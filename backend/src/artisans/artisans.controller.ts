@@ -39,3 +39,24 @@ export class ArtisansController {
       uploaded.push(result.secure_url);
     }
     return { uploaded };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('me')
+  updateProfile(@CurrentUser() user: any, @Body() body: any) {
+    return this.artisansService.updateProfile(user.id, body);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('me/avatar')
+  @UseInterceptors(FilesInterceptor('image', 1))
+  async uploadAvatar(
+    @CurrentUser() user: any,
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
+    if (!files || files.length === 0) return { message: 'No image provided' };
+    const result = await this.cloudinaryService.uploadImage(files[0], 'arthuila/avatars');
+    await this.artisansService.updateProfile(user.id, { avatar_url: result.secure_url });
+    return { avatar_url: result.secure_url };
+  }
+}

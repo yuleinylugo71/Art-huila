@@ -30,7 +30,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     container.innerHTML = `
       <div class="artisan-header">
-        <div class="artisan-avatar-lg">👤</div>
+        ${artisan.avatar_url 
+          ? `<div class="artisan-avatar-lg" style="padding:0; overflow:hidden;"><img src="${artisan.avatar_url}" style="width:100%;height:100%;object-fit:cover;"/></div>`
+          : `<div class="artisan-avatar-lg">👤</div>`}
         <h1 class="artisan-name">${artisan.user.full_name}</h1>
         <div style="color:var(--color-muted);margin-bottom:1rem;font-size:1.1rem;">📍 ${artisan.region?.name || 'Huila'}</div>
         <div>${badge}</div>

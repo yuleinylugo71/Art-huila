@@ -71,7 +71,9 @@
       <hr class="divider" style="margin:3rem 0 2rem;"/>
       <h2 style="font-family:'Crimson Pro',serif;font-size:1.5rem;margin-bottom:1rem;">Sobre el artesano</h2>
       <div class="artisan-mini" style="max-width:500px; cursor:pointer;" onclick="window.location.href='/artesano.html?id=${p.artisan?.id}'">
-        <div class="artisan-avatar">👤</div>
+        ${p.artisan?.avatar_url
+          ? `<div class="artisan-avatar" style="padding:0; overflow:hidden;"><img src="${p.artisan.avatar_url}" style="width:100%;height:100%;object-fit:cover;"/></div>`
+          : `<div class="artisan-avatar">👤</div>`}
         <div>
           <div style="font-weight:600;">${p.artisan?.user?.full_name || 'Artesano'}</div>
           <div style="font-size:0.85rem;color:var(--color-muted);">📍 ${p.artisan?.region?.name || ''}</div>

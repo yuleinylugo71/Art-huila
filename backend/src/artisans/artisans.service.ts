@@ -52,4 +52,15 @@ export class ArtisansService {
     return this.profileRepo.save(profile);
   }
 
- 
+  async updateProfile(userId: string, data: any) {
+    const profile = await this.profileRepo.findOne({ where: { user: { id: userId } } });
+    if (!profile) throw new NotFoundException('Perfil no encontrado');
+
+    if (data.cultural_history) profile.cultural_history = data.cultural_history;
+    if (data.avatar_url) profile.avatar_url = data.avatar_url;
+    if (data.category_id) profile.category = { id: data.category_id } as any;
+    if (data.region_id) profile.region = { id: data.region_id } as any;
+
+    return this.profileRepo.save(profile);
+  }
+}

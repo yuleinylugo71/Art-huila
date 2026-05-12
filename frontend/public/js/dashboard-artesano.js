@@ -70,35 +70,69 @@ async function loadMyProducts() {
 }
 
 async function loadProfile() {
-  const el = document.getElementById('profile-info');
   try {
     const p = await apiFetch('/artisans/me');
-    el.innerHTML = `
-      <div class="card card-body" style="max-width:600px;">
-        <div class="artisan-mini" style="margin-bottom:1.5rem;">
-          <div class="artisan-avatar">👤</div>
-          <div>
-            <div style="font-weight:700;font-size:1.1rem;">${user.full_name}</div>
-            <div style="font-size:0.85rem;color:var(--color-muted);">${user.email}</div>
-            <div style="margin-top:0.4rem;">${badgeStatus(p?.verification_status)}</div>
-          </div>
-        </div>
-        <div class="form-group">
-          <div class="form-label">Categoría</div>
-          <div>${p?.category?.name || '—'}</div>
-        </div>
-        <div class="form-group">
-          <div class="form-label">Región</div>
-          <div>${p?.region?.name || '—'}</div>
-        </div>
-        <div class="form-group">
-          <div class="form-label">Historia cultural</div>
-          <div style="line-height:1.6;">${p?.cultural_history || '—'}</div>
-        </div>
-      </div>
-    `;
-  } catch (e) { el.innerHTML = `<p style="color:var(--color-danger);">${e.message}</p>`; }
+    document.getElementById('profile-history').value = p.cultural_history || '';
+    if (p.avatar_url) {
+      document.getElementById('avatar-preview').innerHTML = `<img src="${p.avatar_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;"/>`;
+    }
+    if (p.gallery && p.gallery.length > 0) {
+      document.getElementById('gallery-previews').innerHTML = p.gallery.map(img => `<img src="${img.url}" style="width:100px;height:100px;object-fit:cover;border-radius:8px;"/>`).join('');
+    }
+  } catch (e) { showToast(e.message, 'error'); }
 }
+
+window.saveProfile = async function() {
+  const btn = document.querySelector('#profile-form .btn-primary');
+  btn.disabled = true; btn.textContent = 'Guardando...';
+  try {
+    const cultural_history = document.getElementById('profile-history').value;
+    await apiFetch('/artisans/me', {
+      method: 'POST',
+      body: JSON.stringify({ cultural_history })
+    });
+    showToast('✅ Perfil actualizado exitosamente');
+  } catch (e) { showToast(e.message, 'error'); }
+  btn.disabled = false; btn.textContent = 'Guardar perfil';
+};
+
+window.uploadAvatar = async function() {
+  const fileInput = document.getElementById('avatar-input');
+  if (!fileInput.files.length) return showToast('Selecciona una imagen primero', 'warning');
+  try {
+    showToast('Subiendo foto...', 'info');
+    const formData = new FormData();
+    formData.append('image', fileInput.files[0]);
+    const res = await fetch('http://localhost:3000/api/v1/artisans/me/avatar', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${Auth.getToken()}` },
+      body: formData,
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Error al subir foto');
+    document.getElementById('avatar-preview').innerHTML = `<img src="${data.avatar_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;"/>`;
+    showToast('✅ Foto de perfil actualizada');
+  } catch(e) { showToast(e.message, 'error'); }
+};
+
+window.uploadGallery = async function() {
+  const fileInput = document.getElementById('gallery-input');
+  if (!fileInput.files.length) return showToast('Selecciona al menos una imagen', 'warning');
+  try {
+    showToast('Subiendo galería...', 'info');
+    const formData = new FormData();
+    for (let f of fileInput.files) formData.append('images', f);
+    const res = await fetch('http://localhost:3000/api/v1/artisans/me/gallery', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${Auth.getToken()}` },
+      body: formData,
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Error al subir galería');
+    showToast('✅ Galería actualizada');
+    loadProfile();
+  } catch(e) { showToast(e.message, 'error'); }
+};
 
 function badgeStatus(s) {
   const map = { pending: 'badge-pending', verified: 'badge-verified', rejected: 'badge-rejected', suspended: 'badge-suspended' };

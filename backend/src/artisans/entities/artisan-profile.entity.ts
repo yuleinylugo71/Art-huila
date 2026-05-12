@@ -50,4 +50,8 @@ export class ArtisanProfile {
   gallery: ArtisanGallery[];
 
   @CreateDateColumn()
-  created_at
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
+}
