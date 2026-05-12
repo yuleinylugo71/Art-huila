@@ -28,4 +28,9 @@ export class OrdersController {
   processPayment(@Param('id') id: string, @CurrentUser() user: any) {
     return this.ordersService.processPayment(id, user);
   }
+
+  @Get('artisan/sales')
+  findArtisanSales(@CurrentUser() user: any) {
+    return this.ordersService.findArtisanSales(user.id);
+  }
 }

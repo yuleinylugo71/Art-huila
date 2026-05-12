@@ -8,12 +8,42 @@ let artisanProfile = null;
 document.getElementById('welcome-msg').textContent = `Hola, ${user.full_name}`;
 
 function showSection(name) {
-  ['mis-productos', 'nuevo-producto', 'mi-perfil'].forEach(s => {
+  ['mis-productos', 'nuevo-producto', 'mi-perfil', 'mis-ventas'].forEach(s => {
     document.getElementById(`section-${s}`).classList.add('hidden');
   });
   document.getElementById(`section-${name}`).classList.remove('hidden');
   if (name === 'mi-perfil') loadProfile();
   if (name === 'mis-productos') loadMyProducts();
+  if (name === 'mis-ventas') loadMySales();
+}
+
+async function loadMySales() {
+  const list = document.getElementById('sales-list');
+  list.innerHTML = '<tr><td colspan="6" style="text-align:center;"><div class="spinner"></div></td></tr>';
+  try {
+    const sales = await apiFetch('/orders/artisan/sales');
+    if (sales.length === 0) {
+      list.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--color-muted);padding:2rem;">No tienes ventas aún.</td></tr>';
+      return;
+    }
+    list.innerHTML = sales.map(s => `
+      <tr>
+        <td style="font-size:0.85rem;">${new Date(s.order.created_at).toLocaleDateString()}</td>
+        <td>
+          <div style="display:flex; align-items:center; gap:0.5rem;">
+            <img src="${s.product.images[0]?.url || ''}" style="width:30px;height:30px;object-fit:cover;border-radius:4px;"/>
+            <span style="font-weight:500;">${s.product.name}</span>
+          </div>
+        </td>
+        <td style="font-size:0.85rem;">${s.order.user.full_name}</td>
+        <td style="text-align:center;">${s.quantity}</td>
+        <td style="font-weight:600;color:var(--color-primary);">${formatPrice(s.subtotal)}</td>
+        <td><span class="badge ${s.order.status === 'paid' ? 'badge-verified' : 'badge-pending'}">${s.order.status}</span></td>
+      </tr>
+    `).join('');
+  } catch (e) {
+    list.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--color-danger);">${e.message}</td></tr>`;
+  }
 }
 
 // Load categories and regions

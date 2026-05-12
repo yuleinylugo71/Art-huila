@@ -115,4 +115,12 @@ export class OrdersService {
     
     return this.ordersRepository.save(order);
   }
+
+  async findArtisanSales(userId: string) {
+    return this.orderItemsRepository.find({
+      where: { product: { artisan: { user: { id: userId } } } },
+      relations: ['order', 'order.user', 'product', 'product.images'],
+      order: { order: { created_at: 'DESC' } },
+    });
+  }
 }
