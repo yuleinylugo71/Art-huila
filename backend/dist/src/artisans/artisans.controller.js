@@ -44,6 +44,16 @@ let ArtisansController = class ArtisansController {
         }
         return { uploaded };
     }
+    updateProfile(user, body) {
+        return this.artisansService.updateProfile(user.id, body);
+    }
+    async uploadAvatar(user, files) {
+        if (!files || files.length === 0)
+            return { message: 'No image provided' };
+        const result = await this.cloudinaryService.uploadImage(files[0], 'arthuila/avatars');
+        await this.artisansService.updateProfile(user.id, { avatar_url: result.secure_url });
+        return { avatar_url: result.secure_url };
+    }
 };
 exports.ArtisansController = ArtisansController;
 __decorate([
@@ -71,6 +81,25 @@ __decorate([
     __metadata("design:paramtypes", [Object, Array]),
     __metadata("design:returntype", Promise)
 ], ArtisansController.prototype, "uploadGallery", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)('me'),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], ArtisansController.prototype, "updateProfile", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)('me/avatar'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FilesInterceptor)('image', 1)),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.UploadedFiles)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Array]),
+    __metadata("design:returntype", Promise)
+], ArtisansController.prototype, "uploadAvatar", null);
 exports.ArtisansController = ArtisansController = __decorate([
     (0, common_1.Controller)('api/v1/artisans'),
     __metadata("design:paramtypes", [artisans_service_1.ArtisansService,

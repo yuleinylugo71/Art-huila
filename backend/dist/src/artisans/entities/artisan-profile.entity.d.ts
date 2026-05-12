@@ -18,6 +18,7 @@ export declare class ArtisanProfile {
     verification_status: VerificationStatus;
     rejection_reason: string;
     truthfulness_declaration: boolean;
+    avatar_url: string;
     gallery: ArtisanGallery[];
     created_at: Date;
     updated_at: Date;

@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       ${artisan.gallery && artisan.gallery.length > 0 ? `
         <h3 style="font-family:'Crimson Pro',serif;font-size:1.5rem;margin:3rem 0 1rem;">Galería del Taller</h3>
         <div class="gallery-grid">
-          ${artisan.gallery.map(imgUrl => `<img src="${imgUrl}" class="gallery-img" alt="Galería"/>`).join('')}
+          ${artisan.gallery.map(img => `<img src="${img.url}" class="gallery-img" alt="Galería"/>`).join('')}
         </div>
       ` : ''}
     `;

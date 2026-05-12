@@ -63,6 +63,20 @@ let ArtisansService = class ArtisansService {
             profile.rejection_reason = rejectionReason;
         return this.profileRepo.save(profile);
     }
+    async updateProfile(userId, data) {
+        const profile = await this.profileRepo.findOne({ where: { user: { id: userId } } });
+        if (!profile)
+            throw new common_1.NotFoundException('Perfil no encontrado');
+        if (data.cultural_history)
+            profile.cultural_history = data.cultural_history;
+        if (data.avatar_url)
+            profile.avatar_url = data.avatar_url;
+        if (data.category_id)
+            profile.category = { id: data.category_id };
+        if (data.region_id)
+            profile.region = { id: data.region_id };
+        return this.profileRepo.save(profile);
+    }
 };
 exports.ArtisansService = ArtisansService;
 exports.ArtisansService = ArtisansService = __decorate([

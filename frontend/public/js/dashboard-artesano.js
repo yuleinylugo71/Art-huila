@@ -82,8 +82,24 @@ async function loadProfile() {
   } catch (e) { showToast(e.message, 'error'); }
 }
 
+window.enableProfileEdit = function() {
+  document.getElementById('profile-history').disabled = false;
+  document.getElementById('avatar-edit-controls').classList.remove('hidden');
+  document.getElementById('gallery-edit-controls').classList.remove('hidden');
+  document.getElementById('profile-save-controls').classList.remove('hidden');
+  document.getElementById('btn-edit-profile').classList.add('hidden');
+};
+
+window.disableProfileEdit = function() {
+  document.getElementById('profile-history').disabled = true;
+  document.getElementById('avatar-edit-controls').classList.add('hidden');
+  document.getElementById('gallery-edit-controls').classList.add('hidden');
+  document.getElementById('profile-save-controls').classList.add('hidden');
+  document.getElementById('btn-edit-profile').classList.remove('hidden');
+};
+
 window.saveProfile = async function() {
-  const btn = document.querySelector('#profile-form .btn-primary');
+  const btn = document.querySelector('#profile-save-controls .btn-primary');
   btn.disabled = true; btn.textContent = 'Guardando...';
   try {
     const cultural_history = document.getElementById('profile-history').value;
@@ -92,8 +108,9 @@ window.saveProfile = async function() {
       body: JSON.stringify({ cultural_history })
     });
     showToast('✅ Perfil actualizado exitosamente');
+    disableProfileEdit();
   } catch (e) { showToast(e.message, 'error'); }
-  btn.disabled = false; btn.textContent = 'Guardar perfil';
+  btn.disabled = false; btn.textContent = '✅ Guardar perfil';
 };
 
 window.uploadAvatar = async function() {

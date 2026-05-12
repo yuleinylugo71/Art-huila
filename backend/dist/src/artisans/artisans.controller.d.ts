@@ -13,4 +13,12 @@ export declare class ArtisansController {
         uploaded: string[];
         message?: undefined;
     }>;
+    updateProfile(user: any, body: any): Promise<import("./entities/artisan-profile.entity").ArtisanProfile>;
+    uploadAvatar(user: any, files: Express.Multer.File[]): Promise<{
+        message: string;
+        avatar_url?: undefined;
+    } | {
+        avatar_url: string;
+        message?: undefined;
+    }>;
 }

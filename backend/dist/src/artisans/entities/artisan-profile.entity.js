@@ -32,6 +32,7 @@ let ArtisanProfile = class ArtisanProfile {
     verification_status;
     rejection_reason;
     truthfulness_declaration;
+    avatar_url;
     gallery;
     created_at;
     updated_at;
@@ -76,6 +77,10 @@ __decorate([
     (0, typeorm_1.Column)({ default: false }),
     __metadata("design:type", Boolean)
 ], ArtisanProfile.prototype, "truthfulness_declaration", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], ArtisanProfile.prototype, "avatar_url", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)(() => artisan_gallery_entity_1.ArtisanGallery, gallery => gallery.profile),
     __metadata("design:type", Array)
