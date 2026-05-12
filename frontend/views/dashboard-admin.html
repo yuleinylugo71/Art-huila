@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panel Admin — Art Huila</title>
+  <link rel="stylesheet" href="/css/styles.css"/>
+</head>
+<body>
+<div class="dashboard-layout">
+  <aside class="sidebar">
+    <a href="/index.html" class="sidebar-brand">Art <span>Huila</span><br/><small style="font-size:0.7rem;opacity:0.5;font-family:Outfit,sans-serif;">Admin Panel</small></a>
+    <ul class="sidebar-nav">
+      <li><a href="#" onclick="showSection('artesanos')" class="active" id="nav-artesanos">🏺 Artesanos</a></li>
+      <li><a href="#" onclick="showSection('auditoria')">📋 Auditoría</a></li>
+      <li><a href="#" onclick="Auth.logout()">🚪 Cerrar sesión</a></li>
+    </ul>
+  </aside>
+
+  <main class="dashboard-main">
+    <div class="dashboard-header flex justify-between items-center">
+      <div>
+        <h1>Panel de Administración</h1>
+        <p class="text-muted" id="admin-welcome">Bienvenido/a</p>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-card"><div class="stat-number" id="stat-pending">—</div><div class="stat-label">Pendientes</div></div>
+      <div class="stat-card"><div class="stat-number" id="stat-verified">—</div><div class="stat-label">Verificados</div></div>
+      <div class="stat-card"><div class="stat-number" id="stat-rejected">—</div><div class="stat-label">Rechazados</div></div>
+      <div class="stat-card"><div class="stat-number" id="stat-suspended">—</div><div class="stat-label">Suspendidos</div></div>
+    </div>
+
+    <!-- Artesanos Section -->
+    <section id="section-artesanos">
+      <div class="flex justify-between items-center mb-2">
+        <h2 style="font-family:'Crimson Pro',serif;font-size:1.5rem;">Gestión de Artesanos</h2>
+        <div style="display:flex;gap:0.5rem;">
+          <select id="status-filter" class="sort-select" onchange="loadArtisans()">
+            <option value="">Todos</option>
+            <option value="pending">Pendientes</option>
+            <option value="verified">Verificados</option>
+            <option value="rejected">Rechazados</option>
+            <option value="suspended">Suspendidos</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>Artesano</th><th>Categoría</th><th>Región</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody id="artisans-table"><tr><td colspan="5" style="text-align:center;"><div class="spinner" style="margin:1rem auto;"></div></td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Auditoria Section -->
+    <section id="section-auditoria" class="hidden">
+      <h2 style="font-family:'Crimson Pro',serif;font-size:1.5rem;margin-bottom:1rem;">Registro de Auditoría</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead><tr><th>Fecha</th><th>Admin</th><th>Acción</th><th>Detalles</th></tr></thead>
+          <tbody id="audit-table"><tr><td colspan="4" style="text-align:center;"><div class="spinner" style="margin:1rem auto;"></div></td></tr></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- Modal: Reject reason -->
+<div id="reject-modal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:500;display:flex;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:var(--radius-lg);padding:2rem;max-width:480px;width:90%;">
+    <h3 style="margin-bottom:1rem;">Razón de rechazo</h3>
+    <textarea id="reject-reason" class="form-control" placeholder="Explica la razón del rechazo..." rows="4"></textarea>
+    <div style="display:flex;gap:1rem;margin-top:1rem;justify-content:flex-end;">
+      <button class="btn btn-ghost" onclick="closeRejectModal()">Cancelar</button>
+      <button class="btn btn-danger" onclick="confirmReject()">Rechazar artesano</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/api.js"></script>
+<script src="/js/dashboard-admin.js"></script>
+</body>
+</html>

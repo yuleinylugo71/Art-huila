@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Art Huila — Artesanías del Huila, Colombia</title>
+  <meta name="description" content="Descubre artesanías auténticas del departamento del Huila, Colombia. Conectamos artesanos verificados con compradores nacionales e internacionales."/>
+  <link rel="stylesheet" href="/css/styles.css"/>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/index.html" class="navbar-brand">Art <span>Huila</span></a>
+  <ul class="navbar-nav">
+    <li><a href="/catalogo.html">Catálogo</a></li>
+    <li><a href="/carrito.html" id="nav-cart-count" style="font-weight: bold; color: var(--color-primary);">Carrito (0)</a></li>
+    <li><a href="/registro.html">Registrarse</a></li>
+    <li id="nav-auth-area">
+      <a href="/login.html" class="btn btn-primary btn-sm">Iniciar sesión</a>
+    </li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <h1 class="hero-title">Artesanías del Huila<br/>con alma y tradición</h1>
+  <p class="hero-subtitle">Conectamos artesanos verificados con compradores que valoran el patrimonio cultural del Huila, Colombia.</p>
+  <div class="hero-actions">
+    <a href="/catalogo.html" class="btn btn-primary btn-lg">Explorar catálogo</a>
+    <a href="/registro.html" class="btn btn-outline btn-lg" style="border-color:white;color:white;">Soy artesano</a>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">Productos destacados</h2>
+    <p class="section-subtitle">Las piezas más recientes de nuestros artesanos verificados</p>
+    <div id="featured-grid" class="grid grid-4">
+      <div class="spinner"></div>
+    </div>
+    <div style="text-align:center;margin-top:2rem;">
+      <a href="/catalogo.html" class="btn btn-outline">Ver todo el catálogo</a>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="background:var(--color-bg2);">
+  <div class="container" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:2rem;text-align:center;">
+    <div><div style="font-size:3rem;">🏺</div><h3 style="font-family:'Crimson Pro',serif;font-size:1.3rem;margin:0.5rem 0;">Artesanías auténticas</h3><p style="color:var(--color-muted);font-size:0.9rem;">Cada pieza cuenta una historia de tradición y cultura huilense.</p></div>
+    <div><div style="font-size:3rem;">✅</div><h3 style="font-family:'Crimson Pro',serif;font-size:1.3rem;margin:0.5rem 0;">Artesanos verificados</h3><p style="color:var(--color-muted);font-size:0.9rem;">Revisamos y aprobamos cada artesano para garantizar calidad.</p></div>
+    <div><div style="font-size:3rem;">🗺️</div><h3 style="font-family:'Crimson Pro',serif;font-size:1.3rem;margin:0.5rem 0;">8 municipios del Huila</h3><p style="color:var(--color-muted);font-size:0.9rem;">Neiva, Pitalito, Garzón, La Plata y más regiones representadas.</p></div>
+    <div><div style="font-size:3rem;">🌍</div><h3 style="font-family:'Crimson Pro',serif;font-size:1.3rem;margin:0.5rem 0;">Envíos a todo el mundo</h3><p style="color:var(--color-muted);font-size:0.9rem;">Llevamos la cultura huilense a cualquier rincón del planeta.</p></div>
+  </div>
+</section>
+
+<footer>
+  <div class="brand">Art <span>Huila</span></div>
+  <p style="margin-top:0.5rem;font-size:0.85rem;">© 2026 Art Huila — Artesanías del Huila, Colombia</p>
+</footer>
+
+<script src="/js/api.js"></script>
+<script src="/js/home.js"></script>
+</body>
+</html>

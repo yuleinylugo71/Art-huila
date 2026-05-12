@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registro — Art Huila</title>
+  <link rel="stylesheet" href="/css/styles.css"/>
+</head>
+<body>
+<div class="auth-layout">
+  <div class="auth-left">
+    <a href="/index.html" style="color:rgba(255,255,255,0.7);text-decoration:none;font-size:0.85rem;margin-bottom:2rem;display:inline-block;">← Volver al inicio</a>
+    <div class="auth-left-title">Únete a la comunidad artesanal</div>
+    <p style="opacity:0.85;line-height:1.7;">Crea tu cuenta y forma parte del marketplace más auténtico del Huila.</p>
+  </div>
+  <div class="auth-right">
+    <div class="auth-box">
+      <a href="/index.html" class="navbar-brand" style="margin-bottom:2rem;display:inline-block;">Art <span>Huila</span></a>
+      <h2>Crear cuenta</h2>
+      <p class="text-muted mb-3">¿Cómo deseas registrarte?</p>
+
+      <!-- Type selector -->
+      <div id="type-selector" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;">
+        <div class="card type-card" id="type-comprador" onclick="selectType('comprador')" style="cursor:pointer;padding:1.5rem;text-align:center;border:2px solid var(--color-border);transition:all 0.2s;">
+          <div style="font-size:2.5rem;">🛍️</div>
+          <div style="font-weight:600;margin-top:0.5rem;">Comprador</div>
+          <div style="font-size:0.8rem;color:var(--color-muted);">Explora y compra artesanías</div>
+        </div>
+        <div class="card type-card" id="type-artesano" onclick="selectType('artesano')" style="cursor:pointer;padding:1.5rem;text-align:center;border:2px solid var(--color-border);transition:all 0.2s;">
+          <div style="font-size:2.5rem;">🏺</div>
+          <div style="font-weight:600;margin-top:0.5rem;">Artesano</div>
+          <div style="font-size:0.8rem;color:var(--color-muted);">Vende tus creaciones</div>
+        </div>
+      </div>
+
+      <div id="error-msg" class="hidden" style="background:#fee2e2;color:#991b1b;padding:0.75rem 1rem;border-radius:var(--radius);margin-bottom:1rem;font-size:0.9rem;"></div>
+
+      <!-- Comprador Form -->
+      <form id="form-comprador" class="hidden">
+        <div class="form-group">
+          <label class="form-label">Nombre completo</label>
+          <input type="text" id="c-name" class="form-control" placeholder="Tu nombre" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Correo electrónico</label>
+          <input type="email" id="c-email" class="form-control" placeholder="tu@email.com" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contraseña</label>
+          <input type="password" id="c-pass" class="form-control" placeholder="Mínimo 8 caracteres" required/>
+          <div class="form-hint">Mínimo 8 caracteres, 1 mayúscula y 1 número</div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full" id="btn-comprador">Crear cuenta de comprador</button>
+      </form>
+
+      <!-- Artisan Form -->
+      <form id="form-artesano" class="hidden">
+        <div class="form-group">
+          <label class="form-label">Nombre completo</label>
+          <input type="text" id="a-name" class="form-control" placeholder="Tu nombre completo" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Correo electrónico</label>
+          <input type="email" id="a-email" class="form-control" placeholder="tu@email.com" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Contraseña</label>
+          <input type="password" id="a-pass" class="form-control" placeholder="Mínimo 8 caracteres" required/>
+          <div class="form-hint">Mínimo 8 caracteres, 1 mayúscula y 1 número</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Número de cédula</label>
+          <input type="text" id="a-cedula" class="form-control" placeholder="1234567890" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Historia cultural de tu oficio</label>
+          <textarea id="a-historia" class="form-control" placeholder="Cuéntanos sobre tu tradición artesanal, cómo aprendiste, qué te inspira..." required></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Categoría de artesanía</label>
+          <select id="a-categoria" class="form-control" required>
+            <option value="">Cargando categorías...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Región del Huila</label>
+          <select id="a-region" class="form-control" required>
+            <option value="">Cargando regiones...</option>
+          </select>
+        </div>
+        <label class="checkbox-label form-group" id="declaracion-wrap">
+          <input type="checkbox" id="a-declaracion" required/>
+          <span>Declaro que la información proporcionada es verídica y que soy artesano del departamento del Huila.</span>
+        </label>
+        <button type="submit" class="btn btn-primary btn-full" id="btn-artesano">Registrarme como artesano</button>
+      </form>
+
+      <hr class="divider"/>
+      <p style="text-align:center;font-size:0.9rem;color:var(--color-muted);">¿Ya tienes cuenta? <a href="/login.html" style="color:var(--color-primary);font-weight:600;">Inicia sesión</a></p>
+    </div>
+  </div>
+</div>
+<script src="/js/api.js"></script>
+<script src="/js/registro.js"></script>
+</body>
+</html>

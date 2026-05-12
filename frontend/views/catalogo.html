@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Catálogo — Art Huila</title>
+  <meta name="description" content="Explora el catálogo de artesanías del Huila. Filtra por región, categoría y precio."/>
+  <link rel="stylesheet" href="/css/styles.css"/>
+</head>
+<body>
+<nav class="navbar">
+  <a href="/index.html" class="navbar-brand">Art <span>Huila</span></a>
+  <ul class="navbar-nav">
+    <li><a href="/catalogo.html" class="active">Catálogo</a></li>
+    <li><a href="/carrito.html" id="nav-cart-count" style="font-weight: bold; color: var(--color-primary);">Carrito (0)</a></li>
+    <li id="nav-auth"></li>
+  </ul>
+</nav>
+
+<section class="section">
+  <div class="container">
+    <h1 class="section-title">Catálogo de Artesanías</h1>
+    <p class="section-subtitle">Descubre piezas únicas hechas a mano por artesanos verificados del Huila</p>
+
+    <div class="catalog-layout">
+      <!-- Sidebar Filters -->
+      <aside class="filter-sidebar">
+        <h3 class="filter-title" style="font-size:1.1rem;margin-bottom:1.25rem;">Filtros</h3>
+
+        <div class="filter-section">
+          <div class="filter-title">Región</div>
+          <div id="region-filters">
+            <div class="spinner" style="width:24px;height:24px;margin:0.5rem 0;"></div>
+          </div>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-title">Categoría</div>
+          <div id="category-filters">
+            <div class="spinner" style="width:24px;height:24px;margin:0.5rem 0;"></div>
+          </div>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-title">Precio (COP)</div>
+          <div class="price-inputs">
+            <input type="number" id="min-price" placeholder="Mín" min="0"/>
+            <input type="number" id="max-price" placeholder="Máx" min="0"/>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-full mt-2" onclick="applyFilters()">Aplicar filtros</button>
+        <button class="btn btn-ghost btn-full mt-1" onclick="clearFilters()">Limpiar filtros</button>
+      </aside>
+
+      <!-- Products Grid -->
+      <main>
+        <div class="sort-bar">
+          <span id="results-count" style="color:var(--color-muted);font-size:0.9rem;">Cargando...</span>
+          <select class="sort-select" id="sort-select" onchange="applyFilters()">
+            <option value="newest">Más recientes</option>
+            <option value="price_asc">Precio: menor a mayor</option>
+            <option value="price_desc">Precio: mayor a menor</option>
+          </select>
+        </div>
+        <div id="products-grid" class="grid grid-3">
+          <div class="spinner"></div>
+        </div>
+        <div id="pagination" class="pagination"></div>
+      </main>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="brand">Art <span>Huila</span></div>
+  <p style="font-size:0.85rem;margin-top:0.5rem;">© 2026 Art Huila</p>
+</footer>
+<script src="/js/api.js"></script>
+<script src="/js/catalogo.js"></script>
+</body>
+</html>

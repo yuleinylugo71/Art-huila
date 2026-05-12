@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mi Perfil — Art Huila</title>
+  <link rel="stylesheet" href="/css/styles.css"/>
+  <style>
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+    .dashboard-sidebar {
+      background: var(--color-bg1);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+    }
+    .sidebar-menu {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .sidebar-menu li {
+      margin-bottom: 0.5rem;
+    }
+    .sidebar-menu a {
+      display: block;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius);
+      color: var(--color-text);
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .sidebar-menu a:hover, .sidebar-menu a.active {
+      background: var(--color-bg2);
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+    .order-card {
+      background: var(--color-bg1);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 1rem;
+      margin-bottom: 1rem;
+    }
+    .order-items {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .order-item {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .order-item img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+    @media (max-width: 768px) {
+      .dashboard-layout { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/index.html" class="navbar-brand">Art <span>Huila</span></a>
+  <ul class="navbar-nav">
+    <li><a href="/catalogo.html">Catálogo</a></li>
+    <li><a href="/carrito.html" id="nav-cart-count" style="font-weight: bold; color: var(--color-primary);">Carrito (0)</a></li>
+    <li><button class="btn btn-outline btn-sm" onclick="Auth.logout()">Cerrar sesión</button></li>
+  </ul>
+</nav>
+
+<div class="container section">
+  <h1 class="page-title" style="margin-bottom: 2rem;">Mi Cuenta</h1>
+  
+  <div class="dashboard-layout">
+    <aside class="dashboard-sidebar">
+      <div style="margin-bottom: 1.5rem; text-align: center;">
+        <div style="font-size: 3rem; margin-bottom: 0.5rem;">👤</div>
+        <h3 id="user-name" style="font-size: 1.1rem;">Cargando...</h3>
+        <p id="user-email" style="font-size: 0.85rem; color: var(--color-muted);"></p>
+      </div>
+      <ul class="sidebar-menu">
+        <li><a href="#" class="active" onclick="showTab('orders')">Mis Pedidos</a></li>
+        <li><a href="#" onclick="showTab('profile')">Perfil</a></li>
+      </ul>
+    </aside>
+
+    <main>
+      <div id="tab-orders">
+        <h2 style="font-family: 'Crimson Pro', serif; margin-bottom: 1.5rem;">Historial de Pedidos</h2>
+        <div id="orders-container">
+          <div class="spinner"></div>
+        </div>
+      </div>
+
+      <div id="tab-profile" style="display: none;">
+        <h2 style="font-family: 'Crimson Pro', serif; margin-bottom: 1.5rem;">Mis Datos</h2>
+        <p style="color: var(--color-muted);">Configuración de perfil (próximamente).</p>
+      </div>
+    </main>
+  </div>
+</div>
+
+<footer><div class="brand">Art <span>Huila</span></div></footer>
+
+<script src="/js/api.js"></script>
+<script src="/js/dashboard-comprador.js"></script>
+</body>
+</html>

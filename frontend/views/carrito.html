@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Carrito de Compras — Art Huila</title>
+  <link rel="stylesheet" href="/css/styles.css"/>
+  <style>
+    .cart-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 2rem;
+    }
+    .cart-items {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .cart-item {
+      display: flex;
+      gap: 1rem;
+      background: var(--color-bg1);
+      padding: 1rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--color-border);
+      align-items: center;
+    }
+    .cart-item img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: var(--radius);
+    }
+    .cart-item-details {
+      flex: 1;
+    }
+    .cart-item-price {
+      font-weight: 600;
+      color: var(--color-primary);
+    }
+    .cart-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .quantity-btn {
+      background: var(--color-bg2);
+      border: 1px solid var(--color-border);
+      width: 30px;
+      height: 30px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .quantity-btn:hover {
+      background: var(--color-border);
+    }
+    .btn-remove {
+      color: #e74c3c;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9rem;
+      text-decoration: underline;
+    }
+    .cart-summary {
+      background: var(--color-bg1);
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--color-border);
+      height: fit-content;
+    }
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .summary-total {
+      font-size: 1.2rem;
+      font-weight: bold;
+      border-top: 1px solid var(--color-border);
+      padding-top: 1rem;
+    }
+    @media (max-width: 768px) {
+      .cart-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/index.html" class="navbar-brand">Art <span>Huila</span></a>
+  <ul class="navbar-nav">
+    <li><a href="/catalogo.html">Catálogo</a></li>
+    <li><a href="/carrito.html" id="nav-cart-count" style="font-weight: bold; color: var(--color-primary);">Carrito (0)</a></li>
+  </ul>
+</nav>
+
+<div class="container section">
+  <h1 class="page-title">Tu Carrito de Compras</h1>
+  
+  <div id="cart-empty" style="display: none; text-align: center; padding: 4rem 0;">
+    <h2>Tu carrito está vacío</h2>
+    <p style="color: var(--color-muted); margin-bottom: 2rem;">Explora el catálogo para descubrir artesanías increíbles.</p>
+    <a href="/catalogo.html" class="btn btn-primary">Ir al Catálogo</a>
+  </div>
+
+  <div id="cart-content" class="cart-grid" style="display: none;">
+    <div class="cart-items" id="cart-items-container">
+      <!-- Items renderizados dinámicamente -->
+    </div>
+    <div class="cart-summary">
+      <h3 style="margin-bottom: 1rem; font-family: 'Crimson Pro', serif;">Resumen del pedido</h3>
+      <div class="summary-row">
+        <span>Subtotal</span>
+        <span id="summary-subtotal">$0</span>
+      </div>
+      <div class="summary-row">
+        <span>Envío</span>
+        <span>Calculado en checkout</span>
+      </div>
+      <div class="summary-row summary-total">
+        <span>Total</span>
+        <span id="summary-total">$0</span>
+      </div>
+      <button id="btn-checkout" class="btn btn-primary btn-block" style="margin-top: 1rem;">Proceder al Pago</button>
+    </div>
+  </div>
+</div>
+
+<footer><div class="brand">Art <span>Huila</span></div></footer>
+
+<script src="/js/api.js"></script>
+<script src="/js/carrito.js"></script>
+</body>
+</html>
