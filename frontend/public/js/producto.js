@@ -82,6 +82,82 @@
       </div>
     `;
 
+    // Reviews logic
+    const reviewsContainer = document.createElement('div');
+    reviewsContainer.id = 'reviews-section';
+    reviewsContainer.style.marginTop = '3rem';
+    container.appendChild(reviewsContainer);
+
+    async function loadReviews() {
+      try {
+        const reviews = await apiFetch('/reviews/product/' + p.id);
+        const avgRating = reviews.length > 0 ? (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1) : 0;
+        
+        reviewsContainer.innerHTML = `
+          <hr class="divider" style="margin:2rem 0;"/>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+            <h2 style="font-family:'Crimson Pro',serif;font-size:1.8rem;margin:0;">Opiniones de clientes</h2>
+            <div style="text-align:right;">
+              <div style="font-size:1.5rem; font-weight:700; color:var(--color-accent);">${'★'.repeat(Math.round(avgRating))}${'☆'.repeat(5 - Math.round(avgRating))}</div>
+              <div style="font-size:0.9rem; color:var(--color-muted);">${reviews.length} reseñas</div>
+            </div>
+          </div>
+
+          <!-- Review Form -->
+          ${Auth.getUser() ? `
+            <div class="card card-body mb-3">
+              <h3 style="font-size:1.1rem; margin-bottom:1rem;">Escribir una reseña</h3>
+              <div class="form-group">
+                <label class="form-label">Calificación</label>
+                <select id="rev-rating" class="form-control" style="max-width:150px;">
+                  <option value="5">★★★★★ (5)</option>
+                  <option value="4">★★★★☆ (4)</option>
+                  <option value="3">★★★☆☆ (3)</option>
+                  <option value="2">★★☆☆☆ (2)</option>
+                  <option value="1">★☆☆☆☆ (1)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Comentario</label>
+                <textarea id="rev-comment" class="form-control" rows="3" placeholder="Cuéntanos tu experiencia con este producto..."></textarea>
+              </div>
+              <button class="btn btn-primary" onclick="submitReview('${p.id}')">Publicar reseña</button>
+            </div>
+          ` : '<p style="background:var(--color-bg2); padding:1rem; border-radius:var(--radius); font-size:0.9rem;">Debes <a href="/login.html" style="color:var(--color-primary); font-weight:600;">iniciar sesión</a> para dejar una reseña.</p>'}
+
+          <div id="reviews-list" style="display:grid; gap:1.5rem; margin-top:2rem;">
+            ${reviews.length > 0 ? reviews.map(r => `
+              <div style="border-bottom:1px solid var(--color-border); padding-bottom:1.5rem;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem;">
+                  <div style="font-weight:600;">${r.user?.full_name || 'Usuario'}</div>
+                  <div style="color:var(--color-accent);">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</div>
+                </div>
+                <div style="font-size:0.95rem; line-height:1.6; color:var(--color-text);">${r.comment}</div>
+                <div style="font-size:0.8rem; color:var(--color-muted); margin-top:0.5rem;">${new Date(r.created_at).toLocaleDateString()}</div>
+              </div>
+            `).join('') : '<p style="text-align:center; color:var(--color-muted); padding:2rem;">Aún no hay reseñas para este producto.</p>'}
+          </div>
+        `;
+      } catch (e) { console.error(e); }
+    }
+
+    window.submitReview = async (productId) => {
+      const rating = parseInt(document.getElementById('rev-rating').value);
+      const comment = document.getElementById('rev-comment').value;
+      if (!comment) return showToast('Por favor escribe un comentario', 'warning');
+
+      try {
+        await apiFetch('/reviews', {
+          method: 'POST',
+          body: JSON.stringify({ productId, rating, comment })
+        });
+        showToast('✅ Reseña publicada exitosamente');
+        loadReviews();
+      } catch (e) { showToast(e.message, 'error'); }
+    };
+
+    loadReviews();
+
     // Carousel logic
     let currentSlide = 0;
     const track = document.getElementById('carousel-track');
