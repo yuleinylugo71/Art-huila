@@ -95,6 +95,12 @@ let ProductsService = class ProductsService {
             cultural_origin: data.cultural_origin,
             technique: data.technique,
             significance: data.significance,
+            short_description: data.short_description,
+            materials: data.materials,
+            dimensions: data.dimensions,
+            weight: data.weight,
+            care_instructions: data.care_instructions,
+            is_handmade: data.is_handmade,
         };
         if (data.category_id)
             updatePayload.category = { id: data.category_id };
@@ -128,6 +134,42 @@ let ProductsService = class ProductsService {
             saved.push(await this.imageRepo.save(image));
         }
         return saved;
+    }
+    async findAll() {
+        return this.productRepo.find({
+            relations: ['artisan', 'artisan.user', 'category', 'region'],
+            order: { created_at: 'DESC' },
+        });
+    }
+    async hide(id) {
+        await this.productRepo.update(id, { status: product_entity_1.ProductStatus.HIDDEN });
+        return this.productRepo.findOneBy({ id });
+    }
+    async remove(id) {
+        const product = await this.productRepo.findOneBy({ id });
+        if (!product)
+            throw new common_1.NotFoundException('Producto no encontrado');
+        await this.productRepo.remove(product);
+    }
+    async findFiltered(query, featured, limit) {
+        const qb = this.productRepo.createQueryBuilder('product')
+            .leftJoinAndSelect('product.artisan', 'artisan')
+            .leftJoinAndSelect('artisan.user', 'user')
+            .leftJoinAndSelect('product.images', 'images')
+            .where('product.status = :status', { status: product_entity_1.ProductStatus.PUBLISHED });
+        if (query) {
+            qb.andWhere('(product.name ILIKE :q OR product.cultural_origin ILIKE :q)', { q: `%${query}%` });
+        }
+        if (featured) {
+            qb.orderBy('product.created_at', 'DESC');
+        }
+        if (limit) {
+            qb.take(limit);
+        }
+        return qb.getMany();
+    }
+    async getCount() {
+        return this.productRepo.count();
     }
 };
 exports.ProductsService = ProductsService;

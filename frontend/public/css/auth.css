@@ -1,0 +1,118 @@
+/* auth.css - Authentication pages (Login, Register) styles */
+
+.auth-layout {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  min-height: 100vh;
+}
+
+.auth-left {
+  background: linear-gradient(rgba(26, 14, 6, 0.85), rgba(26, 14, 6, 0.85)), url('../img/auth-bg.png') no-repeat center center/cover;
+  color: white;
+  padding: 4rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.auth-left-title {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+}
+
+.auth-right {
+  background: var(--color-bg);
+  padding: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-box {
+  width: 100%;
+  max-width: 480px;
+}
+
+.auth-box h2 {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 900;
+  margin-bottom: 0.5rem;
+}
+
+/* Forms */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--color-text);
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.85rem 1.15rem;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  transition: all 0.2s;
+  outline: none;
+}
+
+.form-control:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px rgba(193, 68, 14, 0.1);
+}
+
+.form-hint {
+  font-size: 0.78rem;
+  color: var(--color-muted);
+  margin-top: 0.4rem;
+}
+
+.checkbox-label {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  font-size: 0.88rem;
+  color: var(--color-muted);
+  cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+  margin-top: 0.2rem;
+  accent-color: var(--color-primary);
+}
+
+/* Type selector for registration */
+.type-card {
+  border: 2px solid var(--color-border);
+  transition: all 0.2s;
+}
+
+.type-card:hover {
+  border-color: var(--color-primary-light);
+  background: var(--color-accent-warm);
+}
+
+.type-card.active {
+  border-color: var(--color-primary);
+  background: white;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+  .auth-layout { grid-template-columns: 1fr; }
+  .auth-left { display: none; }
+  .auth-right { padding: 2rem; }
+}

@@ -26,6 +26,19 @@ let ArtisansController = class ArtisansController {
         this.artisansService = artisansService;
         this.cloudinaryService = cloudinaryService;
     }
+    async findAll(featured) {
+        if (featured === 'true') {
+            const artisans = await this.artisansService.findFeatured();
+            return artisans.map(a => ({
+                name: a.user.full_name,
+                city: a.region?.name || 'Huila',
+                bio: a.cultural_history.substring(0, 120) + '...',
+                avatar_url: a.avatar_url,
+                verified: a.verification_status === 'verified',
+            }));
+        }
+        return this.artisansService.findAll();
+    }
     getMyProfile(user) {
         return this.artisansService.findByUserId(user.id);
     }
@@ -56,6 +69,13 @@ let ArtisansController = class ArtisansController {
     }
 };
 exports.ArtisansController = ArtisansController;
+__decorate([
+    (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)('featured')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], ArtisansController.prototype, "findAll", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)('me'),
@@ -101,7 +121,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ArtisansController.prototype, "uploadAvatar", null);
 exports.ArtisansController = ArtisansController = __decorate([
-    (0, common_1.Controller)('api/v1/artisans'),
+    (0, common_1.Controller)('artisans'),
     __metadata("design:paramtypes", [artisans_service_1.ArtisansService,
         cloudinary_service_1.CloudinaryService])
 ], ArtisansController);

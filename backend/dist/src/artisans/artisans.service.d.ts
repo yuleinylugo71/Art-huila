@@ -11,4 +11,5 @@ export declare class ArtisansService {
     addGalleryImage(profileId: string, url: string, publicId: string): Promise<ArtisanGallery>;
     updateStatus(id: string, status: VerificationStatus, rejectionReason?: string): Promise<ArtisanProfile>;
     updateProfile(userId: string, data: any): Promise<ArtisanProfile>;
+    findFeatured(): Promise<ArtisanProfile[]>;
 }

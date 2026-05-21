@@ -49,7 +49,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], CatalogController.prototype, "findAll", null);
 exports.CatalogController = CatalogController = __decorate([
-    (0, common_1.Controller)('api/v1/catalog'),
+    (0, common_1.Controller)('catalog'),
     __metadata("design:paramtypes", [catalog_service_1.CatalogService])
 ], CatalogController);
 //# sourceMappingURL=catalog.controller.js.map

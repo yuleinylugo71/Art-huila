@@ -3,84 +3,191 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Panel Admin — Art Huila</title>
-  <link rel="stylesheet" href="/css/styles.css"/>
+  <title>Panel Premium Admin — Art Huila</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/dashboard-admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
+
 <div class="dashboard-layout">
   <aside class="sidebar">
-    <a href="/index.html" class="sidebar-brand">Art <span>Huila</span><br/><small style="font-size:0.7rem;opacity:0.5;font-family:Outfit,sans-serif;">Admin Panel</small></a>
+    <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;">
+      <a href="index.html" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);font-size:1rem;text-decoration:none;transition:all 0.2s;" title="Ir al inicio">←</a>
+      <a href="index.html" class="sidebar-brand" style="margin:0;">Art <span>Huila</span></a>
+    </div>
+    <div class="lang-switcher" style="margin-bottom:1.5rem;padding-left:0.5rem;">
+      <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+      <span>|</span>
+      <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+    </div>
     <ul class="sidebar-nav">
-      <li><a href="#" onclick="showSection('artesanos')" class="active" id="nav-artesanos">🏺 Artesanos</a></li>
-      <li><a href="#" onclick="showSection('auditoria')">📋 Auditoría</a></li>
-      <li><a href="#" onclick="Auth.logout()">🚪 Cerrar sesión</a></li>
+      <li><a href="#" onclick="showSection('artesanos')" class="active" id="nav-artesanos"><i class="fa-solid fa-users"></i> Artesanos</a></li>
+      <li><a href="#" onclick="showSection('catalogo')" id="nav-catalogo"><i class="fa-solid fa-box"></i> Catálogo</a></li>
+      <li><a href="#" onclick="showSection('pedidos')" id="nav-pedidos"><i class="fa-solid fa-cart-shopping"></i> Pedidos</a></li>
+      <li><a href="#" onclick="showSection('reseñas')" id="nav-reseñas"><i class="fa-solid fa-star"></i> Moderación</a></li>
+      <li><a href="#" onclick="showSection('estadisticas')" id="nav-estadisticas"><i class="fa-solid fa-chart-line"></i> Estadísticas</a></li>
+      <li><a href="#" onclick="showSection('auditoria')" id="nav-auditoria"><i class="fa-solid fa-clipboard-list"></i> Auditoría</a></li>
     </ul>
+    <div style="margin-top: auto; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
+      <a href="#" onclick="Auth.logout()" style="color: #fca5a5; text-decoration: none; display: flex; align-items: center; gap: 0.5rem; font-weight: 600;">
+        <i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión
+      </a>
+    </div>
   </aside>
 
-  <main class="dashboard-main">
-    <div class="dashboard-header flex justify-between items-center">
+  <main class="main-content">
+    <header class="header-actions">
       <div>
-        <h1>Panel de Administración</h1>
-        <p class="text-muted" id="admin-welcome">Bienvenido/a</p>
+        <h1 id="section-title" style="font-size: 1.75rem; font-weight: 800; color: #1e293b; margin:0;">Dashboard</h1>
+        <p style="color: #64748b; margin:0;" id="admin-welcome">Bienvenido/a</p>
+      </div>
+      <div class="admin-profile">
+        <span style="font-weight: 600;">Admin</span>
+        <div style="width: 32px; height: 32px; background: var(--color-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white;">A</div>
+      </div>
+    </header>
+
+    <!-- Resumen rápido (Stats) -->
+    <div class="stats-row" id="stats-summary">
+      <div class="stat-card">
+        <span class="label">ARTESANOS PENDIENTES</span>
+        <span class="value" id="stat-pending">0</span>
+        <span class="trend trend-up">Revisión requerida</span>
+      </div>
+      <div class="stat-card">
+        <span class="label">TOTAL VENTAS</span>
+        <span class="value" id="stat-total-sales">$0</span>
+        <span class="trend trend-up">+12% vs mes anterior</span>
+      </div>
+      <div class="stat-card">
+        <span class="label">PEDIDOS HOY</span>
+        <span class="value" id="stat-orders-today">0</span>
+        <span class="trend trend-up">Activos</span>
+      </div>
+      <div class="stat-card">
+        <span class="label">RESEÑAS REPORTADAS</span>
+        <span class="value" id="stat-reported-reviews">0</span>
+        <span class="trend trend-up" style="background:#fee2e2; color:#b91c1c;">Acción urgente</span>
       </div>
     </div>
 
-    <!-- Stats -->
-    <div class="stats-grid" id="stats-grid">
-      <div class="stat-card"><div class="stat-number" id="stat-pending">—</div><div class="stat-label">Pendientes</div></div>
-      <div class="stat-card"><div class="stat-number" id="stat-verified">—</div><div class="stat-label">Verificados</div></div>
-      <div class="stat-card"><div class="stat-number" id="stat-rejected">—</div><div class="stat-label">Rechazados</div></div>
-      <div class="stat-card"><div class="stat-number" id="stat-suspended">—</div><div class="stat-label">Suspendidos</div></div>
-    </div>
-
-    <!-- Artesanos Section -->
-    <section id="section-artesanos">
-      <div class="flex justify-between items-center mb-2">
-        <h2 style="font-family:'Crimson Pro',serif;font-size:1.5rem;">Gestión de Artesanos</h2>
-        <div style="display:flex;gap:0.5rem;">
-          <select id="status-filter" class="sort-select" onchange="loadArtisans()">
-            <option value="">Todos</option>
+    <!-- Secciones dinámicas -->
+    <div class="content-card">
+      
+      <!-- Artesanos -->
+      <section id="section-artesanos">
+        <div class="flex justify-between items-center mb-2">
+          <h2 style="font-size: 1.25rem; font-weight: 700;">Validación de Artesanos</h2>
+          <select id="status-filter" class="search-box" onchange="loadArtisans()">
+            <option value="">Todos los estados</option>
             <option value="pending">Pendientes</option>
             <option value="verified">Verificados</option>
             <option value="rejected">Rechazados</option>
             <option value="suspended">Suspendidos</option>
           </select>
         </div>
-      </div>
-      <div class="table-wrapper">
-        <table>
-          <thead><tr><th>Artesano</th><th>Categoría</th><th>Región</th><th>Estado</th><th>Acciones</th></tr></thead>
-          <tbody id="artisans-table"><tr><td colspan="5" style="text-align:center;"><div class="spinner" style="margin:1rem auto;"></div></td></tr></tbody>
+        <table class="table-ui" style="width: 100%;">
+          <thead><tr><th>Nombre / Email</th><th>Ubicación</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody id="artisans-table"></tbody>
         </table>
-      </div>
-    </section>
+      </section>
 
-    <!-- Auditoria Section -->
-    <section id="section-auditoria" class="hidden">
-      <h2 style="font-family:'Crimson Pro',serif;font-size:1.5rem;margin-bottom:1rem;">Registro de Auditoría</h2>
-      <div class="table-wrapper">
-        <table>
-          <thead><tr><th>Fecha</th><th>Admin</th><th>Acción</th><th>Detalles</th></tr></thead>
-          <tbody id="audit-table"><tr><td colspan="4" style="text-align:center;"><div class="spinner" style="margin:1rem auto;"></div></td></tr></tbody>
+      <!-- Catálogo -->
+      <section id="section-catalogo" class="hidden">
+        <div class="flex justify-between items-center mb-2">
+          <h2 style="font-size: 1.25rem; font-weight: 700;">Control de Productos</h2>
+          <input type="text" placeholder="Buscar producto..." class="search-box" id="search-product" oninput="filterProducts()"/>
+        </div>
+        <table class="table-ui" style="width: 100%;">
+          <thead><tr><th>Producto</th><th><i class="fa-solid fa-hammer"></i> Artesano</th><th>Stock</th><th>Precio</th><th>Acciones</th></tr></thead>
+          <tbody id="products-table"></tbody>
         </table>
-      </div>
-    </section>
+      </section>
+
+      <!-- Pedidos -->
+      <section id="section-pedidos" class="hidden">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1.5rem;">
+          <h2 style="font-size: 1.25rem; font-weight: 700; margin:0;">Gestión de Órdenes</h2>
+          <span style="font-size:0.75rem; color:#64748b; background:#f1f5f9; padding:0.25rem 0.75rem; border-radius:12px; font-weight:600;">Control Administrativo Directo</span>
+        </div>
+        <table class="table-ui" style="width: 100%;">
+          <thead><tr><th>ID</th><th>Cliente</th><th>Fecha</th><th>Total</th><th>Estado</th></tr></thead>
+          <tbody id="orders-table"></tbody>
+        </table>
+      </section>
+
+      <!-- Reseñas -->
+      <section id="section-reseñas" class="hidden">
+        <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem;">Reseñas Reportadas</h2>
+        <table class="table-ui" style="width: 100%;">
+          <thead><tr><th>Producto</th><th>Comentario</th><th>Motivo</th><th>Acciones</th></tr></thead>
+          <tbody id="reported-reviews-table"></tbody>
+        </table>
+      </section>
+
+      <!-- Estadisticas -->
+      <section id="section-estadisticas" class="hidden">
+        <div class="flex justify-between items-center mb-2">
+          <h2 style="font-size: 1.25rem; font-weight: 700;">Analítica Avanzada</h2>
+          <button class="btn btn-primary btn-sm" onclick="exportStats('pdf')"><i class="fa-solid fa-download"></i> Exportar Reporte Mensual</button>
+        </div>
+        <div class="grid grid-2" style="gap: 2rem;">
+          <div style="background: #f8fafc; padding: 1.5rem; border-radius: 16px;">
+            <h3 style="font-size: 1rem; margin-bottom: 1rem;">Distribución de Ventas</h3>
+            <canvas id="chart-categories"></canvas>
+          </div>
+          <div style="background: #f8fafc; padding: 1.5rem; border-radius: 16px;">
+            <h3 style="font-size: 1rem; margin-bottom: 1rem;">Histórico de Pedidos</h3>
+            <canvas id="chart-orders"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- Auditoria -->
+      <section id="section-auditoria" class="hidden">
+        <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem;">Bitácora de Acciones</h2>
+        <table class="table-ui" style="width: 100%;">
+          <thead><tr><th>Fecha</th><th>Admin</th><th>Acción</th><th>Detalles</th></tr></thead>
+          <tbody id="audit-table"></tbody>
+        </table>
+      </section>
+
+    </div>
   </main>
 </div>
 
-<!-- Modal: Reject reason -->
-<div id="reject-modal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:500;display:flex;align-items:center;justify-content:center;">
-  <div style="background:white;border-radius:var(--radius-lg);padding:2rem;max-width:480px;width:90%;">
-    <h3 style="margin-bottom:1rem;">Razón de rechazo</h3>
-    <textarea id="reject-reason" class="form-control" placeholder="Explica la razón del rechazo..." rows="4"></textarea>
-    <div style="display:flex;gap:1rem;margin-top:1rem;justify-content:flex-end;">
+<!-- Modal Info Artesano -->
+<div id="artisan-modal" class="hidden" style="position:fixed;inset:0;background:rgba(15,23,42,0.8);backdrop-filter:blur(4px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:1rem;">
+  <div style="background:white; border-radius:24px; padding:2rem; width:100%; max-width:700px; max-height:90vh; overflow-y:auto; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+      <h3 style="margin:0; font-size:1.5rem;">Detalles del Artesano</h3>
+      <button onclick="closeArtisanModal()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#64748b;">&times;</button>
+    </div>
+    <div id="artisan-modal-content" style="display:flex; flex-direction:column; gap:1.5rem; font-size:0.95rem;"></div>
+    <div id="artisan-modal-actions" style="display:flex; gap:1rem; margin-top:2rem; justify-content:flex-end; border-top:1px solid #eee; padding-top:1.5rem;"></div>
+  </div>
+</div>
+
+<!-- Modal Reject -->
+<div id="reject-modal" class="hidden" style="position:fixed;inset:0;background:rgba(15,23,42,0.8);backdrop-filter:blur(4px);z-index:1000;display:flex;align-items:center;justify-content:center;">
+  <div style="background:white; border-radius:24px; padding:2rem; width:90%; max-width:500px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25);">
+    <h3 id="modal-title" style="margin-top:0;">Motivo de la acción</h3>
+    <p id="modal-desc" style="color:#64748b; font-size:0.9rem; margin-bottom:1.5rem;">Explica detalladamente por qué se realiza este cambio.</p>
+    <textarea id="reject-reason" class="form-control" style="width:100%; border-radius:12px; padding:1rem;" rows="4" placeholder="Escribe aquí..."></textarea>
+    <div style="display:flex; gap:1rem; margin-top:2rem; justify-content:flex-end;">
       <button class="btn btn-ghost" onclick="closeRejectModal()">Cancelar</button>
-      <button class="btn btn-danger" onclick="confirmReject()">Rechazar artesano</button>
+      <button class="btn btn-danger" id="modal-confirm-btn">Confirmar Acción</button>
     </div>
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+<script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
+<script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
 <script src="/js/api.js"></script>
+<script src="/js/i18n.js"></script>
 <script src="/js/dashboard-admin.js"></script>
 </body>
 </html>

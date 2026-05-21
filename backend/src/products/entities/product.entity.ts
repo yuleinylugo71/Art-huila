@@ -7,6 +7,7 @@ import { ProductImage } from './product-image.entity';
 export enum ProductStatus {
   DRAFT = 'draft',
   PUBLISHED = 'published',
+  HIDDEN = 'hidden',
 }
 
 @Entity('products')
@@ -46,6 +47,24 @@ export class Product {
 
   @Column({ type: 'text' })
   significance: string;
+
+  @Column({ type: 'varchar', length: 150, nullable: true })
+  short_description: string;
+
+  @Column({ type: 'text', nullable: true })
+  materials: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  dimensions: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  weight: string;
+
+  @Column({ type: 'text', nullable: true })
+  care_instructions: string;
+
+  @Column({ type: 'boolean', default: true, nullable: true })
+  is_handmade: boolean;
 
   @Column({ type: 'enum', enum: ProductStatus, default: ProductStatus.DRAFT })
   status: ProductStatus;

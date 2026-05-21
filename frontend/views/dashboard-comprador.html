@@ -1,125 +1,93 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mi Perfil — Art Huila</title>
-  <link rel="stylesheet" href="/css/styles.css"/>
-  <style>
-    .dashboard-layout {
-      display: grid;
-      grid-template-columns: 250px 1fr;
-      gap: 2rem;
-      align-items: start;
-    }
-    .dashboard-sidebar {
-      background: var(--color-bg1);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius);
-      padding: 1.5rem;
-    }
-    .sidebar-menu {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .sidebar-menu li {
-      margin-bottom: 0.5rem;
-    }
-    .sidebar-menu a {
-      display: block;
-      padding: 0.75rem 1rem;
-      border-radius: var(--radius);
-      color: var(--color-text);
-      text-decoration: none;
-      transition: background 0.2s;
-    }
-    .sidebar-menu a:hover, .sidebar-menu a.active {
-      background: var(--color-bg2);
-      color: var(--color-primary);
-      font-weight: 600;
-    }
-    .order-card {
-      background: var(--color-bg1);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius);
-      padding: 1.5rem;
-      margin-bottom: 1rem;
-    }
-    .order-header {
-      display: flex;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--color-border);
-      padding-bottom: 1rem;
-      margin-bottom: 1rem;
-    }
-    .order-items {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    .order-item {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-    }
-    .order-item img {
-      width: 60px;
-      height: 60px;
-      object-fit: cover;
-      border-radius: 4px;
-    }
-    @media (max-width: 768px) {
-      .dashboard-layout { grid-template-columns: 1fr; }
-    }
-  </style>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/dashboard-comprador.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
 <nav class="navbar">
-  <a href="/index.html" class="navbar-brand">Art <span>Huila</span></a>
+  <div style="display:flex;align-items:center;gap:0.75rem;">
+    <a href="index.html" class="nav-back" title="Volver al inicio">←</a>
+    <a href="index.html" class="navbar-brand">Art <span>Huila</span></a>
+  </div>
   <ul class="navbar-nav">
-    <li><a href="/catalogo.html">Catálogo</a></li>
-    <li><a href="/carrito.html" id="nav-cart-count" style="font-weight: bold; color: var(--color-primary);">Carrito (0)</a></li>
-    <li><button class="btn btn-outline btn-sm" onclick="Auth.logout()">Cerrar sesión</button></li>
+    <li><a href="catalogo.html" data-i18n="nav.viewCatalog">Catálogo</a></li>
+    <li><a href="carrito.html" style="font-weight:bold;color:var(--color-primary);"><i class="fa-solid fa-cart-shopping"></i> Carrito</a></li>
+    <li><button class="btn btn-outline btn-sm" onclick="Auth.logout()" data-i18n="auth.logout">Cerrar sesión</button></li>
   </ul>
+  <div class="lang-switcher">
+    <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+    <span>|</span>
+    <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+  </div>
 </nav>
 
 <div class="container section">
-  <h1 class="page-title" style="margin-bottom: 2rem;">Mi Cuenta</h1>
-  
-  <div class="dashboard-layout">
-    <aside class="dashboard-sidebar">
-      <div style="margin-bottom: 1.5rem; text-align: center;">
-        <div style="font-size: 3rem; margin-bottom: 0.5rem;">👤</div>
-        <h3 id="user-name" style="font-size: 1.1rem;">Cargando...</h3>
-        <p id="user-email" style="font-size: 0.85rem; color: var(--color-muted);"></p>
+  <div class="buyer-layout">
+    <aside class="buyer-sidebar">
+      <div style="text-align:center;margin-bottom:1.5rem;">
+        <div style="font-size:3rem;"><i class="fa-solid fa-user"></i></div>
+        <h3 id="user-name" style="font-size:1.1rem;margin-top:0.5rem;">Cargando...</h3>
+        <p id="user-email" style="font-size:0.8rem;color:var(--color-muted);"></p>
       </div>
       <ul class="sidebar-menu">
-        <li><a href="#" class="active" onclick="showTab('orders')">Mis Pedidos</a></li>
-        <li><a href="#" onclick="showTab('profile')">Perfil</a></li>
+        <li><a href="#" class="active" onclick="showTab('orders')"><i class="fa-solid fa-box"></i> Mis Pedidos</a></li>
+        <li><a href="#" onclick="showTab('profile')"><i class="fa-solid fa-user"></i> Mis Datos</a></li>
       </ul>
     </aside>
 
     <main>
       <div id="tab-orders">
-        <h2 style="font-family: 'Crimson Pro', serif; margin-bottom: 1.5rem;">Historial de Pedidos</h2>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; border-bottom:1.5px solid var(--color-border); padding-bottom:0.75rem;">
+          <h2 style="font-family:'Crimson Pro',serif; margin:0; font-size:1.6rem;">Historial de Pedidos</h2>
+          <span style="font-size:0.75rem; color:#64748b; background:#f1f5f9; padding:0.25rem 0.75rem; border-radius:12px; font-weight:600;">Trazabilidad Completa Activa</span>
+        </div>
         <div id="orders-container">
           <div class="spinner"></div>
         </div>
       </div>
 
-      <div id="tab-profile" style="display: none;">
-        <h2 style="font-family: 'Crimson Pro', serif; margin-bottom: 1.5rem;">Mis Datos</h2>
-        <p style="color: var(--color-muted);">Configuración de perfil (próximamente).</p>
+      <div id="tab-profile" style="display:none;">
+        <h2 style="font-family:'Crimson Pro',serif;margin-bottom:1.5rem;">Mis Datos</h2>
+        <div class="card card-body" style="max-width:500px;">
+          <form id="profile-form">
+            <div class="form-group">
+              <label class="form-label">Nombre Completo</label>
+              <input type="text" id="edit-full-name" class="form-control" required/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input type="email" id="edit-email" class="form-control" disabled/>
+              <small class="form-hint">El email no puede cambiarse.</small>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nueva Contraseña</label>
+              <input type="password" id="edit-password" class="form-control" placeholder="Dejar en blanco para mantener la actual"/>
+            </div>
+            <div style="margin-top:1.5rem;">
+              <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Guardar Cambios</button>
+            </div>
+          </form>
+        </div>
       </div>
     </main>
   </div>
 </div>
 
-<footer><div class="brand">Art <span>Huila</span></div></footer>
+<footer>
+  <div class="brand">Art <span>Huila</span></div>
+</footer>
 
+<script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+<script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
+<script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
 <script src="/js/api.js"></script>
+<script src="/js/i18n.js"></script>
 <script src="/js/dashboard-comprador.js"></script>
 </body>
 </html>

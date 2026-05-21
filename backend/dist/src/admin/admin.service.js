@@ -11,30 +11,44 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminService = void 0;
 const common_1 = require("@nestjs/common");
+const typeorm_1 = require("typeorm");
 const artisans_service_1 = require("../artisans/artisans.service");
 const mail_service_1 = require("../mail/mail.service");
 const audit_service_1 = require("../audit/audit.service");
 const artisan_profile_entity_1 = require("../artisans/entities/artisan-profile.entity");
 const admin_audit_log_entity_1 = require("../audit/entities/admin-audit-log.entity");
 const users_service_1 = require("../users/users.service");
+const orders_service_1 = require("../orders/orders.service");
+const reviews_service_1 = require("../reviews/reviews.service");
+const products_service_1 = require("../products/products.service");
 let AdminService = class AdminService {
     artisansService;
     mailService;
     auditService;
     usersService;
-    constructor(artisansService, mailService, auditService, usersService) {
+    ordersService;
+    reviewsService;
+    productsService;
+    constructor(artisansService, mailService, auditService, usersService, ordersService, reviewsService, productsService) {
         this.artisansService = artisansService;
         this.mailService = mailService;
         this.auditService = auditService;
         this.usersService = usersService;
+        this.ordersService = ordersService;
+        this.reviewsService = reviewsService;
+        this.productsService = productsService;
     }
     async getArtisans(status) {
-        return this.artisansService.findAll(status);
+        const artisans = await this.artisansService.findAll(status);
+        return Promise.all(artisans.map(a => this.artisansService.findById(a.id)));
     }
     async approveArtisan(adminId, artisanProfileId) {
         const profile = await this.artisansService.findById(artisanProfileId);
         if (!profile)
             throw new common_1.BadRequestException('Perfil no encontrado');
+        if (profile.verification_status === artisan_profile_entity_1.VerificationStatus.VERIFIED) {
+            throw new common_1.BadRequestException('El artesano ya fue aprobado anteriormente');
+        }
         await this.artisansService.updateStatus(artisanProfileId, artisan_profile_entity_1.VerificationStatus.VERIFIED);
         const admin = await this.usersService.findById(adminId);
         await this.auditService.log(admin, admin_audit_log_entity_1.AuditAction.APPROVE_ARTISAN, artisanProfileId, 'Artesano aprobado');
@@ -63,6 +77,50 @@ let AdminService = class AdminService {
         await this.mailService.sendArtisanSuspensionEmail(profile.user.email, profile.user.full_name);
         return { message: 'Artesano suspendido y notificado' };
     }
+    async getAllOrders(start, end) {
+        if (start && end) {
+            return this.ordersService['ordersRepository'].find({
+                where: { created_at: (0, typeorm_1.Between)(new Date(start), new Date(end)) },
+                relations: ['user', 'items', 'items.product', 'items.product.artisan'],
+                order: { created_at: 'DESC' },
+            });
+        }
+        return this.ordersService.findAll();
+    }
+    async deleteReview(adminId, reviewId, reason) {
+        const review = await this.reviewsService.findOne(reviewId);
+        if (!review)
+            throw new common_1.BadRequestException('Reseña no encontrada');
+        await this.reviewsService.remove(reviewId);
+        const admin = await this.usersService.findById(adminId);
+        await this.auditService.log(admin, admin_audit_log_entity_1.AuditAction.DELETE_REVIEW, reviewId, `Razón: ${reason}`);
+        return { message: 'Reseña eliminada correctamente' };
+    }
+    async keepReview(adminId, reviewId) {
+        await this.reviewsService.resetReport(reviewId);
+        return { message: 'Reporte de reseña descartado' };
+    }
+    async getReportedReviews() {
+        return this.reviewsService.findReported();
+    }
+    async getAllProducts() {
+        return this.productsService.findAll();
+    }
+    async hideProduct(adminId, productId) {
+        await this.productsService.hide(productId);
+        const admin = await this.usersService.findById(adminId);
+        await this.auditService.log(admin, admin_audit_log_entity_1.AuditAction.HIDE_PRODUCT, productId, 'Producto ocultado por admin');
+        return { message: 'Producto ocultado' };
+    }
+    async deleteProduct(adminId, productId) {
+        await this.productsService.remove(productId);
+        const admin = await this.usersService.findById(adminId);
+        await this.auditService.log(admin, admin_audit_log_entity_1.AuditAction.DELETE_PRODUCT, productId, 'Producto eliminado por admin');
+        return { message: 'Producto eliminado' };
+    }
+    async getAuditLogs() {
+        return this.auditService.findAll();
+    }
 };
 exports.AdminService = AdminService;
 exports.AdminService = AdminService = __decorate([
@@ -70,6 +128,9 @@ exports.AdminService = AdminService = __decorate([
     __metadata("design:paramtypes", [artisans_service_1.ArtisansService,
         mail_service_1.MailService,
         audit_service_1.AuditService,
-        users_service_1.UsersService])
+        users_service_1.UsersService,
+        orders_service_1.OrdersService,
+        reviews_service_1.ReviewsService,
+        products_service_1.ProductsService])
 ], AdminService);
 //# sourceMappingURL=admin.service.js.map

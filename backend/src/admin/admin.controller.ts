@@ -1,10 +1,10 @@
-import { Body, Controller, Get, Param, Patch, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Query, UseGuards } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { JwtAuthGuard, RolesGuard } from '../auth/guards/jwt-auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
-@Controller('api/v1/admin')
+@Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('admin')
 export class AdminController {
@@ -28,5 +28,45 @@ export class AdminController {
   @Patch('artisans/:id/suspend')
   suspend(@Param('id') id: string, @CurrentUser() user: any) {
     return this.adminService.suspendArtisan(user.id, id);
+  }
+
+  @Get('orders')
+  getOrders(@Query('start') start?: string, @Query('end') end?: string) {
+    return this.adminService.getAllOrders(start, end);
+  }
+
+  @Delete('reviews/:id')
+  deleteReview(@Param('id') id: string, @Body('reason') reason: string, @CurrentUser() user: any) {
+    return this.adminService.deleteReview(user.id, id, reason);
+  }
+
+  @Get('audit')
+  getAuditLogs() {
+    return this.adminService.getAuditLogs();
+  }
+
+  @Get('products')
+  getProducts() {
+    return this.adminService.getAllProducts();
+  }
+
+  @Patch('products/:id/hide')
+  hideProduct(@Param('id') id: string, @CurrentUser() user: any) {
+    return this.adminService.hideProduct(user.id, id);
+  }
+
+  @Delete('products/:id')
+  deleteProduct(@Param('id') id: string, @CurrentUser() user: any) {
+    return this.adminService.deleteProduct(user.id, id);
+  }
+
+  @Get('reviews/reported')
+  getReportedReviews() {
+    return this.adminService.getReportedReviews();
+  }
+
+  @Patch('reviews/:id/keep')
+  keepReview(@Param('id') id: string, @CurrentUser() user: any) {
+    return this.adminService.keepReview(user.id, id);
   }
 }

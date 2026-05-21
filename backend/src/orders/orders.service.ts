@@ -6,6 +6,8 @@ import { Order, OrderStatus } from './entities/order.entity';
 import { OrderItem } from './entities/order-item.entity';
 import { Product } from '../products/entities/product.entity';
 import { User } from '../users/entities/user.entity';
+import { MailService } from '../mail/mail.service';
+import { MipaqueteService } from '../logistics/mipaquete/mipaquete.service';
 
 @Injectable()
 export class OrdersService {
@@ -16,6 +18,8 @@ export class OrdersService {
     private readonly orderItemsRepository: Repository<OrderItem>,
     @InjectRepository(Product)
     private readonly productsRepository: Repository<Product>,
+    private readonly mailService: MailService,
+    private readonly mipaqueteService: MipaqueteService,
     private dataSource: DataSource,
   ) {}
 
@@ -36,9 +40,12 @@ export class OrdersService {
       order.status = OrderStatus.PENDING;
 
       // Process items
+      let originCity = 'Neiva'; // Default
+
       for (const itemDto of createOrderDto.items) {
         const product = await queryRunner.manager.findOne(Product, {
           where: { id: itemDto.productId },
+          relations: ['artisan', 'artisan.region']
         });
 
         if (!product) {
@@ -47,6 +54,11 @@ export class OrdersService {
 
         if (product.stock < itemDto.quantity) {
           throw new BadRequestException(`Not enough stock for product: ${product.name}`);
+        }
+
+        // Set origin city from the first product's artisan region
+        if (orderItems.length === 0 && product.artisan && product.artisan.region) {
+          originCity = product.artisan.region.name;
         }
 
         // Subtract stock
@@ -65,13 +77,20 @@ export class OrdersService {
         orderItems.push(orderItem);
       }
 
-      order.total_amount = totalAmount;
-      const savedOrder = await queryRunner.manager.save(Order, order);
+      // Calculate shipping cost via MiPaquete
+      const quote = await this.mipaqueteService.getShippingQuote(
+        originCity,
+        createOrderDto.shipping_address.city || 'Bogotá',
+        1 // Default weight
+      );
+      order.shipping_cost = quote.cost;
+      order.estimated_delivery_days = quote.estimatedDays;
+      order.shipping_company = quote.carrier;
 
-      for (const item of orderItems) {
-        item.order = savedOrder;
-        await queryRunner.manager.save(OrderItem, item);
-      }
+      order.total_amount = totalAmount + Number(order.shipping_cost);
+      order.items = orderItems;
+
+      const savedOrder = await queryRunner.manager.save(Order, order);
 
       await queryRunner.commitTransaction();
 
@@ -88,9 +107,37 @@ export class OrdersService {
     }
   }
 
-  findAll(user: User) {
+  findAll() {
     return this.ordersRepository.find({
-      where: { user: { id: user.id } },
+      relations: ['user', 'items', 'items.product', 'items.product.artisan', 'items.product.images'],
+      order: { created_at: 'DESC' },
+    });
+  }
+
+  async getShippingQuoteForCart(destinationCity: string, items: { productId: string; quantity: number }[]) {
+    let originCity = 'Neiva'; // Default
+
+    if (items && items.length > 0) {
+      const firstItem = items[0];
+      const product = await this.productsRepository.findOne({
+        where: { id: firstItem.productId },
+        relations: ['artisan', 'artisan.region']
+      });
+
+      if (product && product.artisan && product.artisan.region) {
+        originCity = product.artisan.region.name;
+      }
+    }
+
+    const quote = await this.mipaqueteService.getShippingQuote(originCity, destinationCity, 1);
+    return {
+      ...quote
+    };
+  }
+
+  findByUser(userId: string) {
+    return this.ordersRepository.find({
+      where: { user: { id: userId } },
       relations: ['items', 'items.product', 'items.product.artisan', 'items.product.images'],
       order: { created_at: 'DESC' },
     });
@@ -109,9 +156,107 @@ export class OrdersService {
       throw new NotFoundException('Order not found');
     }
     
-    // Simulate payment processing...
+    // Manual/Mock payment processing...
+    return this.markAsPaid(id, `MOCK_PAY_${Date.now()}`);
+  }
+
+  async markAsPaid(orderId: string, paymentId: string) {
+    const order = await this.ordersRepository.findOne({ where: { id: orderId } });
+    if (!order) {
+      throw new NotFoundException(`Order ${orderId} not found`);
+    }
+
     order.status = OrderStatus.PAID;
-    order.payment_id = `MOCK_PAY_${Date.now()}`;
+    order.payment_id = paymentId;
+    
+    const savedOrder = await this.ordersRepository.save(order);
+
+    // Send emails
+    try {
+      const fullOrder = await this.ordersRepository.findOne({
+        where: { id: orderId },
+        relations: ['user', 'items', 'items.product', 'items.product.artisan', 'items.product.artisan.user']
+      });
+
+      if (fullOrder) {
+        // Notify buyer
+        await this.mailService.sendOrderConfirmationEmail(
+          fullOrder.user.email,
+          fullOrder.user.full_name,
+          fullOrder.id,
+          fullOrder.total_amount
+        );
+
+        // Notify each artisan
+        for (const item of fullOrder.items) {
+          const artisanUser = item.product.artisan?.user;
+          if (artisanUser) {
+            await this.mailService.sendSaleNotificationEmail(
+              artisanUser.email,
+              artisanUser.full_name,
+              item.product.name,
+              item.quantity
+            );
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error sending order notification emails:', error);
+    }
+
+    return savedOrder;
+  }
+
+  async updateStatus(id: string, status: OrderStatus, user?: any) {
+    const order = await this.ordersRepository.findOne({ 
+      where: { id },
+      relations: ['items', 'items.product']
+    });
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+
+    if (user) {
+      const role = user.role;
+      if (role === 'artesano') {
+        if (order.status === OrderStatus.PAID && status === OrderStatus.PREPARING) {
+          // OK
+        } else if (order.status === OrderStatus.PREPARING && status === OrderStatus.SHIPPED) {
+          // OK
+        } else {
+          throw new BadRequestException('El artesano solo puede cambiar el estado de Pagado a En preparación o de En preparación a Despachado.');
+        }
+      } else if (role === 'admin') {
+        if (status === OrderStatus.CANCELLED || status === OrderStatus.DELIVERED) {
+          // OK
+        } else {
+          throw new BadRequestException('El administrador solo puede marcar un pedido como Cancelado o Entregado.');
+        }
+      }
+    }
+
+    // If order is being cancelled, return stock
+    if (status === OrderStatus.CANCELLED && order.status !== OrderStatus.CANCELLED) {
+      for (const item of order.items) {
+        const product = item.product;
+        product.stock += item.quantity;
+        await this.productsRepository.save(product);
+      }
+    }
+
+    order.status = status;
+    return this.ordersRepository.save(order);
+  }
+
+  async updateTracking(id: string, trackingNumber: string, shippingCompany: string) {
+    const order = await this.ordersRepository.findOne({ where: { id } });
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+
+    order.tracking_number = trackingNumber;
+    order.shipping_company = shippingCompany;
+    order.status = OrderStatus.SHIPPED; // Auto-update to SHIPPED when tracking is added? Usually yes.
     
     return this.ordersRepository.save(order);
   }

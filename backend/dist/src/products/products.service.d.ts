@@ -15,4 +15,9 @@ export declare class ProductsService {
         url: string;
         publicId: string;
     }[]): Promise<ProductImage[]>;
+    findAll(): Promise<Product[]>;
+    hide(id: string): Promise<Product | null>;
+    remove(id: string): Promise<void>;
+    findFiltered(query?: string, featured?: boolean, limit?: number): Promise<Product[]>;
+    getCount(): Promise<number>;
 }

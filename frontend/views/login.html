@@ -1,54 +1,68 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Iniciar sesión — Art Huila</title>
-  <link rel="stylesheet" href="/css/styles.css"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="login.title">Iniciar sesión — Art Huila</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/auth.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 <div class="auth-layout">
   <div class="auth-left">
-    <a href="/index.html" style="color:rgba(255,255,255,0.7);text-decoration:none;font-size:0.85rem;margin-bottom:2rem;display:inline-block;">← Volver al inicio</a>
-    <div class="auth-left-title">Conectamos artesanos con el mundo</div>
-    <p style="opacity:0.85;line-height:1.7;">El marketplace de artesanías más auténtico del Huila. Inicia sesión para acceder a tu área personalizada.</p>
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
+      <a href="index.html" style="color:rgba(255,255,255,0.7);text-decoration:none;font-size:1.3rem;display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);transition:all 0.2s;" onmouseover="this.style.background='var(--color-primary)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">←</a>
+      <span style="color:rgba(255,255,255,0.6);font-size:0.85rem;" data-i18n="nav.backToHome">Volver al inicio</span>
+    </div>
+    <div class="lang-switcher">
+      <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+      <span>|</span>
+      <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+    </div>
+    <div class="auth-left-title" data-i18n="login.leftTitle">Conectamos artesanos con el mundo</div>
+    <p style="opacity:0.85;line-height:1.7;" data-i18n="login.leftSubtitle">El marketplace de artesanías más auténtico del Huila. Inicia sesión para acceder a tu área personalizada.</p>
     <div style="margin-top:3rem;display:flex;flex-direction:column;gap:1rem;">
-      <div style="display:flex;align-items:center;gap:0.75rem;opacity:0.9;"><span style="font-size:1.5rem;">🏺</span><span>Artesanías 100% auténticas del Huila</span></div>
-      <div style="display:flex;align-items:center;gap:0.75rem;opacity:0.9;"><span style="font-size:1.5rem;">✅</span><span>Artesanos verificados por el equipo</span></div>
-      <div style="display:flex;align-items:center;gap:0.75rem;opacity:0.9;"><span style="font-size:1.5rem;">🔒</span><span>Acceso seguro con JWT</span></div>
+      <div style="display:flex;align-items:center;gap:0.75rem;opacity:0.9;"><span style="font-size:1.5rem;"><i class="fa-solid fa-vase"></i></span><span data-i18n="login.leftPoint1">Artesanías 100% auténticas del Huila</span></div>
+      <div style="display:flex;align-items:center;gap:0.75rem;opacity:0.9;"><span style="font-size:1.5rem;"><i class="fa-solid fa-check"></i></span><span data-i18n="login.leftPoint2">Artesanos verificados por el equipo</span></div>
+      <div style="display:flex;align-items:center;gap:0.75rem;opacity:0.9;"><span style="font-size:1.5rem;"><i class="fa-solid fa-lock"></i></span><span data-i18n="login.leftPoint3">Acceso seguro con JWT</span></div>
     </div>
   </div>
 
   <div class="auth-right">
     <div class="auth-box">
-      <a href="/index.html" class="navbar-brand" style="margin-bottom:2rem;display:inline-block;">Art <span>Huila</span></a>
-      <h2>Bienvenido/a de nuevo</h2>
-      <p class="text-muted mb-3">Ingresa tus credenciales para continuar</p>
+      <a href="index.html" class="navbar-brand" style="margin-bottom:2rem;display:inline-block;">Art <span>Huila</span></a>
+      <h2 data-i18n="login.welcome">Bienvenido/a de nuevo</h2>
+      <p class="text-muted mb-3" data-i18n="login.welcomeSub">Ingresa tus credenciales para continuar</p>
 
       <div id="login-error" class="hidden" style="background:#fee2e2;color:#991b1b;padding:0.75rem 1rem;border-radius:var(--radius);margin-bottom:1rem;font-size:0.9rem;"></div>
 
       <form id="login-form">
         <div class="form-group">
-          <label class="form-label" for="email">Correo electrónico</label>
-          <input type="email" id="email" class="form-control" placeholder="tu@email.com" required autocomplete="email"/>
+          <label class="form-label" for="email" data-i18n="auth.emailLabel">Correo electrónico</label>
+          <input type="email" id="email" class="form-control" data-i18n-placeholder="auth.emailPlaceholder" placeholder="tu@email.com" required autocomplete="email"/>
         </div>
         <div class="form-group">
-          <label class="form-label" for="password">Contraseña</label>
-          <input type="password" id="password" class="form-control" placeholder="••••••••" required autocomplete="current-password"/>
+          <label class="form-label" for="password" data-i18n="auth.passwordLabel">Contraseña</label>
+          <input type="password" id="password" class="form-control" data-i18n-placeholder="auth.passwordPlaceholder" placeholder="••••••••" required autocomplete="current-password"/>
         </div>
-        <button type="submit" class="btn btn-primary btn-full btn-lg" id="submit-btn">
+        <button type="submit" class="btn btn-primary btn-full btn-lg" id="submit-btn" data-i18n="login.btnText">
           Iniciar sesión
         </button>
       </form>
 
       <hr class="divider"/>
       <p style="text-align:center;font-size:0.9rem;color:var(--color-muted);">
-        ¿No tienes cuenta? <a href="/registro.html" style="color:var(--color-primary);font-weight:600;">Regístrate aquí</a>
+        <span data-i18n="auth.noAccount">¿No tienes cuenta?</span> <a href="registro.html" style="color:var(--color-primary);font-weight:600;" data-i18n="auth.registerHere">Regístrate aquí</a>
       </p>
     </div>
   </div>
 </div>
+<script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+<script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
+<script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
 <script src="/js/api.js"></script>
+<script src="/js/i18n.js"></script>
 <script src="/js/login.js"></script>
 </body>
 </html>

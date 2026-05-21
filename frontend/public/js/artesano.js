@@ -24,17 +24,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('page-title').textContent = `${artisan.user.full_name} | Art Huila`;
 
     let badge = '';
-    if (artisan.verification_status === 'verified') badge = '<span class="badge badge-verified">✅ Verificado</span>';
-    else if (artisan.verification_status === 'pending') badge = '<span class="badge badge-pending">⏳ Por verificar</span>';
-    else badge = '<span class="badge badge-rejected">❌ No verificado</span>';
+    if (artisan.verification_status === 'verified') badge = '<span class="badge badge-verified"><i class="fa-solid fa-check"></i> Verificado</span>';
+    else if (artisan.verification_status === 'pending') badge = '<span class="badge badge-pending"><i class="fa-solid fa-hourglass-half"></i> Por verificar</span>';
+    else badge = '<span class="badge badge-rejected"><i class="fa-solid fa-xmark"></i> No verificado</span>';
 
     container.innerHTML = `
       <div class="artisan-header">
         ${artisan.avatar_url 
           ? `<div class="artisan-avatar-lg" style="padding:0; overflow:hidden;"><img src="${artisan.avatar_url}" style="width:100%;height:100%;object-fit:cover;"/></div>`
-          : `<div class="artisan-avatar-lg">👤</div>`}
+          : `<div class="artisan-avatar-lg"><i class="fa-solid fa-user"></i></div>`}
         <h1 class="artisan-name">${artisan.user.full_name}</h1>
-        <div style="color:var(--color-muted);margin-bottom:1rem;font-size:1.1rem;">📍 ${artisan.region?.name || 'Huila'}</div>
+        <div style="color:var(--color-muted);margin-bottom:1rem;font-size:1.1rem;"><i class="fa-solid fa-location-dot"></i> ${artisan.region?.name || 'Huila'}</div>
         <div>${badge}</div>
       </div>
 
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         <div class="card product-card" onclick="window.location.href='/producto.html?slug=${p.slug}'">
           ${p.images && p.images[0]
             ? `<img class="product-img" src="${p.images[0].url}" alt="${p.name}" loading="lazy"/>`
-            : `<div class="product-img-placeholder">🏺</div>`}
+            : `<div class="product-img-placeholder"><i class="fa-solid fa-vase"></i></div>`}
           <div class="card-body">
             <div class="product-name">${p.name}</div>
             <div class="product-price">${formatPrice(p.price)}</div>

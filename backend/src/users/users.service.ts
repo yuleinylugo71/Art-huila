@@ -49,4 +49,18 @@ export class UsersService {
   async hashPassword(password: string): Promise<string> {
     return bcrypt.hash(password, 10);
   }
+
+  async update(id: string, data: Partial<User>): Promise<User> {
+    const user = await this.findById(id);
+    if (!user) throw new NotFoundException('Usuario no encontrado');
+    
+    const updateData = data as any;
+    if (updateData.password) {
+      user.password_hash = await this.hashPassword(updateData.password);
+      delete updateData.password;
+    }
+
+    Object.assign(user, updateData);
+    return this.userRepo.save(user);
+  }
 }

@@ -56,9 +56,12 @@ const mail_service_1 = require("../mail/mail.service");
 const user_entity_1 = require("../users/entities/user.entity");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
+const cloudinary_1 = require("cloudinary");
+const stream_1 = require("stream");
 const artisan_profile_entity_1 = require("../artisans/entities/artisan-profile.entity");
 const category_entity_1 = require("../categories/entities/category.entity");
 const region_entity_1 = require("../regions/entities/region.entity");
+const artisan_gallery_entity_1 = require("../artisans/entities/artisan-gallery.entity");
 let AuthService = class AuthService {
     usersService;
     jwtService;
@@ -75,6 +78,24 @@ let AuthService = class AuthService {
         this.artisanRepo = artisanRepo;
         this.categoryRepo = categoryRepo;
         this.regionRepo = regionRepo;
+        cloudinary_1.v2.config({
+            cloud_name: this.configService.get('CLOUDINARY_CLOUD_NAME'),
+            api_key: this.configService.get('CLOUDINARY_API_KEY'),
+            api_secret: this.configService.get('CLOUDINARY_API_SECRET'),
+        });
+    }
+    async uploadToCloudinary(file, folder) {
+        return new Promise((resolve, reject) => {
+            const upload = cloudinary_1.v2.uploader.upload_stream({ folder, resource_type: 'auto' }, (error, result) => {
+                if (error)
+                    return reject(error);
+                resolve(result);
+            });
+            const readable = new stream_1.Readable();
+            readable.push(file.buffer);
+            readable.push(null);
+            readable.pipe(upload);
+        });
     }
     generateTokens(userId, role) {
         const payload = { sub: userId, role };
@@ -111,23 +132,16 @@ let AuthService = class AuthService {
     }
     async registerBuyer(dto) {
         const passwordHash = await bcrypt.hash(dto.password, 10);
-        const verificationToken = crypto.randomBytes(32).toString('hex');
-        const expires = new Date();
-        expires.setHours(expires.getHours() + 48);
-        const user = await this.usersService.create({
+        await this.usersService.create({
             full_name: dto.full_name,
             email: dto.email,
             password_hash: passwordHash,
             role: user_entity_1.UserRole.BUYER,
-            email_verified: false,
-            email_verification_token: verificationToken,
-            email_token_expires_at: expires,
+            email_verified: true,
         });
-        const frontendUrl = this.configService.get('FRONTEND_URL') || 'http://localhost:5173';
-        await this.mailService.sendVerificationEmail(user.email, user.full_name, verificationToken, frontendUrl);
-        return { message: 'Registro exitoso. Revisa tu email para verificar tu cuenta.' };
+        return { message: 'Registro exitoso. ¡Bienvenido!' };
     }
-    async registerArtisan(dto) {
+    async registerArtisan(dto, idDocumentFrontFile, idDocumentBackFile, galleryFiles) {
         const passwordHash = await bcrypt.hash(dto.password, 10);
         const verificationToken = crypto.randomBytes(32).toString('hex');
         const expires = new Date();
@@ -138,6 +152,16 @@ let AuthService = class AuthService {
         const region = await this.regionRepo.findOneBy({ id: dto.region_id });
         if (!region)
             throw new common_1.BadRequestException('Región no válida');
+        let idDocumentFrontUrl = null;
+        if (idDocumentFrontFile) {
+            const upload = await this.uploadToCloudinary(idDocumentFrontFile, 'artisans/documents');
+            idDocumentFrontUrl = upload.secure_url;
+        }
+        let idDocumentBackUrl = null;
+        if (idDocumentBackFile) {
+            const upload = await this.uploadToCloudinary(idDocumentBackFile, 'artisans/documents');
+            idDocumentBackUrl = upload.secure_url;
+        }
         const user = await this.usersService.create({
             full_name: dto.full_name,
             email: dto.email,
@@ -149,14 +173,26 @@ let AuthService = class AuthService {
         });
         const profile = this.artisanRepo.create({
             user,
-            id_number: dto.id_number,
+            id_number: dto.email,
             cultural_history: dto.cultural_history,
             category,
             region,
             verification_status: artisan_profile_entity_1.VerificationStatus.PENDING,
-            truthfulness_declaration: true,
+            truthfulness_declaration: dto.truthfulness_declaration === 'true',
+            id_document_front_url: idDocumentFrontUrl,
+            id_document_back_url: idDocumentBackUrl,
         });
-        await this.artisanRepo.save(profile);
+        const savedProfile = await this.artisanRepo.save(profile);
+        if (galleryFiles && galleryFiles.length > 0) {
+            for (const file of galleryFiles) {
+                const upload = await this.uploadToCloudinary(file, 'artisans/gallery');
+                await this.artisanRepo.manager.save(artisan_gallery_entity_1.ArtisanGallery, {
+                    url: upload.secure_url,
+                    public_id: upload.public_id,
+                    profile: savedProfile,
+                });
+            }
+        }
         const frontendUrl = this.configService.get('FRONTEND_URL') || 'http://localhost:5173';
         await this.mailService.sendVerificationEmail(user.email, user.full_name, verificationToken, frontendUrl);
         return { message: 'Registro exitoso. Revisa tu email para verificar tu cuenta.' };

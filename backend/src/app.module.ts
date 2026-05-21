@@ -17,6 +17,10 @@ import { AdminModule } from './admin/admin.module';
 import { AuditModule } from './audit/audit.module';
 import { OrdersModule } from './orders/orders.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { PaymentsModule } from './payments/payments.module';
+import { SitemapController } from './sitemap/sitemap.controller';
+import { StatsController } from './stats.controller';
+import { LogisticsModule } from './logistics/logistics.module';
 
 @Module({
   imports: [
@@ -29,7 +33,8 @@ import { ReviewsModule } from './reviews/reviews.module';
         CLOUDINARY_CLOUD_NAME: Joi.string().required(),
         CLOUDINARY_API_KEY: Joi.string().required(),
         CLOUDINARY_API_SECRET: Joi.string().required(),
-        RESEND_API_KEY: Joi.string().required(),
+        MAIL_USER: Joi.string().required(),
+        MAIL_PASS: Joi.string().required(),
       }),
     }),
     TypeOrmModule.forRootAsync({
@@ -55,8 +60,10 @@ import { ReviewsModule } from './reviews/reviews.module';
     AuditModule,
     OrdersModule,
     ReviewsModule,
+    PaymentsModule,
+    LogisticsModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, SitemapController, StatsController],
   providers: [AppService],
 })
 export class AppModule {}

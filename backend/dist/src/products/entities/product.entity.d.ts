@@ -4,7 +4,8 @@ import { Region } from '../../regions/entities/region.entity';
 import { ProductImage } from './product-image.entity';
 export declare enum ProductStatus {
     DRAFT = "draft",
-    PUBLISHED = "published"
+    PUBLISHED = "published",
+    HIDDEN = "hidden"
 }
 export declare class Product {
     id: string;
@@ -18,6 +19,12 @@ export declare class Product {
     cultural_origin: string;
     technique: string;
     significance: string;
+    short_description: string;
+    materials: string;
+    dimensions: string;
+    weight: string;
+    care_instructions: string;
+    is_handmade: boolean;
     status: ProductStatus;
     meta_title: string;
     meta_description: string;

@@ -17,6 +17,10 @@ var AuditAction;
     AuditAction["APPROVE_ARTISAN"] = "approve_artisan";
     AuditAction["REJECT_ARTISAN"] = "reject_artisan";
     AuditAction["SUSPEND_ARTISAN"] = "suspend_artisan";
+    AuditAction["DELETE_REVIEW"] = "delete_review";
+    AuditAction["UPDATE_ORDER"] = "update_order";
+    AuditAction["HIDE_PRODUCT"] = "hide_product";
+    AuditAction["DELETE_PRODUCT"] = "delete_product";
 })(AuditAction || (exports.AuditAction = AuditAction = {}));
 let AdminAuditLog = class AdminAuditLog {
     id;

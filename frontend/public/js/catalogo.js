@@ -1,5 +1,16 @@
-// catalogo.js — Catálogo filtrable con URL params
+// catalogo.js — Catálogo filtrable con URL params e i18n completo
 let currentPage = 1;
+
+document.addEventListener('i18nReady', () => {
+  if (typeof applyTranslations === 'function') applyTranslations();
+  initCatalog();
+});
+
+document.addEventListener('languageChanged', () => {
+  if (typeof applyTranslations === 'function') applyTranslations();
+  initCatalog(); 
+});
+
 
 function getUrlParams() {
   const p = new URLSearchParams(window.location.search);
@@ -25,19 +36,22 @@ async function loadFilters() {
   const selectedRegions = params.regions ? params.regions.split(',') : [];
   const selectedCats = params.categories ? params.categories.split(',') : [];
 
-  document.getElementById('region-filters').innerHTML = regs.map(r => `
-    <label class="filter-option">
-      <input type="checkbox" name="region" value="${r.name}" ${selectedRegions.includes(r.name) ? 'checked' : ''}/>
-      ${r.name}
-    </label>
-  `).join('');
+  const regionSelect = document.getElementById('region-select');
+  if (regionSelect) {
+    regionSelect.innerHTML = `<option value="" data-i18n="catalog.allRegions">${i18next.t('catalog.allRegions')}</option>` + regs.map(r => `
+      <option value="${r.name}" ${selectedRegions.includes(r.name) ? 'selected' : ''}>${r.name}</option>
+    `).join('');
+  }
 
-  document.getElementById('category-filters').innerHTML = cats.map(c => `
-    <label class="filter-option">
-      <input type="checkbox" name="category" value="${c.name}" ${selectedCats.includes(c.name) ? 'checked' : ''}/>
-      ${c.name}
-    </label>
-  `).join('');
+  const categoryFilters = document.getElementById('category-filters');
+  if (categoryFilters) {
+    categoryFilters.innerHTML = cats.map(c => `
+      <label class="filter-option">
+        <input type="checkbox" name="category" value="${c.name}" ${selectedCats.includes(c.name) ? 'checked' : ''}/>
+        ${c.name}
+      </label>
+    `).join('');
+  }
 
   const { minPrice, maxPrice, sortBy } = params;
   if (minPrice) document.getElementById('min-price').value = minPrice;
@@ -63,35 +77,48 @@ async function loadProducts(page = 1) {
   try {
     const result = await apiFetch('/catalog?' + qs.toString());
     const { data, meta } = result;
-    document.getElementById('results-count').textContent = `${meta.total} resultado${meta.total !== 1 ? 's' : ''} encontrado${meta.total !== 1 ? 's' : ''}`;
 
-    if (data.length === 0) {
+    // Client-side search keyword filtering
+    let filteredData = data;
+    const searchVal = document.getElementById('search-input')?.value.toLowerCase().trim();
+    if (searchVal) {
+      filteredData = data.filter(p => 
+        p.name.toLowerCase().includes(searchVal) || 
+        (p.artisan?.user?.full_name && p.artisan.user.full_name.toLowerCase().includes(searchVal))
+      );
+    }
+    const finalCount = searchVal ? filteredData.length : meta.total;
+
+    document.getElementById('results-count').textContent = i18next.t('catalog.resultCount', { count: finalCount });
+
+    if (filteredData.length === 0) {
       grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">
-        <div class="emoji">🔍</div>
-        <h3>Sin resultados</h3>
-        <p>Intenta cambiar los filtros para encontrar productos.</p>
+        <div class="emoji"><i class="fa-solid fa-magnifying-glass"></i></div>
+        <h3>${i18next.t('catalog.noResultsTitle')}</h3>
+        <p>${i18next.t('catalog.noResultsDesc')}</p>
       </div>`;
       document.getElementById('pagination').innerHTML = '';
       return;
     }
 
-    grid.innerHTML = data.map(p => `
+    grid.innerHTML = filteredData.map(p => `
       <div class="card product-card" onclick="window.location.href='/producto.html?slug=${p.slug}'">
         ${p.images && p.images[0]
-          ? `<img class="product-img" src="${p.images[0].url}" alt="${p.name}" loading="lazy"/>`
-          : `<div class="product-img-placeholder">🏺</div>`}
-        <div class="card-body">
-          <div class="product-name">${p.name}</div>
-          <div class="product-price">${formatPrice(p.price)}</div>
+          ? `<div class="product-card-image" style="aspect-ratio:1/1;"><img src="${p.images[0].url}" alt="${p.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;"/></div>`
+          : `<div class="product-img-placeholder" style="aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;background:var(--color-bg2);font-size:3rem;"><i class="fa-solid fa-vase"></i></div>`}
+        <div class="card-body" style="padding:1rem;">
+          <div class="product-name" style="font-size:1.15rem;font-weight:700;line-height:1.2;margin-bottom:0.25rem;">${p.name}</div>
+          <div class="product-artisan" style="font-size:0.85rem;color:var(--color-muted);margin-bottom:0.75rem;">${i18next.t('catalog.byArtisan')}<strong>${p.artisan?.user?.full_name || i18next.t('catalog.anonymousArtisan')}</strong></div>
+          <div class="product-price" style="font-size:1.3rem;font-weight:800;color:var(--color-primary);margin-bottom:0.5rem;">${formatPrice(p.price)}</div>
           <div class="product-meta">
-            <span>📍 ${p.region?.name || 'Huila'}</span>
+            <span><i class="fa-solid fa-location-dot"></i> ${p.region?.name || 'Huila'}</span>
             <span class="badge badge-primary">${p.category?.name || ''}</span>
           </div>
           <div class="product-meta mt-1">
-            <span>Stock: ${p.stock}</span>
-            ${p.artisan?.verification_status === 'verified' ? '<span class="badge badge-verified">✅ Verificado</span>' : 
-              (p.artisan?.verification_status === 'pending' ? '<span class="badge badge-pending">⏳ Por verificar</span>' : 
-              '<span class="badge badge-rejected">❌ No verificado</span>')}
+            <span>${i18next.t('catalog.stockLabel')}${p.stock}</span>
+            ${p.artisan?.verification_status === 'verified' ? `<span class="badge badge-verified"><i class="fa-solid fa-check"></i> ${i18next.t('catalog.verifiedStatus')}</span>` : 
+              (p.artisan?.verification_status === 'pending' ? `<span class="badge badge-pending"><i class="fa-solid fa-hourglass-half"></i> ${i18next.t('catalog.pendingStatus')}</span>` : 
+              `<span class="badge badge-rejected"><i class="fa-solid fa-xmark"></i> ${i18next.t('catalog.rejectedStatus')}</span>`)}
           </div>
         </div>
       </div>
@@ -99,7 +126,7 @@ async function loadProducts(page = 1) {
 
     renderPagination(meta.totalPages, page);
   } catch (e) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="emoji">⚠️</div><h3>Error al cargar</h3><p>${e.message}</p></div>`;
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="emoji"><i class="fa-solid fa-triangle-exclamation"></i></div><h3>${i18next.t('catalog.errorLoading')}</h3><p>${e.message}</p></div>`;
   }
 }
 
@@ -122,7 +149,7 @@ function goToPage(page) {
 }
 
 function applyFilters() {
-  const regions = Array.from(document.querySelectorAll('input[name="region"]:checked')).map(el => el.value).join(',');
+  const regions = document.getElementById('region-select').value;
   const categories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(el => el.value).join(',');
   const minPrice = document.getElementById('min-price').value;
   const maxPrice = document.getElementById('max-price').value;
@@ -132,24 +159,28 @@ function applyFilters() {
 }
 
 function clearFilters() {
-  document.querySelectorAll('input[name="region"], input[name="category"]').forEach(el => el.checked = false);
+  document.getElementById('region-select').value = '';
+  document.querySelectorAll('input[name="category"]').forEach(el => el.checked = false);
   document.getElementById('min-price').value = '';
   document.getElementById('max-price').value = '';
   document.getElementById('sort-select').value = 'newest';
+  const searchInput = document.getElementById('search-input');
+  if (searchInput) searchInput.value = '';
   history.replaceState(null, '', window.location.pathname);
   loadProducts(1);
 }
 
-// Init
-(async function () {
+async function initCatalog() {
   const user = Auth.getUser();
   const navAuth = document.getElementById('nav-auth');
-  if (user) {
-    navAuth.innerHTML = `<a href="${user.role === 'admin' ? '/dashboard-admin.html' : '/dashboard-artesano.html'}" class="btn btn-outline btn-sm">Mi panel</a>`;
-  } else {
-    navAuth.innerHTML = `<a href="login.html" class="btn btn-primary btn-sm">Iniciar sesión</a>`;
+  if (navAuth) {
+    if (user) {
+      navAuth.innerHTML = `<a href="${user.role === 'admin' ? '/dashboard-admin.html' : '/dashboard-artesano.html'}" class="btn btn-outline btn-sm" data-i18n="nav.myPanel">${i18next.t('nav.myPanel')}</a>`;
+    } else {
+      navAuth.innerHTML = `<a href="login.html" class="btn btn-primary btn-sm" data-i18n="auth.login">${i18next.t('auth.login')}</a>`;
+    }
   }
   await loadFilters();
   const params = getUrlParams();
   loadProducts(params.page);
-})();
+}

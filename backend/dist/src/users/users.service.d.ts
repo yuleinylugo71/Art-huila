@@ -10,4 +10,5 @@ export declare class UsersService {
     incrementFailedLogins(userId: string): Promise<void>;
     resetFailedLogins(userId: string): Promise<void>;
     hashPassword(password: string): Promise<string>;
+    update(id: string, data: Partial<User>): Promise<User>;
 }

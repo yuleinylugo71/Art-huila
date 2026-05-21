@@ -1,64 +1,30 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title id="page-title">Perfil del Artesano — Art Huila</title>
-  <link rel="stylesheet" href="/css/styles.css"/>
-  <style>
-    .artisan-header {
-      background: var(--color-bg1);
-      border: 1px solid var(--color-border);
-      border-radius: var(--radius-lg);
-      padding: 3rem 2rem;
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    .artisan-avatar-lg {
-      font-size: 5rem;
-      background: var(--color-bg2);
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 1.5rem;
-      border: 4px solid var(--color-bg1);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    }
-    .artisan-name {
-      font-family: 'Crimson Pro', serif;
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
-    }
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-    .gallery-img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      border-radius: var(--radius);
-      transition: transform 0.3s;
-    }
-    .gallery-img:hover {
-      transform: scale(1.03);
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="page-title"><i class="fa-solid fa-hammer"></i> Perfil del Artesano — Art Huila</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/artesano.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
 <nav class="navbar">
-  <a href="/index.html" class="navbar-brand">Art <span>Huila</span></a>
+  <div style="display:flex;align-items:center;gap:0.75rem;">
+    <a href="catalogo.html" class="nav-back" title="Volver al catálogo">←</a>
+    <a href="index.html" class="navbar-brand">Art <span>Huila</span></a>
+  </div>
   <ul class="navbar-nav">
-    <li><a href="/catalogo.html">Catálogo</a></li>
-    <li><a href="/carrito.html" id="nav-cart-count" style="font-weight: bold; color: var(--color-primary);">Carrito (0)</a></li>
+    <li><a href="catalogo.html" data-i18n="nav.viewCatalog">Catálogo</a></li>
     <li id="nav-auth"></li>
+    <li><a href="carrito.html" style="font-weight:bold;color:var(--color-primary);"><i class="fa-solid fa-cart-shopping"></i> <span id="cart-count">0</span></a></li>
   </ul>
+  <div class="lang-switcher">
+    <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+    <span>|</span>
+    <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+  </div>
 </nav>
 
 <div class="container section">
@@ -74,10 +40,14 @@
 
 <footer>
   <div class="brand">Art <span>Huila</span></div>
-  <p style="font-size:0.85rem;margin-top:0.5rem;">© 2026 Art Huila</p>
+  <p style="font-size:0.85rem;margin-top:0.5rem;">&copy; 2026 Art Huila</p>
 </footer>
 
+<script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+<script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
+<script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
 <script src="/js/api.js"></script>
+<script src="/js/i18n.js"></script>
 <script src="/js/artesano.js"></script>
 </body>
 </html>

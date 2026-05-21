@@ -1,6 +1,16 @@
 // registro.js
 let selectedType = null;
 
+document.addEventListener('i18nReady', () => {
+  if (typeof applyTranslations === 'function') applyTranslations();
+  initRegistro();
+});
+
+document.addEventListener('languageChanged', () => {
+  if (typeof applyTranslations === 'function') applyTranslations();
+  loadSelects(); // Reload selects to update the placeholder option language
+});
+
 function selectType(type) {
   selectedType = type;
   document.querySelectorAll('.type-card').forEach(c => {
@@ -8,16 +18,22 @@ function selectType(type) {
     c.style.transform = 'none';
   });
   const card = document.getElementById(`type-${type}`);
-  card.style.border = '2px solid var(--color-primary)';
-  card.style.transform = 'scale(1.02)';
+  if (card) {
+    card.style.border = '2px solid var(--color-primary)';
+    card.style.transform = 'scale(1.02)';
+  }
 
-  document.getElementById('form-comprador').classList.add('hidden');
-  document.getElementById('form-artesano').classList.add('hidden');
-  document.getElementById(`form-${type}`).classList.remove('hidden');
+  const formComp = document.getElementById('form-comprador');
+  const formArte = document.getElementById('form-artesano');
+  if (formComp) formComp.classList.add('hidden');
+  if (formArte) formArte.classList.add('hidden');
+
+  const selectedForm = document.getElementById(`form-${type}`);
+  if (selectedForm) selectedForm.classList.remove('hidden');
 }
 
 // Load categories and regions for artisan form
-(async function loadSelects() {
+async function loadSelects() {
   try {
     const [cats, regs] = await Promise.all([
       apiFetch('/categories'),
@@ -25,66 +41,107 @@ function selectType(type) {
     ]);
     const catSel = document.getElementById('a-categoria');
     const regSel = document.getElementById('a-region');
-    catSel.innerHTML = '<option value="">Selecciona una categoría</option>' +
-      cats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-    regSel.innerHTML = '<option value="">Selecciona tu municipio</option>' +
-      regs.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+    if (catSel) {
+      catSel.innerHTML = `<option value="">${i18next.t('artisan.selectCategoryOption')}</option>` +
+        cats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+    }
+    if (regSel) {
+      regSel.innerHTML = `<option value="">${i18next.t('artisan.selectRegionOption')}</option>` +
+        regs.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+    }
   } catch (e) {
     console.error('Error loading selects', e);
   }
-})();
+}
 
-// Buyer registration
-document.getElementById('form-comprador').addEventListener('submit', async function(e) {
-  e.preventDefault();
-  const btn = document.getElementById('btn-comprador');
-  btn.disabled = true; btn.textContent = 'Registrando...';
-  try {
-    await apiFetch('/auth/register/comprador', {
-      method: 'POST',
-      body: JSON.stringify({
-        full_name: document.getElementById('c-name').value,
-        email: document.getElementById('c-email').value,
-        password: document.getElementById('c-pass').value,
-        role: 'comprador',
-      }),
-    });
-    window.location.href = '/verificar-email.html';
-  } catch (err) {
-    const el = document.getElementById('error-msg');
-    el.textContent = err.message; el.classList.remove('hidden');
-    btn.disabled = false; btn.textContent = 'Crear cuenta de comprador';
-  }
-});
+function initRegistro() {
+  loadSelects();
 
-// Artisan registration
-document.getElementById('form-artesano').addEventListener('submit', async function(e) {
-  e.preventDefault();
-  if (!document.getElementById('a-declaracion').checked) {
-    const el = document.getElementById('error-msg');
-    el.textContent = 'Debes aceptar la declaración de veracidad'; el.classList.remove('hidden');
-    return;
+  // Buyer registration
+  const formComprador = document.getElementById('form-comprador');
+  if (formComprador) {
+    formComprador.onsubmit = async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-comprador');
+      btn.disabled = true; 
+      btn.textContent = i18next.t('register.registering');
+      try {
+        await apiFetch('/auth/register/comprador', {
+          method: 'POST',
+          body: JSON.stringify({
+            full_name: document.getElementById('c-name').value,
+            email: document.getElementById('c-email').value,
+            password: document.getElementById('c-pass').value,
+            role: 'comprador',
+          }),
+        });
+        window.location.href = '/verificar-email.html';
+      } catch (err) {
+        const el = document.getElementById('error-msg');
+        el.textContent = err.message; el.classList.remove('hidden');
+        btn.disabled = false; 
+        btn.textContent = i18next.t('register.createBuyerAccountBtn');
+      }
+    };
   }
-  const btn = document.getElementById('btn-artesano');
-  btn.disabled = true; btn.textContent = 'Registrando...';
-  try {
-    await apiFetch('/auth/register/artesano', {
-      method: 'POST',
-      body: JSON.stringify({
-        full_name: document.getElementById('a-name').value,
-        email: document.getElementById('a-email').value,
-        password: document.getElementById('a-pass').value,
-        role: 'artesano',
-        id_number: document.getElementById('a-cedula').value,
-        cultural_history: document.getElementById('a-historia').value,
-        category_id: document.getElementById('a-categoria').value,
-        region_id: document.getElementById('a-region').value,
-      }),
-    });
-    window.location.href = '/verificar-email.html';
-  } catch (err) {
-    const el = document.getElementById('error-msg');
-    el.textContent = err.message; el.classList.remove('hidden');
-    btn.disabled = false; btn.textContent = 'Registrarme como artesano';
+
+  // Artisan registration
+  const formArtesano = document.getElementById('form-artesano');
+  if (formArtesano) {
+    formArtesano.onsubmit = async function(e) {
+      e.preventDefault();
+      
+      const declaration = document.getElementById('a-declaracion');
+      if (!declaration.checked) {
+        const el = document.getElementById('error-msg');
+        el.textContent = i18next.t('register.errorMustAcceptDeclaration'); 
+        el.classList.remove('hidden');
+        return;
+      }
+
+      const btn = document.getElementById('btn-artesano');
+      btn.disabled = true; 
+      btn.textContent = i18next.t('register.processingRegistration');
+      
+      try {
+        const formData = new FormData();
+        formData.append('full_name', document.getElementById('a-name').value);
+        formData.append('email', document.getElementById('a-email').value);
+        formData.append('password', document.getElementById('a-pass').value);
+        formData.append('role', 'artesano');
+        formData.append('cultural_history', document.getElementById('a-historia').value);
+        formData.append('category_id', document.getElementById('a-categoria').value);
+        formData.append('region_id', document.getElementById('a-region').value);
+        formData.append('truthfulness_declaration', 'true');
+
+        // Handle files
+        const docFrontFile = document.getElementById('a-document-front').files[0];
+        if (docFrontFile) {
+          formData.append('id_document_front', docFrontFile);
+        }
+
+        const docBackFile = document.getElementById('a-document-back').files[0];
+        if (docBackFile) {
+          formData.append('id_document_back', docBackFile);
+        }
+
+        const galleryFiles = document.getElementById('a-galeria').files;
+        for (let i = 0; i < galleryFiles.length; i++) {
+          formData.append('gallery', galleryFiles[i]);
+        }
+
+        await apiFetch('/auth/register/artesano', {
+          method: 'POST',
+          body: formData, // FormData matches multipart/form-data
+        });
+        
+        window.location.href = '/verificar-email.html';
+      } catch (err) {
+        const el = document.getElementById('error-msg');
+        el.textContent = err.message; el.classList.remove('hidden');
+        btn.disabled = false; 
+        btn.textContent = i18next.t('register.registerAsArtisanBtn');
+      }
+    };
   }
-});
+}

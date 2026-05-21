@@ -5,9 +5,12 @@ import { OrderItem } from './order-item.entity';
 export enum OrderStatus {
   PENDING = 'pending',
   PAID = 'paid',
+  PREPARING = 'preparing',
   SHIPPED = 'shipped',
   DELIVERED = 'delivered',
   CANCELLED = 'cancelled',
+  REFUNDED = 'refunded',
+  NOVELTY = 'novelty',
 }
 
 @Entity('orders')
@@ -25,6 +28,12 @@ export class Order {
   @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PENDING })
   status: OrderStatus;
 
+  @Column('numeric', { precision: 10, scale: 2, default: 0 })
+  shipping_cost: number;
+
+  @Column({ type: 'int', nullable: true })
+  estimated_delivery_days: number;
+
   @Column({ type: 'jsonb', nullable: true })
   shipping_address: any;
 
@@ -33,6 +42,12 @@ export class Order {
 
   @Column({ nullable: true })
   payment_id: string; // ID from external payment gateway
+
+  @Column({ nullable: true })
+  tracking_number: string;
+
+  @Column({ nullable: true })
+  shipping_company: string;
 
   @OneToMany(() => OrderItem, item => item.order, { cascade: true })
   items: OrderItem[];

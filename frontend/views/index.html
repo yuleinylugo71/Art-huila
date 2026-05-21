@@ -1,63 +1,126 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Art Huila — Artesanías del Huila, Colombia</title>
-  <meta name="description" content="Descubre artesanías auténticas del departamento del Huila, Colombia. Conectamos artesanos verificados con compradores nacionales e internacionales."/>
-  <link rel="stylesheet" href="/css/styles.css"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Art Huila — Artesanías con Historia</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/index.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
+
 <body>
 
-<nav class="navbar">
-  <a href="/index.html" class="navbar-brand">Art <span>Huila</span></a>
-  <ul class="navbar-nav">
-    <li><a href="/catalogo.html">Catálogo</a></li>
-    <li><a href="/carrito.html" id="nav-cart-count" style="font-weight: bold; color: var(--color-primary);">Carrito (0)</a></li>
-    <li><a href="/registro.html">Registrarse</a></li>
-    <li id="nav-auth-area">
-      <a href="/login.html" class="btn btn-primary btn-sm">Iniciar sesión</a>
-    </li>
-  </ul>
-</nav>
-
-<section class="hero">
-  <h1 class="hero-title">Artesanías del Huila<br/>con alma y tradición</h1>
-  <p class="hero-subtitle">Conectamos artesanos verificados con compradores que valoran el patrimonio cultural del Huila, Colombia.</p>
-  <div class="hero-actions">
-    <a href="/catalogo.html" class="btn btn-primary btn-lg">Explorar catálogo</a>
-    <a href="/registro.html" class="btn btn-outline btn-lg" style="border-color:white;color:white;">Soy artesano</a>
-  </div>
-</section>
-
-<section class="section">
-  <div class="container">
-    <h2 class="section-title">Productos destacados</h2>
-    <p class="section-subtitle">Las piezas más recientes de nuestros artesanos verificados</p>
-    <div id="featured-grid" class="grid grid-4">
-      <div class="spinner"></div>
+  <nav class="navbar">
+    <div style="display:flex;align-items:center;gap:0.75rem;">
+      <a href="index.html" class="navbar-brand" data-subtitle="MAESTRÍA ANCESTRAL">Art <span>Huila</span></a>
     </div>
-    <div style="text-align:center;margin-top:2rem;">
-      <a href="/catalogo.html" class="btn btn-outline">Ver todo el catálogo</a>
+    <ul class="navbar-nav">
+      <li><a href="catalogo.html" data-i18n="nav.viewCatalog">Catálogo</a></li>
+      <li id="nav-auth-area"></li>
+      <li>
+        <a href="carrito.html" style="font-weight:bold;color:var(--color-primary);">
+          <i class="fa-solid fa-cart-shopping"></i> <span id="cart-count">0</span>
+        </a>
+      </li>
+    </ul>
+    <div class="lang-switcher">
+      <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+      <span>|</span>
+      <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
     </div>
-  </div>
-</section>
+  </nav>
 
-<section class="section" style="background:var(--color-bg2);">
-  <div class="container" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:2rem;text-align:center;">
-    <div><div style="font-size:3rem;">🏺</div><h3 style="font-family:'Crimson Pro',serif;font-size:1.3rem;margin:0.5rem 0;">Artesanías auténticas</h3><p style="color:var(--color-muted);font-size:0.9rem;">Cada pieza cuenta una historia de tradición y cultura huilense.</p></div>
-    <div><div style="font-size:3rem;">✅</div><h3 style="font-family:'Crimson Pro',serif;font-size:1.3rem;margin:0.5rem 0;">Artesanos verificados</h3><p style="color:var(--color-muted);font-size:0.9rem;">Revisamos y aprobamos cada artesano para garantizar calidad.</p></div>
-    <div><div style="font-size:3rem;">🗺️</div><h3 style="font-family:'Crimson Pro',serif;font-size:1.3rem;margin:0.5rem 0;">8 municipios del Huila</h3><p style="color:var(--color-muted);font-size:0.9rem;">Neiva, Pitalito, Garzón, La Plata y más regiones representadas.</p></div>
-    <div><div style="font-size:3rem;">🌍</div><h3 style="font-family:'Crimson Pro',serif;font-size:1.3rem;margin:0.5rem 0;">Envíos a todo el mundo</h3><p style="color:var(--color-muted);font-size:0.9rem;">Llevamos la cultura huilense a cualquier rincón del planeta.</p></div>
-  </div>
-</section>
+  <main class="hero">
+    <div class="container">
+      <h1 class="hero-title">Artesanías con <span>Alma</span> del Huila</h1>
+      <p class="hero-subtitle" data-i18n="home.heroSubtitle">Descubre piezas únicas creadas por manos maestras, donde cada técnica cuenta una historia milenaria.</p>
+      <div class="hero-actions">
+        <a href="catalogo.html" class="btn btn-primary btn-lg" data-i18n="nav.viewCatalog">Explorar Catálogo</a>
+        <a href="registro.html" class="btn btn-outline btn-lg" style="border-color:white;color:white;" data-i18n="register.heading">Unirse como Artesano</a>
+      </div>
+      
+      <div class="hero-badges">
+        <span class="hero-badge" data-i18n="home.badgeArtisans">Artesanos verificados</span>
+        <span class="hero-badge" data-i18n="home.badgeShipping">Envíos seguros</span>
+        <span class="hero-badge" data-i18n="home.badgeAuthentic">Productos auténticos</span>
+      </div>
+    </div>
+  </main>
 
-<footer>
-  <div class="brand">Art <span>Huila</span></div>
-  <p style="margin-top:0.5rem;font-size:0.85rem;">© 2026 Art Huila — Artesanías del Huila, Colombia</p>
-</footer>
+  <section class="stats-bar reveal">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <h3 id="stat-artisans">+200</h3>
+        <p data-i18n="home.statArtisansLabel">Artesanos verificados</p>
+      </div>
+      <div class="stat-item">
+        <h3 id="stat-products">+1.400</h3>
+        <p data-i18n="home.statProductsLabel">Productos auténticos</p>
+      </div>
+      <div class="stat-item">
+        <h3 id="stat-rating">4.8<i class="fa-solid fa-star"></i></h3>
+        <p data-i18n="home.statRatingLabel">Valoración promedio</p>
+      </div>
+      <div class="stat-item">
+        <h3 id="stat-delivery">3-5</h3>
+        <p data-i18n="home.statDeliveryLabel">Días de entrega</p>
+      </div>
+    </div>
+  </section>
 
-<script src="/js/api.js"></script>
-<script src="/js/home.js"></script>
+  <section class="section container reveal">
+    <div style="text-align: center; margin-bottom: 3rem;">
+      <h2 class="section-title" data-i18n="home.exploreCategories">Explora por Categoría</h2>
+      <p class="section-subtitle" data-i18n="home.exploreCategoriesSubtitle">Encuentra la maestría en cada oficio</p>
+    </div>
+    <div id="categories-grid" class="grid grid-5 reveal-stagger">
+      <!-- Cargado por JS -->
+    </div>
+  </section>
+
+  <section class="section-warm">
+    <div class="container reveal">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem;">
+        <div>
+          <h2 class="section-title" data-i18n="home.featuredProducts">Productos Destacados</h2>
+          <p class="section-subtitle" data-i18n="home.featuredProductsSubtitle">Selección exclusiva de nuestras mejores piezas</p>
+        </div>
+        <a href="catalogo.html" class="btn btn-outline" data-i18n="home.viewAllCatalog">Ver todo el catálogo →</a>
+      </div>
+      <div id="featured-grid" class="grid grid-4 reveal-stagger">
+        <!-- Cargado por JS -->
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-banner reveal">
+    <div class="container">
+      <h2 data-i18n="home.ctaTitle">¿Eres un maestro artesano?</h2>
+      <p data-i18n="home.ctaSubtitle">Únete a la plataforma que valora tu historia, protege tu técnica y conecta tu arte con el mundo.</p>
+      <a href="registro.html" class="btn btn-lg" data-i18n="home.ctaButton">Empezar a vender hoy</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="brand">Art <span>Huila</span></div>
+      <p style="font-size:0.85rem;margin-top:0.5rem;opacity:0.6;" data-i18n="home.footerText">&copy; 2026 Art Huila. Orgullosamente huilense.</p>
+      <div style="margin-top: 1.5rem; display: flex; gap: 1.5rem; justify-content: center; font-size: 0.8rem;">
+        <a href="#" data-i18n="home.privacy">Privacidad</a>
+        <a href="#" data-i18n="home.terms">Términos</a>
+        <a href="#" data-i18n="home.contact">Contacto</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+  <script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
+  <script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/home.js"></script>
 </body>
+
 </html>

@@ -11,7 +11,7 @@ export class OrderItem {
   @JoinColumn()
   order: Order;
 
-  @ManyToOne(() => Product)
+  @ManyToOne(() => Product, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn()
   product: Product;
 

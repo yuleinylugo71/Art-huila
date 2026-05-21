@@ -1,16 +1,31 @@
-import { Controller, Get, Param, Post, UseGuards, UploadedFiles, UseInterceptors, Body } from '@nestjs/common';
+import { Controller, Get, Param, Post, UseGuards, UploadedFiles, UseInterceptors, Body, Query } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { ArtisansService } from './artisans.service';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
-@Controller('api/v1/artisans')
+@Controller('artisans')
 export class ArtisansController {
   constructor(
     private readonly artisansService: ArtisansService,
     private readonly cloudinaryService: CloudinaryService,
   ) {}
+  
+  @Get()
+  async findAll(@Query('featured') featured?: string) {
+    if (featured === 'true') {
+      const artisans = await this.artisansService.findFeatured();
+      return artisans.map(a => ({
+        name: a.user.full_name,
+        city: a.region?.name || 'Huila',
+        bio: a.cultural_history.substring(0, 120) + '...',
+        avatar_url: a.avatar_url,
+        verified: a.verification_status === 'verified',
+      }));
+    }
+    return this.artisansService.findAll();
+  }
 
   @UseGuards(JwtAuthGuard)
   @Get('me')

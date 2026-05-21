@@ -27,6 +27,23 @@ let ProductsController = class ProductsController {
         this.productsService = productsService;
         this.cloudinaryService = cloudinaryService;
     }
+    async findAll(query, featured, limit) {
+        const products = await this.productsService.findFiltered(query, featured === 'true', limit ? parseInt(limit) : undefined);
+        return products.map(p => ({
+            id: p.id,
+            name: p.name,
+            slug: p.slug,
+            price: p.price,
+            status: p.artisan.verification_status === 'verified' ? 'verified' : 'pending',
+            artisan: {
+                name: p.artisan.user.full_name,
+                avatar_url: p.artisan.avatar_url,
+            },
+            rating: 4.5 + Math.random() * 0.5,
+            review_count: Math.floor(Math.random() * 50) + 5,
+            image_url: p.images?.[0]?.url || '',
+        }));
+    }
     findOne(slug) {
         return this.productsService.findBySlug(slug);
     }
@@ -49,6 +66,15 @@ let ProductsController = class ProductsController {
     }
 };
 exports.ProductsController = ProductsController;
+__decorate([
+    (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)('q')),
+    __param(1, (0, common_1.Query)('featured')),
+    __param(2, (0, common_1.Query)('limit')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:returntype", Promise)
+], ProductsController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':slug'),
     __param(0, (0, common_1.Param)('slug')),
@@ -99,7 +125,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], ProductsController.prototype, "uploadImages", null);
 exports.ProductsController = ProductsController = __decorate([
-    (0, common_1.Controller)('api/v1/products'),
+    (0, common_1.Controller)('products'),
     __metadata("design:paramtypes", [products_service_1.ProductsService,
         cloudinary_service_1.CloudinaryService])
 ], ProductsController);

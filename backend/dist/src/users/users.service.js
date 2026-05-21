@@ -90,6 +90,18 @@ let UsersService = class UsersService {
     async hashPassword(password) {
         return bcrypt.hash(password, 10);
     }
+    async update(id, data) {
+        const user = await this.findById(id);
+        if (!user)
+            throw new common_1.NotFoundException('Usuario no encontrado');
+        const updateData = data;
+        if (updateData.password) {
+            user.password_hash = await this.hashPassword(updateData.password);
+            delete updateData.password;
+        }
+        Object.assign(user, updateData);
+        return this.userRepo.save(user);
+    }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([

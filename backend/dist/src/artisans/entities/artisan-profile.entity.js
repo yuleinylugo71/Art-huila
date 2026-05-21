@@ -33,6 +33,8 @@ let ArtisanProfile = class ArtisanProfile {
     rejection_reason;
     truthfulness_declaration;
     avatar_url;
+    id_document_front_url;
+    id_document_back_url;
     gallery;
     created_at;
     updated_at;
@@ -48,7 +50,7 @@ __decorate([
     __metadata("design:type", user_entity_1.User)
 ], ArtisanProfile.prototype, "user", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ unique: true }),
+    (0, typeorm_1.Column)({ unique: true, nullable: true }),
     __metadata("design:type", String)
 ], ArtisanProfile.prototype, "id_number", void 0);
 __decorate([
@@ -81,6 +83,14 @@ __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], ArtisanProfile.prototype, "avatar_url", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', nullable: true }),
+    __metadata("design:type", Object)
+], ArtisanProfile.prototype, "id_document_front_url", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', nullable: true }),
+    __metadata("design:type", Object)
+], ArtisanProfile.prototype, "id_document_back_url", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)(() => artisan_gallery_entity_1.ArtisanGallery, gallery => gallery.profile),
     __metadata("design:type", Array)

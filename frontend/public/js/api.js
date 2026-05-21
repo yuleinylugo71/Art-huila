@@ -23,13 +23,23 @@ const Auth = {
 };
 
 async function apiFetch(endpoint, options = {}) {
-  const headers = { 'Content-Type': 'application/json', ...options.headers };
+  const isFormData = options.body instanceof FormData;
+  
+  const headers = { ...options.headers };
+  // Only set application/json if it's not FormData
+  if (!isFormData && !headers['Content-Type']) {
+    headers['Content-Type'] = 'application/json';
+  }
+
   const token = Auth.getToken();
   if (token) headers['Authorization'] = `Bearer ${token}`;
+  
   const res = await fetch(`${API}${endpoint}`, { ...options, headers });
+  
   if (!res.ok) {
     const err = await res.json().catch(() => ({ message: 'Error de red' }));
-    throw new Error(err.message || 'Error');
+    const msg = Array.isArray(err.message) ? err.message.join(', ') : (err.message || 'Error');
+    throw new Error(msg);
   }
   return res.json();
 }
@@ -48,9 +58,13 @@ function formatPrice(p) {
 }
 
 const Cart = {
-  get: () => JSON.parse(localStorage.getItem('arthuila_cart') || '[]'),
+  _getKey: () => {
+    const user = Auth.getUser();
+    return user ? `arthuila_cart_${user.id}` : 'arthuila_cart_guest';
+  },
+  get: () => JSON.parse(localStorage.getItem(Cart._getKey()) || '[]'),
   save: (cart) => {
-    localStorage.setItem('arthuila_cart', JSON.stringify(cart));
+    localStorage.setItem(Cart._getKey(), JSON.stringify(cart));
     Cart.updateNav();
   },
   add: (product, quantity = 1) => {
@@ -58,18 +72,27 @@ const Cart = {
     const existing = cart.find(item => item.id === product.id);
     if (existing) {
       existing.quantity += quantity;
+      showToast('<i class="fa-solid fa-box"></i> Se agregó otra unidad al carrito', 'success');
     } else {
       cart.push({ ...product, quantity });
+      showToast('<i class="fa-solid fa-cart-shopping"></i> Producto agregado al carrito', 'success');
     }
     Cart.save(cart);
-    showToast('Producto agregado al carrito', 'success');
+  },
+  clear: () => {
+    localStorage.removeItem(Cart._getKey());
+    Cart.updateNav();
   },
   updateNav: () => {
-    const countEls = document.querySelectorAll('#nav-cart-count');
+    const countEls = document.querySelectorAll('#nav-cart-count, #cart-count');
     const cart = Cart.get();
     const total = cart.reduce((sum, item) => sum + item.quantity, 0);
     countEls.forEach(el => {
-      el.textContent = `Carrito (${total})`;
+      if (el.id === 'cart-count') {
+        el.textContent = total;
+      } else {
+        el.textContent = `Carrito (${total})`;
+      }
     });
   }
 };

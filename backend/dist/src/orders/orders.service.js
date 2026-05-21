@@ -19,15 +19,21 @@ const typeorm_2 = require("typeorm");
 const order_entity_1 = require("./entities/order.entity");
 const order_item_entity_1 = require("./entities/order-item.entity");
 const product_entity_1 = require("../products/entities/product.entity");
+const mail_service_1 = require("../mail/mail.service");
+const mipaquete_service_1 = require("../logistics/mipaquete/mipaquete.service");
 let OrdersService = class OrdersService {
     ordersRepository;
     orderItemsRepository;
     productsRepository;
+    mailService;
+    mipaqueteService;
     dataSource;
-    constructor(ordersRepository, orderItemsRepository, productsRepository, dataSource) {
+    constructor(ordersRepository, orderItemsRepository, productsRepository, mailService, mipaqueteService, dataSource) {
         this.ordersRepository = ordersRepository;
         this.orderItemsRepository = orderItemsRepository;
         this.productsRepository = productsRepository;
+        this.mailService = mailService;
+        this.mipaqueteService = mipaqueteService;
         this.dataSource = dataSource;
     }
     async create(createOrderDto, user) {
@@ -42,15 +48,20 @@ let OrdersService = class OrdersService {
             order.shipping_address = createOrderDto.shipping_address;
             order.payment_method = createOrderDto.payment_method;
             order.status = order_entity_1.OrderStatus.PENDING;
+            let originCity = 'Neiva';
             for (const itemDto of createOrderDto.items) {
                 const product = await queryRunner.manager.findOne(product_entity_1.Product, {
                     where: { id: itemDto.productId },
+                    relations: ['artisan', 'artisan.region']
                 });
                 if (!product) {
                     throw new common_1.NotFoundException(`Product ${itemDto.productId} not found`);
                 }
                 if (product.stock < itemDto.quantity) {
                     throw new common_1.BadRequestException(`Not enough stock for product: ${product.name}`);
+                }
+                if (orderItems.length === 0 && product.artisan && product.artisan.region) {
+                    originCity = product.artisan.region.name;
                 }
                 product.stock -= itemDto.quantity;
                 await queryRunner.manager.save(product);
@@ -63,12 +74,13 @@ let OrdersService = class OrdersService {
                 orderItem.subtotal = subtotal;
                 orderItems.push(orderItem);
             }
-            order.total_amount = totalAmount;
+            const quote = await this.mipaqueteService.getShippingQuote(originCity, createOrderDto.shipping_address.city || 'Bogotá', 1);
+            order.shipping_cost = quote.cost;
+            order.estimated_delivery_days = quote.estimatedDays;
+            order.shipping_company = quote.carrier;
+            order.total_amount = totalAmount + Number(order.shipping_cost);
+            order.items = orderItems;
             const savedOrder = await queryRunner.manager.save(order_entity_1.Order, order);
-            for (const item of orderItems) {
-                item.order = savedOrder;
-                await queryRunner.manager.save(order_item_entity_1.OrderItem, item);
-            }
             await queryRunner.commitTransaction();
             return this.ordersRepository.findOne({
                 where: { id: savedOrder.id },
@@ -83,9 +95,32 @@ let OrdersService = class OrdersService {
             await queryRunner.release();
         }
     }
-    findAll(user) {
+    findAll() {
         return this.ordersRepository.find({
-            where: { user: { id: user.id } },
+            relations: ['user', 'items', 'items.product', 'items.product.artisan', 'items.product.images'],
+            order: { created_at: 'DESC' },
+        });
+    }
+    async getShippingQuoteForCart(destinationCity, items) {
+        let originCity = 'Neiva';
+        if (items && items.length > 0) {
+            const firstItem = items[0];
+            const product = await this.productsRepository.findOne({
+                where: { id: firstItem.productId },
+                relations: ['artisan', 'artisan.region']
+            });
+            if (product && product.artisan && product.artisan.region) {
+                originCity = product.artisan.region.name;
+            }
+        }
+        const quote = await this.mipaqueteService.getShippingQuote(originCity, destinationCity, 1);
+        return {
+            ...quote
+        };
+    }
+    findByUser(userId) {
+        return this.ordersRepository.find({
+            where: { user: { id: userId } },
             relations: ['items', 'items.product', 'items.product.artisan', 'items.product.images'],
             order: { created_at: 'DESC' },
         });
@@ -101,9 +136,89 @@ let OrdersService = class OrdersService {
         if (!order) {
             throw new common_1.NotFoundException('Order not found');
         }
+        return this.markAsPaid(id, `MOCK_PAY_${Date.now()}`);
+    }
+    async markAsPaid(orderId, paymentId) {
+        const order = await this.ordersRepository.findOne({ where: { id: orderId } });
+        if (!order) {
+            throw new common_1.NotFoundException(`Order ${orderId} not found`);
+        }
         order.status = order_entity_1.OrderStatus.PAID;
-        order.payment_id = `MOCK_PAY_${Date.now()}`;
+        order.payment_id = paymentId;
+        const savedOrder = await this.ordersRepository.save(order);
+        try {
+            const fullOrder = await this.ordersRepository.findOne({
+                where: { id: orderId },
+                relations: ['user', 'items', 'items.product', 'items.product.artisan', 'items.product.artisan.user']
+            });
+            if (fullOrder) {
+                await this.mailService.sendOrderConfirmationEmail(fullOrder.user.email, fullOrder.user.full_name, fullOrder.id, fullOrder.total_amount);
+                for (const item of fullOrder.items) {
+                    const artisanUser = item.product.artisan?.user;
+                    if (artisanUser) {
+                        await this.mailService.sendSaleNotificationEmail(artisanUser.email, artisanUser.full_name, item.product.name, item.quantity);
+                    }
+                }
+            }
+        }
+        catch (error) {
+            console.error('Error sending order notification emails:', error);
+        }
+        return savedOrder;
+    }
+    async updateStatus(id, status, user) {
+        const order = await this.ordersRepository.findOne({
+            where: { id },
+            relations: ['items', 'items.product']
+        });
+        if (!order) {
+            throw new common_1.NotFoundException('Order not found');
+        }
+        if (user) {
+            const role = user.role;
+            if (role === 'artesano') {
+                if (order.status === order_entity_1.OrderStatus.PAID && status === order_entity_1.OrderStatus.PREPARING) {
+                }
+                else if (order.status === order_entity_1.OrderStatus.PREPARING && status === order_entity_1.OrderStatus.SHIPPED) {
+                }
+                else {
+                    throw new common_1.BadRequestException('El artesano solo puede cambiar el estado de Pagado a En preparación o de En preparación a Despachado.');
+                }
+            }
+            else if (role === 'admin') {
+                if (status === order_entity_1.OrderStatus.CANCELLED || status === order_entity_1.OrderStatus.DELIVERED) {
+                }
+                else {
+                    throw new common_1.BadRequestException('El administrador solo puede marcar un pedido como Cancelado o Entregado.');
+                }
+            }
+        }
+        if (status === order_entity_1.OrderStatus.CANCELLED && order.status !== order_entity_1.OrderStatus.CANCELLED) {
+            for (const item of order.items) {
+                const product = item.product;
+                product.stock += item.quantity;
+                await this.productsRepository.save(product);
+            }
+        }
+        order.status = status;
         return this.ordersRepository.save(order);
+    }
+    async updateTracking(id, trackingNumber, shippingCompany) {
+        const order = await this.ordersRepository.findOne({ where: { id } });
+        if (!order) {
+            throw new common_1.NotFoundException('Order not found');
+        }
+        order.tracking_number = trackingNumber;
+        order.shipping_company = shippingCompany;
+        order.status = order_entity_1.OrderStatus.SHIPPED;
+        return this.ordersRepository.save(order);
+    }
+    async findArtisanSales(userId) {
+        return this.orderItemsRepository.find({
+            where: { product: { artisan: { user: { id: userId } } } },
+            relations: ['order', 'order.user', 'product', 'product.images'],
+            order: { order: { created_at: 'DESC' } },
+        });
     }
 };
 exports.OrdersService = OrdersService;
@@ -115,6 +230,8 @@ exports.OrdersService = OrdersService = __decorate([
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
+        mail_service_1.MailService,
+        mipaquete_service_1.MipaqueteService,
         typeorm_2.DataSource])
 ], OrdersService);
 //# sourceMappingURL=orders.service.js.map

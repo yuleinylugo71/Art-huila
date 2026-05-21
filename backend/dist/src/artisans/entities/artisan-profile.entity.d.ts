@@ -19,6 +19,8 @@ export declare class ArtisanProfile {
     rejection_reason: string;
     truthfulness_declaration: boolean;
     avatar_url: string;
+    id_document_front_url: string | null;
+    id_document_back_url: string | null;
     gallery: ArtisanGallery[];
     created_at: Date;
     updated_at: Date;

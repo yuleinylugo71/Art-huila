@@ -1,0 +1,275 @@
+/* dashboard-comprador.css - Buyer Profile specific styles */
+
+.buyer-layout {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+.buyer-sidebar {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-menu li {
+  margin-bottom: 0.25rem;
+}
+
+.sidebar-menu a {
+  display: block;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  text-decoration: none;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.sidebar-menu a:hover, .sidebar-menu a.active {
+  background: var(--color-bg);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.order-card {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.order-item {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem 0;
+}
+
+.order-item img {
+  width: 50px;
+  height: 50px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid var(--color-border);
+}
+
+/* Badges color-coded consistentes */
+.badge {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+}
+.badge-pending {
+  color: #d97706;
+  background: #fffbeb;
+  border: 1.5px solid #fcd34d;
+}
+.badge-paid {
+  color: #2563eb;
+  background: #eff6ff;
+  border: 1.5px solid #93c5fd;
+}
+.badge-preparing {
+  color: #b45309;
+  background: #fef3c7;
+  border: 1.5px solid #fde68a;
+}
+.badge-shipped {
+  color: #7c3aed;
+  background: #f5f3ff;
+  border: 1.5px solid #c4b5fd;
+}
+.badge-delivered {
+  color: #16a34a;
+  background: #f0fdf4;
+  border: 1.5px solid #86efac;
+}
+.badge-cancelled {
+  color: #dc2626;
+  background: #fef2f2;
+  border: 1.5px solid #fca5a5;
+}
+
+/* Barra de Progreso Tracker Premium */
+.order-tracker-container {
+  padding: 2rem 1.5rem;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.tracker-steps {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  z-index: 1;
+}
+
+.tracker-steps::before {
+  content: "";
+  position: absolute;
+  top: 25px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: #e2e8f0;
+  z-index: -2;
+}
+
+.tracker-line-progress {
+  position: absolute;
+  top: 25px;
+  left: 0;
+  height: 4px;
+  background: #16a34a; /* verde completado */
+  z-index: -1;
+  transition: width 0.4s ease;
+  width: 0%;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  flex: 1;
+}
+
+.step-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  border: 3px solid #cbd5e1;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.step-label {
+  margin-top: 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+  transition: color 0.3s ease;
+}
+
+/* Paso completado: verde */
+.step.completed .step-icon {
+  background: #16a34a;
+  border-color: #15803d;
+  color: white;
+}
+.step.completed .step-label {
+  color: #15803d;
+}
+
+/* Paso actual: resaltado en color secundario/primario */
+.step.active .step-icon {
+  background: var(--color-primary);
+  border-color: var(--color-primary-dark, #a855f7);
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(186, 73, 11, 0.3);
+}
+.step.active .step-label {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+/* Detalle Grid */
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 2rem;
+}
+
+.order-items-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.detail-item-card {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.detail-item-card:last-child {
+  border-bottom: none;
+}
+
+.detail-item-img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+}
+
+.billing-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.billing-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  color: var(--color-text);
+}
+
+.tracking-info-panel, .shipping-address-panel {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .buyer-layout { grid-template-columns: 1fr; }
+  .detail-grid { grid-template-columns: 1fr; }
+  .step-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 1.1rem;
+  }
+  .tracker-steps::before, .tracker-line-progress {
+    top: 20px;
+  }
+}

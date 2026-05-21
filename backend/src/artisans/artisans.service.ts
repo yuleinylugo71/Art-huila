@@ -63,4 +63,13 @@ export class ArtisansService {
 
     return this.profileRepo.save(profile);
   }
+
+  async findFeatured() {
+    return this.profileRepo.find({
+      where: { verification_status: VerificationStatus.VERIFIED },
+      relations: ['user', 'region'],
+      take: 3,
+      order: { created_at: 'DESC' },
+    });
+  }
 }

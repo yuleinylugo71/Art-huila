@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ProductsService } from './products.service';
 import { JwtAuthGuard, RolesGuard } from '../auth/guards/jwt-auth.guard';
@@ -6,12 +6,35 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
-@Controller('api/v1/products')
+@Controller('products')
 export class ProductsController {
   constructor(
     private readonly productsService: ProductsService,
     private readonly cloudinaryService: CloudinaryService,
   ) {}
+  
+  @Get()
+  async findAll(
+    @Query('q') query?: string,
+    @Query('featured') featured?: string,
+    @Query('limit') limit?: string,
+  ) {
+    const products = await this.productsService.findFiltered(query, featured === 'true', limit ? parseInt(limit) : undefined);
+    return products.map(p => ({
+      id: p.id,
+      name: p.name,
+      slug: p.slug,
+      price: p.price,
+      status: p.artisan.verification_status === 'verified' ? 'verified' : 'pending',
+      artisan: {
+        name: p.artisan.user.full_name,
+        avatar_url: p.artisan.avatar_url,
+      },
+      rating: 4.5 + Math.random() * 0.5, // Dummy for now
+      review_count: Math.floor(Math.random() * 50) + 5, // Dummy for now
+      image_url: p.images?.[0]?.url || '',
+    }));
+  }
 
   @Get(':slug')
   findOne(@Param('slug') slug: string) {

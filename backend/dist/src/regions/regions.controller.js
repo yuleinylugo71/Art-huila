@@ -29,7 +29,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], RegionsController.prototype, "findAll", null);
 exports.RegionsController = RegionsController = __decorate([
-    (0, common_1.Controller)('api/v1/regions'),
+    (0, common_1.Controller)('regions'),
     __metadata("design:paramtypes", [regions_service_1.RegionsService])
 ], RegionsController);
 //# sourceMappingURL=regions.controller.js.map

@@ -20,7 +20,7 @@ export class ArtisanProfile {
   @JoinColumn()
   user: User;
 
-  @Column({ unique: true })
+  @Column({ unique: true, nullable: true })
   id_number: string; // Cédula
 
   @Column({ type: 'text' })
@@ -45,6 +45,12 @@ export class ArtisanProfile {
 
   @Column({ nullable: true })
   avatar_url: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  id_document_front_url: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  id_document_back_url: string | null;
 
   @OneToMany(() => ArtisanGallery, gallery => gallery.profile)
   gallery: ArtisanGallery[];

@@ -1,4 +1,4 @@
-import { IsEmail, IsIn, IsString, MinLength, Matches } from 'class-validator';
+import { IsEmail, IsIn, IsString, MinLength, Matches, IsOptional } from 'class-validator';
 
 export class RegisterDto {
   @IsString()
@@ -32,8 +32,9 @@ export class RefreshDto {
 }
 
 export class RegisterArtisanDto extends RegisterDto {
+  @IsOptional()
   @IsString()
-  id_number: string;
+  id_number?: string;
 
   @IsString()
   cultural_history: string;
@@ -43,4 +44,7 @@ export class RegisterArtisanDto extends RegisterDto {
 
   @IsString()
   region_id: string;
+
+  @IsString()
+  truthfulness_declaration: string; // From FormData it comes as string "true"
 }

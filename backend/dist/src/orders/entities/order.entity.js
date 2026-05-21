@@ -17,18 +17,25 @@ var OrderStatus;
 (function (OrderStatus) {
     OrderStatus["PENDING"] = "pending";
     OrderStatus["PAID"] = "paid";
+    OrderStatus["PREPARING"] = "preparing";
     OrderStatus["SHIPPED"] = "shipped";
     OrderStatus["DELIVERED"] = "delivered";
     OrderStatus["CANCELLED"] = "cancelled";
+    OrderStatus["REFUNDED"] = "refunded";
+    OrderStatus["NOVELTY"] = "novelty";
 })(OrderStatus || (exports.OrderStatus = OrderStatus = {}));
 let Order = class Order {
     id;
     user;
     total_amount;
     status;
+    shipping_cost;
+    estimated_delivery_days;
     shipping_address;
     payment_method;
     payment_id;
+    tracking_number;
+    shipping_company;
     items;
     created_at;
     updated_at;
@@ -52,6 +59,14 @@ __decorate([
     __metadata("design:type", String)
 ], Order.prototype, "status", void 0);
 __decorate([
+    (0, typeorm_1.Column)('numeric', { precision: 10, scale: 2, default: 0 }),
+    __metadata("design:type", Number)
+], Order.prototype, "shipping_cost", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'int', nullable: true }),
+    __metadata("design:type", Number)
+], Order.prototype, "estimated_delivery_days", void 0);
+__decorate([
     (0, typeorm_1.Column)({ type: 'jsonb', nullable: true }),
     __metadata("design:type", Object)
 ], Order.prototype, "shipping_address", void 0);
@@ -63,6 +78,14 @@ __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], Order.prototype, "payment_id", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Order.prototype, "tracking_number", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Order.prototype, "shipping_company", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)(() => order_item_entity_1.OrderItem, item => item.order, { cascade: true }),
     __metadata("design:type", Array)

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="payment.successTitle">Pago Exitoso — Art Huila</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/pago-exitoso.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<nav style="position: absolute; top: 1.5rem; right: 2rem; z-index: 10;">
+  <div class="lang-switcher">
+    <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+    <span>|</span>
+    <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+  </div>
+</nav>
+
+<div class="success-container">
+  <div class="success-icon"><i class="fa-solid fa-check"></i></div>
+  <h1 class="success-title" data-i18n="payment.completedHeading">¡Pago Completado!</h1>
+  <p style="color:var(--color-muted);max-width:480px;margin-bottom:1rem;" data-i18n="payment.successDesc">
+    Gracias por apoyar a los artesanos del Huila. Tu pedido está siendo procesado. Recibirás un correo de confirmación.
+  </p>
+
+  <div class="success-card" id="order-info">
+    <div class="info-row">
+      <span style="color:var(--color-muted);" data-i18n="payment.transactionId">ID de transacción</span>
+      <span id="txn-id" style="font-weight:600;">—</span>
+    </div>
+    <div class="info-row">
+      <span style="color:var(--color-muted);" data-i18n="payment.statusLabel">Estado</span>
+      <span style="color:#16a34a;font-weight:600;" data-i18n="payment.approvedStatus"><i class="fa-solid fa-check"></i> Aprobado</span>
+    </div>
+  </div>
+
+  <div class="nav-actions">
+    <a href="dashboard-comprador.html" class="btn btn-primary btn-lg" data-i18n="payment.viewOrdersBtn"><i class="fa-solid fa-box"></i> Ver mis pedidos</a>
+    <a href="catalogo.html" class="btn btn-outline btn-lg" data-i18n="payment.continueShoppingBtn">← Seguir comprando</a>
+  </div>
+</div>
+
+<script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+<script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/i18n.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const txnId = params.get('id');
+    if (txnId) {
+      document.getElementById('txn-id').textContent = txnId.substring(0, 16) + '...';
+    }
+    // Auto-clear the cart in case it wasn't cleared
+    if (typeof Cart !== 'undefined') Cart.clear();
+  });
+</script>
+</body>
+</html>

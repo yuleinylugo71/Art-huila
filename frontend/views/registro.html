@@ -3,34 +3,47 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Registro — Art Huila</title>
-  <link rel="stylesheet" href="/css/styles.css"/>
+  <title data-i18n="register.title">Registro — Art Huila</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/auth.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 <div class="auth-layout">
   <div class="auth-left">
-    <a href="/index.html" style="color:rgba(255,255,255,0.7);text-decoration:none;font-size:0.85rem;margin-bottom:2rem;display:inline-block;">← Volver al inicio</a>
-    <div class="auth-left-title">Únete a la comunidad artesanal</div>
-    <p style="opacity:0.85;line-height:1.7;">Crea tu cuenta y forma parte del marketplace más auténtico del Huila.</p>
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
+      <a href="index.html" style="color:rgba(255,255,255,0.7);text-decoration:none;font-size:1.3rem;display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);">←</a>
+      <span style="color:rgba(255,255,255,0.6);font-size:0.85rem;" data-i18n="nav.backToHome">Volver al inicio</span>
+    </div>
+    <div class="lang-switcher">
+      <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+      <span>|</span>
+      <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+    </div>
+    <div class="auth-left-title" data-i18n="register.leftTitle">Únete a la comunidad artesanal</div>
+    <p style="opacity:0.85;line-height:1.7;" data-i18n="register.leftSubtitle">Crea tu cuenta y forma parte del marketplace más auténtico del Huila.</p>
   </div>
   <div class="auth-right">
     <div class="auth-box">
       <a href="/index.html" class="navbar-brand" style="margin-bottom:2rem;display:inline-block;">Art <span>Huila</span></a>
-      <h2>Crear cuenta</h2>
-      <p class="text-muted mb-3">¿Cómo deseas registrarte?</p>
+      <h2 data-i18n="register.heading">Crear cuenta</h2>
+      <p class="text-muted mb-3" data-i18n="register.howToRegister">¿Cómo deseas registrarte?</p>
 
       <!-- Type selector -->
       <div id="type-selector" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;">
         <div class="card type-card" id="type-comprador" onclick="selectType('comprador')" style="cursor:pointer;padding:1.5rem;text-align:center;border:2px solid var(--color-border);transition:all 0.2s;">
-          <div style="font-size:2.5rem;">🛍️</div>
-          <div style="font-weight:600;margin-top:0.5rem;">Comprador</div>
-          <div style="font-size:0.8rem;color:var(--color-muted);">Explora y compra artesanías</div>
+          <div style="font-size:2.5rem;"><i class="fa-solid fa-bag-shopping"></i></div>
+          <div style="font-weight:600;margin-top:0.5rem;" data-i18n="register.buyerRole">Comprador</div>
+          <div style="font-size:0.8rem;color:var(--color-muted);" data-i18n="register.buyerRoleDesc">Explora y compra artesanías</div>
         </div>
         <div class="card type-card" id="type-artesano" onclick="selectType('artesano')" style="cursor:pointer;padding:1.5rem;text-align:center;border:2px solid var(--color-border);transition:all 0.2s;">
-          <div style="font-size:2.5rem;">🏺</div>
-          <div style="font-weight:600;margin-top:0.5rem;">Artesano</div>
-          <div style="font-size:0.8rem;color:var(--color-muted);">Vende tus creaciones</div>
-        </div>
+  <!-- AQUÍ CAMBIAS EL ICONO -->
+  <div style="font-size:2.5rem;"><i class="fa-solid fa-tools"></i></div>
+  
+  <div style="font-weight:600;margin-top:0.5rem;" data-i18n="register.artisanRole">Artesano</div>
+  <div style="font-size:0.8rem;color:var(--color-muted);" data-i18n="register.artisanRoleDesc">Vende tus creaciones</div>
+</div>
+
       </div>
 
       <div id="error-msg" class="hidden" style="background:#fee2e2;color:#991b1b;padding:0.75rem 1rem;border-radius:var(--radius);margin-bottom:1rem;font-size:0.9rem;"></div>
@@ -38,69 +51,86 @@
       <!-- Comprador Form -->
       <form id="form-comprador" class="hidden">
         <div class="form-group">
-          <label class="form-label">Nombre completo</label>
-          <input type="text" id="c-name" class="form-control" placeholder="Tu nombre" required/>
+          <label class="form-label" data-i18n="auth.fullNameLabel">Nombre completo</label>
+          <input type="text" id="c-name" class="form-control" data-i18n-placeholder="auth.fullNamePlaceholder" placeholder="Tu nombre" required/>
         </div>
         <div class="form-group">
-          <label class="form-label">Correo electrónico</label>
-          <input type="email" id="c-email" class="form-control" placeholder="tu@email.com" required/>
+          <label class="form-label" data-i18n="auth.emailLabel">Correo electrónico</label>
+          <input type="email" id="c-email" class="form-control" data-i18n-placeholder="auth.emailPlaceholder" placeholder="tu@email.com" required/>
         </div>
         <div class="form-group">
-          <label class="form-label">Contraseña</label>
-          <input type="password" id="c-pass" class="form-control" placeholder="Mínimo 8 caracteres" required/>
-          <div class="form-hint">Mínimo 8 caracteres, 1 mayúscula y 1 número</div>
+          <label class="form-label" data-i18n="auth.passwordLabel">Contraseña</label>
+          <input type="password" id="c-pass" class="form-control" data-i18n-placeholder="auth.passwordPlaceholder" placeholder="Mínimo 8 caracteres" required/>
+          <div class="form-hint" data-i18n="auth.passwordRequirementsHint">Mínimo 8 caracteres, 1 mayúscula y 1 número</div>
         </div>
-        <button type="submit" class="btn btn-primary btn-full" id="btn-comprador">Crear cuenta de comprador</button>
+        <button type="submit" class="btn btn-primary btn-full" id="btn-comprador" data-i18n="register.createBuyerAccountBtn">Crear cuenta de comprador</button>
       </form>
 
       <!-- Artisan Form -->
       <form id="form-artesano" class="hidden">
         <div class="form-group">
-          <label class="form-label">Nombre completo</label>
-          <input type="text" id="a-name" class="form-control" placeholder="Tu nombre completo" required/>
+          <label class="form-label" data-i18n="auth.fullNameLabel">Nombre completo</label>
+          <input type="text" id="a-name" class="form-control" data-i18n-placeholder="auth.fullNamePlaceholder" placeholder="Tu nombre completo" required/>
         </div>
         <div class="form-group">
-          <label class="form-label">Correo electrónico</label>
-          <input type="email" id="a-email" class="form-control" placeholder="tu@email.com" required/>
+          <label class="form-label" data-i18n="auth.emailLabel">Correo electrónico</label>
+          <input type="email" id="a-email" class="form-control" data-i18n-placeholder="auth.emailPlaceholder" placeholder="tu@email.com" required/>
         </div>
         <div class="form-group">
-          <label class="form-label">Contraseña</label>
-          <input type="password" id="a-pass" class="form-control" placeholder="Mínimo 8 caracteres" required/>
-          <div class="form-hint">Mínimo 8 caracteres, 1 mayúscula y 1 número</div>
+          <label class="form-label" data-i18n="auth.passwordLabel">Contraseña</label>
+          <input type="password" id="a-pass" class="form-control" data-i18n-placeholder="auth.passwordPlaceholder" placeholder="Mínimo 8 caracteres" required/>
+          <div class="form-hint" data-i18n="auth.passwordRequirementsHint">Mínimo 8 caracteres, 1 mayúscula y 1 número</div>
         </div>
         <div class="form-group">
-          <label class="form-label">Número de cédula</label>
-          <input type="text" id="a-cedula" class="form-control" placeholder="1234567890" required/>
+          <label class="form-label" data-i18n="register.culturalHistoryLabel">Historia cultural de tu oficio</label>
+          <textarea id="a-historia" class="form-control" data-i18n-placeholder="register.culturalHistoryPlaceholder" placeholder="Cuéntanos sobre tu tradición artesanal, cómo aprendiste, qué te inspira..." required></textarea>
         </div>
         <div class="form-group">
-          <label class="form-label">Historia cultural de tu oficio</label>
-          <textarea id="a-historia" class="form-control" placeholder="Cuéntanos sobre tu tradición artesanal, cómo aprendiste, qué te inspira..." required></textarea>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Categoría de artesanía</label>
+          <label class="form-label" data-i18n="register.categoryLabel">Oficio (ej: tejido, cerámica, talla en madera...)</label>
           <select id="a-categoria" class="form-control" required>
-            <option value="">Cargando categorías...</option>
+            <option value="" data-i18n="common.loading">Cargando oficios...</option>
           </select>
         </div>
         <div class="form-group">
-          <label class="form-label">Región del Huila</label>
+          <label class="form-label" data-i18n="register.regionLabel">Municipio del Huila</label>
           <select id="a-region" class="form-control" required>
-            <option value="">Cargando regiones...</option>
+            <option value="" data-i18n="common.loading">Cargando municipios...</option>
           </select>
         </div>
-        <label class="checkbox-label form-group" id="declaracion-wrap">
-          <input type="checkbox" id="a-declaracion" required/>
-          <span>Declaro que la información proporcionada es verídica y que soy artesano del departamento del Huila.</span>
+        <div class="form-group">
+          <label class="form-label" data-i18n="register.galleryLabel">Galería fotográfica (máx 5 imágenes)</label>
+          <input type="file" id="a-galeria" class="form-control" multiple accept="image/*" required/>
+          <div class="form-hint" data-i18n="register.galleryHint">Muestra tus mejores obras</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="register.docFrontLabel">Cédula (Cara frontal)</label>
+          <input type="file" id="a-document-front" class="form-control" accept="image/*,application/pdf" required/>
+          <div class="form-hint" data-i18n="register.docFrontHint">Sube una foto legible del frente de tu documento</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="register.docBackLabel">Cédula (Cara posterior)</label>
+          <input type="file" id="a-document-back" class="form-control" accept="image/*,application/pdf" required/>
+          <div class="form-hint" data-i18n="register.docBackHint">Sube una foto legible del reverso de tu documento</div>
+        </div>
+        <label class="checkbox-label form-group" id="declaracion-wrap" style="align-items: flex-start; gap: 0.75rem; display: flex;">
+          <input type="checkbox" id="a-declaracion" style="margin-top: 0.25rem;" required/>
+          <span style="font-size: 0.85rem; line-height: 1.4;" data-i18n="register.declarationLabel">Declaro que la información suministrada es verídica y asumo toda responsabilidad legal sobre los datos proporcionados</span>
         </label>
-        <button type="submit" class="btn btn-primary btn-full" id="btn-artesano">Registrarme como artesano</button>
+        <button type="submit" class="btn btn-primary btn-full" id="btn-artesano" data-i18n="register.registerAsArtisanBtn">Registrarme como artesano</button>
       </form>
 
       <hr class="divider"/>
-      <p style="text-align:center;font-size:0.9rem;color:var(--color-muted);">¿Ya tienes cuenta? <a href="/login.html" style="color:var(--color-primary);font-weight:600;">Inicia sesión</a></p>
+      <p style="text-align:center;font-size:0.9rem;color:var(--color-muted);">
+        <span data-i18n="auth.hasAccount">¿Ya tienes cuenta?</span> <a href="/login.html" style="color:var(--color-primary);font-weight:600;" data-i18n="auth.loginHere">Inicia sesión</a>
+      </p>
     </div>
   </div>
 </div>
+<script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+<script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
+<script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
 <script src="/js/api.js"></script>
+<script src="/js/i18n.js"></script>
 <script src="/js/registro.js"></script>
 </body>
 </html>

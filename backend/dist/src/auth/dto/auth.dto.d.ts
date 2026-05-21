@@ -12,8 +12,9 @@ export declare class RefreshDto {
     refresh_token: string;
 }
 export declare class RegisterArtisanDto extends RegisterDto {
-    id_number: string;
+    id_number?: string;
     cultural_history: string;
     category_id: string;
     region_id: string;
+    truthfulness_declaration: string;
 }

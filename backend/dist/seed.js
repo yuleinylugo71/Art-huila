@@ -69,7 +69,12 @@ const seedDatabase = async () => {
     }
     console.log('✅ Categories seeded.');
     const regionRepo = dataSource.getRepository(region_entity_1.Region);
-    const regionNames = ['Neiva', 'Pitalito', 'Garzón', 'La Plata', 'Campoalegre', 'Rivera', 'Agrado', 'Isnos'];
+    const regionNames = [
+        'Acevedo', 'Agrado', 'Aipe', 'Algeciras', 'Altamira', 'Baraya', 'Campoalegre', 'Colombia', 'Elías', 'Garzón',
+        'Gigante', 'Guadalupe', 'Hobo', 'Íquira', 'Isnos', 'La Argentina', 'La Plata', 'Nátaga', 'Neiva', 'Oporapa',
+        'Paicol', 'Palermo', 'Palestina', 'Pital', 'Pitalito', 'Rivera', 'Saladoblanco', 'San Agustín', 'Santa María', 'Suaza',
+        'Tarqui', 'Tello', 'Teruel', 'Tesalia', 'Timaná', 'Villavieja', 'Yaguará'
+    ];
     const regions = [];
     for (const name of regionNames) {
         let reg = await regionRepo.findOneBy({ name });

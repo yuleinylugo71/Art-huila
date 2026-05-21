@@ -19,6 +19,7 @@ var ProductStatus;
 (function (ProductStatus) {
     ProductStatus["DRAFT"] = "draft";
     ProductStatus["PUBLISHED"] = "published";
+    ProductStatus["HIDDEN"] = "hidden";
 })(ProductStatus || (exports.ProductStatus = ProductStatus = {}));
 let Product = class Product {
     id;
@@ -32,6 +33,12 @@ let Product = class Product {
     cultural_origin;
     technique;
     significance;
+    short_description;
+    materials;
+    dimensions;
+    weight;
+    care_instructions;
+    is_handmade;
     status;
     meta_title;
     meta_description;
@@ -87,6 +94,30 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'text' }),
     __metadata("design:type", String)
 ], Product.prototype, "significance", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 150, nullable: true }),
+    __metadata("design:type", String)
+], Product.prototype, "short_description", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'text', nullable: true }),
+    __metadata("design:type", String)
+], Product.prototype, "materials", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', nullable: true }),
+    __metadata("design:type", String)
+], Product.prototype, "dimensions", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', nullable: true }),
+    __metadata("design:type", String)
+], Product.prototype, "weight", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'text', nullable: true }),
+    __metadata("design:type", String)
+], Product.prototype, "care_instructions", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'boolean', default: true, nullable: true }),
+    __metadata("design:type", Boolean)
+], Product.prototype, "is_handmade", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'enum', enum: ProductStatus, default: ProductStatus.DRAFT }),
     __metadata("design:type", String)

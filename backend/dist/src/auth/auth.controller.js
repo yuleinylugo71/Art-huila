@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
 const common_1 = require("@nestjs/common");
+const platform_express_1 = require("@nestjs/platform-express");
 const auth_service_1 = require("./auth.service");
 const auth_dto_1 = require("./dto/auth.dto");
 const jwt_auth_guard_1 = require("./guards/jwt-auth.guard");
@@ -29,8 +30,8 @@ let AuthController = class AuthController {
     registerBuyer(dto) {
         return this.authService.registerBuyer(dto);
     }
-    registerArtisan(dto) {
-        return this.authService.registerArtisan(dto);
+    registerArtisan(dto, files) {
+        return this.authService.registerArtisan(dto, files.id_document_front?.[0], files.id_document_back?.[0], files.gallery);
     }
     verifyEmail(token) {
         return this.authService.verifyEmail(token);
@@ -59,9 +60,15 @@ __decorate([
 ], AuthController.prototype, "registerBuyer", null);
 __decorate([
     (0, common_1.Post)('register/artesano'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileFieldsInterceptor)([
+        { name: 'id_document_front', maxCount: 1 },
+        { name: 'id_document_back', maxCount: 1 },
+        { name: 'gallery', maxCount: 5 },
+    ])),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.UploadedFiles)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_dto_1.RegisterArtisanDto]),
+    __metadata("design:paramtypes", [auth_dto_1.RegisterArtisanDto, Object]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "registerArtisan", null);
 __decorate([
@@ -87,7 +94,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "me", null);
 exports.AuthController = AuthController = __decorate([
-    (0, common_1.Controller)('api/v1/auth'),
+    (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService])
 ], AuthController);
 //# sourceMappingURL=auth.controller.js.map

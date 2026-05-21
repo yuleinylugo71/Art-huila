@@ -22,8 +22,11 @@ let CategoriesService = class CategoriesService {
     constructor(categoryRepo) {
         this.categoryRepo = categoryRepo;
     }
-    findAll() {
-        return this.categoryRepo.find({ order: { name: 'ASC' } });
+    async findAllWithCount() {
+        return this.categoryRepo.createQueryBuilder('category')
+            .loadRelationCountAndMap('category.count', 'category.products')
+            .orderBy('category.name', 'ASC')
+            .getMany();
     }
 };
 exports.CategoriesService = CategoriesService;

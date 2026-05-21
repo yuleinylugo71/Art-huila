@@ -17,6 +17,7 @@ export declare class AuthService {
     private readonly categoryRepo;
     private readonly regionRepo;
     constructor(usersService: UsersService, jwtService: JwtService, configService: ConfigService, mailService: MailService, artisanRepo: Repository<ArtisanProfile>, categoryRepo: Repository<Category>, regionRepo: Repository<Region>);
+    private uploadToCloudinary;
     private generateTokens;
     login(dto: LoginDto): Promise<{
         user: {
@@ -31,7 +32,7 @@ export declare class AuthService {
     registerBuyer(dto: RegisterDto): Promise<{
         message: string;
     }>;
-    registerArtisan(dto: RegisterArtisanDto): Promise<{
+    registerArtisan(dto: RegisterArtisanDto, idDocumentFrontFile?: Express.Multer.File, idDocumentBackFile?: Express.Multer.File, galleryFiles?: Express.Multer.File[]): Promise<{
         message: string;
     }>;
     verifyEmail(token: string): Promise<{

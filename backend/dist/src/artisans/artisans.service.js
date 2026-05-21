@@ -77,6 +77,14 @@ let ArtisansService = class ArtisansService {
             profile.region = { id: data.region_id };
         return this.profileRepo.save(profile);
     }
+    async findFeatured() {
+        return this.profileRepo.find({
+            where: { verification_status: artisan_profile_entity_1.VerificationStatus.VERIFIED },
+            relations: ['user', 'region'],
+            take: 3,
+            order: { created_at: 'DESC' },
+        });
+    }
 };
 exports.ArtisansService = ArtisansService;
 exports.ArtisansService = ArtisansService = __decorate([

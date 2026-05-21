@@ -64,9 +64,11 @@ class RegisterArtisanDto extends RegisterDto {
     cultural_history;
     category_id;
     region_id;
+    truthfulness_declaration;
 }
 exports.RegisterArtisanDto = RegisterArtisanDto;
 __decorate([
+    (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], RegisterArtisanDto.prototype, "id_number", void 0);
@@ -82,4 +84,8 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], RegisterArtisanDto.prototype, "region_id", void 0);
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], RegisterArtisanDto.prototype, "truthfulness_declaration", void 0);
 //# sourceMappingURL=auth.dto.js.map

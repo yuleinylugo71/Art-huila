@@ -16,7 +16,11 @@ export declare class AuthController {
     registerBuyer(dto: RegisterDto): Promise<{
         message: string;
     }>;
-    registerArtisan(dto: RegisterArtisanDto): Promise<{
+    registerArtisan(dto: RegisterArtisanDto, files: {
+        id_document_front?: Express.Multer.File[];
+        id_document_back?: Express.Multer.File[];
+        gallery?: Express.Multer.File[];
+    }): Promise<{
         message: string;
     }>;
     verifyEmail(token: string): Promise<{

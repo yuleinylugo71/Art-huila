@@ -1,22 +1,32 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Mi Panel — Art Huila</title>
-  <link rel="stylesheet" href="/css/styles.css"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="artisan.profileTitle">Mi Panel — Art Huila</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/dashboard-artesano.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 <div class="dashboard-layout">
   <aside class="sidebar">
-    <a href="/index.html" class="sidebar-brand">Art <span>Huila</span><br/><small style="font-size:0.7rem;opacity:0.5;font-family:Outfit,sans-serif;">Panel Artesano</small></a>
+    <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem;">
+      <a href="index.html" class="nav-arrow" title="Ir al inicio">←</a>
+      <a href="index.html" class="sidebar-brand">Art <span>Huila</span><br/><small style="font-size:0.7rem;opacity:0.5;font-family:Outfit,sans-serif;">Panel Artesano</small></a>
+    </div>
+    <div class="lang-switcher" style="margin-bottom:1rem;padding-left:0.5rem;">
+      <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+      <span>|</span>
+      <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+    </div>
     <ul class="sidebar-nav">
-      <li><a href="#" onclick="showSection('mis-productos')" class="active">📦 Mis productos</a></li>
-      <li><a href="#" onclick="showSection('mis-ventas')">💰 Mis ventas</a></li>
-      <li><a href="#" onclick="showSection('nuevo-producto')">➕ Publicar producto</a></li>
-      <li><a href="#" onclick="showSection('mi-perfil')">👤 Mi perfil</a></li>
-      <li><a href="/catalogo.html">🏺 Ver catálogo</a></li>
-      <li><a href="#" onclick="Auth.logout()">🚪 Cerrar sesión</a></li>
+      <li><a href="#" onclick="showSection('mis-productos')" class="active"><i class="fa-solid fa-box"></i> Mis productos</a></li>
+      <li><a href="#" onclick="showSection('mis-ventas')"><i class="fa-solid fa-sack-dollar"></i> Mis ventas</a></li>
+      <li><a href="#" onclick="showSection('nuevo-producto')"><i class="fa-solid fa-plus"></i> Publicar producto</a></li>
+      <li><a href="#" onclick="showSection('mi-perfil')"><i class="fa-solid fa-user"></i> Mi perfil</a></li>
+      <li><a href="catalogo.html"><i class="fa-solid fa-vase"></i> Ver catálogo</a></li>
+      <li><a href="#" onclick="Auth.logout()"><i class="fa-solid fa-right-from-bracket"></i> <span data-i18n="auth.logout">Cerrar sesión</span></a></li>
     </ul>
   </aside>
 
@@ -28,12 +38,15 @@
 
     <!-- Alert if not verified -->
     <div id="not-verified-alert" class="hidden" style="background:#fef9c3;border:1px solid #fde047;border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.5rem;color:#854d0e;">
-      ⏳ Tu perfil está <strong>pendiente de aprobación</strong> por el equipo de Art Huila. Recibirás un correo cuando sea aprobado.
+      <i class="fa-solid fa-hourglass-half"></i> Tu perfil está <strong>pendiente de aprobación</strong> por el equipo de Art Huila. Recibirás un correo cuando sea aprobado.
     </div>
 
     <!-- Mis Ventas -->
     <section id="section-mis-ventas" class="hidden">
-      <h2 style="font-family:'Crimson Pro',serif;font-size:1.5rem;margin-bottom:1.5rem;">Mis ventas</h2>
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
+        <a href="#" onclick="showSection('mis-productos')" class="nav-arrow" style="background:var(--color-bg2);color:var(--color-text);border:1px solid var(--color-border);">←</a>
+        <h2 style="font-family:'Crimson Pro',serif;font-size:1.5rem;margin:0;">Mis ventas</h2>
+      </div>
       <div class="card">
         <table class="table" style="width:100%;">
           <thead>
@@ -41,7 +54,7 @@
               <th>Fecha</th>
               <th>Producto</th>
               <th>Cliente</th>
-              <th>Cantidad</th>
+              <th>Cant.</th>
               <th>Total</th>
               <th>Estado</th>
             </tr>
@@ -64,7 +77,10 @@
 
     <!-- Nuevo Producto -->
     <section id="section-nuevo-producto" class="hidden">
-      <h2 style="font-family:'Crimson Pro',serif;font-size:1.5rem;margin-bottom:1.5rem;">Publicar nuevo producto</h2>
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
+        <a href="#" onclick="showSection('mis-productos')" class="nav-arrow" style="background:var(--color-bg2);color:var(--color-text);border:1px solid var(--color-border);">←</a>
+        <h2 style="font-family:'Crimson Pro',serif;font-size:1.5rem;margin:0;">Publicar nuevo producto</h2>
+      </div>
       <div id="preview-box" class="hidden card card-body mb-3" style="background:#fff5ee;"></div>
       <form id="product-form">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
@@ -85,8 +101,34 @@
             <select id="p-category" class="form-control" required><option value="">Cargando...</option></select>
           </div>
           <div class="form-group">
-            <label class="form-label">Región *</label>
+            <label class="form-label">Municipio *</label>
             <select id="p-region" class="form-control" required><option value="">Cargando...</option></select>
+          </div>
+          <div class="form-group" style="grid-column:1/-1;">
+            <label class="form-label">Descripción breve (gancho)</label>
+            <input type="text" id="p-short-desc" class="form-control" maxlength="150" placeholder="Ej: Pieza única tejida a mano que cuenta la historia de la tierra..."/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Materiales usados</label>
+            <input type="text" id="p-materials" class="form-control" placeholder="Ej: Lana de oveja, tintes naturales"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Medidas / Tamaño</label>
+            <input type="text" id="p-dimensions" class="form-control" placeholder="Ej: 30cm x 20cm"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Peso aproximado</label>
+            <input type="text" id="p-weight" class="form-control" placeholder="Ej: 500g"/>
+          </div>
+          <div class="form-group">
+            <label class="checkbox-label" style="display:flex;align-items:center;gap:0.5rem;margin-top:2rem;">
+              <input type="checkbox" id="p-handmade" checked/>
+              ¿Es hecho a mano?
+            </label>
+          </div>
+          <div class="form-group" style="grid-column:1/-1;">
+            <label class="form-label">Cuidado y mantenimiento</label>
+            <textarea id="p-care" class="form-control" placeholder="Ej: Lavar a mano con agua fría y secar a la sombra..."></textarea>
           </div>
           <div class="form-group" style="grid-column:1/-1;">
             <label class="form-label">Origen cultural *</label>
@@ -104,7 +146,7 @@
             <label class="form-label">Imágenes del producto (máx. 10)</label>
             <div class="image-uploader" id="img-uploader" onclick="document.getElementById('img-input').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondrop="handleDrop(event)">
               <input type="file" id="img-input" accept="image/*" multiple onchange="handleFiles(this.files)"/>
-              <div style="font-size:2rem;margin-bottom:0.5rem;">📸</div>
+              <div style="font-size:2rem;margin-bottom:0.5rem;"><i class="fa-solid fa-camera-retro"></i></div>
               <div style="font-weight:500;">Haz clic o arrastra imágenes aquí</div>
               <div style="font-size:0.8rem;color:var(--color-muted);">PNG, JPG, WEBP — máximo 10 imágenes</div>
             </div>
@@ -112,50 +154,65 @@
           </div>
         </div>
         <div style="display:flex;gap:1rem;margin-top:1rem;">
-          <button type="button" class="btn btn-outline" onclick="previewProduct()">👁️ Vista previa</button>
-          <button type="submit" class="btn btn-primary" id="btn-publish">✅ Publicar producto</button>
+          <button type="button" class="btn btn-outline" onclick="previewProduct()"><i class="fa-solid fa-eye"></i> Vista previa</button>
+          <button type="submit" class="btn btn-primary" id="btn-publish"><i class="fa-solid fa-check"></i> Publicar producto</button>
         </div>
       </form>
     </section>
 
     <!-- Mi Perfil -->
     <section id="section-mi-perfil" class="hidden">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
+        <a href="#" onclick="showSection('mis-productos')" class="nav-arrow" style="background:var(--color-bg2);color:var(--color-text);border:1px solid var(--color-border);">←</a>
+        <div style="flex:1;display:flex;justify-content:space-between;align-items:center;">
           <h2 style="font-family:'Crimson Pro',serif;font-size:1.5rem;margin:0;">Mi perfil</h2>
-          <button class="btn btn-outline btn-sm" id="btn-edit-profile" onclick="enableProfileEdit()">✏️ Editar perfil</button>
+          <button class="btn btn-outline btn-sm" id="btn-edit-profile" onclick="enableProfileEdit()"><i class="fa-solid fa-pen"></i> Editar perfil</button>
         </div>
-      <div id="profile-info">
-        <form id="profile-form" class="card card-body" style="max-width:600px;">
-          <div class="form-group" style="text-align: center;">
-            <div id="avatar-preview" class="artisan-avatar" style="width:100px; height:100px; font-size:3rem; margin:0 auto 1rem;">👤</div>
-            <div id="avatar-edit-controls" class="hidden">
-              <input type="file" id="avatar-input" accept="image/*" class="form-control" style="max-width: 300px; margin: 0 auto;"/>
-              <button type="button" class="btn btn-outline btn-sm mt-1" onclick="uploadAvatar()">Subir nueva foto de perfil</button>
-            </div>
+      </div>
+      <form id="profile-form" class="card card-body" style="max-width:600px;margin:0 auto;">
+        <div class="form-group" style="text-align:center;margin-bottom:0.5rem;">
+          <div id="avatar-preview" class="artisan-avatar" style="width:100px;height:100px;font-size:3rem;margin:0 auto 0.5rem;display:flex;align-items:center;justify-content:center;background:var(--color-bg2);border-radius:50%;border:1px solid var(--color-border);overflow:hidden;"><i class="fa-solid fa-user"></i></div>
+          <div id="avatar-edit-controls" class="hidden">
+            <input type="file" id="avatar-input" accept="image/*" class="form-control" style="max-width:300px;margin:0 auto;"/>
+            <button type="button" class="btn btn-outline btn-sm mt-1" onclick="uploadAvatar()">Subir nueva foto</button>
           </div>
-          <div class="form-group">
-            <label class="form-label">Historia y Tradición</label>
-            <textarea id="profile-history" class="form-control" rows="5" placeholder="Cuéntanos sobre tu taller, tu historia y tu arte..." disabled></textarea>
-          </div>
-          <div class="form-group hidden" id="profile-save-controls">
-            <button type="button" class="btn btn-primary" onclick="saveProfile()">✅ Guardar perfil</button>
-            <button type="button" class="btn btn-ghost" onclick="disableProfileEdit()">Cancelar</button>
-          </div>
-        </form>
-        <div class="card card-body mt-3" style="max-width:600px;">
-          <h3 style="font-family:'Crimson Pro',serif;font-size:1.3rem;margin-bottom:1rem;">Galería del Taller</h3>
-          <div id="gallery-edit-controls" class="hidden">
-            <p class="text-muted" style="font-size:0.9rem;margin-bottom:1rem;">Sube fotos de tu espacio de trabajo o piezas destacadas.</p>
-            <input type="file" id="gallery-input" accept="image/*" multiple class="form-control mb-1"/>
-            <button type="button" class="btn btn-outline" onclick="uploadGallery()">Subir fotos a galería</button>
-          </div>
-          <div id="gallery-previews" style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem;"></div>
         </div>
+
+        <div style="text-align:center;margin-bottom:2rem;">
+          <h3 id="profile-name" style="font-family:'Crimson Pro',serif;font-size:1.5rem;margin:0;">Cargando...</h3>
+          <p id="profile-meta" style="color:var(--color-muted);font-size:0.9rem;margin-top:0.25rem;">Cargando...</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" style="font-weight:600;font-size:1.1rem;margin-bottom:0.75rem;">Historia y Tradición</label>
+          <div id="profile-history-text" style="line-height:1.6;color:var(--color-text);background:var(--color-bg2);padding:1rem;border-radius:var(--radius);white-space:pre-wrap;">Cargando historia...</div>
+          <textarea id="profile-history" class="form-control hidden" rows="5" placeholder="Cuéntanos sobre tu taller, tu historia y tu arte..."></textarea>
+        </div>
+        
+        <div class="form-group hidden" id="profile-save-controls" style="display:flex;justify-content:center;gap:1rem;margin-top:2rem;">
+          <button type="button" class="btn btn-primary" onclick="saveProfile()"><i class="fa-solid fa-check"></i> Guardar perfil</button>
+          <button type="button" class="btn btn-ghost" onclick="disableProfileEdit()">Cancelar</button>
+        </div>
+      </form>
+
+      <div class="card card-body mt-3" style="max-width:600px;margin:1rem auto 0;">
+        <h3 style="font-family:'Crimson Pro',serif;font-size:1.3rem;margin-bottom:1rem;">Galería del Taller</h3>
+        <div id="gallery-edit-controls" class="hidden">
+          <p class="text-muted" style="font-size:0.9rem;margin-bottom:1rem;">Sube fotos de tu espacio de trabajo.</p>
+          <input type="file" id="gallery-input" accept="image/*" multiple class="form-control mb-1"/>
+          <button type="button" class="btn btn-outline" onclick="uploadGallery()">Subir fotos</button>
+        </div>
+        <div id="gallery-previews" style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:1rem;"></div>
       </div>
     </section>
   </main>
 </div>
+
+<script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+<script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
+<script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
 <script src="/js/api.js"></script>
+<script src="/js/i18n.js"></script>
 <script src="/js/dashboard-artesano.js"></script>
 </body>
 </html>

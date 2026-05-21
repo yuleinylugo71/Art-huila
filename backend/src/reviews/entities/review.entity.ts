@@ -13,11 +13,23 @@ export class Review {
   @Column({ type: 'text' })
   comment: string;
 
-  @ManyToOne(() => Product)
+  @ManyToOne(() => Product, { onDelete: 'CASCADE' })
   product: Product;
 
   @ManyToOne(() => User)
   user: User;
+
+  @Column({ default: false })
+  is_reported: boolean;
+
+  @Column({ type: 'text', nullable: true })
+  report_reason: string | null;
+
+  @Column({ type: 'text', nullable: true })
+  artisan_response: string | null;
+
+  @Column({ type: 'timestamp', nullable: true })
+  responded_at: Date | null;
 
   @CreateDateColumn()
   created_at: Date;

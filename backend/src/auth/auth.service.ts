@@ -14,9 +14,12 @@ import { LoginDto, RegisterDto, RegisterArtisanDto } from './dto/auth.dto';
 import { UserRole } from '../users/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { v2 as cloudinary } from 'cloudinary';
+import { Readable } from 'stream';
 import { ArtisanProfile, VerificationStatus } from '../artisans/entities/artisan-profile.entity';
 import { Category } from '../categories/entities/category.entity';
 import { Region } from '../regions/entities/region.entity';
+import { ArtisanGallery } from '../artisans/entities/artisan-gallery.entity';
 
 @Injectable()
 export class AuthService {
@@ -31,7 +34,29 @@ export class AuthService {
     private readonly categoryRepo: Repository<Category>,
     @InjectRepository(Region)
     private readonly regionRepo: Repository<Region>,
-  ) {}
+  ) {
+    cloudinary.config({
+      cloud_name: this.configService.get<string>('CLOUDINARY_CLOUD_NAME'),
+      api_key: this.configService.get<string>('CLOUDINARY_API_KEY'),
+      api_secret: this.configService.get<string>('CLOUDINARY_API_SECRET'),
+    });
+  }
+
+  private async uploadToCloudinary(file: Express.Multer.File, folder: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const upload = cloudinary.uploader.upload_stream(
+        { folder, resource_type: 'auto' },
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result);
+        },
+      );
+      const readable = new Readable();
+      readable.push(file.buffer);
+      readable.push(null);
+      readable.pipe(upload);
+    });
+  }
 
   private generateTokens(userId: string, role: string) {
     const payload = { sub: userId, role };
@@ -78,27 +103,24 @@ export class AuthService {
 
   async registerBuyer(dto: RegisterDto) {
     const passwordHash = await bcrypt.hash(dto.password, 10);
-    const verificationToken = crypto.randomBytes(32).toString('hex');
-    const expires = new Date();
-    expires.setHours(expires.getHours() + 48);
 
-    const user = await this.usersService.create({
+    await this.usersService.create({
       full_name: dto.full_name,
       email: dto.email,
       password_hash: passwordHash,
       role: UserRole.BUYER,
-      email_verified: false,
-      email_verification_token: verificationToken,
-      email_token_expires_at: expires,
+      email_verified: true,
     });
 
-    const frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'http://localhost:5173';
-    await this.mailService.sendVerificationEmail(user.email, user.full_name, verificationToken, frontendUrl);
-
-    return { message: 'Registro exitoso. Revisa tu email para verificar tu cuenta.' };
+    return { message: 'Registro exitoso. ¡Bienvenido!' };
   }
 
-  async registerArtisan(dto: RegisterArtisanDto) {
+  async registerArtisan(
+    dto: RegisterArtisanDto,
+    idDocumentFrontFile?: Express.Multer.File,
+    idDocumentBackFile?: Express.Multer.File,
+    galleryFiles?: Express.Multer.File[],
+  ) {
     const passwordHash = await bcrypt.hash(dto.password, 10);
     const verificationToken = crypto.randomBytes(32).toString('hex');
     const expires = new Date();
@@ -108,6 +130,19 @@ export class AuthService {
     if (!category) throw new BadRequestException('Categoría no válida');
     const region = await this.regionRepo.findOneBy({ id: dto.region_id });
     if (!region) throw new BadRequestException('Región no válida');
+
+    // Upload ID document if exists
+    let idDocumentFrontUrl = null;
+    if (idDocumentFrontFile) {
+      const upload = await this.uploadToCloudinary(idDocumentFrontFile, 'artisans/documents');
+      idDocumentFrontUrl = upload.secure_url;
+    }
+
+    let idDocumentBackUrl = null;
+    if (idDocumentBackFile) {
+      const upload = await this.uploadToCloudinary(idDocumentBackFile, 'artisans/documents');
+      idDocumentBackUrl = upload.secure_url;
+    }
 
     const user = await this.usersService.create({
       full_name: dto.full_name,
@@ -121,14 +156,28 @@ export class AuthService {
 
     const profile = this.artisanRepo.create({
       user,
-      id_number: dto.id_number,
+      id_number: dto.email, // Use email as fallback for unique id_number if not provided
       cultural_history: dto.cultural_history,
       category,
       region,
       verification_status: VerificationStatus.PENDING,
-      truthfulness_declaration: true,
+      truthfulness_declaration: dto.truthfulness_declaration === 'true',
+      id_document_front_url: idDocumentFrontUrl,
+      id_document_back_url: idDocumentBackUrl,
     });
-    await this.artisanRepo.save(profile);
+    const savedProfile = await this.artisanRepo.save(profile);
+
+    // Upload gallery images
+    if (galleryFiles && galleryFiles.length > 0) {
+      for (const file of galleryFiles) {
+        const upload = await this.uploadToCloudinary(file, 'artisans/gallery');
+        await this.artisanRepo.manager.save(ArtisanGallery, {
+          url: upload.secure_url,
+          public_id: upload.public_id,
+          profile: savedProfile,
+        });
+      }
+    }
 
     const frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'http://localhost:5173';
     await this.mailService.sendVerificationEmail(user.email, user.full_name, verificationToken, frontendUrl);

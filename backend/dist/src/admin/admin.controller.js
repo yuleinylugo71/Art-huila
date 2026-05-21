@@ -35,6 +35,30 @@ let AdminController = class AdminController {
     suspend(id, user) {
         return this.adminService.suspendArtisan(user.id, id);
     }
+    getOrders(start, end) {
+        return this.adminService.getAllOrders(start, end);
+    }
+    deleteReview(id, reason, user) {
+        return this.adminService.deleteReview(user.id, id, reason);
+    }
+    getAuditLogs() {
+        return this.adminService.getAuditLogs();
+    }
+    getProducts() {
+        return this.adminService.getAllProducts();
+    }
+    hideProduct(id, user) {
+        return this.adminService.hideProduct(user.id, id);
+    }
+    deleteProduct(id, user) {
+        return this.adminService.deleteProduct(user.id, id);
+    }
+    getReportedReviews() {
+        return this.adminService.getReportedReviews();
+    }
+    keepReview(id, user) {
+        return this.adminService.keepReview(user.id, id);
+    }
 };
 exports.AdminController = AdminController;
 __decorate([
@@ -69,8 +93,67 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], AdminController.prototype, "suspend", null);
+__decorate([
+    (0, common_1.Get)('orders'),
+    __param(0, (0, common_1.Query)('start')),
+    __param(1, (0, common_1.Query)('end')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "getOrders", null);
+__decorate([
+    (0, common_1.Delete)('reviews/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)('reason')),
+    __param(2, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "deleteReview", null);
+__decorate([
+    (0, common_1.Get)('audit'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "getAuditLogs", null);
+__decorate([
+    (0, common_1.Get)('products'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "getProducts", null);
+__decorate([
+    (0, common_1.Patch)('products/:id/hide'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "hideProduct", null);
+__decorate([
+    (0, common_1.Delete)('products/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "deleteProduct", null);
+__decorate([
+    (0, common_1.Get)('reviews/reported'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "getReportedReviews", null);
+__decorate([
+    (0, common_1.Patch)('reviews/:id/keep'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "keepReview", null);
 exports.AdminController = AdminController = __decorate([
-    (0, common_1.Controller)('api/v1/admin'),
+    (0, common_1.Controller)('admin'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, jwt_auth_guard_1.RolesGuard),
     (0, roles_decorator_1.Roles)('admin'),
     __metadata("design:paramtypes", [admin_service_1.AdminService])

@@ -58,6 +58,11 @@ const mail_module_1 = require("./mail/mail.module");
 const admin_module_1 = require("./admin/admin.module");
 const audit_module_1 = require("./audit/audit.module");
 const orders_module_1 = require("./orders/orders.module");
+const reviews_module_1 = require("./reviews/reviews.module");
+const payments_module_1 = require("./payments/payments.module");
+const sitemap_controller_1 = require("./sitemap/sitemap.controller");
+const stats_controller_1 = require("./stats.controller");
+const logistics_module_1 = require("./logistics/logistics.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -73,7 +78,8 @@ exports.AppModule = AppModule = __decorate([
                     CLOUDINARY_CLOUD_NAME: Joi.string().required(),
                     CLOUDINARY_API_KEY: Joi.string().required(),
                     CLOUDINARY_API_SECRET: Joi.string().required(),
-                    RESEND_API_KEY: Joi.string().required(),
+                    MAIL_USER: Joi.string().required(),
+                    MAIL_PASS: Joi.string().required(),
                 }),
             }),
             typeorm_1.TypeOrmModule.forRootAsync({
@@ -98,8 +104,11 @@ exports.AppModule = AppModule = __decorate([
             admin_module_1.AdminModule,
             audit_module_1.AuditModule,
             orders_module_1.OrdersModule,
+            reviews_module_1.ReviewsModule,
+            payments_module_1.PaymentsModule,
+            logistics_module_1.LogisticsModule,
         ],
-        controllers: [app_controller_1.AppController],
+        controllers: [app_controller_1.AppController, sitemap_controller_1.SitemapController, stats_controller_1.StatsController],
         providers: [app_service_1.AppService],
     })
 ], AppModule);

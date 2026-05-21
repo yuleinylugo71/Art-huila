@@ -1,27 +1,45 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title id="page-title">Producto — Art Huila</title>
-  <link rel="stylesheet" href="/css/styles.css"/>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/producto.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
+
 <nav class="navbar">
-  <a href="/index.html" class="navbar-brand">Art <span>Huila</span></a>
+  <div style="display:flex;align-items:center;gap:0.75rem;">
+    <a href="catalogo.html" class="nav-back" title="Volver al catálogo">←</a>
+    <a href="index.html" class="navbar-brand">Art <span>Huila</span></a>
+  </div>
   <ul class="navbar-nav">
-    <li><a href="/catalogo.html">← Catálogo</a></li>
-    <li><a href="/carrito.html" id="nav-cart-count" style="font-weight: bold; color: var(--color-primary);">Carrito (0)</a></li>
+    <li id="auth-links"></li>
+    <li><a href="carrito.html" style="font-weight:bold;color:var(--color-primary);"><i class="fa-solid fa-cart-shopping"></i> <span id="cart-count">0</span></a></li>
   </ul>
+  <div class="lang-switcher">
+    <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+    <span>|</span>
+    <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+  </div>
 </nav>
 
-<div id="product-container" class="container section">
-  <div class="spinner"></div>
+<div class="container section" id="product-container" style="min-height: 60vh;">
+  <!-- JS Hidratación -->
 </div>
 
-<footer><div class="brand">Art <span>Huila</span></div></footer>
+<footer>
+  <div class="brand">Art <span>Huila</span></div>
+  <p style="font-size:0.85rem;margin-top:0.5rem;">&copy; 2026 Art Huila</p>
+</footer>
 
+<script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+<script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
+<script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
 <script src="/js/api.js"></script>
+<script src="/js/i18n.js"></script>
 <script src="/js/producto.js"></script>
 </body>
 </html>

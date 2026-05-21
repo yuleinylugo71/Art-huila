@@ -7,6 +7,9 @@ import { ArtisansModule } from '../artisans/artisans.module';
 import { MailModule } from '../mail/mail.module';
 import { AuditModule } from '../audit/audit.module';
 import { UsersModule } from '../users/users.module';
+import { OrdersModule } from '../orders/orders.module';
+import { ProductsModule } from '../products/products.module';
+import { ReviewsModule } from '../reviews/reviews.module';
 
 @Module({
   imports: [
@@ -15,6 +18,9 @@ import { UsersModule } from '../users/users.module';
     MailModule,
     AuditModule,
     UsersModule,
+    OrdersModule,
+    ProductsModule,
+    ReviewsModule,
   ],
   controllers: [AdminController],
   providers: [AdminService],
