@@ -31,6 +31,8 @@ export class RefreshDto {
   refresh_token: string;
 }
 
+export class LogoutDto extends RefreshDto {}
+
 export class RegisterArtisanDto extends RegisterDto {
   @IsOptional()
   @IsString()

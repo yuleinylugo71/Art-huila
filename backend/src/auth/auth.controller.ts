@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Query, UseGuards, UseInterceptors, UploadedFiles } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { AuthService } from './auth.service';
-import { LoginDto, RefreshDto, RegisterArtisanDto, RegisterDto } from './dto/auth.dto';
+import { LoginDto, LogoutDto, RefreshDto, RegisterArtisanDto, RegisterDto } from './dto/auth.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
 
@@ -42,6 +42,11 @@ export class AuthController {
   @Post('refresh')
   refresh(@Body() dto: RefreshDto) {
     return this.authService.refresh(dto.refresh_token);
+  }
+
+  @Post('logout')
+  logout(@Body() dto: LogoutDto) {
+    return this.authService.logout(dto.refresh_token);
   }
 
   @UseGuards(JwtAuthGuard)
