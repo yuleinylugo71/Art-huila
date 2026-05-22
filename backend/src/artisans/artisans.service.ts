@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ArtisanProfile, VerificationStatus } from './entities/artisan-profile.entity';
+import { ArtisanProfile, ArtisanStatus } from './entities/artisan-profile.entity';
 import { ArtisanGallery } from './entities/artisan-gallery.entity';
 
 @Injectable()
@@ -14,26 +14,34 @@ export class ArtisansService {
   ) {}
 
   async findByUserId(userId: string): Promise<ArtisanProfile | null> {
-    return this.profileRepo.findOne({
+    const profile = await this.profileRepo.findOne({
       where: { user: { id: userId } },
       relations: ['user', 'category', 'region', 'gallery'],
     });
+    if (profile) (profile as any).status = profile.verification_status;
+    return profile;
   }
 
   async findById(id: string): Promise<ArtisanProfile | null> {
-    return this.profileRepo.findOne({
+    const profile = await this.profileRepo.findOne({
       where: { id },
       relations: ['user', 'category', 'region', 'gallery'],
     });
+    if (profile) (profile as any).status = profile.verification_status;
+    return profile;
   }
 
   async findAll(status?: string) {
     const where: any = {};
-    if (status) where.verification_status = status as VerificationStatus;
-    return this.profileRepo.find({
+    if (status) where.verification_status = status as ArtisanStatus;
+    const profiles = await this.profileRepo.find({
       where,
       relations: ['user', 'category', 'region'],
       order: { created_at: 'DESC' },
+    });
+    return profiles.map((profile) => {
+      (profile as any).status = profile.verification_status;
+      return profile;
     });
   }
 
@@ -44,7 +52,7 @@ export class ArtisansService {
     return this.galleryRepo.save(img);
   }
 
-  async updateStatus(id: string, status: VerificationStatus, rejectionReason?: string) {
+  async updateStatus(id: string, status: ArtisanStatus, rejectionReason?: string) {
     const profile = await this.profileRepo.findOneBy({ id });
     if (!profile) throw new NotFoundException('Perfil no encontrado');
     profile.verification_status = status;
@@ -66,7 +74,7 @@ export class ArtisansService {
 
   async findFeatured() {
     return this.profileRepo.find({
-      where: { verification_status: VerificationStatus.VERIFIED },
+      where: { verification_status: ArtisanStatus.VERIFIED },
       relations: ['user', 'region'],
       take: 3,
       order: { created_at: 'DESC' },

@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { Product, ProductStatus } from './entities/product.entity';
 import { ProductImage } from './entities/product-image.entity';
 import { ArtisansService } from '../artisans/artisans.service';
-import { VerificationStatus } from '../artisans/entities/artisan-profile.entity';
+import { ArtisanStatus } from '../artisans/entities/artisan-profile.entity';
 
 function slugify(text: string): string {
   return text
@@ -28,8 +28,11 @@ export class ProductsService {
   async create(userId: string, data: any) {
     const profile = await this.artisansService.findByUserId(userId);
     if (!profile) throw new ForbiddenException('Solo artesanos pueden crear productos');
-    if (profile.verification_status !== VerificationStatus.VERIFIED) {
-      throw new ForbiddenException('Tu cuenta aún no está verificada por el administrador');
+    if (profile.verification_status === ArtisanStatus.SUSPENDED) {
+      throw new ForbiddenException('Tu cuenta se encuentra suspendida y no puede publicar productos');
+    }
+    if (profile.verification_status === ArtisanStatus.PENDING) {
+      throw new ForbiddenException('Debes confirmar tu correo antes de publicar productos');
     }
 
     let slug = slugify(data.name!);
@@ -57,7 +60,8 @@ export class ProductsService {
       where: { slug },
       relations: ['artisan', 'artisan.user', 'artisan.region', 'category', 'region', 'images'],
     });
-    if (!product) throw new NotFoundException('Producto no encontrado');
+    if (!product || product.artisan.verification_status === ArtisanStatus.SUSPENDED) throw new NotFoundException('Producto no encontrado');
+    (product.artisan as any).status = product.artisan.verification_status;
     return product;
   }
 
@@ -148,7 +152,8 @@ export class ProductsService {
       .leftJoinAndSelect('product.artisan', 'artisan')
       .leftJoinAndSelect('artisan.user', 'user')
       .leftJoinAndSelect('product.images', 'images')
-      .where('product.status = :status', { status: ProductStatus.PUBLISHED });
+      .where('product.status = :status', { status: ProductStatus.PUBLISHED })
+      .andWhere('artisan.verification_status != :suspended', { suspended: ArtisanStatus.SUSPENDED });
 
     if (query) {
       qb.andWhere('(product.name ILIKE :q OR product.cultural_origin ILIKE :q)', { q: `%${query}%` });
@@ -162,7 +167,11 @@ export class ProductsService {
       qb.take(limit);
     }
 
-    return qb.getMany();
+    const products = await qb.getMany();
+    return products.map((product) => {
+      (product.artisan as any).status = product.artisan.verification_status;
+      return product;
+    });
   }
 
   async getCount() {

@@ -20,14 +20,29 @@ export class AdminController {
     return this.adminService.approveArtisan(user.id, id);
   }
 
+  @Patch('artesanos/:id/verificar')
+  verificarArtesano(@Param('id') id: string, @Body('reason') reason: string, @CurrentUser() user: any) {
+    return this.adminService.verifyArtisan(user.id, id, reason);
+  }
+
   @Patch('artisans/:id/reject')
   reject(@Param('id') id: string, @Body('reason') reason: string, @CurrentUser() user: any) {
     return this.adminService.rejectArtisan(user.id, id, reason);
   }
 
   @Patch('artisans/:id/suspend')
-  suspend(@Param('id') id: string, @CurrentUser() user: any) {
-    return this.adminService.suspendArtisan(user.id, id);
+  suspend(@Param('id') id: string, @Body('reason') reason: string, @CurrentUser() user: any) {
+    return this.adminService.suspendArtisan(user.id, id, reason);
+  }
+
+  @Patch('artesanos/:id/suspender')
+  suspenderArtesano(@Param('id') id: string, @Body('reason') reason: string, @CurrentUser() user: any) {
+    return this.adminService.suspendArtisan(user.id, id, reason);
+  }
+
+  @Get('artesanos/:id/auditoria')
+  getArtisanAudit(@Param('id') id: string) {
+    return this.adminService.getArtisanAudit(id);
   }
 
   @Get('orders')

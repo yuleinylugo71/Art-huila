@@ -4,12 +4,14 @@ import { Region } from '../../regions/entities/region.entity';
 import { Category } from '../../categories/entities/category.entity';
 import { ArtisanGallery } from './artisan-gallery.entity';
 
-export enum VerificationStatus {
+export enum ArtisanStatus {
   PENDING = 'pending',
+  ACTIVE = 'active',
   VERIFIED = 'verified',
-  REJECTED = 'rejected',
   SUSPENDED = 'suspended',
 }
+
+export { ArtisanStatus as VerificationStatus };
 
 @Entity('artisan_profiles')
 export class ArtisanProfile {
@@ -34,8 +36,8 @@ export class ArtisanProfile {
   @JoinColumn()
   region: Region;
 
-  @Column({ type: 'enum', enum: VerificationStatus, default: VerificationStatus.PENDING })
-  verification_status: VerificationStatus;
+  @Column({ type: 'enum', enum: ArtisanStatus, default: ArtisanStatus.PENDING })
+  verification_status: ArtisanStatus;
 
   @Column({ type: 'text', nullable: true })
   rejection_reason: string;

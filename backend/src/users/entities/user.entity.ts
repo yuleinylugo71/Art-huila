@@ -34,6 +34,9 @@ export class User {
   @Column({ default: false })
   email_verified: boolean;
 
+  @Column({ type: 'timestamp', nullable: true })
+  verifiedAt: Date | null;
+
   @Column({ nullable: true })
   email_verification_token: string;
 

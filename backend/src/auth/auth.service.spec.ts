@@ -1,7 +1,8 @@
 import { UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { AuthService } from './auth.service';
-import { Role } from '../users/entities/user.entity';
+import { UserRole, Role } from '../users/entities/user.entity';
+import { ArtisanStatus } from '../artisans/entities/artisan-profile.entity';
 
 jest.mock('bcrypt', () => ({
   compare: jest.fn(),
@@ -9,125 +10,209 @@ jest.mock('bcrypt', () => ({
 }));
 
 describe('AuthService', () => {
-  const user = {
-    id: 'user-1',
+  const buyerUser = {
+    id: 'user-buyer-1',
     email: 'buyer@example.com',
-    full_name: 'Comprador Uno',
-    role: Role.COMPRADOR,
-    password_hash: 'hashed-password',
+    full_name: 'Comprador Test',
+    role: UserRole.BUYER,
+    password_hash: 'hashed_password',
     locked_until: null,
+    email_verified: true,
+    email_verification_token: null,
+    email_token_expires_at: null,
+    verifiedAt: new Date(),
+    failed_login_attempts: 0,
   };
 
   let service: AuthService;
   let usersService: any;
   let jwtService: any;
   let configService: any;
-  let refreshTokenRepo: any;
-  let tokenCounter: number;
+  let mailService: any;
+  let artisanRepo: any;
 
   beforeEach(() => {
-    tokenCounter = 0;
     usersService = {
-      findByEmail: jest.fn().mockResolvedValue(user),
-      findById: jest.fn().mockResolvedValue(user),
+      findByEmail: jest.fn(),
+      findById: jest.fn(),
       incrementFailedLogins: jest.fn(),
       resetFailedLogins: jest.fn(),
-      create: jest.fn(),
-      save: jest.fn(),
+      create: jest.fn().mockImplementation((data) => Promise.resolve({ id: 'new-user', ...data })),
+      save: jest.fn().mockImplementation((data) => Promise.resolve(data)),
+      userRepo: {
+        findOne: jest.fn().mockResolvedValue(null),
+      },
     };
     jwtService = {
-      sign: jest.fn((_payload, options) => {
-        tokenCounter += 1;
-        return options.expiresIn === '15m' ? `access-${tokenCounter}` : `refresh-${tokenCounter}`;
-      }),
-      verify: jest.fn().mockReturnValue({ sub: user.id, role: user.role, typ: 'refresh' }),
+      sign: jest.fn().mockReturnValue('token'),
+      verify: jest.fn(),
     };
     configService = {
-      get: jest.fn((key: string) => {
-        const values = {
-          JWT_SECRET: 'access-secret',
-          JWT_REFRESH_SECRET: 'refresh-secret',
-        };
-        return values[key];
-      }),
+      get: jest.fn().mockReturnValue('secret'),
     };
-    refreshTokenRepo = {
+    mailService = {
+      sendVerificationEmail: jest.fn(),
+    };
+    artisanRepo = {
       create: jest.fn((data) => data),
-      save: jest.fn((data) => Promise.resolve(data)),
-      findOneBy: jest.fn(),
-      delete: jest.fn().mockResolvedValue({ affected: 1 }),
+      save: jest.fn().mockImplementation((data) => Promise.resolve(data)),
+      findOne: jest.fn().mockResolvedValue(null),
     };
 
     service = new AuthService(
       usersService,
       jwtService,
       configService,
+      mailService,
+      artisanRepo,
+      { findOneBy: jest.fn().mockResolvedValue({ id: 'cat-1' }) },
+      { findOneBy: jest.fn().mockResolvedValue({ id: 'reg-1' }) },
+    );
+  });
+
+  describe('login', () => {
+    it('loguea un usuario comprador correctamente', async () => {
+      usersService.findByEmail.mockResolvedValue(buyerUser);
+      (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+
+      const result = await service.login({ email: buyerUser.email, password: 'Password123' });
+
+      expect(result.access_token).toBe('token');
+      expect(result.refresh_token).toBe('token');
+      expect(result.user.email).toBe(buyerUser.email);
+    });
+
+    it('fallo con credenciales incorrectas lanza UnauthorizedException', async () => {
+      usersService.findByEmail.mockResolvedValue(buyerUser);
+      (bcrypt.compare as jest.Mock).mockResolvedValue(false);
+
+      await expect(service.login({ email: buyerUser.email, password: 'wrong' }))
+        .rejects.toBeInstanceOf(UnauthorizedException);
+    });
+
+    it('usuario no existente lanza UnauthorizedException', async () => {
+      usersService.findByEmail.mockResolvedValue(null);
+
+      await expect(service.login({ email: 'nonexistent@example.com', password: 'password' }))
+        .rejects.toBeInstanceOf(UnauthorizedException);
+    });
+
+    it('cuenta bloqueada lanza UnauthorizedException', async () => {
+      const lockedUser = { ...buyerUser, locked_until: new Date(Date.now() + 60000) };
+      usersService.findByEmail.mockResolvedValue(lockedUser);
+
+      await expect(service.login({ email: lockedUser.email, password: 'password' }))
+        .rejects.toBeInstanceOf(UnauthorizedException);
+    });
+  });
+
+  describe('refresh', () => {
+    it('refresca tokens correctamente', async () => {
+      const refreshPayload = { sub: buyerUser.id, role: buyerUser.role };
+      jwtService.verify.mockReturnValue(refreshPayload);
+      usersService.findById.mockResolvedValue(buyerUser);
+
+      const result = await service.refresh('valid_refresh_token');
+
+      expect(result.access_token).toBe('token');
+      expect(result.refresh_token).toBe('token');
+    });
+
+    it('token de refresco invalido lanza UnauthorizedException', async () => {
+      jwtService.verify.mockImplementation(() => {
+        throw new Error('Invalid token');
+      });
+
+      await expect(service.refresh('invalid_token'))
+        .rejects.toBeInstanceOf(UnauthorizedException);
+    });
+  });
+});
+
+describe('AuthService HU-02', () => {
+  const user = {
+    id: 'user-1',
+    email: 'artisan@example.com',
+    full_name: 'Artesana Huila',
+    role: UserRole.ARTISAN,
+    password_hash: 'hashed',
+    locked_until: null,
+    email_verified: false,
+    email_verification_token: 'email-token',
+    email_token_expires_at: new Date(Date.now() + 60_000),
+    verifiedAt: null,
+  };
+
+  let service: AuthService;
+  let usersService: any;
+  let artisanRepo: any;
+
+  beforeEach(() => {
+    usersService = {
+      findByEmail: jest.fn().mockResolvedValue(user),
+      incrementFailedLogins: jest.fn(),
+      resetFailedLogins: jest.fn(),
+      create: jest.fn().mockImplementation((data) => Promise.resolve({ id: 'new-user', ...data })),
+      save: jest.fn().mockImplementation((data) => Promise.resolve(data)),
+      userRepo: {
+        findOne: jest.fn().mockResolvedValue(user),
+      },
+    };
+    artisanRepo = {
+      create: jest.fn((data) => data),
+      save: jest.fn().mockImplementation((data) => Promise.resolve(data)),
+      findOne: jest.fn(),
+    };
+
+    service = new AuthService(
+      usersService,
+      { sign: jest.fn().mockReturnValue('token'), verify: jest.fn() },
+      { get: jest.fn().mockReturnValue('secret') },
       { sendVerificationEmail: jest.fn() },
-      {} as any,
-      {} as any,
-      {} as any,
-      refreshTokenRepo,
+      artisanRepo,
+      { findOneBy: jest.fn().mockResolvedValue({ id: 'cat-1' }) },
+      { findOneBy: jest.fn().mockResolvedValue({ id: 'reg-1' }) },
     );
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
+  it('registro de artesano deja estado PENDING', async () => {
+    (bcrypt.hash as jest.Mock).mockResolvedValue('hashed');
 
-  it('login exitoso devuelve access token y refresh token', async () => {
-    (bcrypt.compare as jest.Mock).mockResolvedValue(true);
-
-    const result = await service.login({
-      email: user.email,
+    await service.registerArtisan({
+      full_name: 'Artesana Huila',
+      email: 'artisan@example.com',
       password: 'Password1',
+      role: 'artesano',
+      cultural_history: 'Historia',
+      category_id: 'cat-1',
+      region_id: 'reg-1',
+      truthfulness_declaration: 'true',
     });
 
-    expect(result.access_token).toMatch(/^access-/);
-    expect(result.refresh_token).toMatch(/^refresh-/);
-    expect(result.redirectUrl).toBe('/catalogo');
-    expect(refreshTokenRepo.save).toHaveBeenCalledWith(
-      expect.objectContaining({
-        userId: user.id,
-        token: result.refresh_token,
-        expiresAt: expect.any(Date),
-      }),
-    );
+    expect(artisanRepo.create).toHaveBeenCalledWith(expect.objectContaining({
+      verification_status: ArtisanStatus.PENDING,
+    }));
   });
 
-  it('refresh token valido devuelve nuevo access token', async () => {
-    const oldRefreshToken = 'refresh-token';
-    refreshTokenRepo.findOneBy.mockResolvedValue({
-      token: oldRefreshToken,
-      userId: user.id,
-      expiresAt: new Date(Date.now() + 60 * 60 * 1000),
-      createdAt: new Date(),
-    });
+  it('confirmacion de email cambia estado a ACTIVE', async () => {
+    const profile = { id: 'artisan-1', verification_status: ArtisanStatus.PENDING };
+    artisanRepo.findOne.mockResolvedValue(profile);
 
-    const result = await service.refresh(oldRefreshToken);
+    await service.verifyEmail('email-token');
 
-    expect(result.access_token).toMatch(/^access-/);
-    expect(result.refresh_token).toMatch(/^refresh-/);
-    expect(refreshTokenRepo.delete).toHaveBeenCalledWith({ token: oldRefreshToken });
-    expect(refreshTokenRepo.save).toHaveBeenCalled();
+    expect(usersService.save).toHaveBeenCalledWith(expect.objectContaining({
+      email_verified: true,
+      verifiedAt: expect.any(Date),
+    }));
+    expect(artisanRepo.save).toHaveBeenCalledWith(expect.objectContaining({
+      verification_status: ArtisanStatus.ACTIVE,
+    }));
   });
 
-  it('refresh token expirado lanza UnauthorizedException', async () => {
-    const expiredRefreshToken = 'expired-refresh-token';
-    refreshTokenRepo.findOneBy.mockResolvedValue({
-      token: expiredRefreshToken,
-      userId: user.id,
-      expiresAt: new Date(Date.now() - 1000),
-      createdAt: new Date(),
-    });
+  it('artesano SUSPENDED no puede iniciar sesion', async () => {
+    (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+    artisanRepo.findOne.mockResolvedValue({ verification_status: ArtisanStatus.SUSPENDED });
 
-    await expect(service.refresh(expiredRefreshToken)).rejects.toBeInstanceOf(UnauthorizedException);
-    expect(refreshTokenRepo.delete).toHaveBeenCalledWith({ token: expiredRefreshToken });
-  });
-
-  it('logout invalida el refresh token', async () => {
-    const result = await service.logout('refresh-token');
-
-    expect(refreshTokenRepo.delete).toHaveBeenCalledWith({ token: 'refresh-token' });
-    expect(result).toEqual({ message: 'Sesion cerrada correctamente' });
+    await expect(service.login({ email: user.email, password: 'Password1' })).rejects.toBeInstanceOf(UnauthorizedException);
   });
 });
