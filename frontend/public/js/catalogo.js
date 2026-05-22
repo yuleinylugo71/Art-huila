@@ -116,9 +116,7 @@ async function loadProducts(page = 1) {
           </div>
           <div class="product-meta mt-1">
             <span>${i18next.t('catalog.stockLabel')}${p.stock}</span>
-            ${p.artisan?.verification_status === 'verified' ? `<span class="badge badge-verified"><i class="fa-solid fa-check"></i> ${i18next.t('catalog.verifiedStatus')}</span>` : 
-              (p.artisan?.verification_status === 'pending' ? `<span class="badge badge-pending"><i class="fa-solid fa-hourglass-half"></i> ${i18next.t('catalog.pendingStatus')}</span>` : 
-              `<span class="badge badge-rejected"><i class="fa-solid fa-xmark"></i> ${i18next.t('catalog.rejectedStatus')}</span>`)}
+            ${renderTrustBadge(p.artisan?.status || p.artisan?.verification_status)}
           </div>
         </div>
       </div>
@@ -128,6 +126,16 @@ async function loadProducts(page = 1) {
   } catch (e) {
     grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="emoji"><i class="fa-solid fa-triangle-exclamation"></i></div><h3>${i18next.t('catalog.errorLoading')}</h3><p>${e.message}</p></div>`;
   }
+}
+
+function renderTrustBadge(status) {
+  if (status === 'verified') {
+    return `<span class="badge badge-verified"><i class="fa-solid fa-check"></i> Verificado ✓</span>`;
+  }
+  if (status === 'active' || status === 'pending') {
+    return `<span class="badge badge-pending"><i class="fa-solid fa-hourglass-half"></i> Por verificar</span>`;
+  }
+  return '';
 }
 
 function renderPagination(totalPages, current) {

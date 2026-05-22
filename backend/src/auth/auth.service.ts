@@ -16,7 +16,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { v2 as cloudinary } from 'cloudinary';
 import { Readable } from 'stream';
-import { ArtisanProfile, VerificationStatus } from '../artisans/entities/artisan-profile.entity';
+import { ArtisanProfile, ArtisanStatus } from '../artisans/entities/artisan-profile.entity';
 import { Category } from '../categories/entities/category.entity';
 import { Region } from '../regions/entities/region.entity';
 import { ArtisanGallery } from '../artisans/entities/artisan-gallery.entity';
@@ -78,6 +78,13 @@ export class AuthService {
     const invalidMsg = 'Credenciales incorrectas';
 
     if (!user) throw new UnauthorizedException(invalidMsg);
+
+    if (user.role === UserRole.ARTISAN) {
+      const profile = await this.artisanRepo.findOne({ where: { user: { id: user.id } } });
+      if (profile?.verification_status === ArtisanStatus.SUSPENDED) {
+        throw new UnauthorizedException('Tu cuenta de artesano se encuentra suspendida');
+      }
+    }
 
     // Check if account is locked
     if (user.locked_until && user.locked_until > new Date()) {
@@ -160,7 +167,7 @@ export class AuthService {
       cultural_history: dto.cultural_history,
       category,
       region,
-      verification_status: VerificationStatus.PENDING,
+      verification_status: ArtisanStatus.PENDING,
       truthfulness_declaration: dto.truthfulness_declaration === 'true',
       id_document_front_url: idDocumentFrontUrl,
       id_document_back_url: idDocumentBackUrl,
@@ -194,9 +201,17 @@ export class AuthService {
       throw new BadRequestException('El token ha expirado');
     }
     user.email_verified = true;
+    user.verifiedAt = new Date();
     user.email_verification_token = undefined as any;
     user.email_token_expires_at = undefined as any;
     await this.usersService.save(user);
+
+    const profile = await this.artisanRepo.findOne({ where: { user: { id: user.id } } });
+    if (profile && profile.verification_status === ArtisanStatus.PENDING) {
+      profile.verification_status = ArtisanStatus.ACTIVE;
+      await this.artisanRepo.save(profile);
+    }
+
     return { message: 'Email verificado exitosamente' };
   }
 

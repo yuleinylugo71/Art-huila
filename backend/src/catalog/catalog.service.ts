@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product, ProductStatus } from '../products/entities/product.entity';
+import { ArtisanStatus } from '../artisans/entities/artisan-profile.entity';
 
 @Injectable()
 export class CatalogService {
@@ -29,7 +30,8 @@ export class CatalogService {
       .leftJoinAndSelect('product.category', 'category')
       .leftJoinAndSelect('product.region', 'region')
       .leftJoinAndSelect('product.images', 'images')
-      .where('product.status = :status', { status: ProductStatus.PUBLISHED });
+      .where('product.status = :status', { status: ProductStatus.PUBLISHED })
+      .andWhere('artisan.verification_status != :suspended', { suspended: ArtisanStatus.SUSPENDED });
 
     if (artisanId) {
       qb.andWhere('artisan.id = :artisanId', { artisanId });
@@ -52,7 +54,10 @@ export class CatalogService {
     else qb.orderBy('product.created_at', 'DESC');
 
     const total = await qb.getCount();
-    const data = await qb.skip((page - 1) * limit).take(limit).getMany();
+    const data = (await qb.skip((page - 1) * limit).take(limit).getMany()).map((product) => {
+      (product.artisan as any).status = product.artisan.verification_status;
+      return product;
+    });
 
     return {
       data,

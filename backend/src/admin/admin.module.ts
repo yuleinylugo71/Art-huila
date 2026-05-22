@@ -10,10 +10,11 @@ import { UsersModule } from '../users/users.module';
 import { OrdersModule } from '../orders/orders.module';
 import { ProductsModule } from '../products/products.module';
 import { ReviewsModule } from '../reviews/reviews.module';
+import { ArtisanAuditLog } from '../artisans/entities/artisan-audit-log.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ArtisanProfile]),
+    TypeOrmModule.forFeature([ArtisanProfile, ArtisanAuditLog]),
     ArtisansModule,
     MailModule,
     AuditModule,
