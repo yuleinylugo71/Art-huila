@@ -133,8 +133,6 @@ async function loadProducts(page = 1) {
           <div class="product-artisan">
             <i class="fa-solid fa-store"></i>
             <span><strong>${p.artisan?.user?.full_name || i18next.t('catalog.anonymousArtisan')}</strong></span>
-          </div>
-          <div class="product-meta">
             ${renderTrustBadge(p.artisan?.status || p.artisan?.verification_status)}
           </div>
           <div class="product-price">${formatPrice(p.price)}</div>
@@ -150,10 +148,7 @@ async function loadProducts(page = 1) {
 
 function renderTrustBadge(status) {
   if (status === 'verified') {
-    return `<span class="badge badge-verified"><i class="fa-solid fa-check"></i> Verificado</span>`;
-  }
-  if (status === 'active' || status === 'pending') {
-    return `<span class="badge badge-pending"><i class="fa-solid fa-hourglass-half"></i> Por verificar</span>`;
+    return `<i class="fa-solid fa-circle-check" style="color: var(--color-verified); font-size: 0.9rem; margin-left: 0.25rem;" title="Vendedor Verificado"></i>`;
   }
   return '';
 }

@@ -20,10 +20,9 @@
       : `<div style="background:var(--color-bg2);border-radius:var(--radius-lg);height:350px;display:flex;align-items:center;justify-content:center;font-size:5rem;"><i class="fa-solid fa-vase"></i></div>`;
 
     const status = p.artisan?.verification_status;
-    let badge = '';
-    if (status === 'verified') badge = '<span class="badge badge-verified"><i class="fa-solid fa-check"></i> Verificado</span>';
-    else if (status === 'pending') badge = '<span class="badge badge-pending"><i class="fa-solid fa-hourglass-half"></i> Por verificar</span>';
-    else badge = '<span class="badge badge-rejected"><i class="fa-solid fa-xmark"></i> No verificado</span>';
+    let badgeHtml = '';
+    if (status === 'pending') badgeHtml = '<div style="margin-top:0.3rem;"><span class="badge badge-pending"><i class="fa-solid fa-hourglass-half"></i> Por verificar</span></div>';
+    else if (status !== 'verified') badgeHtml = '<div style="margin-top:0.3rem;"><span class="badge badge-rejected"><i class="fa-solid fa-xmark"></i> No verificado</span></div>';
 
     const user = Auth.getUser();
     const isOwner = user && p.artisan?.user && user.id === p.artisan.user.id;
@@ -94,9 +93,12 @@
           ? `<div class="artisan-avatar" style="padding:0; overflow:hidden;"><img src="${p.artisan.avatar_url}" style="width:100%;height:100%;object-fit:cover;"/></div>`
           : `<div class="artisan-avatar"><i class="fa-solid fa-user"></i></div>`}
         <div>
-          <div style="font-weight:600;">${p.artisan?.user?.full_name || '<i class="fa-solid fa-hammer"></i> Artesano'}</div>
+          <div style="font-weight:600; display:flex; align-items:center; gap:0.35rem;">
+            ${p.artisan?.user?.full_name || '<i class="fa-solid fa-hammer"></i> Artesano'}
+            ${status === 'verified' ? `<i class="fa-solid fa-circle-check" style="color: var(--color-verified); font-size: 0.95rem;" title="Artesano Verificado"></i>` : ''}
+          </div>
           <div style="font-size:0.85rem;color:var(--color-muted);"><i class="fa-solid fa-location-dot"></i> ${p.artisan?.region?.name || ''}</div>
-          <div style="margin-top:0.3rem;">${badge}</div>
+          ${badgeHtml}
         </div>
       </div>
     `;
