@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RegisterArtisanDto = exports.RefreshDto = exports.LoginDto = exports.RegisterDto = void 0;
+exports.RegisterArtisanDto = exports.LogoutDto = exports.RefreshDto = exports.LoginDto = exports.RegisterDto = void 0;
 const class_validator_1 = require("class-validator");
 class RegisterDto {
     full_name;
@@ -59,6 +59,9 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], RefreshDto.prototype, "refresh_token", void 0);
+class LogoutDto extends RefreshDto {
+}
+exports.LogoutDto = LogoutDto;
 class RegisterArtisanDto extends RegisterDto {
     id_number;
     cultural_history;
@@ -68,12 +71,14 @@ class RegisterArtisanDto extends RegisterDto {
 }
 exports.RegisterArtisanDto = RegisterArtisanDto;
 __decorate([
-    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNotEmpty)({ message: 'El número de identificación (cédula) es obligatorio' }),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], RegisterArtisanDto.prototype, "id_number", void 0);
 __decorate([
+    (0, class_validator_1.IsNotEmpty)({ message: 'La historia cultural es obligatoria' }),
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.MaxLength)(1000, { message: 'La historia cultural no puede exceder los 1000 caracteres' }),
     __metadata("design:type", String)
 ], RegisterArtisanDto.prototype, "cultural_history", void 0);
 __decorate([

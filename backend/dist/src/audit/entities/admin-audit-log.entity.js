@@ -21,6 +21,7 @@ var AuditAction;
     AuditAction["UPDATE_ORDER"] = "update_order";
     AuditAction["HIDE_PRODUCT"] = "hide_product";
     AuditAction["DELETE_PRODUCT"] = "delete_product";
+    AuditAction["BULK_UPLOAD_PRODUCTS"] = "bulk_upload_products";
 })(AuditAction || (exports.AuditAction = AuditAction = {}));
 let AdminAuditLog = class AdminAuditLog {
     id;

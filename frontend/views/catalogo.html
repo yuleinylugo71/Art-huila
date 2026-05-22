@@ -47,7 +47,7 @@
           <!-- Search Filter -->
           <div class="filter-section">
             <div class="filter-title" data-i18n="catalog.searchLabel">Buscar</div>
-            <input type="text" id="search-input" class="form-control" style="width:100%;" data-i18n-placeholder="catalog.searchPlaceholder" placeholder="Buscar por nombre..." oninput="applyFilters()"/>
+            <input type="text" id="search-input" class="form-control" style="width:100%;" data-i18n-placeholder="catalog.searchPlaceholder" placeholder="Buscar por nombre..." oninput="applyFilters(400)"/>
           </div>
 
           <div class="filter-section">
@@ -67,8 +67,8 @@
           <div class="filter-section">
             <div class="filter-title" data-i18n="catalog.priceLabel">Precio (COP)</div>
             <div class="price-inputs">
-              <input type="number" id="min-price" placeholder="Mín" min="0"/>
-              <input type="number" id="max-price" placeholder="Máx" min="0"/>
+              <input type="number" id="min-price" placeholder="Mín" min="0" oninput="applyFilters(400)"/>
+              <input type="number" id="max-price" placeholder="Máx" min="0" oninput="applyFilters(400)"/>
             </div>
           </div>
         </div>

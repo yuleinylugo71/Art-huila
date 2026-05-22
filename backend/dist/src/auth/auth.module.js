@@ -19,6 +19,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const artisan_profile_entity_1 = require("../artisans/entities/artisan-profile.entity");
 const category_entity_1 = require("../categories/entities/category.entity");
 const region_entity_1 = require("../regions/entities/region.entity");
+const refresh_token_entity_1 = require("./entities/refresh-token.entity");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
@@ -29,7 +30,7 @@ exports.AuthModule = AuthModule = __decorate([
             mail_module_1.MailModule,
             passport_1.PassportModule,
             jwt_1.JwtModule.register({}),
-            typeorm_1.TypeOrmModule.forFeature([artisan_profile_entity_1.ArtisanProfile, category_entity_1.Category, region_entity_1.Region]),
+            typeorm_1.TypeOrmModule.forFeature([artisan_profile_entity_1.ArtisanProfile, category_entity_1.Category, region_entity_1.Region, refresh_token_entity_1.RefreshToken]),
         ],
         controllers: [auth_controller_1.AuthController],
         providers: [auth_service_1.AuthService, jwt_strategy_1.JwtStrategy],

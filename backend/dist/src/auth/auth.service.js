@@ -62,6 +62,7 @@ const artisan_profile_entity_1 = require("../artisans/entities/artisan-profile.e
 const category_entity_1 = require("../categories/entities/category.entity");
 const region_entity_1 = require("../regions/entities/region.entity");
 const artisan_gallery_entity_1 = require("../artisans/entities/artisan-gallery.entity");
+const refresh_token_entity_1 = require("./entities/refresh-token.entity");
 let AuthService = class AuthService {
     usersService;
     jwtService;
@@ -70,7 +71,8 @@ let AuthService = class AuthService {
     artisanRepo;
     categoryRepo;
     regionRepo;
-    constructor(usersService, jwtService, configService, mailService, artisanRepo, categoryRepo, regionRepo) {
+    refreshTokenRepo;
+    constructor(usersService, jwtService, configService, mailService, artisanRepo, categoryRepo, regionRepo, refreshTokenRepo) {
         this.usersService = usersService;
         this.jwtService = jwtService;
         this.configService = configService;
@@ -78,6 +80,7 @@ let AuthService = class AuthService {
         this.artisanRepo = artisanRepo;
         this.categoryRepo = categoryRepo;
         this.regionRepo = regionRepo;
+        this.refreshTokenRepo = refreshTokenRepo;
         cloudinary_1.v2.config({
             cloud_name: this.configService.get('CLOUDINARY_CLOUD_NAME'),
             api_key: this.configService.get('CLOUDINARY_API_KEY'),
@@ -114,6 +117,12 @@ let AuthService = class AuthService {
         const invalidMsg = 'Credenciales incorrectas';
         if (!user)
             throw new common_1.UnauthorizedException(invalidMsg);
+        if (user.role === user_entity_1.UserRole.ARTISAN) {
+            const profile = await this.artisanRepo.findOne({ where: { user: { id: user.id } } });
+            if (profile?.verification_status === artisan_profile_entity_1.ArtisanStatus.SUSPENDED) {
+                throw new common_1.UnauthorizedException('Tu cuenta de artesano se encuentra suspendida');
+            }
+        }
         if (user.locked_until && user.locked_until > new Date()) {
             const minutesLeft = Math.ceil((user.locked_until.getTime() - Date.now()) / 60000);
             throw new common_1.UnauthorizedException(`Cuenta bloqueada. Intenta en ${minutesLeft} minuto(s)`);
@@ -141,7 +150,7 @@ let AuthService = class AuthService {
         });
         return { message: 'Registro exitoso. ¡Bienvenido!' };
     }
-    async registerArtisan(dto, idDocumentFrontFile, idDocumentBackFile, galleryFiles) {
+    async registerArtisan(dto, idDocumentFrontFile, idDocumentBackFile, galleryFiles, clientIp) {
         const passwordHash = await bcrypt.hash(dto.password, 10);
         const verificationToken = crypto.randomBytes(32).toString('hex');
         const expires = new Date();
@@ -173,14 +182,16 @@ let AuthService = class AuthService {
         });
         const profile = this.artisanRepo.create({
             user,
-            id_number: dto.email,
+            id_number: dto.id_number,
             cultural_history: dto.cultural_history,
             category,
             region,
-            verification_status: artisan_profile_entity_1.VerificationStatus.PENDING,
+            verification_status: artisan_profile_entity_1.ArtisanStatus.PENDING,
             truthfulness_declaration: dto.truthfulness_declaration === 'true',
             id_document_front_url: idDocumentFrontUrl,
             id_document_back_url: idDocumentBackUrl,
+            legal_acceptance_ip: clientIp || null,
+            legal_acceptance_timestamp: new Date(),
         });
         const savedProfile = await this.artisanRepo.save(profile);
         if (galleryFiles && galleryFiles.length > 0) {
@@ -207,9 +218,15 @@ let AuthService = class AuthService {
             throw new common_1.BadRequestException('El token ha expirado');
         }
         user.email_verified = true;
+        user.verifiedAt = new Date();
         user.email_verification_token = undefined;
         user.email_token_expires_at = undefined;
         await this.usersService.save(user);
+        const profile = await this.artisanRepo.findOne({ where: { user: { id: user.id } } });
+        if (profile && profile.verification_status === artisan_profile_entity_1.ArtisanStatus.PENDING) {
+            profile.verification_status = artisan_profile_entity_1.ArtisanStatus.ACTIVE;
+            await this.artisanRepo.save(profile);
+        }
         return { message: 'Email verificado exitosamente' };
     }
     async refresh(refreshToken) {
@@ -226,6 +243,10 @@ let AuthService = class AuthService {
             throw new common_1.UnauthorizedException('Token de refresco inválido');
         }
     }
+    async logout(refreshToken) {
+        await this.refreshTokenRepo.delete({ token: refreshToken });
+        return { message: 'Sesion cerrada correctamente' };
+    }
 };
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = __decorate([
@@ -233,10 +254,12 @@ exports.AuthService = AuthService = __decorate([
     __param(4, (0, typeorm_1.InjectRepository)(artisan_profile_entity_1.ArtisanProfile)),
     __param(5, (0, typeorm_1.InjectRepository)(category_entity_1.Category)),
     __param(6, (0, typeorm_1.InjectRepository)(region_entity_1.Region)),
+    __param(7, (0, typeorm_1.InjectRepository)(refresh_token_entity_1.RefreshToken)),
     __metadata("design:paramtypes", [users_service_1.UsersService,
         jwt_1.JwtService,
         config_1.ConfigService,
         mail_service_1.MailService,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository])

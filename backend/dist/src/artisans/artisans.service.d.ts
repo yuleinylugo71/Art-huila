@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { ArtisanProfile, VerificationStatus } from './entities/artisan-profile.entity';
+import { ArtisanProfile, ArtisanStatus } from './entities/artisan-profile.entity';
 import { ArtisanGallery } from './entities/artisan-gallery.entity';
 export declare class ArtisansService {
     private readonly profileRepo;
@@ -9,7 +9,7 @@ export declare class ArtisansService {
     findById(id: string): Promise<ArtisanProfile | null>;
     findAll(status?: string): Promise<ArtisanProfile[]>;
     addGalleryImage(profileId: string, url: string, publicId: string): Promise<ArtisanGallery>;
-    updateStatus(id: string, status: VerificationStatus, rejectionReason?: string): Promise<ArtisanProfile>;
+    updateStatus(id: string, status: ArtisanStatus, rejectionReason?: string): Promise<ArtisanProfile>;
     updateProfile(userId: string, data: any): Promise<ArtisanProfile>;
     findFeatured(): Promise<ArtisanProfile[]>;
 }

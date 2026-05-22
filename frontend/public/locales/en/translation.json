@@ -19,7 +19,8 @@
     "backToCatalog": "Back to catalog",
     "backToDashboard": "Back to dashboard",
     "myPanel": "My Panel",
-    "viewCatalog": "View catalog"
+    "viewCatalog": "View catalog",
+    "home": "Home"
   },
   "auth": {
     "emailLabel": "Email address",
@@ -452,7 +453,7 @@
     "ctaTitle": "Are you a master artisan?",
     "ctaSubtitle": "Join the platform that values your history, protects your technique, and connects your art with the world.",
     "ctaButton": "Start selling today",
-    "footerText": "<i class='fa-regular fa-copyright'></i> 2026 Art Huila. Proudly Huilense.",
+    "footerText": "2026 Art Huila. Proudly Huilense.",
     "privacy": "Privacy",
     "terms": "Terms",
     "contact": "Contact",

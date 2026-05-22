@@ -130,6 +130,7 @@ export class AuthService {
     idDocumentFrontFile?: Express.Multer.File,
     idDocumentBackFile?: Express.Multer.File,
     galleryFiles?: Express.Multer.File[],
+    clientIp?: string,
   ) {
     const passwordHash = await bcrypt.hash(dto.password, 10);
     const verificationToken = crypto.randomBytes(32).toString('hex');
@@ -166,7 +167,7 @@ export class AuthService {
 
     const profile = this.artisanRepo.create({
       user,
-      id_number: dto.email, // Use email as fallback for unique id_number if not provided
+      id_number: dto.id_number,
       cultural_history: dto.cultural_history,
       category,
       region,
@@ -174,6 +175,8 @@ export class AuthService {
       truthfulness_declaration: dto.truthfulness_declaration === 'true',
       id_document_front_url: idDocumentFrontUrl,
       id_document_back_url: idDocumentBackUrl,
+      legal_acceptance_ip: clientIp || null,
+      legal_acceptance_timestamp: new Date(),
     });
     const savedProfile = await this.artisanRepo.save(profile);
 

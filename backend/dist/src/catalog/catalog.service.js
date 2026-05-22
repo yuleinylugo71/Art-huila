@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const product_entity_1 = require("../products/entities/product.entity");
+const artisan_profile_entity_1 = require("../artisans/entities/artisan-profile.entity");
 let CatalogService = class CatalogService {
     productRepo;
     constructor(productRepo) {
@@ -31,7 +32,8 @@ let CatalogService = class CatalogService {
             .leftJoinAndSelect('product.category', 'category')
             .leftJoinAndSelect('product.region', 'region')
             .leftJoinAndSelect('product.images', 'images')
-            .where('product.status = :status', { status: product_entity_1.ProductStatus.PUBLISHED });
+            .where('product.status = :status', { status: product_entity_1.ProductStatus.PUBLISHED })
+            .andWhere('artisan.verification_status != :suspended', { suspended: artisan_profile_entity_1.ArtisanStatus.SUSPENDED });
         if (artisanId) {
             qb.andWhere('artisan.id = :artisanId', { artisanId });
         }
@@ -54,7 +56,10 @@ let CatalogService = class CatalogService {
         else
             qb.orderBy('product.created_at', 'DESC');
         const total = await qb.getCount();
-        const data = await qb.skip((page - 1) * limit).take(limit).getMany();
+        const data = (await qb.skip((page - 1) * limit).take(limit).getMany()).map((product) => {
+            product.artisan.status = product.artisan.verification_status;
+            return product;
+        });
         return {
             data,
             meta: { total, page, limit, totalPages: Math.ceil(total / limit) },

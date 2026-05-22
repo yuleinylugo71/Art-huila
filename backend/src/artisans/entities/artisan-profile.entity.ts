@@ -45,6 +45,12 @@ export class ArtisanProfile {
   @Column({ default: false })
   truthfulness_declaration: boolean;
 
+  @Column({ type: 'varchar', nullable: true })
+  legal_acceptance_ip: string | null;
+
+  @Column({ type: 'timestamp', nullable: true })
+  legal_acceptance_timestamp: Date | null;
+
   @Column({ nullable: true })
   avatar_url: string;
 

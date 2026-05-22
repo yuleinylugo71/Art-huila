@@ -35,6 +35,7 @@ let ArtisansController = class ArtisansController {
                 bio: a.cultural_history.substring(0, 120) + '...',
                 avatar_url: a.avatar_url,
                 verified: a.verification_status === 'verified',
+                status: a.verification_status,
             }));
         }
         return this.artisansService.findAll();

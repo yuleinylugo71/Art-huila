@@ -1,5 +1,5 @@
 import { AuthService } from './auth.service';
-import { LoginDto, RefreshDto, RegisterArtisanDto, RegisterDto } from './dto/auth.dto';
+import { LoginDto, LogoutDto, RefreshDto, RegisterArtisanDto, RegisterDto } from './dto/auth.dto';
 export declare class AuthController {
     private readonly authService;
     constructor(authService: AuthService);
@@ -8,7 +8,7 @@ export declare class AuthController {
             id: string;
             email: string;
             full_name: string;
-            role: import("../users/entities/user.entity").UserRole;
+            role: import("../users/entities/user.entity").Role;
         };
         access_token: string;
         refresh_token: string;
@@ -20,7 +20,7 @@ export declare class AuthController {
         id_document_front?: Express.Multer.File[];
         id_document_back?: Express.Multer.File[];
         gallery?: Express.Multer.File[];
-    }): Promise<{
+    }, req: any): Promise<{
         message: string;
     }>;
     verifyEmail(token: string): Promise<{
@@ -29,6 +29,9 @@ export declare class AuthController {
     refresh(dto: RefreshDto): Promise<{
         access_token: string;
         refresh_token: string;
+    }>;
+    logout(dto: LogoutDto): Promise<{
+        message: string;
     }>;
     me(user: any): any;
 }

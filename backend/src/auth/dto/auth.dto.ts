@@ -1,4 +1,4 @@
-import { IsEmail, IsIn, IsString, MinLength, Matches, IsOptional } from 'class-validator';
+import { IsEmail, IsIn, IsString, MinLength, Matches, IsOptional, MaxLength, IsNotEmpty } from 'class-validator';
 
 export class RegisterDto {
   @IsString()
@@ -34,11 +34,13 @@ export class RefreshDto {
 export class LogoutDto extends RefreshDto {}
 
 export class RegisterArtisanDto extends RegisterDto {
-  @IsOptional()
+  @IsNotEmpty({ message: 'El número de identificación (cédula) es obligatorio' })
   @IsString()
-  id_number?: string;
+  id_number: string;
 
+  @IsNotEmpty({ message: 'La historia cultural es obligatoria' })
   @IsString()
+  @MaxLength(1000, { message: 'La historia cultural no puede exceder los 1000 caracteres' })
   cultural_history: string;
 
   @IsString()

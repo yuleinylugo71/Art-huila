@@ -19,13 +19,14 @@ const users_module_1 = require("../users/users.module");
 const orders_module_1 = require("../orders/orders.module");
 const products_module_1 = require("../products/products.module");
 const reviews_module_1 = require("../reviews/reviews.module");
+const artisan_audit_log_entity_1 = require("../artisans/entities/artisan-audit-log.entity");
 let AdminModule = class AdminModule {
 };
 exports.AdminModule = AdminModule;
 exports.AdminModule = AdminModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            typeorm_1.TypeOrmModule.forFeature([artisan_profile_entity_1.ArtisanProfile]),
+            typeorm_1.TypeOrmModule.forFeature([artisan_profile_entity_1.ArtisanProfile, artisan_audit_log_entity_1.ArtisanAuditLog]),
             artisans_module_1.ArtisansModule,
             mail_module_1.MailModule,
             audit_module_1.AuditModule,

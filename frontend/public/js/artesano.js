@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const status = artisan.status || artisan.verification_status;
     let badge = '';
-    if (status === 'verified') badge = '<span class="badge badge-verified"><i class="fa-solid fa-check"></i> Verificado ✓</span>';
+    if (status === 'verified') badge = '<span class="badge badge-verified"><i class="fa-solid fa-check"></i> Verificado</span>';
     else if (status === 'active' || status === 'pending') badge = '<span class="badge badge-pending"><i class="fa-solid fa-hourglass-half"></i> Por verificar</span>';
 
     container.innerHTML = `
