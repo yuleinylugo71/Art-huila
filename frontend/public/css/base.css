@@ -279,17 +279,38 @@ img { max-width: 100%; display: block; }
 }
 .product-card-image {
   position: relative;
-  aspect-ratio: 4/3;
+  aspect-ratio: 1/1;
   overflow: hidden;
   background: var(--color-accent-warm);
+}
+.product-card-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(0, 0, 0, 0.035);
+  pointer-events: none;
 }
 .product-card-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s var(--ease-out);
+  transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
 }
-.product-card:hover .product-card-image img { transform: scale(1.07); }
+.product-card:hover .product-card-image img {
+  transform: scale(1.05);
+}
+
+/* Warm Clay Shimmer Placeholder */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.product-img-placeholder {
+  background: linear-gradient(90deg, #f7f3ed 25%, #eae2d5 37%, #f7f3ed 63%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite linear;
+  color: var(--color-muted);
+}
 .product-card-body {
   padding: 1.15rem 1.2rem 1.3rem;
   display: flex;
