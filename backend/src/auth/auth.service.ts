@@ -20,6 +20,7 @@ import { ArtisanProfile, ArtisanStatus } from '../artisans/entities/artisan-prof
 import { Category } from '../categories/entities/category.entity';
 import { Region } from '../regions/entities/region.entity';
 import { ArtisanGallery } from '../artisans/entities/artisan-gallery.entity';
+import { RefreshToken } from './entities/refresh-token.entity';
 
 @Injectable()
 export class AuthService {
@@ -34,6 +35,8 @@ export class AuthService {
     private readonly categoryRepo: Repository<Category>,
     @InjectRepository(Region)
     private readonly regionRepo: Repository<Region>,
+    @InjectRepository(RefreshToken)
+    private readonly refreshTokenRepo: Repository<RefreshToken>,
   ) {
     cloudinary.config({
       cloud_name: this.configService.get<string>('CLOUDINARY_CLOUD_NAME'),
@@ -227,4 +230,9 @@ export class AuthService {
       throw new UnauthorizedException('Token de refresco inválido');
     }
   }
+  async logout(refreshToken: string) {
+    await this.refreshTokenRepo.delete({ token: refreshToken });
+    return { message: 'Sesion cerrada correctamente' };
+  }
 }
+
