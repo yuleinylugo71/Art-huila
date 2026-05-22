@@ -1,10 +1,18 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
-export enum UserRole {
-  ARTISAN = 'artesano',
-  BUYER = 'comprador',
+export enum Role {
   ADMIN = 'admin',
+  ARTESANO = 'artesano',
+  COMPRADOR = 'comprador',
 }
+
+export const UserRole = {
+  ADMIN: Role.ADMIN,
+  ARTISAN: Role.ARTESANO,
+  BUYER: Role.COMPRADOR,
+} as const;
+
+export type UserRole = Role;
 
 @Entity('users')
 export class User {
@@ -20,8 +28,8 @@ export class User {
   @Column()
   password_hash: string;
 
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.BUYER })
-  role: UserRole;
+  @Column({ type: 'enum', enum: Role, default: Role.COMPRADOR })
+  role: Role;
 
   @Column({ default: false })
   email_verified: boolean;

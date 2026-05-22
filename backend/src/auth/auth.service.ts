@@ -2,7 +2,6 @@ import {
   Injectable,
   UnauthorizedException,
   BadRequestException,
-  NotFoundException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -20,6 +19,7 @@ import { ArtisanProfile, VerificationStatus } from '../artisans/entities/artisan
 import { Category } from '../categories/entities/category.entity';
 import { Region } from '../regions/entities/region.entity';
 import { ArtisanGallery } from '../artisans/entities/artisan-gallery.entity';
+import { RefreshToken } from './entities/refresh-token.entity';
 
 @Injectable()
 export class AuthService {
@@ -34,6 +34,8 @@ export class AuthService {
     private readonly categoryRepo: Repository<Category>,
     @InjectRepository(Region)
     private readonly regionRepo: Repository<Region>,
+    @InjectRepository(RefreshToken)
+    private readonly refreshTokenRepo: Repository<RefreshToken>,
   ) {
     cloudinary.config({
       cloud_name: this.configService.get<string>('CLOUDINARY_CLOUD_NAME'),
@@ -58,28 +60,72 @@ export class AuthService {
     });
   }
 
-  private generateTokens(userId: string, role: string) {
-    const payload = { sub: userId, role };
-    const access_token = this.jwtService.sign(payload, {
-      secret: this.configService.get<string>('JWT_SECRET'),
-      expiresIn: '24h',
-    });
-    const refresh_token = this.jwtService.sign(payload, {
-      secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-      expiresIn: '7d',
-    });
-    return { access_token, refresh_token };
+  private getAccessSecret(): string {
+    return this.configService.get<string>('JWT_SECRET') || 'secret';
+  }
+
+  private getRefreshSecret(): string {
+    return this.configService.get<string>('JWT_REFRESH_SECRET') || this.getAccessSecret();
+  }
+
+  private generateAccessToken(userId: string, role: string) {
+    return this.jwtService.sign(
+      { sub: userId, role },
+      {
+        secret: this.getAccessSecret(),
+        expiresIn: '15m',
+      },
+    );
+  }
+
+  private generateRefreshToken(userId: string, role: string) {
+    return this.jwtService.sign(
+      { sub: userId, role, typ: 'refresh' },
+      {
+        secret: this.getRefreshSecret(),
+        expiresIn: '24h',
+      },
+    );
+  }
+
+  private async issueRefreshToken(userId: string, role: string) {
+    const token = this.generateRefreshToken(userId, role);
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    await this.refreshTokenRepo.save(
+      this.refreshTokenRepo.create({
+        userId,
+        token,
+        expiresAt,
+      }),
+    );
+
+    return token;
+  }
+
+  private getRedirectUrlByRole(role: string) {
+    const redirects: Record<string, string> = {
+      admin: '/admin/dashboard',
+      artesano: '/artesano/dashboard',
+      comprador: '/catalogo',
+    };
+    return redirects[role] || '/catalogo';
+  }
+
+  private async issueSession(userId: string, role: string) {
+    return {
+      access_token: this.generateAccessToken(userId, role),
+      refresh_token: await this.issueRefreshToken(userId, role),
+      redirectUrl: this.getRedirectUrlByRole(role),
+    };
   }
 
   async login(dto: LoginDto) {
     const user = await this.usersService.findByEmail(dto.email);
-
-    // Unified error message (no distinction between wrong email/password)
     const invalidMsg = 'Credenciales incorrectas';
 
     if (!user) throw new UnauthorizedException(invalidMsg);
 
-    // Check if account is locked
     if (user.locked_until && user.locked_until > new Date()) {
       const minutesLeft = Math.ceil((user.locked_until.getTime() - Date.now()) / 60000);
       throw new UnauthorizedException(`Cuenta bloqueada. Intenta en ${minutesLeft} minuto(s)`);
@@ -91,10 +137,9 @@ export class AuthService {
       throw new UnauthorizedException(invalidMsg);
     }
 
-    // Reset failed attempts on success
     await this.usersService.resetFailedLogins(user.id);
 
-    const tokens = this.generateTokens(user.id, user.role);
+    const tokens = await this.issueSession(user.id, user.role);
     return {
       ...tokens,
       user: { id: user.id, email: user.email, full_name: user.full_name, role: user.role },
@@ -112,7 +157,7 @@ export class AuthService {
       email_verified: true,
     });
 
-    return { message: 'Registro exitoso. ¡Bienvenido!' };
+    return { message: 'Registro exitoso. Bienvenido!' };
   }
 
   async registerArtisan(
@@ -127,11 +172,10 @@ export class AuthService {
     expires.setHours(expires.getHours() + 48);
 
     const category = await this.categoryRepo.findOneBy({ id: dto.category_id });
-    if (!category) throw new BadRequestException('Categoría no válida');
+    if (!category) throw new BadRequestException('Categoria no valida');
     const region = await this.regionRepo.findOneBy({ id: dto.region_id });
-    if (!region) throw new BadRequestException('Región no válida');
+    if (!region) throw new BadRequestException('Region no valida');
 
-    // Upload ID document if exists
     let idDocumentFrontUrl = null;
     if (idDocumentFrontFile) {
       const upload = await this.uploadToCloudinary(idDocumentFrontFile, 'artisans/documents');
@@ -156,7 +200,7 @@ export class AuthService {
 
     const profile = this.artisanRepo.create({
       user,
-      id_number: dto.email, // Use email as fallback for unique id_number if not provided
+      id_number: dto.email,
       cultural_history: dto.cultural_history,
       category,
       region,
@@ -167,7 +211,6 @@ export class AuthService {
     });
     const savedProfile = await this.artisanRepo.save(profile);
 
-    // Upload gallery images
     if (galleryFiles && galleryFiles.length > 0) {
       for (const file of galleryFiles) {
         const upload = await this.uploadToCloudinary(file, 'artisans/gallery');
@@ -189,7 +232,7 @@ export class AuthService {
     const user = await this.usersService['userRepo'].findOne({
       where: { email_verification_token: token },
     });
-    if (!user) throw new BadRequestException('Token inválido o expirado');
+    if (!user) throw new BadRequestException('Token invalido o expirado');
     if (user.email_token_expires_at && user.email_token_expires_at < new Date()) {
       throw new BadRequestException('El token ha expirado');
     }
@@ -202,14 +245,37 @@ export class AuthService {
 
   async refresh(refreshToken: string) {
     try {
+      const storedToken = await this.refreshTokenRepo.findOneBy({ token: refreshToken });
+      if (!storedToken) throw new UnauthorizedException('Token de refresco invalido');
+
+      const now = new Date();
+      const inactivityLimit = new Date(now.getTime() - 30 * 60 * 1000);
+      if (storedToken.expiresAt <= now || storedToken.createdAt <= inactivityLimit) {
+        await this.refreshTokenRepo.delete({ token: refreshToken });
+        throw new UnauthorizedException('La sesion ha expirado');
+      }
+
       const payload = this.jwtService.verify(refreshToken, {
-        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+        secret: this.getRefreshSecret(),
       });
       const user = await this.usersService.findById(payload.sub);
       if (!user) throw new UnauthorizedException();
-      return this.generateTokens(user.id, user.role);
-    } catch {
-      throw new UnauthorizedException('Token de refresco inválido');
+
+      await this.refreshTokenRepo.delete({ token: refreshToken });
+      const session = await this.issueSession(user.id, user.role);
+      return {
+        ...session,
+        user: { id: user.id, email: user.email, full_name: user.full_name, role: user.role },
+      };
+    } catch (error) {
+      if (error instanceof UnauthorizedException) throw error;
+      await this.refreshTokenRepo.delete({ token: refreshToken }).catch(() => undefined);
+      throw new UnauthorizedException('Token de refresco invalido');
     }
+  }
+
+  async logout(refreshToken: string) {
+    await this.refreshTokenRepo.delete({ token: refreshToken });
+    return { message: 'Sesion cerrada correctamente' };
   }
 }

@@ -30,6 +30,7 @@ import { LogisticsModule } from './logistics/logistics.module';
       validationSchema: Joi.object({
         DATABASE_URL: Joi.string().required(),
         JWT_SECRET: Joi.string().required(),
+        JWT_REFRESH_SECRET: Joi.string().required(),
         CLOUDINARY_CLOUD_NAME: Joi.string().required(),
         CLOUDINARY_API_KEY: Joi.string().required(),
         CLOUDINARY_API_SECRET: Joi.string().required(),

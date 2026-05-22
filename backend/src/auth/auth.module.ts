@@ -10,6 +10,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ArtisanProfile } from '../artisans/entities/artisan-profile.entity';
 import { Category } from '../categories/entities/category.entity';
 import { Region } from '../regions/entities/region.entity';
+import { RefreshToken } from './entities/refresh-token.entity';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { Region } from '../regions/entities/region.entity';
     MailModule,
     PassportModule,
     JwtModule.register({}),
-    TypeOrmModule.forFeature([ArtisanProfile, Category, Region]),
+    TypeOrmModule.forFeature([ArtisanProfile, Category, Region, RefreshToken]),
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],

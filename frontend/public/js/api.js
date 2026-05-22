@@ -1,18 +1,37 @@
 const API = 'http://localhost:3000/api/v1';
 
 const Auth = {
-  getToken: () => localStorage.getItem('access_token'),
+  getToken: () => localStorage.getItem('accessToken'),
+  getRefreshToken: () => localStorage.getItem('refreshToken'),
   getUser: () => JSON.parse(localStorage.getItem('user') || 'null'),
   setSession: (data) => {
-    localStorage.setItem('access_token', data.access_token);
-    localStorage.setItem('refresh_token', data.refresh_token);
+    localStorage.setItem('accessToken', data.access_token);
+    localStorage.setItem('refreshToken', data.refresh_token);
     localStorage.setItem('user', JSON.stringify(data.user));
   },
-  logout: () => {
+  clearSession: () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('user');
-    window.location.href = '/login.html';
+  },
+  logout: async () => {
+    const refreshToken = Auth.getRefreshToken();
+    try {
+      if (refreshToken) {
+        await apiFetch('/auth/logout', {
+          method: 'POST',
+          body: JSON.stringify({ refresh_token: refreshToken }),
+          skipAuthRefresh: true,
+        });
+      }
+    } catch (error) {
+      console.warn('No se pudo invalidar la sesion en servidor:', error);
+    } finally {
+      Auth.clearSession();
+      window.location.href = '/login.html';
+    }
   },
   requireRole: (role) => {
     const user = Auth.getUser();
@@ -22,20 +41,52 @@ const Auth = {
   }
 };
 
+async function requestNewAccessToken() {
+  const refreshToken = Auth.getRefreshToken();
+  if (!refreshToken) throw new Error('No refresh token');
+
+  const res = await fetch(`${API}/auth/refresh`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refresh_token: refreshToken }),
+  });
+
+  if (!res.ok) throw new Error('Refresh token invalido');
+
+  const data = await res.json();
+  Auth.setSession({
+    ...data,
+    user: data.user || Auth.getUser(),
+  });
+  return data.access_token;
+}
+
 async function apiFetch(endpoint, options = {}) {
-  const isFormData = options.body instanceof FormData;
-  
-  const headers = { ...options.headers };
-  // Only set application/json if it's not FormData
+  const { skipAuthRefresh, ...fetchOptions } = options;
+  const isFormData = fetchOptions.body instanceof FormData;
+  const headers = { ...(fetchOptions.headers || {}) };
+
   if (!isFormData && !headers['Content-Type']) {
     headers['Content-Type'] = 'application/json';
   }
 
   const token = Auth.getToken();
   if (token) headers['Authorization'] = `Bearer ${token}`;
-  
-  const res = await fetch(`${API}${endpoint}`, { ...options, headers });
-  
+
+  let res = await fetch(`${API}${endpoint}`, { ...fetchOptions, headers });
+
+  if (res.status === 401 && !skipAuthRefresh && endpoint !== '/auth/refresh') {
+    try {
+      const newAccessToken = await requestNewAccessToken();
+      const retryHeaders = { ...headers, Authorization: `Bearer ${newAccessToken}` };
+      res = await fetch(`${API}${endpoint}`, { ...fetchOptions, headers: retryHeaders });
+    } catch {
+      Auth.clearSession();
+      window.location.href = '/login.html';
+      throw new Error('Sesion expirada. Inicia sesion nuevamente.');
+    }
+  }
+
   if (!res.ok) {
     const err = await res.json().catch(() => ({ message: 'Error de red' }));
     const msg = Array.isArray(err.message) ? err.message.join(', ') : (err.message || 'Error');
@@ -72,7 +123,7 @@ const Cart = {
     const existing = cart.find(item => item.id === product.id);
     if (existing) {
       existing.quantity += quantity;
-      showToast('<i class="fa-solid fa-box"></i> Se agregó otra unidad al carrito', 'success');
+      showToast('<i class="fa-solid fa-box"></i> Se agrego otra unidad al carrito', 'success');
     } else {
       cart.push({ ...product, quantity });
       showToast('<i class="fa-solid fa-cart-shopping"></i> Producto agregado al carrito', 'success');

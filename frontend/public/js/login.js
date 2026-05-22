@@ -35,12 +35,8 @@ function initLogin() {
       Auth.setSession(data);
       showToast(i18next.t('login.toastWelcome'));
 
-      // Redirect based on role
-      const role = data.user.role;
       setTimeout(() => {
-        if (role === 'admin') window.location.href = '/dashboard-admin.html';
-        else if (role === 'artesano') window.location.href = '/dashboard-artesano.html';
-        else window.location.href = '/index.html';
+        window.location.href = data.redirectUrl || '/catalogo';
       }, 600);
     } catch (err) {
       errorEl.textContent = err.message;
