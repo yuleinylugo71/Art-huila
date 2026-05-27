@@ -1,4 +1,7 @@
-const API = 'http://localhost:3000/api/v1';
+let API = window.VITE_API_URL || 'http://localhost:3000/api/v1';
+
+const BASE_URL = API.replace('/api/v1', '');
+window.BASE_URL = BASE_URL; // Asegurar disponibilidad global para otros archivos
 
 const Auth = {
   getToken: () => localStorage.getItem('accessToken'),
@@ -116,7 +119,8 @@ function showToast(msg, type = 'success') {
 }
 
 function formatPrice(p) {
-  return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(p);
+  const value = (p === null || p === undefined || isNaN(p) || typeof p === 'string' && p.trim() === '') ? 0 : Number(p);
+  return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(value);
 }
 
 const Cart = {
