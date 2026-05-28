@@ -42,7 +42,14 @@ function initLogin() {
       showToast(i18next.t('login.toastWelcome'));
 
       setTimeout(() => {
-        window.location.href = data.redirectUrl || '/catalogo';
+        const user = data.user;
+        if (user && user.role === 'admin') {
+          window.location.href = '/dashboard-admin.html';
+        } else if (user && user.role === 'artesano') {
+          window.location.href = '/dashboard-artesano.html';
+        } else {
+          window.location.href = '/catalogo.html';
+        }
       }, 600);
     } catch (err) {
       errorEl.textContent = err.message;

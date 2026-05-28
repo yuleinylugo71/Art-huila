@@ -12,10 +12,10 @@ const initCart = () => {
 
     if (isApproved) {
       Cart.clear();
-      window.location.href = '/pago-exitoso' + window.location.search;
+      window.location.href = '/pago-exitoso.html' + window.location.search;
     } else {
       // NO limpiar el carrito — el usuario puede reintentar
-      window.location.href = '/pago-fallido' + window.location.search;
+      window.location.href = '/pago-fallido.html' + window.location.search;
     }
     return;
   }
@@ -515,7 +515,7 @@ window.simulatePayment = async function(orderId, totalAmount) {
       x_transaction_date: new Date().toLocaleString('es-CO'),
       simulated: 'true'
     });
-    window.location.href = `/pago-exitoso?${params.toString()}`;
+    window.location.href = `/pago-exitoso.html?${params.toString()}`;
 
   } catch (e) {
     console.error('Payment simulation error:', e);

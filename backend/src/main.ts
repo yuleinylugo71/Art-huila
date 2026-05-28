@@ -11,7 +11,9 @@ async function bootstrap() {
   app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
   // Servir archivos estáticos del frontend desde la carpeta public (Monolito Unificado)
-  app.use(express.static(join(__dirname, '..', '..', 'public')));
+  const publicPath = join(process.cwd(), 'public');
+  console.log(`📁 Servir archivos estáticos desde: ${publicPath}`);
+  app.use(express.static(publicPath));
 
   const frontendUrl = process.env.FRONTEND_URL;
   const origins = ['http://localhost:5173', 'http://127.0.0.1:5500', 'http://localhost:5500', 'http://localhost:8080'];
