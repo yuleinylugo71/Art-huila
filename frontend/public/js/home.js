@@ -13,11 +13,40 @@ if (window.i18nReadyProcessed) {
 
 document.addEventListener('languageChanged', runInitHome);
 
+// Mobile search handler
+function handleMobileSearch(event) {
+  if (event.key === 'Enter') {
+    const query = event.target.value.trim();
+    if (query) {
+      window.location.href = `/catalogo.html?search=${encodeURIComponent(query)}`;
+    }
+  }
+}
+window.handleMobileSearch = handleMobileSearch;
+
 async function initHome() {
   const featuredGrid = document.getElementById('featured-grid');
   const categoriesGrid = document.getElementById('categories-grid');
 
   if (!featuredGrid || !categoriesGrid) return; // Defensive check
+
+  // 1. Mobile Welcome Greeting Setup
+  const user = Auth.getUser();
+  const mobileWelcomeUsername = document.getElementById('mobile-welcome-username');
+  if (mobileWelcomeUsername) {
+    if (user) {
+      const firstName = (user.full_name || user.username || '').split(' ')[0];
+      mobileWelcomeUsername.textContent = firstName || 'Invitado 🏺';
+    } else {
+      mobileWelcomeUsername.textContent = 'Invitado 🏺';
+    }
+  }
+
+  // Mobile User Avatar Setup
+  const mobileAvatar = document.getElementById('mobile-user-avatar');
+  if (mobileAvatar && user && user.avatar_url) {
+    mobileAvatar.src = user.avatar_url;
+  }
 
   // Load Stats
   try {
@@ -31,43 +60,25 @@ async function initHome() {
   // Load Categories
   try {
     const categories = await apiFetch('/categories');
-    
-    // Find Sombreros or default to the first one as featured
-    let sombrerosCat = categories.find(c => c.slug.toLowerCase().includes('sombrero') || c.name.toLowerCase().includes('sombrero'));
-    if (!sombrerosCat && categories.length > 0) {
-      sombrerosCat = categories[0];
-    }
-    
-    const otherCats = categories.filter(c => c.id !== sombrerosCat.id).slice(0, 3);
-    
-    if (sombrerosCat) {
-      categoriesGrid.className = 'asymmetric-categories-container';
-      categoriesGrid.innerHTML = `
-        <div class="category-large-card" onclick="window.location.href='/catalogo.html?category=${sombrerosCat.slug}'">
-          <div class="large-card-content">
-            <span class="large-card-emoji">${sombrerosCat.icon_emoji}</span>
-            <h3 class="large-card-title">${sombrerosCat.name}</h3>
-            <p class="large-card-subtitle" data-i18n="home.sombrerosSubtitle">Maestría de paja toquilla tradicional</p>
-            <span class="large-card-btn" data-i18n="home.exploreCraft">Ver Oficio &rarr;</span>
-          </div>
-        </div>
-        <div class="category-grid-small">
-          ${otherCats.map(c => `
-            <div class="category-small-card" onclick="window.location.href='/catalogo.html?category=${c.slug}'">
-              <span class="small-card-emoji">${c.icon_emoji}</span>
-              <h4 class="small-card-title">${c.name}</h4>
-              <span class="small-card-count">${c.count} ${i18next.t('home.productsSuffix', { defaultValue: 'piezas' })}</span>
-            </div>
-          `).join('')}
-        </div>
-      `;
-    } else {
-      categoriesGrid.innerHTML = categories.map(c => `
-        <div class="category-card" onclick="window.location.href='/catalogo.html?category=${c.slug}'">
-          <span class="category-icon">${c.icon_emoji}</span>
-          <div class="category-name">${c.name}</div>
-          <div style="font-size:0.75rem;color:var(--color-muted);margin-top:0.3rem;">${c.count} ${i18next.t('home.productsSuffix')}</div>
-        </div>
+    categoriesGrid.innerHTML = categories.map(c => `
+      <div class="category-card" onclick="window.location.href='/catalogo.html?category=${c.slug}'">
+        <span class="category-icon">${c.icon_emoji}</span>
+        <div class="category-name">${c.name}</div>
+        <div style="font-size:0.75rem;color:var(--color-muted);margin-top:0.3rem;">${c.count}${i18next.t('home.productsSuffix')}</div>
+      </div>
+    `).join('');
+
+    // Load Mobile categories scrolling pills
+    const mobileHomeCategories = document.getElementById('mobile-home-categories');
+    if (mobileHomeCategories) {
+      mobileHomeCategories.innerHTML = `
+        <button class="category-chip active" onclick="window.location.href='/catalogo.html'">
+          Todos
+        </button>
+      ` + categories.map(c => `
+        <button class="category-chip" onclick="window.location.href='/catalogo.html?category=${c.slug}'">
+          ${c.icon_emoji} ${c.name}
+        </button>
       `).join('');
     }
   } catch (e) { console.error('Error loading categories', e); }
@@ -79,8 +90,10 @@ async function initHome() {
     
     if (!products || products.length === 0) {
       featuredGrid.innerHTML = `<p class="text-muted">${i18next.t('home.noFeaturedProducts')}</p>`;
+      const mobileFeaturedGrid = document.getElementById('mobile-featured-grid');
+      if (mobileFeaturedGrid) mobileFeaturedGrid.innerHTML = `<p class="text-muted">${i18next.t('home.noFeaturedProducts')}</p>`;
     } else {
-      featuredGrid.innerHTML = products.map(p => {
+      const cardsHtml = products.map(p => {
         const isOutOfStock = p.stock !== undefined && p.stock < 1;
         const isWish = typeof Wishlist !== 'undefined' && Wishlist.has(p.id);
         const imgUrl = p.image_url || '/img/placeholder.jpg';
@@ -128,9 +141,20 @@ async function initHome() {
           </div>
         `;
       }).join('');
+
+      featuredGrid.innerHTML = cardsHtml;
+
+      const mobileFeaturedGrid = document.getElementById('mobile-featured-grid');
+      if (mobileFeaturedGrid) {
+        mobileFeaturedGrid.innerHTML = cardsHtml;
+      }
     }
   } catch (e) {
-    featuredGrid.innerHTML = `<div class="empty-state"><div class="emoji"><i class="fa-solid fa-triangle-exclamation"></i></div> h3>${i18next.t('home.errorLoadingProducts')}</h3><p>${e.message}</p></div>`;
+    featuredGrid.innerHTML = `<div class="empty-state"><div class="emoji"><i class="fa-solid fa-triangle-exclamation"></i></div> <h3>${i18next.t('home.errorLoadingProducts')}</h3><p>${e.message}</p></div>`;
+    const mobileFeaturedGrid = document.getElementById('mobile-featured-grid');
+    if (mobileFeaturedGrid) {
+      mobileFeaturedGrid.innerHTML = `<div class="empty-state"><div class="emoji"><i class="fa-solid fa-triangle-exclamation"></i></div> <h3>${i18next.t('home.errorLoadingProducts')}</h3><p>${e.message}</p></div>`;
+    }
   }
 
   // Local addToCart for home page
@@ -144,7 +168,7 @@ async function initHome() {
     }
     const imgUrl = p.image_url || '';
     const artisanName = p.artisan?.name || '';
-    Cart.add({ id: p.id, name: p.name, price: p.price, image: imgUrl, artisanName }, 1);
+    Cart.add({ id: p.id, name: p.price, price: p.price, image: imgUrl, artisanName }, 1);
   }
   window.addToCart = addToCart;
 

@@ -19,6 +19,7 @@ const create_order_dto_1 = require("./dto/create-order.dto");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const roles_decorator_1 = require("../auth/decorators/roles.decorator");
 const current_user_decorator_1 = require("../auth/decorators/current-user.decorator");
+const public_decorator_1 = require("../auth/decorators/public.decorator");
 let OrdersController = class OrdersController {
     ordersService;
     constructor(ordersService) {
@@ -60,6 +61,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], OrdersController.prototype, "create", null);
 __decorate([
+    (0, public_decorator_1.Public)(),
     (0, common_1.Post)('shipping-quote'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),

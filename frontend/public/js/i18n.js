@@ -40,6 +40,9 @@
     updateSwitcherButtons(i18next.language);
     window.applyTranslations();
     
+    // Set a global flag to prevent race conditions on scripts loaded later
+    window.i18nReadyProcessed = true;
+    
     // Disparar evento i18nReady en document
     document.dispatchEvent(new CustomEvent('i18nReady'));
   }
@@ -80,6 +83,14 @@
       const placeholderKey = el.dataset.i18nPlaceholder;
       if (placeholderKey) {
         el.placeholder = i18next.t(placeholderKey);
+      }
+    });
+
+    // Traducir tooltips usando data-i18n-tooltip
+    document.querySelectorAll('[data-i18n-tooltip]').forEach(el => {
+      const tooltipKey = el.dataset.i18nTooltip;
+      if (tooltipKey) {
+        el.setAttribute('data-tooltip', i18next.t(tooltipKey));
       }
     });
   };

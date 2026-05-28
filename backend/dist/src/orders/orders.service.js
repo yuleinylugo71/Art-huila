@@ -60,9 +60,6 @@ let OrdersService = class OrdersService {
                 if (product.stock < itemDto.quantity) {
                     throw new common_1.BadRequestException(`Not enough stock for product: ${product.name}`);
                 }
-                if (orderItems.length === 0 && product.artisan && product.artisan.region) {
-                    originCity = product.artisan.region.name;
-                }
                 product.stock -= itemDto.quantity;
                 await queryRunner.manager.save(product);
                 const subtotal = product.price * itemDto.quantity;
@@ -103,16 +100,6 @@ let OrdersService = class OrdersService {
     }
     async getShippingQuoteForCart(destinationCity, items) {
         let originCity = 'Neiva';
-        if (items && items.length > 0) {
-            const firstItem = items[0];
-            const product = await this.productsRepository.findOne({
-                where: { id: firstItem.productId },
-                relations: ['artisan', 'artisan.region']
-            });
-            if (product && product.artisan && product.artisan.region) {
-                originCity = product.artisan.region.name;
-            }
-        }
         const quote = await this.mipaqueteService.getShippingQuote(originCity, destinationCity, 1);
         return {
             ...quote

@@ -48,4 +48,21 @@ export declare class AdminService {
         message: string;
     }>;
     getAuditLogs(): Promise<import("../audit/entities/admin-audit-log.entity").AdminAuditLog[]>;
+    getStatsSummary(): Promise<{
+        artisans: {
+            total: number;
+            pending: number;
+            verified: number;
+            suspended: number;
+        };
+        orders: {
+            total: number;
+            today: number;
+            byStatus: Record<string, number>;
+            totalRevenue: number;
+        };
+        reviews: {
+            reported: number;
+        };
+    }>;
 }

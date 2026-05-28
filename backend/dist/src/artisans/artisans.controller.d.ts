@@ -21,12 +21,26 @@ export declare class ArtisansController {
         uploaded: string[];
         message?: undefined;
     }>;
-    updateProfile(user: any, body: any): Promise<import("./entities/artisan-profile.entity").ArtisanProfile>;
+    updateProfile(user: any, body: any): Promise<import("./entities/artisan-profile.entity").ArtisanProfile | null>;
     uploadAvatar(user: any, files: Express.Multer.File[]): Promise<{
         message: string;
         avatar_url?: undefined;
     } | {
         avatar_url: string;
+        message?: undefined;
+    }>;
+    uploadDocumentFront(user: any, files: Express.Multer.File[]): Promise<{
+        message: string;
+        id_document_front_url?: undefined;
+    } | {
+        id_document_front_url: string;
+        message?: undefined;
+    }>;
+    uploadDocumentBack(user: any, files: Express.Multer.File[]): Promise<{
+        message: string;
+        id_document_back_url?: undefined;
+    } | {
+        id_document_back_url: string;
         message?: undefined;
     }>;
 }

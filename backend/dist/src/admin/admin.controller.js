@@ -68,6 +68,9 @@ let AdminController = class AdminController {
     keepReview(id, user) {
         return this.adminService.keepReview(user.id, id);
     }
+    getStatsSummary() {
+        return this.adminService.getStatsSummary();
+    }
 };
 exports.AdminController = AdminController;
 __decorate([
@@ -187,6 +190,12 @@ __decorate([
     __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], AdminController.prototype, "keepReview", null);
+__decorate([
+    (0, common_1.Get)('stats/summary'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "getStatsSummary", null);
 exports.AdminController = AdminController = __decorate([
     (0, common_1.Controller)('admin'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, jwt_auth_guard_1.RolesGuard),

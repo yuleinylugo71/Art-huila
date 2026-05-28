@@ -1,9 +1,15 @@
 // login.js
 
-document.addEventListener('i18nReady', () => {
+const runInitLogin = () => {
   if (typeof applyTranslations === 'function') applyTranslations();
   initLogin();
-});
+};
+
+if (window.i18nReadyProcessed) {
+  runInitLogin();
+} else {
+  document.addEventListener('i18nReady', runInitLogin);
+}
 
 document.addEventListener('languageChanged', () => {
   if (typeof applyTranslations === 'function') applyTranslations();

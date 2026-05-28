@@ -261,6 +261,143 @@
   line-height: 1.5;
 }
 
+/* Premium profile card styling */
+.buyer-profile-card {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg, 22px);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-sm);
+  max-width: 550px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Terracotta left accent bar */
+.buyer-profile-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--color-primary);
+}
+
+.buyer-profile-card .form-group {
+  margin-bottom: 1.25rem;
+}
+
+.buyer-profile-card .form-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.buyer-profile-card .form-control {
+  border: 1.5px solid var(--color-border);
+  border-radius: 9px;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  background: var(--color-bg2, #fbfaf8);
+  transition: all 0.25s ease;
+  width: 100%;
+}
+
+.buyer-profile-card .form-control:focus {
+  border-color: var(--color-primary);
+  background: var(--color-surface);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(193, 68, 14, 0.1);
+}
+
+.buyer-profile-card .form-hint {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  margin-top: 0.35rem;
+  display: block;
+}
+
+.buyer-profile-card .btn-primary {
+  background: var(--color-primary);
+  border: none;
+  color: white;
+  padding: 0.8rem 1.75rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(193, 68, 14, 0.25);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.buyer-profile-card .btn-primary:hover {
+  background: var(--color-primary-dark, #a83b0c);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(193, 68, 14, 0.35);
+}
+
+.buyer-profile-card .btn-primary:active {
+  transform: translateY(0);
+}
+
+/* ── PAGINACIÓN COMPRADOR ── */
+.pagination-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg, 22px);
+  box-shadow: var(--shadow-sm);
+  margin-top: 1.5rem;
+}
+.pagination-info {
+  font-size: 0.85rem;
+  color: var(--color-muted, #7a6e64);
+  font-weight: 500;
+}
+.pagination-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+.pagination-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--color-border, #e8e0d8);
+  background: var(--color-surface, #ffffff);
+  color: var(--color-text, #1a1208);
+  border-radius: 9px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: var(--font-body), sans-serif;
+}
+.pagination-btn:hover:not(:disabled) {
+  background: rgba(193, 68, 14, 0.05);
+  border-color: var(--color-primary, #c1440e);
+  color: var(--color-primary, #c1440e);
+  transform: translateY(-1px);
+}
+.pagination-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 @media (max-width: 768px) {
   .buyer-layout { grid-template-columns: 1fr; }
   .detail-grid { grid-template-columns: 1fr; }
@@ -272,4 +409,35 @@
   .tracker-steps::before, .tracker-line-progress {
     top: 20px;
   }
+}
+
+/* ── VIEW MODE & UTILITIES ── */
+.hidden {
+  display: none !important;
+}
+
+.profile-info-row {
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.75rem;
+}
+
+.profile-info-row:last-of-type {
+  border-bottom: none;
+}
+
+.profile-info-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.profile-info-value {
+  font-size: 1.1rem;
+  color: var(--color-text);
+  font-weight: 500;
 }

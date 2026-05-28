@@ -154,6 +154,38 @@ let AdminService = class AdminService {
     async getAuditLogs() {
         return this.auditService.findAll();
     }
+    async getStatsSummary() {
+        const [artisans, orders, reported] = await Promise.all([
+            this.artisansService.findAll(),
+            this.ordersService.findAll(),
+            this.reviewsService.findReported(),
+        ]);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const totalRevenue = orders
+            .filter(o => o.status !== 'cancelled')
+            .reduce((sum, o) => sum + Number(o.total_amount), 0);
+        const ordersToday = orders.filter(o => new Date(o.created_at) >= today).length;
+        const statusCount = {};
+        orders.forEach(o => { statusCount[o.status] = (statusCount[o.status] || 0) + 1; });
+        return {
+            artisans: {
+                total: artisans.length,
+                pending: artisans.filter(a => a.verification_status === 'pending').length,
+                verified: artisans.filter(a => a.verification_status === 'verified').length,
+                suspended: artisans.filter(a => a.verification_status === 'suspended').length,
+            },
+            orders: {
+                total: orders.length,
+                today: ordersToday,
+                byStatus: statusCount,
+                totalRevenue,
+            },
+            reviews: {
+                reported: reported.length,
+            },
+        };
+    }
 };
 exports.AdminService = AdminService;
 exports.AdminService = AdminService = __decorate([

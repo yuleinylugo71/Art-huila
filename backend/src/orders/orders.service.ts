@@ -56,10 +56,11 @@ export class OrdersService {
           throw new BadRequestException(`Not enough stock for product: ${product.name}`);
         }
 
-        // Set origin city from the first product's artisan region
-        if (orderItems.length === 0 && product.artisan && product.artisan.region) {
-          originCity = product.artisan.region.name;
-        }
+        // Note: As per requirements, all products are shipped from the central hub in Neiva.
+        // We do not override originCity with the artisan's region.
+        // if (orderItems.length === 0 && product.artisan && product.artisan.region) {
+        //   originCity = product.artisan.region.name;
+        // }
 
         // Subtract stock
         product.stock -= itemDto.quantity;
@@ -117,17 +118,19 @@ export class OrdersService {
   async getShippingQuoteForCart(destinationCity: string, items: { productId: string; quantity: number }[]) {
     let originCity = 'Neiva'; // Default
 
-    if (items && items.length > 0) {
-      const firstItem = items[0];
-      const product = await this.productsRepository.findOne({
-        where: { id: firstItem.productId },
-        relations: ['artisan', 'artisan.region']
-      });
-
-      if (product && product.artisan && product.artisan.region) {
-        originCity = product.artisan.region.name;
-      }
-    }
+    // Note: As per requirements, all products are shipped from the central hub in Neiva.
+    // We do not override originCity with the artisan's region.
+    // if (items && items.length > 0) {
+    //   const firstItem = items[0];
+    //   const product = await this.productsRepository.findOne({
+    //     where: { id: firstItem.productId },
+    //     relations: ['artisan', 'artisan.region']
+    //   });
+    //
+    //   if (product && product.artisan && product.artisan.region) {
+    //     originCity = product.artisan.region.name;
+    //   }
+    // }
 
     const quote = await this.mipaqueteService.getShippingQuote(originCity, destinationCity, 1);
     return {

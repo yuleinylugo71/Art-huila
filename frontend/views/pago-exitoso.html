@@ -25,19 +25,36 @@
     Gracias por apoyar a los artesanos del Huila. Tu pedido está siendo procesado. Recibirás un correo de confirmación.
   </p>
 
+  <!-- Simulated mode badge -->
+  <div id="sim-badge" style="display:none; background:#fef9c3; border:1px solid #fde68a; color:#92400e; border-radius:20px; padding:0.4rem 1rem; font-size:0.78rem; font-weight:700; margin-bottom:1rem; display:none; align-items:center; gap:0.4rem;">
+    <i class="fa-solid fa-flask"></i> Pago simulado — Sin cargo real
+  </div>
+
   <div class="success-card" id="order-info">
     <div class="info-row">
       <span style="color:var(--color-muted);" data-i18n="payment.transactionId">ID de transacción</span>
       <span id="txn-id" style="font-weight:600;">—</span>
     </div>
+    <div class="info-row" id="row-amount" style="display:none;">
+      <span style="color:var(--color-muted);" data-i18n="payment.amountPaid">Monto pagado</span>
+      <span id="txn-amount" style="font-weight:700; color:var(--color-primary);">—</span>
+    </div>
+    <div class="info-row" id="row-method" style="display:none;">
+      <span style="color:var(--color-muted);" data-i18n="payment.paymentMethod">Método de pago</span>
+      <span id="txn-method" style="font-weight:600;">—</span>
+    </div>
+    <div class="info-row" id="row-date" style="display:none;">
+      <span style="color:var(--color-muted);" data-i18n="payment.date">Fecha</span>
+      <span id="txn-date" style="font-weight:600;">—</span>
+    </div>
     <div class="info-row">
       <span style="color:var(--color-muted);" data-i18n="payment.statusLabel">Estado</span>
-      <span style="color:#16a34a;font-weight:600;" data-i18n="payment.approvedStatus"><i class="fa-solid fa-check"></i> Aprobado</span>
+      <span style="color:#16a34a;font-weight:600;"><i class="fa-solid fa-check"></i> <span data-i18n="payment.approvedStatus">Aprobado</span></span>
     </div>
   </div>
 
   <div class="nav-actions">
-    <a href="dashboard-comprador.html" class="btn btn-primary btn-lg" data-i18n="payment.viewOrdersBtn"><i class="fa-solid fa-box"></i> Ver mis pedidos</a>
+    <a href="dashboard-comprador.html" class="btn btn-primary btn-lg"><i class="fa-solid fa-box"></i> <span data-i18n="payment.viewOrdersBtn">Ver mis pedidos</span></a>
     <a href="catalogo.html" class="btn btn-outline btn-lg" data-i18n="payment.continueShoppingBtn">← Seguir comprando</a>
   </div>
 </div>
@@ -49,13 +66,50 @@
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
-    const txnId = params.get('id');
-    if (txnId) {
-      document.getElementById('txn-id').textContent = txnId.substring(0, 16) + '...';
+
+    // Check simulated mode
+    const isSimulated = params.get('simulated') === 'true';
+    const simBadge = document.getElementById('sim-badge');
+    if (isSimulated && simBadge) {
+      simBadge.style.display = 'flex';
     }
-    // Auto-clear the cart in case it wasn't cleared
+
+    // ID / referencia
+    const txnId = params.get('x_ref_payco') || params.get('ref_payco') || params.get('id');
+    if (txnId) {
+      document.getElementById('txn-id').textContent = txnId;
+    }
+
+    // Monto
+    const amount = params.get('x_amount') || params.get('x_amount_ok');
+    if (amount) {
+      const num = parseFloat(amount);
+      if (!isNaN(num)) {
+        document.getElementById('txn-amount').textContent =
+          new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(num);
+        document.getElementById('row-amount').style.display = 'flex';
+      }
+    }
+
+    // Método de pago
+    const method = params.get('x_franchise') || params.get('x_type_operation');
+    if (method) {
+      document.getElementById('txn-method').textContent = method;
+      document.getElementById('row-method').style.display = 'flex';
+    }
+
+    // Fecha
+    const date = params.get('x_transaction_date');
+    if (date) {
+      document.getElementById('txn-date').textContent = date;
+      document.getElementById('row-date').style.display = 'flex';
+    }
+
+    // Limpiar carrito
     if (typeof Cart !== 'undefined') Cart.clear();
   });
+
 </script>
 </body>
 </html>
+

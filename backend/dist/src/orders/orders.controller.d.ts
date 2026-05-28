@@ -10,15 +10,11 @@ export declare class OrdersController {
     }): Promise<{
         isFallback: boolean;
         originCity: string;
-        cost: number;
-        estimatedDays: number;
-        carrier: string;
+        cost: any;
+        estimatedDays: any;
+        carrier: any;
         fallbackMessage: null;
-        options: {
-            carrier: string;
-            price: number;
-            estimatedDays: number;
-        }[];
+        options: any;
     }>;
     findArtisanSales(user: any): Promise<import("./entities/order-item.entity").OrderItem[]>;
     findAll(user: any): Promise<import("./entities/order.entity").Order[]>;

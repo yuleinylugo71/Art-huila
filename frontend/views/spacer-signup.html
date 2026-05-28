@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spacer — Create Account</title>
+  <link rel="stylesheet" href="/css/spacer-signup.css" />
+</head>
+<body>
+
+<div class="card">
+
+  <!-- ── LEFT: BRAND PANEL ── -->
+  <div class="panel-brand">
+
+    <div class="brand-content">
+      <span class="welcome-text">Welcome to</span>
+
+      <div class="rocket-container">
+        <svg class="rocket-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path class="rocket-body" d="M12 2C12 2 7 6 7 13C7 15.76 8.24 18.24 10.2 19.8L11 15H13L13.8 19.8C15.76 18.24 17 15.76 17 13C17 6 12 2 12 2Z" />
+          <path class="rocket-flame" d="M9 17L7.5 22L10.5 20.5L12 22L13.5 20.5L16.5 22L15 17" opacity="0.6"/>
+          <circle class="rocket-window" cx="12" cy="12" r="2" />
+        </svg>
+      </div>
+
+      <span class="app-name">Spacer</span>
+
+      <p class="brand-desc">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed diam nonummy nibh euismod tincidunt.
+      </p>
+    </div>
+
+    <span class="brand-footer">CREATOR HERE &nbsp;|&nbsp; DESIGNER HERE</span>
+
+    <!-- Organic wavy/bubbly cloud divider styled completely by CSS -->
+    <svg class="wave-divider" viewBox="0 0 88 460" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="
+        M0,0 L44,0
+        C44,0 28,28 36,58
+        C44,88 52,100 44,128
+        C36,156 20,168 28,200
+        C36,232 52,244 44,274
+        C36,304 20,318 28,350
+        C36,382 52,396 44,424
+        C36,452 28,460 44,460
+        L0,460 Z
+      " />
+    </svg>
+  </div>
+
+  <!-- ── RIGHT: FORM PANEL ── -->
+  <div class="panel-form">
+    <h1 class="form-title">Create your account</h1>
+
+    <div class="field-group">
+
+      <!-- Name -->
+      <div class="field">
+        <label for="field-name">Name</label>
+        <div class="field-row">
+          <input id="field-name" type="text" placeholder="Enter your name" autocomplete="name" />
+          <svg class="check-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 8L6.5 11.5L13 5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- E-mail -->
+      <div class="field">
+        <label for="field-email">E-mail Adress</label>
+        <div class="field-row">
+          <input id="field-email" type="email" placeholder="Enter your mail" autocomplete="email" />
+          <svg class="check-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 8L6.5 11.5L13 5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="field">
+        <label for="field-password">Password</label>
+        <div class="field-row">
+          <input id="field-password" type="password" placeholder="Enter your password" autocomplete="new-password" />
+          <svg class="check-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 8L6.5 11.5L13 5" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Terms & Conditions -->
+    <label class="terms-row">
+      <input type="checkbox" id="terms-check" />
+      <span>
+        By Signing Up I Agree with
+        <a href="#" class="terms-link">Terms &amp; Conditions</a>
+      </span>
+    </label>
+
+    <!-- Buttons -->
+    <div class="btn-row">
+      <button class="btn btn-primary" type="button" id="btn-signup">Sign Up</button>
+      <button class="btn btn-outline" type="button" id="btn-signin">Sign In</button>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

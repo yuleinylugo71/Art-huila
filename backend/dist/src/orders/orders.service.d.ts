@@ -22,15 +22,11 @@ export declare class OrdersService {
     }[]): Promise<{
         isFallback: boolean;
         originCity: string;
-        cost: number;
-        estimatedDays: number;
-        carrier: string;
+        cost: any;
+        estimatedDays: any;
+        carrier: any;
         fallbackMessage: null;
-        options: {
-            carrier: string;
-            price: number;
-            estimatedDays: number;
-        }[];
+        options: any;
     }>;
     findByUser(userId: string): Promise<Order[]>;
     findOne(id: string, user: User): Promise<Order | null>;

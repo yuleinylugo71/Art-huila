@@ -4,6 +4,7 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { JwtAuthGuard, RolesGuard } from '../auth/guards/jwt-auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { Public } from '../auth/decorators/public.decorator';
 
 @Controller('orders')
 @UseGuards(JwtAuthGuard)
@@ -16,6 +17,7 @@ export class OrdersController {
     return this.ordersService.create(createOrderDto, user);
   }
 
+  @Public()
   @Post('shipping-quote')
   async getShippingQuote(@Body() body: { destinationCity: string; items: any[] }) {
     return this.ordersService.getShippingQuoteForCart(body.destinationCity, body.items);

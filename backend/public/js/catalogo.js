@@ -44,6 +44,7 @@ function getUrlParams() {
     maxPrice: p.get('maxPrice') || '',
     sortBy: p.get('sortBy') || 'newest',
     page: parseInt(p.get('page') || '1'),
+    search: p.get('search') || '',
   };
 }
 
@@ -79,10 +80,24 @@ async function loadFilters() {
     `).join('');
   }
 
-  const { minPrice, maxPrice, sortBy } = params;
+  const { minPrice, maxPrice, sortBy, search } = params;
   if (minPrice) document.getElementById('min-price').value = minPrice;
   if (maxPrice) document.getElementById('max-price').value = maxPrice;
-  document.getElementById('sort-select').value = sortBy;
+  
+  const sortSelect = document.getElementById('sort-select');
+  if (sortSelect) sortSelect.value = sortBy;
+  
+  const mobileSort = document.getElementById('mobile-sort-select');
+  if (mobileSort) mobileSort.value = sortBy;
+
+  const searchInput = document.getElementById('search-input');
+  if (searchInput && search) {
+    searchInput.value = search;
+  }
+  const mobileSearch = document.getElementById('mobile-search-input');
+  if (mobileSearch && search) {
+    mobileSearch.value = search;
+  }
 
   // 🏷️ Sync Category Chips Scroller
   syncCategoryChips();
@@ -90,30 +105,46 @@ async function loadFilters() {
 
 function syncCategoryChips() {
   const chipsScroller = document.getElementById('category-chips-scroller');
-  if (!chipsScroller || cachedCategories.length === 0) return;
-  
-  chipsScroller.className = 'category-circle-carousel';
-  
   const checkedCats = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(el => el.value);
   const allActive = checkedCats.length === 0;
-  
-  let chipsHtml = `
-    <div class="category-circle-item ${allActive ? 'active' : ''}" onclick="window.selectCategoryChip('')">
-      <div class="category-circle-chip">✨</div>
-      <div class="category-circle-label" data-i18n="catalog.allCategories">Todos</div>
-    </div>
-  `;
-  chipsHtml += cachedCategories.map(c => {
-    const isActive = checkedCats.includes(c.name);
-    const emoji = c.icon_emoji || '🏺';
-    return `
-      <div class="category-circle-item ${isActive ? 'active' : ''}" onclick="window.selectCategoryChip('${c.name}')">
-        <div class="category-circle-chip">${emoji}</div>
-        <div class="category-circle-label">${c.name}</div>
-      </div>
+
+  if (chipsScroller && cachedCategories.length > 0) {
+    let chipsHtml = `
+      <button class="category-chip ${allActive ? 'active' : ''}" onclick="selectCategoryChip('')">
+        Todos
+      </button>
     `;
-  }).join('');
-  chipsScroller.innerHTML = chipsHtml;
+    chipsHtml += cachedCategories.map(c => {
+      const isActive = checkedCats.includes(c.name);
+      return `
+        <button class="category-chip ${isActive ? 'active' : ''}" onclick="selectCategoryChip('${c.name}')">
+          ${c.name}
+        </button>
+      `;
+    }).join('');
+    chipsScroller.innerHTML = chipsHtml;
+  }
+  
+  // Render Figma circular categories
+  const circularContainer = document.getElementById('mobile-categories-carousel');
+  if (circularContainer && cachedCategories.length > 0) {
+    let circularHtml = `
+      <button class="mobile-category-circle ${allActive ? 'active' : ''}" onclick="selectCategoryChip('')">
+        <div class="circle-icon">🏺</div>
+        <span class="circle-label">Todos</span>
+      </button>
+    `;
+    circularHtml += cachedCategories.map(c => {
+      const isActive = checkedCats.includes(c.name);
+      return `
+        <button class="mobile-category-circle ${isActive ? 'active' : ''}" onclick="selectCategoryChip('${c.name}')">
+          <div class="circle-icon">${c.icon_emoji || '✨'}</div>
+          <span class="circle-label">${c.name}</span>
+        </button>
+      `;
+    }).join('');
+    circularContainer.innerHTML = circularHtml;
+  }
 }
 
 window.selectCategoryChip = (catName) => {
@@ -150,7 +181,7 @@ async function loadProducts(page = 1) {
 
     // Client-side search keyword filtering
     let filteredData = data;
-    const searchVal = document.getElementById('search-input')?.value.toLowerCase().trim();
+    const searchVal = (document.getElementById('search-input')?.value || document.getElementById('mobile-search-input')?.value || '').toLowerCase().trim();
     if (searchVal) {
       filteredData = data.filter(p => 
         p.name.toLowerCase().includes(searchVal) || 
@@ -265,8 +296,27 @@ function applyFilters(debounceMs = 0) {
     const categories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(el => el.value).join(',');
     const minPrice = document.getElementById('min-price').value;
     const maxPrice = document.getElementById('max-price').value;
-    const sortBy = document.getElementById('sort-select').value;
-    syncFiltersToUrl({ regions, categories, minPrice, maxPrice, sortBy });
+    
+    // Sync sorting dropdown values
+    const desktopSort = document.getElementById('sort-select');
+    const mobileSort = document.getElementById('mobile-sort-select');
+    const sortBy = desktopSort?.value || mobileSort?.value || 'newest';
+    
+    // Sync search input values
+    const desktopSearch = document.getElementById('search-input');
+    const mobileSearch = document.getElementById('mobile-search-input');
+    const search = (desktopSearch?.value || mobileSearch?.value || '').trim();
+    
+    // Make sure we keep both inputs in sync visually if one changes
+    if (desktopSearch && mobileSearch) {
+      if (document.activeElement === desktopSearch) {
+        mobileSearch.value = desktopSearch.value;
+      } else if (document.activeElement === mobileSearch) {
+        desktopSearch.value = mobileSearch.value;
+      }
+    }
+    
+    syncFiltersToUrl({ regions, categories, minPrice, maxPrice, sortBy, search });
     loadProducts(1);
     
     // 🏷️ Sync chips immediately
@@ -285,15 +335,53 @@ function clearFilters() {
   document.querySelectorAll('input[name="category"]').forEach(el => el.checked = false);
   document.getElementById('min-price').value = '';
   document.getElementById('max-price').value = '';
-  document.getElementById('sort-select').value = 'newest';
+  
+  const desktopSort = document.getElementById('sort-select');
+  if (desktopSort) desktopSort.value = 'newest';
+  const mobileSort = document.getElementById('mobile-sort-select');
+  if (mobileSort) mobileSort.value = 'newest';
+  
   const searchInput = document.getElementById('search-input');
   if (searchInput) searchInput.value = '';
+  const mobileSearch = document.getElementById('mobile-search-input');
+  if (mobileSearch) mobileSearch.value = '';
+  
   history.replaceState(null, '', window.location.pathname);
   loadProducts(1);
   
   // 🏷️ Sync chips immediately
   if (typeof syncCategoryChips === 'function') syncCategoryChips();
 }
+
+// Sync mobile and desktop sort dropdowns
+window.syncMobileSort = (mobileSelect) => {
+  const desktopSelect = document.getElementById('sort-select');
+  if (desktopSelect) {
+    desktopSelect.value = mobileSelect.value;
+  }
+  applyFilters();
+};
+
+// Toggle quick filter scroll/focus
+window.toggleQuickFilter = (type) => {
+  const sidebar = document.querySelector('.filter-sidebar');
+  if (sidebar) {
+    sidebar.classList.add('open');
+    let targetSection;
+    if (type === 'region') {
+      targetSection = document.getElementById('region-select');
+    } else if (type === 'price') {
+      targetSection = document.getElementById('min-price');
+    }
+    if (targetSection) {
+      setTimeout(() => {
+        targetSection.focus();
+        targetSection.style.outline = '2px solid var(--color-primary)';
+        setTimeout(() => { targetSection.style.outline = 'none'; }, 1500);
+      }, 300);
+    }
+  }
+};
 
 async function initCatalog() {
   const user = Auth.getUser();

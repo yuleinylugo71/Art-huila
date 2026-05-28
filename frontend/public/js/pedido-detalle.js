@@ -1,14 +1,28 @@
 if (!Auth.getToken()) window.location.href = '/login.html';
 
-document.addEventListener('DOMContentLoaded', () => {
+let currentOrderId = null;
+
+if (window.i18nReadyProcessed) {
+    initPage();
+} else {
+    document.addEventListener('i18nReady', initPage);
+}
+
+document.addEventListener('languageChanged', () => {
+    if (currentOrderId) {
+        loadOrderDetail(currentOrderId);
+    }
+});
+
+function initPage() {
     const params = new URLSearchParams(window.location.search);
-    const orderId = params.get('id');
-    if (!orderId) {
+    currentOrderId = params.get('id');
+    if (!currentOrderId) {
         window.location.href = '/dashboard-comprador.html';
         return;
     }
-    loadOrderDetail(orderId);
-});
+    loadOrderDetail(currentOrderId);
+}
 
 async function loadOrderDetail(orderId) {
     const orderTitle = document.getElementById('order-title');
@@ -18,14 +32,17 @@ async function loadOrderDetail(orderId) {
     try {
         const order = await apiFetch(`/orders/${orderId}`);
         if (!order) {
-            showToast('Pedido no encontrado', 'error');
+            showToast(i18next.t('order.errorNotFound'), 'error');
             setTimeout(() => { window.location.href = '/dashboard-comprador.html'; }, 2000);
             return;
         }
 
         // Title and Date
-        orderTitle.textContent = `Pedido #${order.id.substring(0, 8)}`;
-        orderDateText.textContent = `Realizado el ${new Date(order.created_at).toLocaleString('es-CO', { dateStyle: 'long', timeStyle: 'short' })}`;
+        orderTitle.textContent = i18next.t('order.idLabel', { id: order.id.substring(0, 8) });
+        
+        const dateLocale = i18next.language === 'es' ? 'es-CO' : 'en-US';
+        const formattedDate = new Date(order.created_at).toLocaleString(dateLocale, { dateStyle: 'long', timeStyle: 'short' });
+        orderDateText.textContent = i18next.t('order.placedOnLabel', { date: formattedDate });
 
         // Progress Tracker
         updateTracker(order.status);
@@ -39,10 +56,10 @@ async function loadOrderDetail(orderId) {
             
             return `
                 <div class="detail-item-card">
-                    <img src="${imgUrl}" alt="${item.product?.name || 'Producto eliminado'}" class="detail-item-img"/>
+                    <img src="${imgUrl}" alt="${item.product?.name || i18next.t('order.productDeleted')}" class="detail-item-img"/>
                     <div style="flex: 1;">
-                        <h4 style="margin: 0; font-size: 1rem; font-weight: 600;">${item.product?.name || 'Producto eliminado'}</h4>
-                        <p style="margin: 0.15rem 0 0 0; font-size: 0.8rem; color: var(--color-muted);">Artesano: ${item.product?.artisan?.user?.full_name || 'Art Huila Co'}</p>
+                        <h4 style="margin: 0; font-size: 1rem; font-weight: 600;">${item.product?.name || i18next.t('order.productDeleted')}</h4>
+                        <p style="margin: 0.15rem 0 0 0; font-size: 0.8rem; color: var(--color-muted);">${i18next.t('order.artisanLabel')}${item.product?.artisan?.user?.full_name || 'Art Huila Co'}</p>
                         <p style="margin: 0.25rem 0 0 0; font-size: 0.85rem; font-weight: 500;">
                             $${Number(item.unit_price).toLocaleString('es-CO')} x ${item.quantity}
                         </p>
@@ -78,14 +95,14 @@ async function loadOrderDetail(orderId) {
             const trackingUrl = getTrackingUrl(order.shipping_company, order.tracking_number);
             actionContainer.innerHTML = `
                 <a href="${trackingUrl}" target="_blank" class="btn btn-primary btn-sm" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%;">
-                    <i class="fa-solid fa-magnifying-glass"></i> Rastrear Envío
+                    <i class="fa-solid fa-magnifying-glass"></i> <span>${i18next.t('order.trackShippingBtn')}</span>
                 </a>
             `;
         } else {
             trackingNumEl.textContent = '—';
             actionContainer.innerHTML = `
                 <div style="font-size: 0.85rem; color: var(--color-muted); text-align: center; font-style: italic; border: 1.5px dashed var(--color-border); padding: 0.75rem; border-radius: var(--radius);">
-                    La guía de seguimiento estará disponible una vez que el artesano despache el producto.
+                    ${i18next.t('order.trackingUnavailableHint')}
                 </div>
             `;
         }
@@ -96,21 +113,22 @@ async function loadOrderDetail(orderId) {
         const addressCity = document.getElementById('address-city');
 
         const addr = order.shipping_address;
-        if (addr && addr.address) {
-            addressName.textContent = addr.receiver_name || order.user?.full_name || Auth.getUser().full_name;
-            addressLine.textContent = addr.address;
-            addressCity.textContent = `${addr.city || 'Municipio Huila'} • Tel: ${addr.phone || '—'}`;
+        if (addr && (addr.address || addr.city)) {
+            addressName.textContent = addr.receiver_name || order.user?.full_name || Auth.getUser()?.full_name || '—';
+            addressLine.textContent = addr.address || i18next.t('order.errorAddressNotRegistered');
+            addressCity.textContent = addr.city ? `${addr.city}, Huila, Colombia${addr.phone ? ' · Tel: ' + addr.phone : ''}` : '—';
         } else {
             document.getElementById('shipping-address-panel').innerHTML = `
-                <div style="font-size: 0.9rem; color: var(--color-danger); font-weight: 600; padding: 0.5rem; background: #fef2f2; border-radius: 4px; border: 1px solid #fecaca; text-align: center;">
-                    <i class="fa-solid fa-triangle-exclamation"></i> Dirección no registrada
+                <div style="font-size: 0.9rem; color: var(--color-danger); font-weight: 600; padding: 0.5rem; background: #fef2f2; border-radius: 4px; border: 1px solid #fecaca; text-align: center; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                    <i class="fa-solid fa-triangle-exclamation"></i> <span>${i18next.t('order.errorAddressNotRegistered')}</span>
                 </div>
             `;
         }
 
+
     } catch (e) {
         console.error(e);
-        itemsList.innerHTML = `<div class="error-msg">Error al cargar el detalle del pedido: ${e.message}</div>`;
+        itemsList.innerHTML = `<div class="error-msg">${i18next.t('order.errorLoadingDetail')}${e.message}</div>`;
     }
 }
 
@@ -118,10 +136,31 @@ function updateTracker(status) {
     const steps = ['pending', 'paid', 'preparing', 'shipped', 'delivered'];
     const currentIdx = steps.indexOf(status);
     
-    // Reset classes
+    // Reset classes and restore original labels
     steps.forEach(s => {
         const el = document.getElementById(`step-${s}`);
-        if (el) el.className = 'step';
+        if (el) {
+            el.className = 'step';
+            const labelEl = el.querySelector('.step-label');
+            if (labelEl) {
+                // Restore label text content based on translation
+                const transKey = 'order.status' + s.charAt(0).toUpperCase() + s.slice(1);
+                labelEl.textContent = i18next.t(transKey);
+                labelEl.style.color = '';
+            }
+            const iconContainer = el.querySelector('.step-icon');
+            if (iconContainer) {
+                // Restore original icon HTML
+                const iconMap = {
+                    'pending': '<i class="fa-solid fa-hourglass-half"></i>',
+                    'paid': '<i class="fa-solid fa-credit-card"></i>',
+                    'preparing': '<i class="fa-solid fa-user"></i>‍<i class="fa-solid fa-utensils"></i>',
+                    'shipped': '<i class="fa-solid fa-rocket"></i>',
+                    'delivered': '<i class="fa-solid fa-check"></i>'
+                };
+                iconContainer.innerHTML = iconMap[s];
+            }
+        }
     });
 
     const lineProgress = document.getElementById('tracker-line-progress');
@@ -131,9 +170,13 @@ function updateTracker(status) {
         const firstStep = document.getElementById('step-pending');
         if (firstStep) {
             firstStep.classList.add('active');
-            firstStep.querySelector('.step-icon').textContent = '<i class="fa-solid fa-xmark"></i>';
-            firstStep.querySelector('.step-label').textContent = 'Cancelado';
-            firstStep.querySelector('.step-label').style.color = '#dc2626';
+            const iconEl = firstStep.querySelector('.step-icon');
+            if (iconEl) iconEl.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+            const labelEl = firstStep.querySelector('.step-label');
+            if (labelEl) {
+                labelEl.textContent = i18next.t('order.statusCancelled', { defaultValue: 'Cancelado' });
+                labelEl.style.color = '#dc2626';
+            }
         }
         if (lineProgress) lineProgress.style.width = '0%';
         return;
@@ -148,7 +191,8 @@ function updateTracker(status) {
             el.classList.add('active');
         } else if (idx < currentIdx) {
             el.classList.add('completed');
-            el.querySelector('.step-icon').textContent = '<i class="fa-solid fa-check"></i>';
+            const iconEl = el.querySelector('.step-icon');
+            if (iconEl) iconEl.innerHTML = '<i class="fa-solid fa-check"></i>';
         }
     });
 
@@ -166,7 +210,7 @@ function updateTracker(status) {
 function getImageUrl(url) {
     if (!url) return '/img/placeholder.jpg';
     if (url.startsWith('http://') || url.startsWith('https://')) return url;
-    return `http://localhost:3000${url.startsWith('/') ? '' : '/'}${url}`;
+    return `${BASE_URL}${url.startsWith('/') ? '' : '/'}${url}`;
 }
 
 function getStatusBadgeClass(status) {
@@ -183,12 +227,12 @@ function getStatusBadgeClass(status) {
 
 function translateStatus(status) {
     const map = {
-        'pending': 'Pendiente',
-        'paid': 'Pagado',
-        'preparing': 'En preparación',
-        'shipped': 'Despachado',
-        'delivered': 'Entregado',
-        'cancelled': 'Cancelado'
+        'pending': i18next.t('order.statusPending'),
+        'paid': i18next.t('order.statusPaid'),
+        'preparing': i18next.t('order.statusPreparing'),
+        'shipped': i18next.t('order.statusShipped'),
+        'delivered': i18next.t('order.statusDelivered'),
+        'cancelled': i18next.t('order.statusCancelled', { defaultValue: 'Cancelado' })
     };
     return map[status] || status;
 }

@@ -12,108 +12,166 @@
 
 <body>
 
-  <nav class="navbar">
-    <div style="display:flex;align-items:center;gap:0.75rem;">
-      <a href="index.html" class="navbar-brand" data-subtitle="MAESTRÍA ANCESTRAL">Art <span>Huila</span></a>
-    </div>
-    <ul class="navbar-nav">
-      <li><a href="catalogo.html" data-i18n="nav.viewCatalog">Catálogo</a></li>
-      <li id="nav-auth-area"></li>
-      <li>
-        <a href="carrito.html" style="font-weight:bold;color:var(--color-primary);">
-          <i class="fa-solid fa-cart-shopping"></i> <span id="cart-count">0</span>
-        </a>
-      </li>
-    </ul>
-    <div class="lang-switcher">
-      <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
-      <span>|</span>
-      <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
-    </div>
-  </nav>
+  <!-- Desktop Layout -->
+  <div class="desktop-only">
+    <nav class="navbar">
+      <div style="display:flex;align-items:center;gap:0.75rem;">
+        <a href="index.html" class="navbar-brand" data-subtitle="MAESTRÍA ANCESTRAL">Art <span>Huila</span></a>
+      </div>
+      <ul class="navbar-nav">
+        <li><a href="catalogo.html" data-i18n="nav.viewCatalog">Catálogo</a></li>
+        <li id="nav-auth-area"></li>
+        <li>
+          <a href="carrito.html" style="font-weight:bold;color:var(--color-primary);">
+            <i class="fa-solid fa-cart-shopping"></i> <span id="cart-count">0</span>
+          </a>
+        </li>
+      </ul>
+      <div class="lang-switcher">
+        <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+        <span>|</span>
+        <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+      </div>
+    </nav>
 
-  <main class="hero">
-    <div class="container">
-      <h1 class="hero-title">Artesanías con <span>Alma</span> del Huila</h1>
-      <p class="hero-subtitle" data-i18n="home.heroSubtitle">Descubre piezas únicas creadas por manos maestras, donde cada técnica cuenta una historia milenaria.</p>
-      <div class="hero-actions">
-        <a href="catalogo.html" class="btn btn-primary btn-lg" data-i18n="nav.viewCatalog">Explorar Catálogo</a>
-        <a href="registro.html" class="btn btn-outline btn-lg" style="border-color:white;color:white;" data-i18n="register.heading">Unirse como Artesano</a>
-      </div>
-      
-      <div class="hero-badges">
-        <span class="hero-badge" data-i18n="home.badgeArtisans">Artesanos verificados</span>
-        <span class="hero-badge" data-i18n="home.badgeShipping">Envíos seguros</span>
-        <span class="hero-badge" data-i18n="home.badgeAuthentic">Productos auténticos</span>
-      </div>
-    </div>
-  </main>
-
-  <section class="stats-bar reveal">
-    <div class="stats-grid">
-      <div class="stat-item">
-        <h3 id="stat-artisans">+200</h3>
-        <p data-i18n="home.statArtisansLabel">Artesanos verificados</p>
-      </div>
-      <div class="stat-item">
-        <h3 id="stat-products">+1.400</h3>
-        <p data-i18n="home.statProductsLabel">Productos auténticos</p>
-      </div>
-      <div class="stat-item">
-        <h3 id="stat-rating">4.8<i class="fa-solid fa-star"></i></h3>
-        <p data-i18n="home.statRatingLabel">Valoración promedio</p>
-      </div>
-      <div class="stat-item">
-        <h3 id="stat-delivery">3-5</h3>
-        <p data-i18n="home.statDeliveryLabel">Días de entrega</p>
-      </div>
-    </div>
-  </section>
-
-  <section class="section container reveal">
-    <div style="text-align: center; margin-bottom: 3rem;">
-      <h2 class="section-title" data-i18n="home.exploreCategories">Explora por Categoría</h2>
-      <p class="section-subtitle" data-i18n="home.exploreCategoriesSubtitle">Encuentra la maestría en cada oficio</p>
-    </div>
-    <div id="categories-grid" class="grid grid-5 reveal-stagger">
-      <!-- Cargado por JS -->
-    </div>
-  </section>
-
-  <section class="section-warm">
-    <div class="container reveal">
-      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem;">
-        <div>
-          <h2 class="section-title" data-i18n="home.featuredProducts">Productos Destacados</h2>
-          <p class="section-subtitle" data-i18n="home.featuredProductsSubtitle">Selección exclusiva de nuestras mejores piezas</p>
+    <main class="hero">
+      <div class="container">
+        <h1 class="hero-title">Artesanías con <span>Alma</span> del Huila</h1>
+        <p class="hero-subtitle" data-i18n="home.heroSubtitle">Descubre piezas únicas creadas por manos maestras, donde cada técnica cuenta una historia milenaria.</p>
+        <div class="hero-actions">
+          <a href="catalogo.html" class="btn btn-primary btn-lg" data-i18n="nav.viewCatalog">Explorar Catálogo</a>
+          <a href="registro.html" class="btn btn-outline btn-lg" style="border-color:white;color:white;" data-i18n="register.heading">Unirse como Artesano</a>
         </div>
-        <a href="catalogo.html" class="btn btn-outline" data-i18n="home.viewAllCatalog">Ver todo el catálogo →</a>
+        
+        <div class="hero-badges">
+          <span class="hero-badge" data-i18n="home.badgeArtisans">Artesanos verificados</span>
+          <span class="hero-badge" data-i18n="home.badgeShipping">Envíos seguros</span>
+          <span class="hero-badge" data-i18n="home.badgeAuthentic">Productos auténticos</span>
+        </div>
       </div>
-      <div id="featured-grid" class="grid grid-4 reveal-stagger">
+    </main>
+
+    <section class="stats-bar reveal">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <h3 id="stat-artisans">+200</h3>
+          <p data-i18n="home.statArtisansLabel">Artesanos verificados</p>
+        </div>
+        <div class="stat-item">
+          <h3 id="stat-products">+1.400</h3>
+          <p data-i18n="home.statProductsLabel">Productos auténticos</p>
+        </div>
+        <div class="stat-item">
+          <h3 id="stat-rating">4.8<i class="fa-solid fa-star"></i></h3>
+          <p data-i18n="home.statRatingLabel">Valoración promedio</p>
+        </div>
+        <div class="stat-item">
+          <h3 id="stat-delivery">3-5</h3>
+          <p data-i18n="home.statDeliveryLabel">Días de entrega</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section container reveal">
+      <div style="text-align: center; margin-bottom: 3rem;">
+        <h2 class="section-title" data-i18n="home.exploreCategories">Explora por Categoría</h2>
+        <p class="section-subtitle" data-i18n="home.exploreCategoriesSubtitle">Encuentra la maestría en cada oficio</p>
+      </div>
+      <div id="categories-grid" class="grid grid-5 reveal-stagger">
         <!-- Cargado por JS -->
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="cta-banner reveal">
-    <div class="container">
-      <h2 data-i18n="home.ctaTitle">¿Eres un maestro artesano?</h2>
-      <p data-i18n="home.ctaSubtitle">Únete a la plataforma que valora tu historia, protege tu técnica y conecta tu arte con el mundo.</p>
-      <a href="registro.html" class="btn btn-lg" data-i18n="home.ctaButton">Empezar a vender hoy</a>
-    </div>
-  </section>
-
-  <footer>
-    <div class="container">
-      <div class="brand">Art <span>Huila</span></div>
-      <p style="font-size:0.85rem;margin-top:0.5rem;opacity:0.6;" data-i18n="home.footerText">&copy;2026 Art Huila. Orgullosamente huilense.</p>
-      <div style="margin-top: 1.5rem; display: flex; gap: 1.5rem; justify-content: center; font-size: 0.8rem;">
-        <a href="#" data-i18n="home.privacy">Privacidad</a>
-        <a href="#" data-i18n="home.terms">Términos</a>
-        <a href="#" data-i18n="home.contact">Contacto</a>
+    <section class="section-warm">
+      <div class="container reveal">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem;">
+          <div>
+            <h2 class="section-title" data-i18n="home.featuredProducts">Productos Destacados</h2>
+            <p class="section-subtitle" data-i18n="home.featuredProductsSubtitle">Selección exclusiva de nuestras mejores piezas</p>
+          </div>
+          <a href="catalogo.html" class="btn btn-outline" data-i18n="home.viewAllCatalog">Ver todo el catálogo →</a>
+        </div>
+        <div id="featured-grid" class="grid grid-4 reveal-stagger">
+          <!-- Cargado por JS -->
+        </div>
       </div>
+    </section>
+
+    <section class="cta-banner reveal">
+      <div class="container">
+        <h2 data-i18n="home.ctaTitle">¿Eres un maestro artesano?</h2>
+        <p data-i18n="home.ctaSubtitle">Únete a la plataforma que valora tu historia, protege tu técnica y conecta tu arte con el mundo.</p>
+        <a href="registro.html" class="btn btn-lg" data-i18n="home.ctaButton">Empezar a vender hoy</a>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <div class="brand">Art <span>Huila</span></div>
+        <p style="font-size:0.85rem;margin-top:0.5rem;opacity:0.6;" data-i18n="home.footerText">&copy;2026 Art Huila. Orgullosamente huilense.</p>
+        <div style="margin-top: 1.5rem; display: flex; gap: 1.5rem; justify-content: center; font-size: 0.8rem;">
+          <a href="#" data-i18n="home.privacy">Privacidad</a>
+          <a href="#" data-i18n="home.terms">Términos</a>
+          <a href="#" data-i18n="home.contact">Contacto</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Mobile Layout (Screen 1: Home/Discovery) -->
+  <div class="mobile-only mobile-discovery-page">
+    <!-- Mobile Welcome Header -->
+    <header class="mobile-welcome-header">
+      <div class="welcome-user-info">
+        <img src="/img/artisan-bear.png" id="mobile-user-avatar" class="mobile-avatar" alt="Avatar" />
+        <div class="welcome-texts">
+          <span class="welcome-label" data-i18n="home.welcomeBack">Bienvenido de nuevo,</span>
+          <span class="welcome-username" id="mobile-welcome-username">Invitado 🏺</span>
+        </div>
+      </div>
+      <a href="carrito.html" class="mobile-header-cart">
+        <i class="fa-solid fa-bag-shopping"></i>
+        <span class="cart-badge-dot" id="mobile-cart-badge-dot" style="display:none;">0</span>
+      </a>
+    </header>
+
+    <!-- Mobile Search Block -->
+    <div class="mobile-search-block">
+      <div class="mobile-search-pill">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="mobile-home-search" placeholder="¿Qué buscas hoy?" onkeypress="window.handleMobileSearch(event)" />
+      </div>
+      <button class="mobile-search-filter-btn" onclick="window.location.href='/catalogo.html'">
+        <i class="fa-solid fa-sliders"></i>
+      </button>
     </div>
-  </footer>
+
+    <!-- Category Chips Horizontally Scrollable -->
+    <div class="category-chips-scroller" id="mobile-home-categories">
+      <!-- Cargado por JS -->
+    </div>
+
+    <!-- Terracota Promo Banner -->
+    <div class="mobile-promo-banner" onclick="window.location.href='/catalogo.html'">
+      <div class="promo-content">
+        <span class="promo-tag" data-i18n="home.promoTag">Colección 2026</span>
+        <h3 class="promo-title" data-i18n="home.promoDiscount">¡Hasta 30% de descuento en piezas seleccionadas!</h3>
+        <button class="btn-promo-buy" data-i18n="home.promoBuy">Comprar ahora</button>
+      </div>
+      <div class="promo-image-decoration">🏺</div>
+    </div>
+
+    <!-- Featured Products Title Row -->
+    <div class="mobile-section-header">
+      <h3 class="mobile-section-title" data-i18n="home.featuredProducts">Productos Destacados</h3>
+      <a href="catalogo.html" class="mobile-view-all" data-i18n="home.viewAllCatalog">Ver todo →</a>
+    </div>
+    
+    <!-- Mobile Featured 2-Column Grid -->
+    <div id="mobile-featured-grid" class="grid grid-2">
+      <!-- Cargado por JS -->
+    </div>
+  </div>
 
   <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
   <script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>

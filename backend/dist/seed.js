@@ -56,6 +56,10 @@ const seedDatabase = async () => {
     });
     await dataSource.initialize();
     console.log('✅ Database connected for seeding...');
+    const imageTableName = dataSource.getRepository(product_image_entity_1.ProductImage).metadata.tableName;
+    const productTableName = dataSource.getRepository(product_entity_1.Product).metadata.tableName;
+    await dataSource.query(`DELETE FROM "${imageTableName}"`);
+    await dataSource.query(`DELETE FROM "${productTableName}"`);
     const categoryRepo = dataSource.getRepository(category_entity_1.Category);
     const categoryNames = ['Tejeduría', 'Cerámica', 'Talla en madera', 'Orfebrería', 'Sombrerería'];
     const categories = [];

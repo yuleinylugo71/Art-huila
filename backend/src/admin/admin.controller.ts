@@ -1,8 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Patch, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Query, Res, UseGuards } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { JwtAuthGuard, RolesGuard } from '../auth/guards/jwt-auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { Response } from 'express';
 
 @Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -83,5 +84,10 @@ export class AdminController {
   @Patch('reviews/:id/keep')
   keepReview(@Param('id') id: string, @CurrentUser() user: any) {
     return this.adminService.keepReview(user.id, id);
+  }
+
+  @Get('stats/summary')
+  getStatsSummary() {
+    return this.adminService.getStatsSummary();
   }
 }

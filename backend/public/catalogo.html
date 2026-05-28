@@ -11,41 +11,86 @@
 </head>
 <body>
 
-<nav class="navbar">
-  <div style="display:flex;align-items:center;gap:0.75rem;">
-    <a href="index.html" class="nav-back" data-i18n="nav.backToHome" title="Volver al inicio">←</a>
-    <a href="index.html" class="navbar-brand">Art <span>Huila</span></a>
-  </div>
-  <ul class="navbar-nav">
-    <li><a href="catalogo.html" class="active" data-i18n="nav.viewCatalog">Catálogo</a></li>
-    <li><a href="carrito.html" id="nav-cart-count" style="font-weight:bold;color:var(--color-primary);"><i class="fa-solid fa-cart-shopping"></i> Carrito (0)</a></li>
-    <li id="nav-auth"></li>
-  </ul>
-  <div class="lang-switcher">
-    <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
-    <span>|</span>
-    <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
-  </div>
-</nav>
+<!-- Desktop Navigation -->
+<div class="desktop-only">
+  <nav class="navbar">
+    <div style="display:flex;align-items:center;gap:0.75rem;">
+      <a href="index.html" class="nav-back" data-i18n="nav.backToHome" title="Volver al inicio">←</a>
+      <a href="index.html" class="navbar-brand">Art <span>Huila</span></a>
+    </div>
+    <ul class="navbar-nav">
+      <li><a href="catalogo.html" class="active" data-i18n="nav.viewCatalog">Catálogo</a></li>
+      <li><a href="carrito.html" id="nav-cart-count" style="font-weight:bold;color:var(--color-primary);"><i class="fa-solid fa-cart-shopping"></i> Carrito (0)</a></li>
+      <li id="nav-auth"></li>
+    </ul>
+    <div class="lang-switcher">
+      <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+      <span>|</span>
+      <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+    </div>
+  </nav>
+</div>
 
-<section class="section">
+<!-- Mobile Screen 2 Header Bar -->
+<div class="mobile-only mobile-catalog-header">
+  <div class="mobile-search-nav-bar">
+    <a href="index.html" class="mobile-back-arrow">
+      <i class="fa-solid fa-arrow-left"></i>
+    </a>
+    <div class="mobile-catalog-search-wrapper">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" id="mobile-search-input" placeholder="Buscar artesanía..." oninput="window.applyFilters(400)" />
+    </div>
+    <div class="mobile-sort-select-wrapper">
+      <select id="mobile-sort-select" onchange="window.syncMobileSort(this)">
+        <option value="newest">🕒</option>
+        <option value="price_asc">💵↑</option>
+        <option value="price_desc">💵↓</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<section class="section" style="padding-top: 1.5rem;">
   <div class="container">
-    <h1 class="section-title" data-i18n="catalog.heading">Catálogo de Artesanías</h1>
-    <p class="section-subtitle" data-i18n="catalog.subtitle">Descubre piezas únicas hechas a mano por artesanos verificados del Huila</p>
+    
+    <div class="desktop-only">
+      <h1 class="section-title" data-i18n="catalog.heading">Catálogo de Artesanías</h1>
+      <p class="section-subtitle" data-i18n="catalog.subtitle">Descubre piezas únicas hechas a mano por artesanos verificados del Huila</p>
+    </div>
+
+    <!-- Mobile Circular Categories Carousel (Figma Screen 2) -->
+    <div class="mobile-only mobile-categories-carousel" id="mobile-categories-carousel">
+      <!-- Cargado dinámicamente por JS -->
+    </div>
+
+    <!-- Mobile Filter Pills Row -->
+    <div class="mobile-only mobile-filter-pills-row">
+      <button class="mobile-filter-pill" onclick="document.querySelector('.filter-sidebar').classList.toggle('open')">
+        <i class="fa-solid fa-sliders"></i> Filtros
+      </button>
+      <button class="mobile-filter-pill" onclick="window.toggleQuickFilter('region')">
+        📍 Región <i class="fa-solid fa-chevron-down" style="font-size:0.6rem;margin-left:2px;"></i>
+      </button>
+      <button class="mobile-filter-pill" onclick="window.toggleQuickFilter('price')">
+        💰 Precio <i class="fa-solid fa-chevron-down" style="font-size:0.6rem;margin-left:2px;"></i>
+      </button>
+      <button class="mobile-filter-pill" onclick="window.clearFilters()">
+        🧹 Limpiar
+      </button>
+    </div>
 
     <div class="catalog-layout">
-      <!-- Mobile Filter Toggle -->
-      <button class="btn btn-outline btn-full mb-2" id="mobile-filter-toggle" style="display:none;" onclick="document.querySelector('.filter-sidebar').classList.toggle('open')">
-        <i class="fa-solid fa-magnifying-glass"></i> Filtrar Resultados
-      </button>
-
-      <!-- Sidebar Filters -->
+      <!-- Sidebar Filters (Drawer-style on mobile) -->
       <aside class="filter-sidebar">
         <div class="filter-content">
-          <h3 class="filter-title" style="font-size:1.1rem;margin-bottom:1.25rem;">Filtros</h3>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+            <h3 class="filter-title" style="font-size:1.1rem; margin-bottom: 0;" data-i18n="catalog.filtersTitle">Filtros</h3>
+            <button class="mobile-only btn btn-sm btn-outline" style="padding: 0.35rem 0.65rem; border-radius: 50%;" onclick="document.querySelector('.filter-sidebar').classList.remove('open')">×</button>
+          </div>
 
-          <!-- Search Filter -->
-          <div class="filter-section">
+          <!-- Search Filter (Hidden on mobile drawer since we have it on header) -->
+          <div class="filter-section desktop-only">
             <div class="filter-title" data-i18n="catalog.searchLabel">Buscar</div>
             <input type="text" id="search-input" class="form-control" style="width:100%;" data-i18n-placeholder="catalog.searchPlaceholder" placeholder="Buscar por nombre..." oninput="applyFilters(400)"/>
           </div>
@@ -74,25 +119,28 @@
         </div>
 
         <div class="filter-footer">
-          <button class="btn btn-primary btn-full" onclick="applyFilters()" style="box-shadow:var(--shadow-sm);" data-i18n="catalog.applyFilters">Aplicar filtros</button>
-          <button class="btn btn-ghost btn-full mt-1" onclick="clearFilters()" data-i18n="catalog.clearFilters">Limpiar filtros</button>
+          <button class="btn btn-primary btn-full" onclick="applyFilters(); document.querySelector('.filter-sidebar').classList.remove('open')" style="box-shadow:var(--shadow-sm);" data-i18n="catalog.applyFilters">Aplicar filtros</button>
+          <button class="btn btn-ghost btn-full mt-1" onclick="clearFilters(); document.querySelector('.filter-sidebar').classList.remove('open')" data-i18n="catalog.clearFilters">Limpiar filtros</button>
         </div>
       </aside>
 
       <!-- Products Grid -->
       <main>
-        <div class="sort-bar">
-          <span id="results-count" style="color:var(--color-muted);font-size:0.9rem;" data-i18n="common.loading">Cargando...</span>
-          <div style="display:flex;align-items:center;gap:0.5rem;">
-            <label id="sort-by-label" style="font-size:0.9rem;color:var(--color-muted);" data-i18n="catalog.sortByLabel">Ordenar por</label>
-            <select class="sort-select" id="sort-select" onchange="applyFilters()">
-              <option value="newest" data-i18n="catalog.sortNewest">Más recientes</option>
-              <option value="price_asc" data-i18n="catalog.sortPriceAsc">Precio: menor a mayor</option>
-              <option value="price_desc" data-i18n="catalog.sortPriceDesc">Precio: mayor a menor</option>
-            </select>
+        <div class="desktop-only">
+          <div class="sort-bar">
+            <span id="results-count" style="color:var(--color-muted);font-size:0.9rem;" data-i18n="common.loading">Cargando...</span>
+            <div style="display:flex;align-items:center;gap:0.5rem;">
+              <label id="sort-by-label" style="font-size:0.9rem;color:var(--color-muted);" data-i18n="catalog.sortByLabel">Ordenar por</label>
+              <select class="sort-select" id="sort-select" onchange="applyFilters()">
+                <option value="newest" data-i18n="catalog.sortNewest">Más recientes</option>
+                <option value="price_asc" data-i18n="catalog.sortPriceAsc">Precio: menor a mayor</option>
+                <option value="price_desc" data-i18n="catalog.sortPriceDesc">Precio: mayor a menor</option>
+              </select>
+            </div>
           </div>
+          <div class="category-chips-scroller" id="category-chips-scroller"></div>
         </div>
-        <div class="category-chips-scroller" id="category-chips-scroller"></div>
+
         <div id="products-grid" class="grid grid-3">
           <div class="spinner"></div>
         </div>
@@ -102,10 +150,12 @@
   </div>
 </section>
 
-<footer>
-  <div class="brand">Art <span>Huila</span></div>
-  <p style="font-size:0.85rem;margin-top:0.5rem;">&copy; 2026 Art Huila</p>
-</footer>
+<div class="desktop-only">
+  <footer>
+    <div class="brand">Art <span>Huila</span></div>
+    <p style="font-size:0.85rem;margin-top:0.5rem;">&copy; 2026 Art Huila</p>
+  </footer>
+</div>
 
 <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
 <script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>

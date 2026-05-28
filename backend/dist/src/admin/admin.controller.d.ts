@@ -35,4 +35,21 @@ export declare class AdminController {
     keepReview(id: string, user: any): Promise<{
         message: string;
     }>;
+    getStatsSummary(): Promise<{
+        artisans: {
+            total: number;
+            pending: number;
+            verified: number;
+            suspended: number;
+        };
+        orders: {
+            total: number;
+            today: number;
+            byStatus: Record<string, number>;
+            totalRevenue: number;
+        };
+        reviews: {
+            reported: number;
+        };
+    }>;
 }

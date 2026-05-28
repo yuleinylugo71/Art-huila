@@ -70,7 +70,7 @@ exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
             config_1.ConfigModule.forRoot({
-                envFilePath: '../.env',
+                envFilePath: ['.env', '../.env'],
                 isGlobal: true,
                 validationSchema: Joi.object({
                     DATABASE_URL: Joi.string().required(),
@@ -81,6 +81,7 @@ exports.AppModule = AppModule = __decorate([
                     CLOUDINARY_API_SECRET: Joi.string().required(),
                     MAIL_USER: Joi.string().required(),
                     MAIL_PASS: Joi.string().required(),
+                    DB_SYNCHRONIZE: Joi.string().optional(),
                 }),
             }),
             typeorm_1.TypeOrmModule.forRootAsync({
@@ -89,7 +90,7 @@ exports.AppModule = AppModule = __decorate([
                     type: 'postgres',
                     url: configService.get('DATABASE_URL'),
                     autoLoadEntities: true,
-                    synchronize: true,
+                    synchronize: configService.get('DB_SYNCHRONIZE') === 'true',
                 }),
                 inject: [config_1.ConfigService],
             }),

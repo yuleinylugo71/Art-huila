@@ -61,15 +61,30 @@ export class ArtisansService {
   }
 
   async updateProfile(userId: string, data: any) {
-    const profile = await this.profileRepo.findOne({ where: { user: { id: userId } } });
+    const profile = await this.profileRepo.findOne({
+      where: { user: { id: userId } },
+      relations: ['user', 'category', 'region'],
+    });
     if (!profile) throw new NotFoundException('Perfil no encontrado');
 
-    if (data.cultural_history) profile.cultural_history = data.cultural_history;
-    if (data.avatar_url) profile.avatar_url = data.avatar_url;
-    if (data.category_id) profile.category = { id: data.category_id } as any;
-    if (data.region_id) profile.region = { id: data.region_id } as any;
+    if (data.cultural_history !== undefined) profile.cultural_history = data.cultural_history;
+    if (data.avatar_url !== undefined) profile.avatar_url = data.avatar_url;
+    if (data.category_id !== undefined) profile.category = { id: data.category_id } as any;
+    if (data.region_id !== undefined) profile.region = { id: data.region_id } as any;
+    if (data.id_number !== undefined) profile.id_number = data.id_number;
+    if (data.truthfulness_declaration !== undefined) {
+      profile.truthfulness_declaration = data.truthfulness_declaration === true || data.truthfulness_declaration === 'true';
+    }
+    if (data.id_document_front_url !== undefined) profile.id_document_front_url = data.id_document_front_url;
+    if (data.id_document_back_url !== undefined) profile.id_document_back_url = data.id_document_back_url;
 
-    return this.profileRepo.save(profile);
+    if (data.full_name && profile.user) {
+      profile.user.full_name = data.full_name;
+      await this.profileRepo.manager.save(profile.user);
+    }
+
+    await this.profileRepo.save(profile);
+    return this.findByUserId(userId);
   }
 
   async findFeatured() {

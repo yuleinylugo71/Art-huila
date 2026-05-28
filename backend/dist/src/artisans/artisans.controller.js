@@ -68,6 +68,20 @@ let ArtisansController = class ArtisansController {
         await this.artisansService.updateProfile(user.id, { avatar_url: result.secure_url });
         return { avatar_url: result.secure_url };
     }
+    async uploadDocumentFront(user, files) {
+        if (!files || files.length === 0)
+            return { message: 'No file provided' };
+        const result = await this.cloudinaryService.uploadImage(files[0], 'arthuila/documents');
+        await this.artisansService.updateProfile(user.id, { id_document_front_url: result.secure_url });
+        return { id_document_front_url: result.secure_url };
+    }
+    async uploadDocumentBack(user, files) {
+        if (!files || files.length === 0)
+            return { message: 'No file provided' };
+        const result = await this.cloudinaryService.uploadImage(files[0], 'arthuila/documents');
+        await this.artisansService.updateProfile(user.id, { id_document_back_url: result.secure_url });
+        return { id_document_back_url: result.secure_url };
+    }
 };
 exports.ArtisansController = ArtisansController;
 __decorate([
@@ -121,6 +135,26 @@ __decorate([
     __metadata("design:paramtypes", [Object, Array]),
     __metadata("design:returntype", Promise)
 ], ArtisansController.prototype, "uploadAvatar", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)('me/document-front'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FilesInterceptor)('document', 1)),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.UploadedFiles)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Array]),
+    __metadata("design:returntype", Promise)
+], ArtisansController.prototype, "uploadDocumentFront", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Post)('me/document-back'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FilesInterceptor)('document', 1)),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.UploadedFiles)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Array]),
+    __metadata("design:returntype", Promise)
+], ArtisansController.prototype, "uploadDocumentBack", null);
 exports.ArtisansController = ArtisansController = __decorate([
     (0, common_1.Controller)('artisans'),
     __metadata("design:paramtypes", [artisans_service_1.ArtisansService,

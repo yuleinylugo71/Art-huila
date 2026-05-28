@@ -75,4 +75,30 @@ export class ArtisansController {
     await this.artisansService.updateProfile(user.id, { avatar_url: result.secure_url });
     return { avatar_url: result.secure_url };
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('me/document-front')
+  @UseInterceptors(FilesInterceptor('document', 1))
+  async uploadDocumentFront(
+    @CurrentUser() user: any,
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
+    if (!files || files.length === 0) return { message: 'No file provided' };
+    const result = await this.cloudinaryService.uploadImage(files[0], 'arthuila/documents');
+    await this.artisansService.updateProfile(user.id, { id_document_front_url: result.secure_url });
+    return { id_document_front_url: result.secure_url };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('me/document-back')
+  @UseInterceptors(FilesInterceptor('document', 1))
+  async uploadDocumentBack(
+    @CurrentUser() user: any,
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
+    if (!files || files.length === 0) return { message: 'No file provided' };
+    const result = await this.cloudinaryService.uploadImage(files[0], 'arthuila/documents');
+    await this.artisansService.updateProfile(user.id, { id_document_back_url: result.secure_url });
+    return { id_document_back_url: result.secure_url };
+  }
 }
