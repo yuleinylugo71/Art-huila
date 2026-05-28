@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Carrito de Compras — Art Huila</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/carrito.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div style="display:flex;align-items:center;gap:0.75rem;">
+    <a href="catalogo.html" style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:var(--color-bg2);color:var(--color-text);text-decoration:none;font-size:1.1rem;transition:all 0.2s;border:1px solid var(--color-border);" title="Seguir comprando">←</a>
+    <a href="index.html" class="navbar-brand">Art <span>Huila</span></a>
+  </div>
+  <ul class="navbar-nav">
+    <li><a href="catalogo.html">Catálogo</a></li>
+    <li><a href="carrito.html" id="nav-cart-count" style="font-weight:bold;color:var(--color-primary);"><i class="fa-solid fa-cart-shopping"></i> Carrito (0)</a></li>
+  </ul>
+  <div class="lang-switcher">
+    <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+    <span>|</span>
+    <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+  </div>
+</nav>
+
+<div class="container section">
+  <h1 class="section-title">Tu Carrito de Compras</h1>
+  
+  <div id="cart-empty" style="display: none; text-align: center; padding: 4rem 0;">
+    <h2>Tu carrito está vacío</h2>
+    <p style="color: var(--color-muted); margin-bottom: 2rem;">Explora el catálogo para descubrir artesanías increíbles.</p>
+    <a href="/catalogo.html" class="btn btn-primary">Ir al Catálogo</a>
+  </div>
+
+  <div id="cart-content" class="cart-grid" style="display: none;">
+    <div class="cart-items" id="cart-items-container">
+      <!-- Items renderizados dinámicamente -->
+    </div>
+    <div class="cart-summary">
+      <h3 style="margin-bottom: 1.25rem; font-family: 'Crimson Pro', serif; font-size: 1.3rem;">Resumen del Pedido</h3>
+
+      <!-- Origen del envío -->
+      <div style="display:flex; align-items:center; gap:0.5rem; background: linear-gradient(135deg, rgba(var(--color-primary-rgb, 139,90,43),0.08), rgba(var(--color-primary-rgb, 139,90,43),0.03)); border: 1px solid var(--color-primary); border-radius: 8px; padding: 0.6rem 0.85rem; margin-bottom: 1.1rem;">
+        <span style="font-size: 1.1rem;">📍</span>
+        <div>
+          <div style="font-size: 0.78rem; color: var(--color-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em;">Envío desde</div>
+          <div style="font-weight: 700; color: var(--color-primary); font-size: 0.95rem;">Neiva, Huila</div>
+        </div>
+      </div>
+
+      <div class="summary-row">
+        <span>Subtotal</span>
+        <span id="summary-subtotal">$0</span>
+      </div>
+
+      <div class="shipping-calculator" style="margin: 1rem 0; padding: 1rem; background: var(--color-bg2); border-radius: 8px; border: 1px solid var(--color-border);">
+        <h4 style="margin-bottom: 0.6rem; font-size: 0.9rem; display:flex; align-items:center; gap:0.4rem;">
+          <i class="fa-solid fa-truck" style="color: var(--color-primary);"></i> Ciudad de destino
+        </h4>
+        <select id="destination-city" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-bg); color: var(--color-text);">
+          <option value="">Selecciona tu ciudad...</option>
+          <option value="Bogotá">Bogotá</option>
+          <option value="Medellín">Medellín</option>
+          <option value="Cali">Cali</option>
+          <option value="Barranquilla">Barranquilla</option>
+          <option value="Cartagena">Cartagena</option>
+          <option value="Neiva">Neiva (envío local)</option>
+          <option value="Bucaramanga">Bucaramanga</option>
+          <option value="Pereira">Pereira</option>
+          <option value="Santa Marta">Santa Marta</option>
+          <option value="Ibagué">Ibagué</option>
+          <option value="Pitalito">Pitalito</option>
+          <option value="Garzón">Garzón</option>
+          <option value="La Plata">La Plata</option>
+        </select>
+        <button id="btn-quote-shipping" class="btn btn-secondary btn-block" style="font-size: 0.85rem; padding: 0.5rem; background: transparent; border: 1px solid var(--color-primary); color: var(--color-primary); border-radius: 6px; cursor: pointer; transition: all 0.2s; width:100%;" onclick="calculateShipping()">
+          <i class="fa-solid fa-calculator"></i> Calcular Envío
+        </button>
+        <div id="shipping-result" style="margin-top: 0.75rem; font-size: 0.85rem; display: none;"></div>
+      </div>
+
+      <!-- Dirección de envío (aparece tras calcular) -->
+      <div id="address-section" style="margin: 0.75rem 0; padding: 1rem; background: var(--color-bg2); border-radius: 8px; border: 1px solid var(--color-border); display:none;">
+        <h4 style="margin-bottom: 0.75rem; font-size: 0.9rem; display:flex; align-items:center; gap:0.4rem;">
+          <i class="fa-solid fa-location-dot" style="color: var(--color-primary);"></i> Dirección de entrega
+        </h4>
+        <input type="text" id="shipping-street" placeholder="Calle / Carrera / Avenida (ej: Cra 5 # 10-25)" style="width:100%; padding:0.5rem 0.65rem; border:1.5px solid var(--color-border); border-radius:6px; font-size:0.88rem; background:var(--color-bg); color:var(--color-text); margin-bottom:0.5rem; box-sizing:border-box;" />
+        <input type="text" id="shipping-barrio" placeholder="Barrio / Urbanización (opcional)" style="width:100%; padding:0.5rem 0.65rem; border:1.5px solid var(--color-border); border-radius:6px; font-size:0.88rem; background:var(--color-bg); color:var(--color-text); margin-bottom:0.5rem; box-sizing:border-box;" />
+        <input type="text" id="shipping-ref" placeholder="Referencia (ej: Apto 301, casa amarilla...)" style="width:100%; padding:0.5rem 0.65rem; border:1.5px solid var(--color-border); border-radius:6px; font-size:0.88rem; background:var(--color-bg); color:var(--color-text); box-sizing:border-box;" />
+        <p style="font-size:0.75rem; color:var(--color-muted); margin-top:0.4rem; margin-bottom:0;">
+          <i class="fa-solid fa-circle-info"></i> Asegúrate de que la dirección sea completa para facilitar la entrega.
+        </p>
+      </div>
+
+      <!-- Panel tarjetas de prueba ePayco (visible en modo test) -->
+      <div id="epayco-test-panel" style="margin: 0.75rem 0; padding: 0.9rem 1rem; background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border-radius: 8px; border: 1px solid #7dd3fc; display:none;">
+        <div style="display:flex; align-items:center; gap:0.4rem; margin-bottom:0.5rem;">
+          <i class="fa-solid fa-flask" style="color:#0284c7; font-size:0.9rem;"></i>
+          <span style="font-size:0.8rem; font-weight:700; color:#0284c7; text-transform:uppercase; letter-spacing:0.04em;">Modo Prueba — Tarjetas de Test</span>
+        </div>
+        <div style="font-size:0.78rem; color:#0369a1; line-height:1.7;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.25rem 1rem;">
+            <span><strong>Visa:</strong> 4575 2362 5326 0168</span>
+            <span><strong>Master:</strong> 5170 6952 0831 6840</span>
+            <span><strong>Amex:</strong> 3757 5217 5049 510</span>
+            <span><strong>Diners:</strong> 3607 0509 1685 70</span>
+          </div>
+          <div style="margin-top:0.4rem;">
+            <span><strong>CVV:</strong> 123 &nbsp;·&nbsp; <strong>Venc.:</strong> 12/21 &nbsp;·&nbsp; <strong>Cuotas:</strong> 1</span>
+          </div>
+          <div style="margin-top:0.3rem; font-style:italic;">
+            <i class="fa-solid fa-triangle-exclamation"></i> Usa cualquier nombre y correo. No se cobra dinero real.
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-row">
+        <span>Envío</span>
+        <span id="summary-shipping" style="color: var(--color-muted);">Por calcular</span>
+      </div>
+      <div class="summary-row summary-total">
+        <span>Total</span>
+        <span id="summary-total">$0</span>
+      </div>
+      <button id="btn-checkout" class="btn btn-primary btn-block" style="margin-top: 1rem; width:100%;">
+        <i class="fa-solid fa-lock" style="margin-right:0.4rem;"></i>Proceder al Pago
+      </button>
+      <p style="text-align:center; font-size:0.75rem; color: var(--color-muted); margin-top:0.75rem;">
+        <i class="fa-solid fa-shield-halved"></i> Pago 100% seguro con ePayco
+      </p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="brand">Art <span>Huila</span></div>
+</footer>
+
+<script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+<script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
+<script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
+<script src="https://checkout.epayco.co/checkout.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/i18n.js"></script>
+<script src="/js/carrito.js"></script>
+</body>
+</html>

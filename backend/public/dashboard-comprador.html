@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="buyer.title">Mi Perfil — Art Huila</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/dashboard-comprador.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div style="display:flex;align-items:center;gap:0.75rem;">
+    <a href="index.html" class="nav-back" title="Volver al inicio">←</a>
+    <a href="index.html" class="navbar-brand">Art <span>Huila</span></a>
+  </div>
+  <ul class="navbar-nav">
+    <li><a href="catalogo.html" data-i18n="nav.viewCatalog">Catálogo</a></li>
+    <li><a href="carrito.html" style="font-weight:bold;color:var(--color-primary);"><i class="fa-solid fa-cart-shopping"></i> <span data-i18n="cart.navbarCart">Carrito</span></a></li>
+    <li><button class="btn btn-outline btn-sm" onclick="Auth.logout()" data-i18n="auth.logout">Cerrar sesión</button></li>
+  </ul>
+  <div class="lang-switcher">
+    <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+    <span>|</span>
+    <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+  </div>
+</nav>
+
+<div class="container section">
+  <div class="buyer-layout">
+    <aside class="buyer-sidebar">
+      <div style="text-align:center;margin-bottom:1.5rem;">
+        <div style="font-size:3rem;"><i class="fa-solid fa-user"></i></div>
+        <h3 id="user-name" style="font-size:1.1rem;margin-top:0.5rem;">Cargando...</h3>
+        <p id="user-email" style="font-size:0.8rem;color:var(--color-muted);"></p>
+      </div>
+      <ul class="sidebar-menu">
+        <li><a href="#" class="active" id="menu-link-orders" onclick="showTab('orders')"><i class="fa-solid fa-box"></i> <span data-i18n="buyer.menuMyOrders">Mis Pedidos</span></a></li>
+        <li><a href="#" id="menu-link-profile" onclick="showTab('profile')"><i class="fa-solid fa-user"></i> <span data-i18n="buyer.menuMyProfile">Mis Datos</span></a></li>
+      </ul>
+    </aside>
+
+    <main>
+      <div id="tab-orders">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; border-bottom:1.5px solid var(--color-border); padding-bottom:0.75rem;">
+          <h2 style="font-family:'Crimson Pro',serif; margin:0; font-size:1.6rem;" data-i18n="buyer.orderHistoryHeading">Historial de Pedidos</h2>
+          <span style="font-size:0.75rem; color:#64748b; background:#f1f5f9; padding:0.25rem 0.75rem; border-radius:12px; font-weight:600;" data-i18n="buyer.trackingActiveBadge">Trazabilidad Completa Activa</span>
+        </div>
+        <div id="orders-container">
+          <div class="spinner"></div>
+        </div>
+        <div class="pagination-controls" id="buyer-orders-pagination" style="margin-top:1.5rem;"></div>
+      </div>
+
+      <div id="tab-profile" style="display:none;">
+        <h2 style="font-family:'Crimson Pro',serif;margin-bottom:1.5rem;" data-i18n="buyer.myProfileHeading">Mis Datos</h2>
+        <div class="buyer-profile-card">
+          <!-- VIEW MODE CONTAINER (DEFAULT) -->
+          <div id="profile-view-mode">
+            <div class="profile-info-row">
+              <span class="profile-info-label" data-i18n="buyer.fullNameLabel">Nombre Completo</span>
+              <span class="profile-info-value" id="info-full-name">—</span>
+            </div>
+            <div class="profile-info-row">
+              <span class="profile-info-label" data-i18n="buyer.emailLabel">Email</span>
+              <span class="profile-info-value" id="info-email">—</span>
+            </div>
+            <div class="profile-info-row">
+              <span class="profile-info-label" data-i18n="buyer.newPasswordLabel">Contraseña</span>
+              <span class="profile-info-value">••••••••••••</span>
+            </div>
+            <div style="margin-top:2rem;">
+              <button class="btn btn-primary" onclick="toggleProfileEdit(true)">
+                <i class="fa-solid fa-pen"></i> Editar Datos
+              </button>
+            </div>
+          </div>
+
+          <!-- EDIT MODE CONTAINER (FORM) -->
+          <form id="profile-form" class="hidden">
+            <div class="form-group">
+              <label class="form-label" data-i18n="buyer.fullNameLabel">Nombre Completo</label>
+              <input type="text" id="edit-full-name" class="form-control" required/>
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="buyer.emailLabel">Email</label>
+              <input type="email" id="edit-email" class="form-control" disabled/>
+              <small class="form-hint" data-i18n="buyer.emailDisabledHint">El email no puede cambiarse.</small>
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="buyer.newPasswordLabel">Nueva Contraseña</label>
+              <input type="password" id="edit-password" class="form-control" data-i18n-placeholder="buyer.newPasswordPlaceholder" placeholder="Dejar en blanco para mantener la actual"/>
+            </div>
+            <div style="margin-top:1.5rem; display:flex; gap:0.5rem;">
+              <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> <span data-i18n="buyer.saveChangesBtn">Guardar Cambios</span></button>
+              <button type="button" class="btn btn-ghost" onclick="toggleProfileEdit(false)" style="border:1.5px solid var(--color-border); border-radius:9px; font-weight:600; padding:0.8rem 1.5rem; font-size:0.9rem; font-family:var(--font-body),sans-serif; cursor:pointer;">Cancelar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<footer>
+  <div class="brand">Art <span>Huila</span></div>
+</footer>
+
+<script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+<script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
+<script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/i18n.js"></script>
+<script src="/js/dashboard-comprador.js"></script>
+</body>
+</html>

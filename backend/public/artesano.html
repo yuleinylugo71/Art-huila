@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="page-title"><i class="fa-solid fa-hammer"></i> Perfil del Artesano — Art Huila</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/artesano.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div style="display:flex;align-items:center;gap:0.75rem;">
+    <a href="catalogo.html" class="nav-back" title="Volver al catálogo">←</a>
+    <a href="index.html" class="navbar-brand">Art <span>Huila</span></a>
+  </div>
+  <ul class="navbar-nav">
+    <li><a href="catalogo.html" data-i18n="nav.viewCatalog">Catálogo</a></li>
+    <li id="nav-auth"></li>
+    <li><a href="carrito.html" style="font-weight:bold;color:var(--color-primary);"><i class="fa-solid fa-cart-shopping"></i> <span id="cart-count">0</span></a></li>
+  </ul>
+  <div class="lang-switcher">
+    <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+    <span>|</span>
+    <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+  </div>
+</nav>
+
+<div class="container section">
+  <div id="artisan-container">
+    <div class="spinner"></div>
+  </div>
+
+  <h2 style="font-family:'Crimson Pro',serif;font-size:2rem;margin:3rem 0 1.5rem;" data-i18n="artisan.productsHeading">Obras de este artesano</h2>
+  <div id="artisan-products" class="grid grid-4">
+    <div class="spinner"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="brand">Art <span>Huila</span></div>
+  <p style="font-size:0.85rem;margin-top:0.5rem;">&copy; 2026 Art Huila</p>
+</footer>
+
+<script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+<script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
+<script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/i18n.js"></script>
+<script src="/js/artesano.js"></script>
+</body>
+</html>

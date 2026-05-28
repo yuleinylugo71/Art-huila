@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalle del Pedido — Art Huila</title>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/dashboard-comprador.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div style="display:flex;align-items:center;gap:0.75rem;">
+    <a href="/dashboard-comprador.html" class="nav-back" title="Volver al panel">←</a>
+    <a href="index.html" class="navbar-brand">Art <span>Huila</span></a>
+  </div>
+  <ul class="navbar-nav">
+    <li><a href="catalogo.html" data-i18n="nav.viewCatalog">Catálogo</a></li>
+    <li><a href="carrito.html" style="font-weight:bold;color:var(--color-primary);"><i class="fa-solid fa-cart-shopping"></i> <span data-i18n="cart.navbarCart">Carrito</span></a></li>
+    <li><button class="btn btn-outline btn-sm" onclick="Auth.logout()" data-i18n="auth.logout">Cerrar sesión</button></li>
+  </ul>
+  <div class="lang-switcher">
+    <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+    <span>|</span>
+    <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+  </div>
+</nav>
+ 
+<div class="container section">
+  <div style="margin-bottom: 2rem; display: flex; align-items: center; gap: 1rem;">
+    <a href="/dashboard-comprador.html" class="nav-back" style="font-size: 1.2rem; background: var(--color-surface); padding: 0.5rem 0.8rem; border-radius: 50%; border: 1.5px solid var(--color-border); text-decoration: none; color: var(--color-text); transition: all 0.2s;">←</a>
+    <div>
+      <h1 style="font-family:'Crimson Pro',serif; margin: 0; font-size: 2rem;" id="order-title" data-i18n="order.loading">Cargando pedido...</h1>
+      <p style="color: var(--color-muted); margin: 0.25rem 0 0 0;" id="order-date-text"></p>
+    </div>
+  </div>
+ 
+  <!-- Barra de Progreso Visual Premium -->
+  <div class="order-tracker-container card">
+    <div class="tracker-steps" id="tracker-steps">
+      <div class="step" id="step-pending">
+        <div class="step-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+        <div class="step-label" id="label-step-pending" data-i18n="order.statusPending">Pendiente</div>
+      </div>
+      <div class="step" id="step-paid">
+        <div class="step-icon"><i class="fa-solid fa-credit-card"></i></div>
+        <div class="step-label" id="label-step-paid" data-i18n="order.statusPaid">Pagado</div>
+      </div>
+      <div class="step" id="step-preparing">
+        <div class="step-icon"><i class="fa-solid fa-user"></i>‍<i class="fa-solid fa-utensils"></i></div>
+        <div class="step-label" id="label-step-preparing" data-i18n="order.statusPreparing">En preparación</div>
+      </div>
+      <div class="step" id="step-shipped">
+        <div class="step-icon"><i class="fa-solid fa-rocket"></i></div>
+        <div class="step-label" id="label-step-shipped" data-i18n="order.statusShipped">Despachado</div>
+      </div>
+      <div class="step" id="step-delivered">
+        <div class="step-icon"><i class="fa-solid fa-check"></i></div>
+        <div class="step-label" id="label-step-delivered" data-i18n="order.statusDelivered">Entregado</div>
+      </div>
+      <div class="tracker-line-progress" id="tracker-line-progress"></div>
+    </div>
+  </div>
+ 
+  <!-- Detalle del Pedido Grid -->
+  <div class="detail-grid">
+    <!-- Artículos y Totales -->
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+      <div class="card">
+        <h3 style="font-family:'Crimson Pro',serif; font-size: 1.3rem; margin-bottom: 1.25rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem;"><i class="fa-solid fa-box"></i> <span data-i18n="order.itemsHeading">Artículos en tu Pedido</span></h3>
+        <div id="order-items-list" class="order-items-detail">
+          <div class="spinner"></div>
+        </div>
+      </div>
+ 
+      <div class="card">
+        <h3 style="font-family:'Crimson Pro',serif; font-size: 1.3rem; margin-bottom: 1.25rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem;"><i class="fa-solid fa-sack-dollar"></i> <span data-i18n="order.paymentSummaryHeading">Resumen de Pago</span></h3>
+        <div class="billing-summary">
+          <div class="billing-row">
+            <span data-i18n="order.subtotalLabel">Subtotal Productos:</span>
+            <span id="bill-subtotal" style="font-weight: 500;">$0</span>
+          </div>
+          <div class="billing-row">
+            <span data-i18n="order.shippingCostLabel">Costo de Envío:</span>
+            <span id="bill-shipping" style="font-weight: 500;">$0</span>
+          </div>
+          <div class="billing-row total-row" style="font-size: 1.2rem; font-weight: 700; color: var(--color-primary); border-top: 1.5px solid var(--color-border); padding-top: 0.75rem; margin-top: 0.75rem; display: flex; justify-content: space-between;">
+            <span data-i18n="order.totalPaidLabel">Total Pagado:</span>
+            <span id="bill-total">$0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <!-- Envío y Seguimiento -->
+    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+      <div class="card">
+        <h3 style="font-family:'Crimson Pro',serif; font-size: 1.3rem; margin-bottom: 1.25rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem;"><i class="fa-solid fa-truck"></i> <span data-i18n="order.trackingHeading">Seguimiento del Envío</span></h3>
+        <div class="tracking-info-panel">
+          <div style="margin-bottom: 1rem;">
+            <span style="font-size: 0.85rem; color: var(--color-muted); display: block; margin-bottom: 0.25rem;" data-i18n="order.currentStatusLabel">Estado Actual:</span>
+            <div id="detail-status-badge"></div>
+          </div>
+          <div style="margin-bottom: 1rem;">
+            <span style="font-size: 0.85rem; color: var(--color-muted); display: block; margin-bottom: 0.25rem;" data-i18n="order.carrierLabel">Transportadora:</span>
+            <span id="detail-carrier" style="font-weight: 600; font-size: 1rem;">—</span>
+          </div>
+          <div style="margin-bottom: 1.5rem;">
+            <span style="font-size: 0.85rem; color: var(--color-muted); display: block; margin-bottom: 0.25rem;" data-i18n="order.trackingNumberLabel">Número de Guía:</span>
+            <span id="detail-tracking-number" style="font-weight: 700; font-size: 1.1rem; color: var(--color-text); font-family: monospace;">—</span>
+          </div>
+          <div id="tracking-action-container"></div>
+        </div>
+      </div>
+ 
+      <div class="card">
+        <h3 style="font-family:'Crimson Pro',serif; font-size: 1.3rem; margin-bottom: 1.25rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem;"><i class="fa-solid fa-location-dot"></i> <span data-i18n="order.shippingAddressHeading">Dirección de Envío</span></h3>
+        <div class="shipping-address-panel" id="shipping-address-panel">
+          <p style="margin: 0; font-weight: 600;" id="address-name">Cargando...</p>
+          <p style="margin: 0.25rem 0 0 0; color: var(--color-text);" id="address-line">Cargando...</p>
+          <p style="margin: 0.25rem 0 0 0; font-weight: 500; color: var(--color-muted);" id="address-city">Cargando...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="brand">Art <span>Huila</span></div>
+</footer>
+
+<script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+<script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
+<script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/i18n.js"></script>
+<script src="/js/pedido-detalle.js"></script>
+</body>
+</html>

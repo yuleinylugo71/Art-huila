@@ -1,0 +1,25 @@
+{
+  "name": "ecomerce_arthuila",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yuleinylugo71/Art-huila.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/yuleinylugo71/Art-huila/issues"
+  },
+  "homepage": "https://github.com/yuleinylugo71/Art-huila#readme",
+  "dependencies": {
+    "@supabase/ssr": "^0.10.3",
+    "@supabase/supabase-js": "^2.106.2"
+  }
+}

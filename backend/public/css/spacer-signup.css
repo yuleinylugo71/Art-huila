@@ -1,0 +1,359 @@
+/* spacer-signup.css — Spacer sign-up screen, styled with the project's earth-tone color system */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  --color-primary: #c1440e;          /* Terracotta Clay */
+  --color-primary-dark: #a33a0b;     /* Deep Burnt Clay */
+  --color-primary-light: #e8593a;    /* Clay Orange Highlight */
+  --color-bg: #faf7f4;               /* Cream background */
+  --color-surface: #ffffff;          /* Card surface background */
+  --color-border: #e8e0d8;           /* Delicate sand border */
+  --color-text: #1a1208;             /* Rich dark brown text */
+  --color-muted: #7a6e64;            /* Soft earth-gray */
+  --color-accent-warm: #f5ede4;      /* Gentle warm accent */
+  
+  --font-body: 'DM Sans', sans-serif;
+  --font-display: 'Playfair Display', Georgia, serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle, var(--color-bg) 0%, var(--color-accent-warm) 100%);
+  padding: 2rem;
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── CARD ── */
+.card {
+  display: flex;
+  width: 100%;
+  max-width: 720px;
+  min-height: 460px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow:
+    0 20px 48px rgba(26, 18, 8, 0.08),
+    0 4px 16px rgba(26, 18, 8, 0.04);
+  border: 1px solid var(--color-border);
+  position: relative;
+  background: var(--color-surface);
+}
+
+/* ─────────────────────────────────────────
+   LEFT PANEL — brand
+   ───────────────────────────────────────── */
+.panel-brand {
+  width: 42%;
+  background: var(--color-primary);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem 1.75rem 1.5rem;
+  z-index: 1;
+}
+
+/* Organic wavy SVG divider */
+.wave-divider {
+  position: absolute;
+  top: 0;
+  right: -44px;
+  height: 100%;
+  width: 88px;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.wave-divider path {
+  fill: var(--color-primary);
+}
+
+.brand-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  flex: 1;
+  justify-content: center;
+}
+
+.welcome-text {
+  font-size: 13px;
+  color: var(--color-accent-warm);
+  opacity: 0.9;
+  letter-spacing: 0.03em;
+}
+
+.rocket-container {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: var(--color-accent-warm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.35rem 0;
+  box-shadow: 0 4px 14px rgba(163, 58, 11, 0.2);
+}
+
+.rocket-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.rocket-icon .rocket-body {
+  fill: var(--color-primary);
+}
+
+.rocket-icon .rocket-flame {
+  fill: var(--color-primary-light);
+  opacity: 0.8;
+}
+
+.rocket-icon .rocket-window {
+  fill: var(--color-accent-warm);
+}
+
+.app-name {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+}
+
+.brand-desc {
+  font-size: 11px;
+  color: var(--color-accent-warm);
+  opacity: 0.85;
+  text-align: center;
+  max-width: 140px;
+  line-height: 1.6;
+}
+
+.brand-footer {
+  font-size: 10px;
+  color: var(--color-accent-warm);
+  opacity: 0.65;
+  text-decoration: underline;
+  letter-spacing: 0.04em;
+  margin-top: auto;
+  text-align: center;
+  padding-top: 1rem;
+}
+
+/* ─────────────────────────────────────────
+   RIGHT PANEL — form
+   ───────────────────────────────────────── */
+.panel-form {
+  width: 58%;
+  background: var(--color-surface);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2.5rem 2.75rem 2rem 3.25rem;
+  position: relative;
+  z-index: 0;
+}
+
+.form-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text);
+  text-align: center;
+  margin-bottom: 1.75rem;
+  letter-spacing: -0.01em;
+}
+
+/* ── Fields ── */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+  margin-bottom: 1.25rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  position: relative;
+}
+
+.field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-muted);
+  letter-spacing: 0.01em;
+}
+
+.field-row {
+  display: flex;
+  align-items: center;
+  border-bottom: 1.5px solid var(--color-border);
+  padding-bottom: 6px;
+  transition: border-color 0.25s ease;
+}
+
+.field-row:focus-within {
+  border-bottom-color: var(--color-primary);
+}
+
+.field input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 12.5px;
+  color: var(--color-text);
+  font-family: var(--font-body);
+  padding: 0;
+}
+
+.field input::placeholder {
+  color: var(--color-muted);
+  opacity: 0.45;
+  font-size: 11.5px;
+}
+
+/* Checkmark icon — only visible when field has value */
+.check-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  transform: scale(0.8);
+}
+
+.check-icon path {
+  stroke: var(--color-primary);
+}
+
+.field input:not(:placeholder-shown) ~ .check-icon,
+.field-row:focus-within .check-icon {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ── Terms ── */
+.terms-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  font-size: 12.5px;
+  color: var(--color-muted);
+  margin-bottom: 1.5rem;
+  line-height: 1.45;
+  cursor: pointer;
+  user-select: none;
+}
+
+.terms-row input[type="checkbox"] {
+  width: 13.5px;
+  height: 13.5px;
+  accent-color: var(--color-primary);
+  margin-top: 2px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.terms-link {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s ease;
+}
+
+.terms-link:hover {
+  border-color: var(--color-primary);
+}
+
+/* ── Buttons ── */
+.btn-row {
+  display: flex;
+  gap: 0.85rem;
+  justify-content: center;
+}
+
+.btn {
+  padding: 0.55rem 1.9rem;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all 0.25s var(--transition, ease);
+  letter-spacing: 0.01em;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: #ffffff;
+  border: 1.5px solid var(--color-primary);
+  box-shadow: 0 4px 12px rgba(193, 68, 14, 0.18);
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 18px rgba(163, 58, 11, 0.28);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--color-primary);
+  border: 1.5px solid var(--color-border);
+}
+
+.btn-outline:hover {
+  background: var(--color-accent-warm);
+  border-color: var(--color-primary);
+  transform: translateY(-1.5px);
+}
+
+.btn-outline:active {
+  transform: translateY(0);
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  body {
+    padding: 1rem;
+  }
+  .card {
+    flex-direction: column;
+    max-width: 360px;
+  }
+  .panel-brand {
+    width: 100%;
+    padding: 2rem 1.5rem;
+  }
+  .wave-divider {
+    display: none;
+  }
+  .panel-form {
+    width: 100%;
+    padding: 2.25rem 1.75rem 2rem;
+  }
+}

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="catalog.title">Catálogo — Art Huila</title>
+  <meta name="description" content="Explora el catálogo de artesanías del Huila. Filtra por región, categoría y precio."/>
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/catalogo.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div style="display:flex;align-items:center;gap:0.75rem;">
+    <a href="index.html" class="nav-back" data-i18n="nav.backToHome" title="Volver al inicio">←</a>
+    <a href="index.html" class="navbar-brand">Art <span>Huila</span></a>
+  </div>
+  <ul class="navbar-nav">
+    <li><a href="catalogo.html" class="active" data-i18n="nav.viewCatalog">Catálogo</a></li>
+    <li><a href="carrito.html" id="nav-cart-count" style="font-weight:bold;color:var(--color-primary);"><i class="fa-solid fa-cart-shopping"></i> Carrito (0)</a></li>
+    <li id="nav-auth"></li>
+  </ul>
+  <div class="lang-switcher">
+    <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+    <span>|</span>
+    <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+  </div>
+</nav>
+
+<section class="section">
+  <div class="container">
+    <h1 class="section-title" data-i18n="catalog.heading">Catálogo de Artesanías</h1>
+    <p class="section-subtitle" data-i18n="catalog.subtitle">Descubre piezas únicas hechas a mano por artesanos verificados del Huila</p>
+
+    <div class="catalog-layout">
+      <!-- Mobile Filter Toggle -->
+      <button class="btn btn-outline btn-full mb-2" id="mobile-filter-toggle" style="display:none;" onclick="document.querySelector('.filter-sidebar').classList.toggle('open')">
+        <i class="fa-solid fa-magnifying-glass"></i> Filtrar Resultados
+      </button>
+
+      <!-- Sidebar Filters -->
+      <aside class="filter-sidebar">
+        <div class="filter-content">
+          <h3 class="filter-title" style="font-size:1.1rem;margin-bottom:1.25rem;">Filtros</h3>
+
+          <!-- Search Filter -->
+          <div class="filter-section">
+            <div class="filter-title" data-i18n="catalog.searchLabel">Buscar</div>
+            <input type="text" id="search-input" class="form-control" style="width:100%;" data-i18n-placeholder="catalog.searchPlaceholder" placeholder="Buscar por nombre..." oninput="applyFilters(400)"/>
+          </div>
+
+          <div class="filter-section">
+            <div class="filter-title" data-i18n="catalog.regionLabel">Región</div>
+            <select id="region-select" class="form-control" style="width:100%;margin-bottom:0.5rem;" onchange="applyFilters()">
+              <option value="" data-i18n="common.loading">Cargando...</option>
+            </select>
+          </div>
+
+          <div class="filter-section">
+            <div class="filter-title" data-i18n="catalog.categoriesLabel">Categoría</div>
+            <div id="category-filters" style="display:flex;flex-direction:column;gap:0.75rem;">
+              <span data-i18n="common.loading">Cargando...</span>
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <div class="filter-title" data-i18n="catalog.priceLabel">Precio (COP)</div>
+            <div class="price-inputs">
+              <input type="number" id="min-price" placeholder="Mín" min="0" oninput="applyFilters(400)"/>
+              <input type="number" id="max-price" placeholder="Máx" min="0" oninput="applyFilters(400)"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-footer">
+          <button class="btn btn-primary btn-full" onclick="applyFilters()" style="box-shadow:var(--shadow-sm);" data-i18n="catalog.applyFilters">Aplicar filtros</button>
+          <button class="btn btn-ghost btn-full mt-1" onclick="clearFilters()" data-i18n="catalog.clearFilters">Limpiar filtros</button>
+        </div>
+      </aside>
+
+      <!-- Products Grid -->
+      <main>
+        <div class="sort-bar">
+          <span id="results-count" style="color:var(--color-muted);font-size:0.9rem;" data-i18n="common.loading">Cargando...</span>
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <label id="sort-by-label" style="font-size:0.9rem;color:var(--color-muted);" data-i18n="catalog.sortByLabel">Ordenar por</label>
+            <select class="sort-select" id="sort-select" onchange="applyFilters()">
+              <option value="newest" data-i18n="catalog.sortNewest">Más recientes</option>
+              <option value="price_asc" data-i18n="catalog.sortPriceAsc">Precio: menor a mayor</option>
+              <option value="price_desc" data-i18n="catalog.sortPriceDesc">Precio: mayor a menor</option>
+            </select>
+          </div>
+        </div>
+        <div id="products-grid" class="grid grid-3">
+          <div class="spinner"></div>
+        </div>
+        <div id="pagination" class="pagination"></div>
+      </main>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="brand">Art <span>Huila</span></div>
+  <p style="font-size:0.85rem;margin-top:0.5rem;">&copy; 2026 Art Huila</p>
+</footer>
+
+<script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+<script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
+<script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/i18n.js"></script>
+<script src="/js/catalogo.js"></script>
+</body>
+</html>
