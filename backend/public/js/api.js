@@ -78,7 +78,7 @@ async function apiFetch(endpoint, options = {}) {
 
   let res = await fetch(`${API}${endpoint}`, { ...fetchOptions, headers });
 
-  if (res.status === 401 && !skipAuthRefresh && endpoint !== '/auth/refresh') {
+  if (res.status === 401 && !skipAuthRefresh && endpoint !== '/auth/refresh' && endpoint !== '/auth/login' && !endpoint.startsWith('/auth/register')) {
     try {
       const newAccessToken = await requestNewAccessToken();
       const retryHeaders = { ...headers, Authorization: `Bearer ${newAccessToken}` };
