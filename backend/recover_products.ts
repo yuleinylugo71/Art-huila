@@ -1,10 +1,11 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import * as path from 'path';
+import * as fs from 'fs';
 import * as XLSX from 'xlsx';
 import * as dotenv from 'dotenv';
-import * as bcrypt from 'bcrypt';
-import { User, UserRole } from './src/users/entities/user.entity';
+import { v2 as cloudinary } from 'cloudinary';
+import { User } from './src/users/entities/user.entity';
 import { Category } from './src/categories/entities/category.entity';
 import { Region } from './src/regions/entities/region.entity';
 import { ArtisanProfile, ArtisanStatus } from './src/artisans/entities/artisan-profile.entity';
@@ -15,56 +16,185 @@ import { AdminAuditLog } from './src/audit/entities/admin-audit-log.entity';
 
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
-const excelPath = 'C:\\Users\\Yuleiny\\Downloads\\Plantilla_Productos_ArtHuila_50.xlsx';
+// Configurar Cloudinary usando las credenciales del archivo .env de forma directa
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-// Hermosas imágenes reales de Unsplash para cada categoría para dar una estética súper premium
-const categoryImages: Record<string, string[]> = {
-  'Sombrerería': [
-    'https://images.unsplash.com/photo-1572307480813-ceb0e59d694b?q=80&w=600&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1533461502717-83546484078c?q=80&w=600&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1595487742435-41a026ab3310?q=80&w=600&auto=format&fit=crop'
-  ],
-  'Cerámica': [
-    'https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?q=80&w=600&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1565192647048-f997ed8799d4?q=80&w=600&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?q=80&w=600&auto=format&fit=crop'
-  ],
-  'Tejeduría': [
-    'https://images.unsplash.com/photo-1544816155-12df9643f363?q=80&w=600&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1575844265151-518296fe7dbb?q=80&w=600&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1528731708534-816fe59f90cb?q=80&w=600&auto=format&fit=crop'
-  ],
-  'Talla en madera': [
-    'https://images.unsplash.com/photo-1606293926075-69a00dbfde81?q=80&w=600&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1546482503-934ae3fd95c5?q=80&w=600&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=600&auto=format&fit=crop'
-  ],
-  'Orfebrería': [
-    'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=600&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?q=80&w=600&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=600&auto=format&fit=crop'
-  ]
-};
+const excelPath = 'C:\\Users\\Yuleiny\\Downloads\\Plantilla_Productos_ArtHuila_50.xlsx';
+const downloadsDir = 'C:\\Users\\Yuleiny\\Downloads';
+
+// Función inteligente de mapeo de nombres de productos a sus respectivas imágenes reales descargadas
+function getMatchingImageFile(productName: string): string {
+  const lowerName = productName.toLowerCase().trim();
+  
+  if (lowerName.includes('máscara') || lowerName.includes('mascara')) {
+    return 'descarga (1).jpg';
+  }
+  if (lowerName.includes('caimán') || lowerName.includes('caiman')) {
+    return 'descarga (13).jpg';
+  }
+  if (lowerName.includes('jaguar')) {
+    return 'descarga (19).jpg';
+  }
+  if (lowerName.includes('bastón') || lowerName.includes('baston')) {
+    return 'descarga (31).jpg';
+  }
+  if (lowerName.includes('suazero') || lowerName.includes('vueltiao') || lowerName.includes('aguadeño') || lowerName.includes('sombrero')) {
+    if (lowerName.includes('palma') || lowerName.includes('aguadeño') || lowerName.includes('tello')) {
+      return 'descarga (2).jpg'; // Sombrero de palma / Tello / Aguadeño
+    }
+    return 'descarga (7).jpg'; // Sombrero suazero / paja / vueltiao
+  }
+  if (lowerName.includes('mochila') || lowerName.includes('bolso') || lowerName.includes('cabuya') || lowerName.includes('fique') || lowerName.includes('cesta') || lowerName.includes('canasto')) {
+    if (lowerName.includes('fique') || lowerName.includes('cabuya') || lowerName.includes('mochila')) {
+      if (lowerName.includes('san agustín') || lowerName.includes('san agustin')) {
+        return 'descarga (32).jpg'; // Mochila wayuu/fique azul/violeta
+      }
+      return 'descarga (28).jpg'; // Bolso fique blanco
+    }
+    if (lowerName.includes('canasto') || lowerName.includes('cesta')) {
+      return 'descarga (11).jpg'; // Canasto de mimbre marrón
+    }
+    return 'descarga (10).jpg'; // Bolso de palma
+  }
+  if (lowerName.includes('aretes') || lowerName.includes('pendientes') || lowerName.includes('broche') || lowerName.includes('pulsera') || lowerName.includes('manilla') || lowerName.includes('anillo')) {
+    if (lowerName.includes('cobre') || lowerName.includes('aretes de tagua') || lowerName.includes('pendientes')) {
+      return 'descarga (30).jpg'; // Pendientes de cobre / filigrana
+    }
+    if (lowerName.includes('cerámica') || lowerName.includes('ceramica') || lowerName.includes('aretes de cerámica')) {
+      return 'descarga (25).jpg'; // Aretes turquesa cerámica
+    }
+    if (lowerName.includes('broche')) {
+      return 'descarga (22).jpg'; // Broche mariposa tagua
+    }
+    if (lowerName.includes('cinturón') || lowerName.includes('cinturon')) {
+      return 'descarga (15).jpg'; // Cinturón cuero
+    }
+    return 'descarga (21).jpg'; // Manilla/pulsera cuero
+  }
+  if (lowerName.includes('collar')) {
+    if (lowerName.includes('chaquiras') || lowerName.includes('páez') || lowerName.includes('paez')) {
+      return 'descarga (14).jpg'; // Collar de chaquiras
+    }
+    if (lowerName.includes('huesos') || lowerName.includes('semillas')) {
+      return 'descarga (3).jpg'; // Collar de semillas / huesos
+    }
+    return 'descarga (27).jpg'; // Collar decorativo
+  }
+  if (lowerName.includes('vasija') || lowerName.includes('barro') || lowerName.includes('cerámica') || lowerName.includes('ceramica') || lowerName.includes('plato') || lowerName.includes('jarro') || lowerName.includes('taza') || lowerName.includes('jarrón') || lowerName.includes('florero') || lowerName.includes('macetero')) {
+    if (lowerName.includes('vasija') || lowerName.includes('figura')) {
+      return 'descarga (29).jpg'; // Figuras pequeñas arcilla / vasija
+    }
+    if (lowerName.includes('jarrón') || lowerName.includes('jarron') || lowerName.includes('barro') || lowerName.includes('cerámica san agustín')) {
+      return 'descarga (26).jpg'; // Jarrón de barro grande
+    }
+    if (lowerName.includes('plato')) {
+      return 'descarga (17).jpg'; // Plato decorativo azul
+    }
+    if (lowerName.includes('taza') || lowerName.includes('macetero')) {
+      return 'descarga (8).jpg'; // Ollas / tazas de barro
+    }
+    if (lowerName.includes('jarro')) {
+      return 'descarga (6).jpg'; // Jarro arcilla
+    }
+    return 'descarga.jpg'; // Taza de barro marrón
+  }
+  if (lowerName.includes('poncho') || lowerName.includes('ruana')) {
+    return 'descarga (23).jpg'; // Poncho de lana
+  }
+  if (lowerName.includes('chal')) {
+    return 'descarga (18).jpg'; // Chal tejido
+  }
+  if (lowerName.includes('mantel')) {
+    return 'descarga (12).jpg'; // Mantel bordado
+  }
+  if (lowerName.includes('hamaca')) {
+    return 'descarga (5).jpg'; // Hamaca algodón
+  }
+  if (lowerName.includes('tapete')) {
+    return 'descarga (9).jpg'; // Tapete fique
+  }
+  if (lowerName.includes('cuadro')) {
+    if (lowerName.includes('pirograbado')) {
+      return 'descarga (16).jpg'; // Cuadro pirograbado madera
+    }
+    return 'descarga (20).jpg'; // Cuadro espejo marco cabuya
+  }
+  
+  return 'descarga.jpg';
+}
 
 const recoverDatabase = async () => {
   const dataSource = new DataSource({
     type: 'postgres',
     url: process.env.DATABASE_URL || 'postgresql://postgres:0408@localhost:5432/arthuila',
     entities: [User, Category, Region, ArtisanProfile, ArtisanGallery, Product, ProductImage, AdminAuditLog],
-    synchronize: true,
+    synchronize: false, // ¡Totalmente deshabilitado aquí también para evitar borrado accidental!
   });
 
   await dataSource.initialize();
-  console.log('✅ Conectado a la base de datos para recuperación...');
+  console.log('✅ Conectado a la base de datos de manera segura...');
 
-  // 1. Limpiar imágenes y productos antiguos de forma segura para evitar FK crashes
+  // 1. Encontrar la artesana Deicy Quimbayo (yuleinylugo71@gmail.com)
+  const artisanRepo = dataSource.getRepository(ArtisanProfile);
+  const targetEmail = 'yuleinylugo71@gmail.com';
+  
+  const deicyArtisan = await artisanRepo.findOne({
+    where: { user: { email: targetEmail } },
+    relations: ['user', 'region'],
+  });
+
+  if (!deicyArtisan) {
+    console.error(`❌ Error: No se encontró el perfil de la artesana con el correo ${targetEmail} en la base de datos.`);
+    await dataSource.destroy();
+    return;
+  }
+  console.log(`👤 Asociando todos los productos a la artesana: ${deicyArtisan.user.full_name} (${deicyArtisan.user.email})`);
+
+  // 2. Escanear y subir las imágenes locales de Descargas a Cloudinary
+  console.log('📂 Escaneando imágenes reales en la carpeta de Descargas...');
+  const files = fs.readdirSync(downloadsDir);
+  const descargaFiles = files.filter(f => f.toLowerCase().startsWith('descarga'));
+
+  if (descargaFiles.length === 0) {
+    console.error('❌ Error: No se encontraron las imágenes descargadas (descarga*.jpg) en la carpeta C:\\Users\\Yuleiny\\Downloads.');
+    await dataSource.destroy();
+    return;
+  }
+
+  console.log(`📸 Encontradas ${descargaFiles.length} imágenes para subir a Cloudinary...`);
+  
+  const cloudinaryUrlsMap = new Map<string, { secure_url: string; public_id: string }>();
+
+  for (const fileName of descargaFiles) {
+    const filePath = path.join(downloadsDir, fileName);
+    console.log(`☁️ Subiendo ${fileName} a tu cuenta de Cloudinary...`);
+    try {
+      const result = await cloudinary.uploader.upload(filePath, {
+        folder: 'arthuila/products',
+        resource_type: 'image',
+      });
+      cloudinaryUrlsMap.set(fileName.toLowerCase(), {
+        secure_url: result.secure_url,
+        public_id: result.public_id,
+      });
+      console.log(`   ✅ ¡Subido con éxito! URL: ${result.secure_url}`);
+    } catch (uploadErr: any) {
+      console.error(`   ❌ Error subiendo ${fileName}:`, uploadErr.message);
+    }
+  }
+
+  // 3. Limpiar imágenes y productos antiguos de forma segura para evitar FK crashes antes de re-importar
   const imageTableName = dataSource.getRepository(ProductImage).metadata.tableName;
   const productTableName = dataSource.getRepository(Product).metadata.tableName;
   await dataSource.query(`DELETE FROM "${imageTableName}"`);
   await dataSource.query(`DELETE FROM "${productTableName}"`);
-  console.log('🧹 Limpieza de productos antiguos completada de manera limpia.');
+  console.log('🧹 Base de datos local limpiada para evitar duplicaciones.');
 
-  // 2. Cargar el archivo Excel
+  // 4. Cargar el archivo Excel
   const workbook = XLSX.readFile(excelPath);
   const sheetName = workbook.SheetNames[0];
   const sheet = workbook.Sheets[sheetName];
@@ -76,10 +206,8 @@ const recoverDatabase = async () => {
   const imageRepo = dataSource.getRepository(ProductImage);
   const categoryRepo = dataSource.getRepository(Category);
   const regionRepo = dataSource.getRepository(Region);
-  const artisanRepo = dataSource.getRepository(ArtisanProfile);
-  const userRepo = dataSource.getRepository(User);
 
-  // 3. Asegurar categorías en DB
+  // Asegurar categorías en DB
   const categoryNames = ['Sombrerería', 'Cerámica', 'Tejeduría', 'Talla en madera', 'Orfebrería'];
   const categoriesMap: Record<string, Category> = {};
   for (const name of categoryNames) {
@@ -91,7 +219,7 @@ const recoverDatabase = async () => {
     categoriesMap[name] = cat;
   }
 
-  // 4. Asegurar regiones en DB
+  // Asegurar regiones en DB
   const regionNames = [
     'Acevedo', 'Agrado', 'Aipe', 'Algeciras', 'Altamira', 'Baraya', 'Campoalegre', 'Colombia', 'Elías', 'Garzón',
     'Gigante', 'Guadalupe', 'Hobo', 'Íquira', 'Isnos', 'La Argentina', 'La Plata', 'Nátaga', 'Neiva', 'Oporapa',
@@ -108,36 +236,8 @@ const recoverDatabase = async () => {
     regionsMap[name] = reg;
   }
 
-  // 5. Asegurar un artesano verificado
-  let artisanUser = await userRepo.findOneBy({ email: 'rosa@artesano.com' });
-  if (!artisanUser) {
-    artisanUser = userRepo.create({
-      full_name: 'Rosa Elena Vargas',
-      email: 'rosa@artesano.com',
-      password_hash: await bcrypt.hash('Artesano123!', 10),
-      role: UserRole.ARTISAN,
-    });
-    await userRepo.save(artisanUser);
-  }
-
-  let defaultArtisan = await artisanRepo.findOne({ where: { user: { id: artisanUser.id } }, relations: ['user', 'region'] });
-  if (!defaultArtisan) {
-    defaultArtisan = artisanRepo.create({
-      user: artisanUser,
-      id_number: '10234567',
-      cultural_history: 'Rosa Elena es una artesana de amplia trayectoria, tejedora de sombreros tradicionales y mochilas en el Huila.',
-      category: categoriesMap['Sombrerería'],
-      region: regionsMap['Suaza'],
-      verification_status: ArtisanStatus.VERIFIED,
-      truthfulness_declaration: true,
-    });
-    await artisanRepo.save(defaultArtisan);
-  }
-
-  // 6. Importar productos
+  // 5. Importar y enlazar productos con sus imágenes verdaderas en Cloudinary
   let count = 0;
-  const categoryCounters: Record<string, number> = {};
-
   for (const row of productsList) {
     const rawName = row['Nombre del Producto'] || '';
     if (!rawName.trim()) continue;
@@ -146,14 +246,14 @@ const recoverDatabase = async () => {
     const slug = rawSlug.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') ||
                  rawName.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
-    // Verificar si ya existe un producto con el mismo slug para evitar duplicados
+    // Verificar duplicación de slug
     let product = await productRepo.findOneBy({ slug });
     if (!product) {
       const catName = (row['Categoría'] || '').trim();
       const category = categoriesMap[catName] || categoriesMap['Tejeduría'];
 
       const regName = (row['Región'] || '').trim();
-      const region = regionsMap[regName] || defaultArtisan.region;
+      const region = regionsMap[regName] || deicyArtisan.region;
 
       const price = parseFloat(row['Precio']) || 0;
       const stock = parseInt(row['Cantidad en Inventario']) || 0;
@@ -165,7 +265,7 @@ const recoverDatabase = async () => {
         slug,
         price,
         stock,
-        artisan: defaultArtisan,
+        artisan: deicyArtisan, // Registrado a nombre de Deicy Quimbayo
         category,
         region,
         cultural_origin: row['Origen Cultural (Pueblo/Comunidad)'] || 'Comunidad artesana de Neiva, Huila',
@@ -184,19 +284,24 @@ const recoverDatabase = async () => {
 
       await productRepo.save(product);
 
-      // Asignar imagen hermosa y giratoria según su categoría
-      const imgs = categoryImages[category.name] || categoryImages['Tejeduría'];
-      if (!categoryCounters[category.name]) {
-        categoryCounters[category.name] = 0;
-      }
-      const imgIndex = categoryCounters[category.name] % imgs.length;
-      categoryCounters[category.name]++;
+      // Encontrar la imagen verdadera para este producto
+      const targetFileName = getMatchingImageFile(rawName);
+      const cloudinaryImage = cloudinaryUrlsMap.get(targetFileName.toLowerCase());
 
-      const imageUrl = imgs[imgIndex];
+      let finalUrl = 'https://res.cloudinary.com/dcoj4c3ay/image/upload/v1/arthuila/sample';
+      let finalPublicId = `arthuila/sample_${slug}`;
+
+      if (cloudinaryImage) {
+        finalUrl = cloudinaryImage.secure_url;
+        finalPublicId = cloudinaryImage.public_id;
+        console.log(`🔗 Enlazado: "${rawName}" ➔ "${targetFileName}"`);
+      } else {
+        console.warn(`⚠️ Advertencia: No se encontró imagen cargada para "${targetFileName}". Se usará fallback.`);
+      }
 
       const img = imageRepo.create({
-        url: imageUrl,
-        public_id: `unsplash_placeholder_${slug}`,
+        url: finalUrl,
+        public_id: finalPublicId,
         product,
       });
       await imageRepo.save(img);
@@ -206,7 +311,7 @@ const recoverDatabase = async () => {
   }
 
   await dataSource.destroy();
-  console.log(`\n🎉 ¡Recuperación exitosa! Se han importado e ilustrado ${count} productos de tu Excel original de forma impecable.`);
+  console.log(`\n🎉 ¡Recuperación exitosa! Se han importado ${count} productos en la cuenta de Deicy Quimbayo, enlazados perfectamente a las imágenes reales subidas a tu Cloudinary.`);
 };
 
 recoverDatabase().catch(err => {
