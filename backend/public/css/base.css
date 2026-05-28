@@ -1007,4 +1007,92 @@ footer a:hover { color: var(--color-primary-light); }
   border-color: var(--color-border);
 }
 
+/* ==========================================
+   BARRA DE NAVEGACIÓN MÓVIL INFERIOR (TAB BAR)
+   ========================================== */
+.mobile-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 62px;
+  background: rgba(250, 247, 244, 0.96);
+  backdrop-filter: blur(20px) saturate(1.6);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  border-top: 1.5px solid var(--color-border);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+  display: none;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 99999;
+  padding: 0 0.5rem;
+  box-sizing: border-box;
+}
+
+.mobile-bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-muted);
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-decoration: none;
+  width: 22%;
+  height: 100%;
+  gap: 0.25rem;
+  position: relative;
+  transition: all 0.2s var(--ease-out);
+}
+
+.mobile-bottom-nav-item i {
+  font-size: 1.25rem;
+  transition: transform 0.2s var(--ease-out);
+}
+
+.mobile-bottom-nav-item:active i {
+  transform: scale(0.85);
+}
+
+.mobile-bottom-nav-item.active {
+  color: var(--color-primary);
+}
+
+.mobile-bottom-nav-item .cart-badge {
+  position: absolute;
+  top: 4px;
+  right: calc(50% - 18px);
+  background: var(--color-primary);
+  color: white;
+  font-size: 0.62rem;
+  font-weight: 800;
+  min-width: 17px;
+  height: 17px;
+  border-radius: 99px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--color-surface);
+  box-shadow: var(--shadow-xs);
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .mobile-bottom-nav {
+    display: flex;
+  }
+  
+  /* Evitar que el pie de página o contenido quede cubierto por la barra */
+  body {
+    padding-bottom: 74px !important;
+  }
+  
+  /* Esconder la navegación superior duplicada para no saturar al usuario */
+  .navbar-global .navbar-center {
+    display: none !important;
+  }
+}
+
+
 
