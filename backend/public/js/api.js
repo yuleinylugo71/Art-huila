@@ -123,6 +123,48 @@ function formatPrice(p) {
   return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(value);
 }
 
+const Wishlist = {
+  get() {
+    try {
+      return JSON.parse(localStorage.getItem('arthuila_wishlist')) || [];
+    } catch (e) {
+      return [];
+    }
+  },
+  has(id) {
+    return this.get().includes(id);
+  },
+  toggle(id) {
+    let list = this.get();
+    const idx = list.indexOf(id);
+    if (idx > -1) {
+      list.splice(idx, 1);
+    } else {
+      list.push(id);
+    }
+    localStorage.setItem('arthuila_wishlist', JSON.stringify(list));
+    
+    // Toggle active state in DOM if present
+    document.querySelectorAll(`.btn-wishlist[data-id="${id}"]`).forEach(btn => {
+      btn.classList.toggle('active');
+      const icon = btn.querySelector('i');
+      if (icon) {
+        if (idx === -1) {
+          icon.className = 'fa-solid fa-heart';
+        } else {
+          icon.className = 'fa-regular fa-heart';
+        }
+      }
+    });
+
+    if (idx === -1) {
+      showToast('<i class="fa-solid fa-heart" style="color:var(--color-primary-light);"></i> Agregado a favoritos', 'success');
+    } else {
+      showToast('<i class="fa-regular fa-heart"></i> Removido de favoritos', 'info');
+    }
+  }
+};
+
 const Cart = {
   _getKey: () => {
     const user = Auth.getUser();
@@ -138,7 +180,7 @@ const Cart = {
     const existing = cart.find(item => item.id === product.id);
     if (existing) {
       existing.quantity += quantity;
-      showToast('<i class="fa-solid fa-box"></i> Se agrego otra unidad al carrito', 'success');
+      showToast('<i class="fa-solid fa-box"></i> Se agregó otra unidad al carrito', 'success');
     } else {
       cart.push({ ...product, quantity });
       showToast('<i class="fa-solid fa-cart-shopping"></i> Producto agregado al carrito', 'success');
@@ -163,6 +205,43 @@ const Cart = {
         el.textContent = `Carrito (${total})`;
       }
     });
+
+    // 🛍️ FLOATING CAPSULE SHOPPING CART (ONLY FOR CATALOG & HOME ON MOBILE)
+    const isCatalog = window.location.pathname.includes('catalogo.html');
+    const isHome = window.location.pathname === '/' || window.location.pathname.endsWith('/index.html') || window.location.pathname === '';
+    
+    if ((isCatalog || isHome) && window.innerWidth <= 768) {
+      let capsule = document.getElementById('global-floating-cart-capsule');
+      if (total > 0) {
+        if (!capsule) {
+          capsule = document.createElement('div');
+          capsule.id = 'global-floating-cart-capsule';
+          capsule.className = 'floating-cart-capsule';
+          capsule.onclick = () => window.location.href = 'carrito.html';
+          document.body.appendChild(capsule);
+        }
+        
+        const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const formattedTotal = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(totalPrice);
+        
+        capsule.innerHTML = `
+          <div class="capsule-left">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span>Ver carrito</span>
+            <span class="capsule-badge">${total}</span>
+          </div>
+          <div class="capsule-price">${formattedTotal}</div>
+        `;
+        
+        setTimeout(() => capsule.classList.add('show'), 50);
+      } else if (capsule) {
+        capsule.classList.remove('show');
+        setTimeout(() => capsule.remove(), 400);
+      }
+    } else {
+      const capsule = document.getElementById('global-floating-cart-capsule');
+      if (capsule) capsule.remove();
+    }
   }
 };
 

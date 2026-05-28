@@ -1167,5 +1167,197 @@ footer a:hover { color: var(--color-primary-light); }
   }
 }
 
+/* ==========================================================================
+   PREMIUM BOUTIQUE DESIGN Overhauls (Inspired by Reference UI Layout)
+   ========================================================================== */
+
+/* 🤍 Wishlist / Favoritos Heart Button on Product Image */
+.btn-wishlist {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.65rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--color-muted);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-xs);
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s var(--ease-out);
+  outline: none;
+}
+.btn-wishlist:hover {
+  transform: scale(1.1);
+  color: var(--color-primary-light);
+}
+.btn-wishlist.active {
+  color: var(--color-primary) !important;
+}
+.btn-wishlist.active i {
+  font-weight: 900 !important;
+}
+
+/* 🏷️ Floating Rust Price Pill directly overlaying the image */
+.product-price-pill {
+  position: absolute;
+  bottom: 0.65rem;
+  left: 0.65rem;
+  background: var(--color-primary);
+  color: white;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 0.28rem 0.75rem;
+  border-radius: 99px;
+  box-shadow: var(--shadow-sm);
+  z-index: 10;
+  letter-spacing: -0.01em;
+}
+
+/* 🏷️ Stock / Reseñas Minimalistas */
+.product-card-stock {
+  font-size: 0.68rem !important;
+  color: var(--color-primary-light) !important;
+  font-weight: 700 !important;
+  margin-top: 0.15rem;
+}
+.product-card-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.22rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-muted);
+}
+.product-card-stars i {
+  color: #f5a623;
+  font-size: 0.72rem;
+}
+
+/* 📱 Active dot indicator floating on active Tab Menu items */
+.mobile-bottom-nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  width: 4px;
+  height: 4px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  animation: bounceDot 0.3s var(--ease-out) both;
+}
+@keyframes bounceDot {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* 🛍️ Floating Capsule Shop Cart Button (Native Mobile style) */
+.floating-cart-capsule {
+  position: fixed;
+  bottom: 82px; /* Placed exactly above bottom tab bar height (62px) + safe margin */
+  left: 50%;
+  transform: translateX(-50%) translateY(150%);
+  background: var(--color-primary);
+  color: white;
+  padding: 0.75rem 1.4rem;
+  border-radius: 99px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  box-shadow: var(--shadow-lg), 0 8px 30px rgba(193, 68, 14, 0.25);
+  z-index: 99998;
+  width: 90%;
+  max-width: 350px;
+  box-sizing: border-box;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.88rem;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+  opacity: 0;
+  pointer-events: none;
+}
+.floating-cart-capsule.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.floating-cart-capsule:active {
+  transform: translateX(-50%) scale(0.95);
+}
+.floating-cart-capsule .capsule-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.floating-cart-capsule .capsule-badge {
+  background: white;
+  color: var(--color-primary);
+  font-size: 0.68rem;
+  font-weight: 800;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.floating-cart-capsule .capsule-price {
+  font-weight: 800;
+  font-size: 0.95rem;
+  border-left: 1.5px solid rgba(255, 255, 255, 0.25);
+  padding-left: 0.85rem;
+}
+
+/* 🏷️ Horizontal Scrolling Category Chips container for Mobile viewports */
+.category-chips-scroller {
+  display: none;
+  overflow-x: auto;
+  white-space: nowrap;
+  gap: 0.5rem;
+  padding: 0.4rem 0.2rem 1.1rem 0.2rem;
+  width: 100%;
+  box-sizing: border-box;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.category-chips-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+.category-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 1.1rem;
+  border-radius: 99px;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-accent-warm);
+  color: var(--color-muted);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s var(--transition);
+  box-shadow: var(--shadow-xs);
+}
+.category-chip.active {
+  background: var(--color-primary) !important;
+  color: white !important;
+  border-color: var(--color-primary) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+@media (max-width: 992px) {
+  .category-chips-scroller {
+    display: flex;
+  }
+}
+
 
 

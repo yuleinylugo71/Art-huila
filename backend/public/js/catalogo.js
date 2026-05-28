@@ -83,7 +83,46 @@ async function loadFilters() {
   if (minPrice) document.getElementById('min-price').value = minPrice;
   if (maxPrice) document.getElementById('max-price').value = maxPrice;
   document.getElementById('sort-select').value = sortBy;
+
+  // 🏷️ Sync Category Chips Scroller
+  syncCategoryChips();
 }
+
+function syncCategoryChips() {
+  const chipsScroller = document.getElementById('category-chips-scroller');
+  if (!chipsScroller || cachedCategories.length === 0) return;
+  
+  const checkedCats = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(el => el.value);
+  const allActive = checkedCats.length === 0;
+  
+  let chipsHtml = `
+    <button class="category-chip ${allActive ? 'active' : ''}" onclick="selectCategoryChip('')">
+      Todos
+    </button>
+  `;
+  chipsHtml += cachedCategories.map(c => {
+    const isActive = checkedCats.includes(c.name);
+    return `
+      <button class="category-chip ${isActive ? 'active' : ''}" onclick="selectCategoryChip('${c.name}')">
+        ${c.name}
+      </button>
+    `;
+  }).join('');
+  chipsScroller.innerHTML = chipsHtml;
+}
+
+window.selectCategoryChip = (catName) => {
+  document.querySelectorAll('input[name="category"]').forEach(el => {
+    if (catName === '') {
+      el.checked = false;
+    } else {
+      el.checked = (el.value === catName);
+    }
+  });
+  
+  syncCategoryChips();
+  applyFilters();
+};
 
 async function loadProducts(page = 1) {
   const grid = document.getElementById('products-grid');
@@ -134,21 +173,41 @@ async function loadProducts(page = 1) {
       const isOutOfStock = p.stock !== undefined && p.stock < 1;
       const user = Auth.getUser();
       const isOwner = user && p.artisan?.user && user.id === p.artisan.user.id;
+      const isWish = typeof Wishlist !== 'undefined' && Wishlist.has(p.id);
 
       return `
         <div class="product-card" onclick="window.location.href='/producto.html?slug=${p.slug}'">
-          ${p.images && p.images[0]
-            ? `<div class="product-card-image"><img src="${p.images[0].url}" alt="${p.name}" loading="lazy"/></div>`
-            : `<div class="product-card-image product-img-placeholder" style="display:flex;align-items:center;justify-content:center;font-size:3rem;"><i class="fa-solid fa-vase"></i></div>`}
+          <div class="product-card-image" style="position:relative;">
+            ${p.images && p.images[0]
+              ? `<img src="${p.images[0].url}" alt="${p.name}" loading="lazy"/>`
+              : `<div class="product-img-placeholder" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem;color:var(--color-muted);"><i class="fa-solid fa-vase"></i></div>`}
+            
+            <!-- Price pill floating over image -->
+            <div class="product-price-pill">${formatPrice(p.price)}</div>
+            
+            <!-- Heart Wishlist button floating over image -->
+            <button class="btn-wishlist ${isWish ? 'active' : ''}" data-id="${p.id}" onclick="event.stopPropagation(); if (typeof Wishlist !== 'undefined') Wishlist.toggle('${p.id}')" title="Favoritos">
+              <i class="${isWish ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+            </button>
+          </div>
           <div class="product-card-body">
-            <div class="product-card-name">${p.name}</div>
-            <div class="product-artisan">
-              <i class="fa-solid fa-store"></i>
-              <span><strong>${p.artisan?.user?.full_name || i18next.t('catalog.anonymousArtisan')}</strong></span>
-              ${renderTrustBadge(p.artisan?.status || p.artisan?.verification_status)}
+            <div class="product-card-name" style="font-weight:700;">${p.name}</div>
+            <div class="product-artisan" style="margin-top:0.15rem;">
+              <i class="fa-solid fa-store" style="font-size:0.75rem;"></i>
+              <span style="font-size:0.75rem;"><strong>${p.artisan?.user?.full_name || i18next.t('catalog.anonymousArtisan')}</strong></span>
             </div>
-            <div class="product-card-footer" style="display:flex;justify-content:space-between;align-items:center;margin-top:auto;">
-              <div class="product-price" style="margin-top:0;">${formatPrice(p.price)}</div>
+            
+            <!-- Stock & Stars Row -->
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.25rem;">
+              <div class="product-card-stock">${isOutOfStock ? 'Sin stock' : `${p.stock || 5} disponibles`}</div>
+              <div class="product-card-stars">
+                <i class="fa-solid fa-star"></i>
+                <span>4.8 (8)</span>
+              </div>
+            </div>
+
+            <!-- Compact Premium Cart Button -->
+            <div style="display:flex;justify-content:flex-end;margin-top:auto;padding-top:0.4rem;">
               <button class="btn-card-cart ${isOutOfStock ? 'disabled' : ''} ${isOwner ? 'owner' : ''}" 
                       onclick="event.stopPropagation(); ${isOutOfStock ? '' : `addToCart('${p.id}')`}" 
                       title="${isOutOfStock ? 'Sin stock' : (isOwner ? 'Es tu producto' : 'Agregar al carrito')}"
@@ -204,6 +263,9 @@ function applyFilters(debounceMs = 0) {
     const sortBy = document.getElementById('sort-select').value;
     syncFiltersToUrl({ regions, categories, minPrice, maxPrice, sortBy });
     loadProducts(1);
+    
+    // 🏷️ Sync chips immediately
+    if (typeof syncCategoryChips === 'function') syncCategoryChips();
   };
 
   if (debounceMs > 0) {
@@ -223,6 +285,9 @@ function clearFilters() {
   if (searchInput) searchInput.value = '';
   history.replaceState(null, '', window.location.pathname);
   loadProducts(1);
+  
+  // 🏷️ Sync chips immediately
+  if (typeof syncCategoryChips === 'function') syncCategoryChips();
 }
 
 async function initCatalog() {

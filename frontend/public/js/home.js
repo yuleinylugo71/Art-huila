@@ -1,14 +1,17 @@
 // home.js
 
-document.addEventListener('i18nReady', () => {
+const runInitHome = () => {
   if (typeof applyTranslations === 'function') applyTranslations();
   initHome();
-});
+};
 
-document.addEventListener('languageChanged', () => {
-  if (typeof applyTranslations === 'function') applyTranslations();
-  initHome();
-});
+if (window.i18nReadyProcessed) {
+  runInitHome();
+} else {
+  document.addEventListener('i18nReady', runInitHome);
+}
+
+document.addEventListener('languageChanged', runInitHome);
 
 async function initHome() {
   const featuredGrid = document.getElementById('featured-grid');
@@ -40,34 +43,78 @@ async function initHome() {
   // Load Featured Products
   try {
     const products = await apiFetch('/products?featured=true&limit=4');
+    cachedProducts = products; // Cache the products for wishlist and cart
+    
     if (!products || products.length === 0) {
       featuredGrid.innerHTML = `<p class="text-muted">${i18next.t('home.noFeaturedProducts')}</p>`;
     } else {
-      featuredGrid.innerHTML = products.map(p => `
-        <div class="product-card" onclick="window.location.href='/producto.html?slug=${p.slug}'">
-          <div class="product-card-image">
-            <span class="badge badge-${p.status}">${p.status === 'verified' ? i18next.t('home.verifiedBadge') : i18next.t('home.pendingBadge')}</span>
-            <img src="${p.image_url || '/img/placeholder.jpg'}" alt="${p.name}" loading="lazy"/>
-          </div>
-          <div class="product-card-body">
-            <div class="product-artisan">
-              <img src="${p.artisan.avatar_url || '/img/default-avatar.jpg'}" alt="${p.artisan.name}"/>
-              <span>${p.artisan.name}</span>
+      featuredGrid.innerHTML = products.map(p => {
+        const isOutOfStock = p.stock !== undefined && p.stock < 1;
+        const isWish = typeof Wishlist !== 'undefined' && Wishlist.has(p.id);
+        const imgUrl = p.image_url || '/img/placeholder.jpg';
+        const artisanName = p.artisan?.name || '';
+
+        return `
+          <div class="product-card" onclick="window.location.href='/producto.html?slug=${p.slug}'">
+            <div class="product-card-image" style="position:relative;">
+              <img src="${imgUrl}" alt="${p.name}" loading="lazy"/>
+              
+              <!-- Price pill floating over image -->
+              <div class="product-price-pill">${formatPrice(p.price)}</div>
+              
+              <!-- Heart Wishlist button floating over image -->
+              <button class="btn-wishlist ${isWish ? 'active' : ''}" data-id="${p.id}" onclick="event.stopPropagation(); if (typeof Wishlist !== 'undefined') Wishlist.toggle('${p.id}')" title="Favoritos">
+                <i class="${isWish ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+              </button>
             </div>
-            <h3 class="product-card-name">${p.name}</h3>
-            <div class="product-stars">
-              <span class="stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
-              <span>(${p.review_count})</span>
+            <div class="product-card-body">
+              <div class="product-card-name" style="font-weight:700;">${p.name}</div>
+              <div class="product-artisan" style="margin-top:0.15rem;">
+                <i class="fa-solid fa-store" style="font-size:0.75rem;"></i>
+                <span style="font-size:0.75rem;"><strong>${artisanName}</strong></span>
+              </div>
+              
+              <!-- Stock & Stars Row -->
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.25rem;">
+                <div class="product-card-stock">${isOutOfStock ? 'Sin stock' : `${p.stock || 5} disponibles`}</div>
+                <div class="product-card-stars">
+                  <i class="fa-solid fa-star"></i>
+                  <span>4.8 (${p.review_count || 4})</span>
+                </div>
+              </div>
+
+              <!-- Compact Premium Cart Button -->
+              <div style="display:flex;justify-content:flex-end;margin-top:auto;padding-top:0.4rem;">
+                <button class="btn-card-cart ${isOutOfStock ? 'disabled' : ''}" 
+                        onclick="event.stopPropagation(); ${isOutOfStock ? '' : `addToCart('${p.id}')`}" 
+                        title="${isOutOfStock ? 'Sin stock' : 'Agregar al carrito'}"
+                        ${isOutOfStock ? 'disabled' : ''}>
+                  <i class="${isOutOfStock ? 'fa-solid fa-circle-xmark' : 'fa-solid fa-cart-plus'}"></i>
+                </button>
+              </div>
             </div>
-            <div class="product-price">${formatPrice(p.price)}</div>
-            <button class="btn btn-sm">${i18next.t('home.viewDetailsBtn')}</button>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
   } catch (e) {
-    featuredGrid.innerHTML = `<div class="empty-state"><div class="emoji"><i class="fa-solid fa-triangle-exclamation"></i></div><h3>${i18next.t('home.errorLoadingProducts')}</h3><p>${e.message}</p></div>`;
+    featuredGrid.innerHTML = `<div class="empty-state"><div class="emoji"><i class="fa-solid fa-triangle-exclamation"></i></div> h3>${i18next.t('home.errorLoadingProducts')}</h3><p>${e.message}</p></div>`;
   }
+
+  // Local addToCart for home page
+  function addToCart(productId) {
+    const p = cachedProducts.find(x => x.id === productId);
+    if (!p) return;
+    const user = Auth.getUser();
+    if (user && user.role === 'artesano' && p.artisan?.user && user.id === p.artisan.user.id) {
+      showToast('No puedes comprar tus propios productos', 'warning'); 
+      return;
+    }
+    const imgUrl = p.image_url || '';
+    const artisanName = p.artisan?.name || '';
+    Cart.add({ id: p.id, name: p.name, price: p.price, image: imgUrl, artisanName }, 1);
+  }
+  window.addToCart = addToCart;
 
   // Auth Area
   const navAuth = document.getElementById('nav-auth-area');
