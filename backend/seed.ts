@@ -25,6 +25,12 @@ const seedDatabase = async () => {
   await dataSource.initialize();
   console.log('✅ Database connected for seeding...');
 
+  // Limpiar imágenes y productos antiguos usando queries nativos con nombres de tabla dinámicos
+  const imageTableName = dataSource.getRepository(ProductImage).metadata.tableName;
+  const productTableName = dataSource.getRepository(Product).metadata.tableName;
+  await dataSource.query(`DELETE FROM "${imageTableName}"`);
+  await dataSource.query(`DELETE FROM "${productTableName}"`);
+
   // --- Seed Categories ---
   const categoryRepo = dataSource.getRepository(Category);
   const categoryNames = ['Tejeduría', 'Cerámica', 'Talla en madera', 'Orfebrería', 'Sombrerería'];
@@ -116,11 +122,11 @@ const seedDatabase = async () => {
   const verifiedArtisan = artisanProfiles.find(p => p.verification_status === VerificationStatus.VERIFIED);
   if (verifiedArtisan) {
     const productsData = [
-      { name: 'Mochila Wayuu Tejida', price: 180000, stock: 15, cat: 0, sig: 'Símbolo de identidad cultural' },
-      { name: 'Vasija de Cerámica Huilense', price: 95000, stock: 8, cat: 1, sig: 'Representación de la cosmovisión indígena' },
-      { name: 'Talla de Madera Amazónica', price: 240000, stock: 5, cat: 2, sig: 'Arte ancestral de las comunidades del sur del Huila' },
-      { name: 'Collar de Orfebrería en Filigrana', price: 320000, stock: 3, cat: 3, sig: 'Herencia de los orfebres de la región andina' },
-      { name: 'Sombrero Vueltiao Huilense', price: 125000, stock: 20, cat: 4, sig: 'Tradición de tejedores del Huila' },
+      { name: 'Mochila Wayuu Tejida', price: 180000, stock: 15, cat: 0, sig: 'Símbolo de identidad cultural', imageUrl: 'https://images.unsplash.com/photo-1590736969955-71cc94801759?w=600&auto=format&fit=crop' },
+      { name: 'Vasija de Cerámica Huilense', price: 95000, stock: 8, cat: 1, sig: 'Representación de la cosmovisión indígena', imageUrl: 'https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?w=600&auto=format&fit=crop' },
+      { name: 'Talla de Madera Amazónica', price: 240000, stock: 5, cat: 2, sig: 'Arte ancestral de las comunidades del sur del Huila', imageUrl: 'https://images.unsplash.com/photo-1606293926075-69a00dbfde81?w=600&auto=format&fit=crop' },
+      { name: 'Collar de Orfebrería en Filigrana', price: 320000, stock: 3, cat: 3, sig: 'Herencia de los orfebres de la región andina', imageUrl: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=600&auto=format&fit=crop' },
+      { name: 'Sombrero Vueltiao Huilense', price: 125000, stock: 20, cat: 4, sig: 'Tradición de tejedores del Huila', imageUrl: 'https://images.unsplash.com/photo-1575844810752-32152dc10384?w=600&auto=format&fit=crop' },
     ];
 
     for (const pd of productsData) {
@@ -145,8 +151,8 @@ const seedDatabase = async () => {
         await productRepo.save(product);
 
         const img = imageRepo.create({
-          url: `https://res.cloudinary.com/dcoj4c3ay/image/upload/v1/arthuila/sample`,
-          public_id: `arthuila/sample_${slug}`,
+          url: pd.imageUrl,
+          public_id: `unsplash_${slug}`,
           product,
         });
         await imageRepo.save(img);
