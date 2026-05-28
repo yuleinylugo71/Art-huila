@@ -31,13 +31,45 @@ async function initHome() {
   // Load Categories
   try {
     const categories = await apiFetch('/categories');
-    categoriesGrid.innerHTML = categories.map(c => `
-      <div class="category-card" onclick="window.location.href='/catalogo.html?category=${c.slug}'">
-        <span class="category-icon">${c.icon_emoji}</span>
-        <div class="category-name">${c.name}</div>
-        <div style="font-size:0.75rem;color:var(--color-muted);margin-top:0.3rem;">${c.count}${i18next.t('home.productsSuffix')}</div>
-      </div>
-    `).join('');
+    
+    // Find Sombreros or default to the first one as featured
+    let sombrerosCat = categories.find(c => c.slug.toLowerCase().includes('sombrero') || c.name.toLowerCase().includes('sombrero'));
+    if (!sombrerosCat && categories.length > 0) {
+      sombrerosCat = categories[0];
+    }
+    
+    const otherCats = categories.filter(c => c.id !== sombrerosCat.id).slice(0, 3);
+    
+    if (sombrerosCat) {
+      categoriesGrid.className = 'asymmetric-categories-container';
+      categoriesGrid.innerHTML = `
+        <div class="category-large-card" onclick="window.location.href='/catalogo.html?category=${sombrerosCat.slug}'">
+          <div class="large-card-content">
+            <span class="large-card-emoji">${sombrerosCat.icon_emoji}</span>
+            <h3 class="large-card-title">${sombrerosCat.name}</h3>
+            <p class="large-card-subtitle" data-i18n="home.sombrerosSubtitle">Maestría de paja toquilla tradicional</p>
+            <span class="large-card-btn" data-i18n="home.exploreCraft">Ver Oficio &rarr;</span>
+          </div>
+        </div>
+        <div class="category-grid-small">
+          ${otherCats.map(c => `
+            <div class="category-small-card" onclick="window.location.href='/catalogo.html?category=${c.slug}'">
+              <span class="small-card-emoji">${c.icon_emoji}</span>
+              <h4 class="small-card-title">${c.name}</h4>
+              <span class="small-card-count">${c.count} ${i18next.t('home.productsSuffix', { defaultValue: 'piezas' })}</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    } else {
+      categoriesGrid.innerHTML = categories.map(c => `
+        <div class="category-card" onclick="window.location.href='/catalogo.html?category=${c.slug}'">
+          <span class="category-icon">${c.icon_emoji}</span>
+          <div class="category-name">${c.name}</div>
+          <div style="font-size:0.75rem;color:var(--color-muted);margin-top:0.3rem;">${c.count} ${i18next.t('home.productsSuffix')}</div>
+        </div>
+      `).join('');
+    }
   } catch (e) { console.error('Error loading categories', e); }
 
   // Load Featured Products

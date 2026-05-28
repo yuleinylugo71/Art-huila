@@ -92,20 +92,25 @@ function syncCategoryChips() {
   const chipsScroller = document.getElementById('category-chips-scroller');
   if (!chipsScroller || cachedCategories.length === 0) return;
   
+  chipsScroller.className = 'category-circle-carousel';
+  
   const checkedCats = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(el => el.value);
   const allActive = checkedCats.length === 0;
   
   let chipsHtml = `
-    <button class="category-chip ${allActive ? 'active' : ''}" onclick="selectCategoryChip('')">
-      Todos
-    </button>
+    <div class="category-circle-item ${allActive ? 'active' : ''}" onclick="window.selectCategoryChip('')">
+      <div class="category-circle-chip">✨</div>
+      <div class="category-circle-label" data-i18n="catalog.allCategories">Todos</div>
+    </div>
   `;
   chipsHtml += cachedCategories.map(c => {
     const isActive = checkedCats.includes(c.name);
+    const emoji = c.icon_emoji || '🏺';
     return `
-      <button class="category-chip ${isActive ? 'active' : ''}" onclick="selectCategoryChip('${c.name}')">
-        ${c.name}
-      </button>
+      <div class="category-circle-item ${isActive ? 'active' : ''}" onclick="window.selectCategoryChip('${c.name}')">
+        <div class="category-circle-chip">${emoji}</div>
+        <div class="category-circle-label">${c.name}</div>
+      </div>
     `;
   }).join('');
   chipsScroller.innerHTML = chipsHtml;

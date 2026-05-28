@@ -1,10 +1,16 @@
 // registro.js
 let selectedType = null;
 
-document.addEventListener('i18nReady', () => {
+const runInitRegistro = () => {
   if (typeof applyTranslations === 'function') applyTranslations();
   initRegistro();
-});
+};
+
+if (window.i18nReadyProcessed) {
+  runInitRegistro();
+} else {
+  document.addEventListener('i18nReady', runInitRegistro);
+}
 
 document.addEventListener('languageChanged', () => {
   if (typeof applyTranslations === 'function') applyTranslations();
@@ -13,16 +19,25 @@ document.addEventListener('languageChanged', () => {
 
 function selectType(type) {
   selectedType = type;
-  document.querySelectorAll('.type-card').forEach(c => {
-    c.style.border = '2px solid var(--color-border)';
-    c.style.transform = 'none';
+  document.querySelectorAll('.role-tab-btn').forEach(btn => {
+    btn.classList.remove('active');
   });
-  const card = document.getElementById(`type-${type}`);
-  if (card) {
-    card.style.border = '2px solid var(--color-primary)';
-    card.style.transform = 'scale(1.02)';
+  const activeTab = document.getElementById(`reg-tab-${type}`);
+  if (activeTab) {
+    activeTab.classList.add('active');
   }
 
+  const authLayout = document.querySelector('.auth-layout');
+  if (authLayout) {
+    // Smoothly toggle the register-width class based on the form type
+    if (type === 'artesano') {
+      authLayout.classList.add('auth-layout-register');
+    } else {
+      authLayout.classList.remove('auth-layout-register');
+    }
+  }
+
+  // Switch the forms (add/remove .hidden)
   const formComp = document.getElementById('form-comprador');
   const formArte = document.getElementById('form-artesano');
   if (formComp) formComp.classList.add('hidden');
@@ -56,6 +71,7 @@ async function loadSelects() {
 
 function initRegistro() {
   loadSelects();
+  selectType('comprador');
 
   // Buyer registration
   const formComprador = document.getElementById('form-comprador');

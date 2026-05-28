@@ -19,14 +19,12 @@ document.addEventListener('languageChanged', () => {
 
 function selectType(type) {
   selectedType = type;
-  document.querySelectorAll('.type-card').forEach(c => {
-    c.style.border = '2px solid var(--color-border)';
-    c.style.transform = 'none';
+  document.querySelectorAll('.role-tab-btn').forEach(btn => {
+    btn.classList.remove('active');
   });
-  const card = document.getElementById(`type-${type}`);
-  if (card) {
-    card.style.border = '2px solid var(--color-primary)';
-    card.style.transform = 'scale(1.02)';
+  const activeTab = document.getElementById(`reg-tab-${type}`);
+  if (activeTab) {
+    activeTab.classList.add('active');
   }
 
   const authLayout = document.querySelector('.auth-layout');
@@ -73,6 +71,7 @@ async function loadSelects() {
 
 function initRegistro() {
   loadSelects();
+  selectType('comprador');
 
   // Buyer registration
   const formComprador = document.getElementById('form-comprador');

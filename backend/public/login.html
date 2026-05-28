@@ -66,6 +66,33 @@
       <!-- Error box dynamically populated -->
       <div id="login-error" class="hidden"></div>
 
+      <!-- Selector de Rol (Tabs Mockup Storyboard) -->
+      <div class="role-tabs-container">
+        <button type="button" class="role-tab-btn active" onclick="selectLoginRole('comprador', this)">Comprador</button>
+        <button type="button" class="role-tab-btn" onclick="selectLoginRole('artesano', this)">Artesano</button>
+        <button type="button" class="role-tab-btn" onclick="selectLoginRole('admin', this)">Admin</button>
+      </div>
+      
+      <!-- Role Helper Text -->
+      <p id="role-helper-text" style="font-size:0.82rem;color:var(--color-muted);margin-top:-1rem;margin-bottom:1.5rem;text-align:center;font-weight:500;">
+        Accede para gestionar tus favoritos, carrito y pedidos.
+      </p>
+
+      <script>
+        window.selectLoginRole = (role, btn) => {
+          document.querySelectorAll('.role-tab-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const helper = document.getElementById('role-helper-text');
+          if (role === 'comprador') {
+            helper.textContent = 'Accede para gestionar tus favoritos, carrito y pedidos.';
+          } else if (role === 'artesano') {
+            helper.textContent = 'Accede a tu taller digital para publicar y gestionar artesanías.';
+          } else if (role === 'admin') {
+            helper.textContent = 'Acceso de administración, aprobaciones y auditoría oficial.';
+          }
+        };
+      </script>
+
       <form id="login-form">
         <div class="form-group">
           <label class="form-label" for="email" data-i18n="auth.emailLabel">Correo electrónico</label>

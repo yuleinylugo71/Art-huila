@@ -275,6 +275,14 @@ function renderGlobalLayout() {
   const isCatalog = window.location.pathname.includes('catalogo.html');
   const isCart = window.location.pathname.includes('carrito.html');
   
+  const user = Auth.getUser();
+  let dashboard = 'login.html';
+  if (user) {
+    if (user.role === 'artesano') dashboard = 'dashboard-artesano.html';
+    else if (user.role === 'admin') dashboard = 'dashboard-admin.html';
+    else dashboard = 'dashboard-comprador.html';
+  }
+
   // 1. GLOBAL HEADER
   const oldNav = document.querySelector('nav.navbar, nav.navbar-global');
   if (oldNav) {
@@ -284,49 +292,75 @@ function renderGlobalLayout() {
     // Add scrolled class if already scrolled
     if (window.scrollY > 20) header.classList.add('scrolled');
     
-    const user = Auth.getUser();
-    let authAreaHtml = '';
-    if (user) {
-      let dashboard = 'dashboard-comprador.html';
-      if (user.role === 'artesano') dashboard = 'dashboard-artesano.html';
-      if (user.role === 'admin') dashboard = 'dashboard-admin.html';
-      authAreaHtml = `
-        <a href="${dashboard}" class="btn btn-outline btn-sm" style="padding: 0.45rem 1rem;" data-i18n="nav.myPanel">${i18next.t('nav.myPanel')}</a>
-        <button class="btn btn-ghost btn-sm" onclick="Auth.logout()" style="color: var(--color-muted); border: none; background: transparent; font-weight: 600; cursor: pointer; padding: 0.45rem 0.5rem;" data-i18n="auth.logout">${i18next.t('auth.logout')}</button>
+    const isMobile = window.innerWidth <= 768;
+    
+    if (isMobile) {
+      // 📱 Mobile Header Template (Mockup Storyboard)
+      const initial = user && user.name ? user.name.trim().charAt(0).toUpperCase() : '<i class="fa-solid fa-user"></i>';
+      header.innerHTML = `
+        <div class="navbar-left" style="width:33%; display:flex; justify-content:flex-start;">
+          <button class="mobile-menu-btn" onclick="window.toggleMobileDrawer(true)">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+        </div>
+        
+        <div class="navbar-center" style="display:flex !important; width:33%; justify-content:center; align-items:center;">
+          <a href="index.html" class="navbar-brand-mobile">Art <span>Huila</span></a>
+        </div>
+        
+        <div class="navbar-right" style="width:33%; display:flex; justify-content:flex-end; align-items:center; gap:0.5rem;">
+          <div class="lang-switcher" style="margin-right: 0.1rem;">
+            <button id="btn-lang-es" class="lang-btn" onclick="window.changeLanguage('es')">ES</button>
+            <span style="color: var(--color-border); font-size: 0.7rem; user-select: none;">|</span>
+            <button id="btn-lang-en" class="lang-btn" onclick="window.changeLanguage('en')">EN</button>
+          </div>
+          <div class="header-profile-circle" onclick="window.location.href='${dashboard}'">
+            ${initial}
+          </div>
+        </div>
       `;
     } else {
-      authAreaHtml = `
-        <a href="login.html" class="btn btn-primary btn-sm" style="padding: 0.45rem 1rem;" data-i18n="auth.login">${i18next.t('auth.login')}</a>
+      // 💻 Desktop Header Template
+      let authAreaHtml = '';
+      if (user) {
+        authAreaHtml = `
+          <a href="${dashboard}" class="btn btn-outline btn-sm" style="padding: 0.45rem 1rem;" data-i18n="nav.myPanel">${i18next.t('nav.myPanel')}</a>
+          <button class="btn btn-ghost btn-sm" onclick="Auth.logout()" style="color: var(--color-muted); border: none; background: transparent; font-weight: 600; cursor: pointer; padding: 0.45rem 0.5rem;" data-i18n="auth.logout">${i18next.t('auth.logout')}</button>
+        `;
+      } else {
+        authAreaHtml = `
+          <a href="login.html" class="btn btn-primary btn-sm" style="padding: 0.45rem 1rem;" data-i18n="auth.login">${i18next.t('auth.login')}</a>
+        `;
+      }
+      
+      header.innerHTML = `
+        <div class="navbar-left">
+          <a href="index.html" class="navbar-brand" data-subtitle="MAESTRÍA ANCESTRAL">Art <span>Huila</span></a>
+        </div>
+        
+        <div class="navbar-center">
+          <ul class="navbar-nav">
+            <li><a href="index.html" id="nav-link-home" class="${isHome ? 'active' : ''}" data-i18n="nav.home">${i18next.t('nav.home')}</a></li>
+            <li><a href="catalogo.html" id="nav-link-catalog" class="${isCatalog ? 'active' : ''}" data-i18n="nav.viewCatalog">${i18next.t('nav.viewCatalog')}</a></li>
+            <li><a href="carrito.html" id="nav-link-cart" class="cart-nav-btn ${isCart ? 'active' : ''}">
+              <i class="fa-solid fa-cart-shopping"></i> <span data-i18n="cart.navbarCart" style="display:none;">Carrito</span>
+              <span id="nav-cart-count" class="cart-badge">0</span>
+            </a></li>
+          </ul>
+        </div>
+        
+        <div class="navbar-right">
+          <div id="nav-auth-area" style="display: flex; align-items: center; gap: 0.5rem;">${authAreaHtml}</div>
+          <div id="nav-auth" style="display:none;"></div>
+          
+          <div class="lang-switcher">
+            <button id="btn-lang-es" class="lang-btn" onclick="window.changeLanguage('es')">ES</button>
+            <span style="color: var(--color-border); font-size: 0.8rem; user-select: none;">|</span>
+            <button id="btn-lang-en" class="lang-btn" onclick="window.changeLanguage('en')">EN</button>
+          </div>
+        </div>
       `;
     }
-    
-    header.innerHTML = `
-      <div class="navbar-left">
-        <a href="index.html" class="navbar-brand" data-subtitle="MAESTRÍA ANCESTRAL">Art <span>Huila</span></a>
-      </div>
-      
-      <div class="navbar-center">
-        <ul class="navbar-nav">
-          <li><a href="index.html" id="nav-link-home" class="${isHome ? 'active' : ''}" data-i18n="nav.home">${i18next.t('nav.home')}</a></li>
-          <li><a href="catalogo.html" id="nav-link-catalog" class="${isCatalog ? 'active' : ''}" data-i18n="nav.viewCatalog">${i18next.t('nav.viewCatalog')}</a></li>
-          <li><a href="carrito.html" id="nav-link-cart" class="cart-nav-btn ${isCart ? 'active' : ''}">
-            <i class="fa-solid fa-cart-shopping"></i> <span data-i18n="cart.navbarCart" style="display:none;">Carrito</span>
-            <span id="nav-cart-count" class="cart-badge">0</span>
-          </a></li>
-        </ul>
-      </div>
-      
-      <div class="navbar-right">
-        <div id="nav-auth-area" style="display: flex; align-items: center; gap: 0.5rem;">${authAreaHtml}</div>
-        <div id="nav-auth" style="display:none;"></div>
-        
-        <div class="lang-switcher">
-          <button id="btn-lang-es" class="lang-btn" onclick="window.changeLanguage('es')">ES</button>
-          <span style="color: var(--color-border); font-size: 0.8rem; user-select: none;">|</span>
-          <button id="btn-lang-en" class="lang-btn" onclick="window.changeLanguage('en')">EN</button>
-        </div>
-      </div>
-    `;
     
     oldNav.replaceWith(header);
     
@@ -339,6 +373,55 @@ function renderGlobalLayout() {
     
     Cart.updateNav();
   }
+
+  // 📱 Sliding Drawer Dynamic Setup
+  let drawer = document.getElementById('global-mobile-drawer');
+  let overlay = document.getElementById('global-drawer-overlay');
+  
+  if (!drawer) {
+    drawer = document.createElement('div');
+    drawer.id = 'global-mobile-drawer';
+    drawer.className = 'mobile-drawer';
+    document.body.appendChild(drawer);
+    
+    overlay = document.createElement('div');
+    overlay.id = 'global-drawer-overlay';
+    overlay.className = 'drawer-overlay';
+    overlay.onclick = () => window.toggleMobileDrawer(false);
+    document.body.appendChild(overlay);
+  }
+  
+  const drawerUserHtml = user ? `
+    <div class="drawer-link" style="color:var(--color-primary); font-weight:700;"><i class="fa-solid fa-user"></i> Hola, ${user.name}</div>
+    <a href="${dashboard}" class="drawer-link"><i class="fa-solid fa-user-gear"></i> Mi Panel</a>
+    <a href="#" onclick="Auth.logout(); window.toggleMobileDrawer(false);" class="drawer-link" style="color:var(--color-muted);"><i class="fa-solid fa-right-from-bracket"></i> Cerrar Sesión</a>
+  ` : `
+    <a href="login.html" class="drawer-link"><i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión</a>
+    <a href="registro.html" class="drawer-link"><i class="fa-solid fa-user-plus"></i> Registrarse</a>
+  `;
+  
+  drawer.innerHTML = `
+    <div class="drawer-header">
+      <div class="brand">Art <span>Huila</span></div>
+      <button class="drawer-close-btn" onclick="window.toggleMobileDrawer(false)">&times;</button>
+    </div>
+    <div class="drawer-content">
+      <a href="index.html" class="drawer-link ${isHome ? 'active' : ''}"><i class="fa-solid fa-house"></i> Inicio</a>
+      <a href="catalogo.html" class="drawer-link ${isCatalog ? 'active' : ''}"><i class="fa-solid fa-store"></i> Catálogo</a>
+      <a href="carrito.html" class="drawer-link ${isCart ? 'active' : ''}"><i class="fa-solid fa-cart-shopping"></i> Mi Carrito</a>
+      <hr class="drawer-divider">
+      ${drawerUserHtml}
+    </div>
+  `;
+  
+  window.toggleMobileDrawer = (open) => {
+    const dr = document.getElementById('global-mobile-drawer');
+    const ov = document.getElementById('global-drawer-overlay');
+    if (dr && ov) {
+      dr.classList.toggle('open', open);
+      ov.classList.toggle('open', open);
+    }
+  };
   
   // 2. GLOBAL FOOTER
   const oldFooter = document.querySelector('footer, footer.footer-global');
@@ -424,3 +507,12 @@ function renderGlobalLayout() {
   // Asegurar que el contador del carrito del menú móvil se inicialice
   Cart.updateNav();
 }
+
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    renderGlobalLayout();
+  }, 150);
+});
+
