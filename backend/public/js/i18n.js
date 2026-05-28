@@ -97,24 +97,21 @@
 
   // 5. ACTUALIZAR CLASE ACTIVE EN EL SELECTOR DE IDIOMA
   function updateSwitcherButtons(lang) {
-    const btnEs = document.getElementById('btn-lang-es');
-    const btnEn = document.getElementById('btn-lang-en');
-    
-    if (btnEs) {
+    document.querySelectorAll('.btn-lang-es, #btn-lang-es').forEach(btn => {
       if (lang === 'es') {
-        btnEs.classList.add('active');
+        btn.classList.add('active');
       } else {
-        btnEs.classList.remove('active');
+        btn.classList.remove('active');
       }
-    }
+    });
     
-    if (btnEn) {
+    document.querySelectorAll('.btn-lang-en, #btn-lang-en').forEach(btn => {
       if (lang === 'en') {
-        btnEn.classList.add('active');
+        btn.classList.add('active');
       } else {
-        btnEn.classList.remove('active');
+        btn.classList.remove('active');
       }
-    }
+    });
   }
 })();
 

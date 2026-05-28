@@ -129,10 +129,17 @@
           <span class="welcome-username" id="mobile-welcome-username">Invitado 🏺</span>
         </div>
       </div>
-      <a href="carrito.html" class="mobile-header-cart">
-        <i class="fa-solid fa-bag-shopping"></i>
-        <span class="cart-badge-dot" id="mobile-cart-badge-dot" style="display:none;">0</span>
-      </a>
+      <div style="display:flex;align-items:center;gap:0.5rem;">
+        <div class="lang-switcher">
+          <button class="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+          <span style="color:var(--color-border);">|</span>
+          <button class="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+        </div>
+        <a href="carrito.html" class="mobile-header-cart">
+          <i class="fa-solid fa-bag-shopping"></i>
+          <span class="cart-badge-dot" id="mobile-cart-badge-dot" style="display:none;">0</span>
+        </a>
+      </div>
     </header>
 
     <!-- Mobile Search Block -->

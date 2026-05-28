@@ -509,6 +509,10 @@
     "goToLogin": "Ir al inicio de sesión"
   },
   "home": {
+    "welcomeBack": "Bienvenido de nuevo,",
+    "promoTag": "Colección 2026",
+    "promoDiscount": "¡Hasta 30% de descuento en piezas seleccionadas!",
+    "promoBuy": "Comprar ahora",
     "title": "Art Huila — Artesanías con Historia",
     "brandSubtitle": "MAESTRÍA ANCESTRAL",
     "heroSubtitle": "Descubre piezas únicas creadas por manos maestras, donde cada técnica cuenta una historia milenaria.",

@@ -41,6 +41,11 @@
       <i class="fa-solid fa-magnifying-glass"></i>
       <input type="text" id="mobile-search-input" placeholder="Buscar artesanía..." oninput="window.applyFilters(400)" />
     </div>
+    <div class="lang-switcher">
+      <button class="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+      <span style="color:var(--color-border);">|</span>
+      <button class="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+    </div>
     <div class="mobile-sort-select-wrapper">
       <select id="mobile-sort-select" onchange="window.syncMobileSort(this)">
         <option value="newest">🕒</option>

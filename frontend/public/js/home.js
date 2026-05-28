@@ -97,7 +97,7 @@ async function initHome() {
         const isOutOfStock = p.stock !== undefined && p.stock < 1;
         const isWish = typeof Wishlist !== 'undefined' && Wishlist.has(p.id);
         const imgUrl = p.image_url || '/img/placeholder.jpg';
-        const artisanName = p.artisan?.name || '';
+        const artisanName = p.artisan?.user?.full_name || p.artisan?.name || '';
 
         return `
           <div class="product-card" onclick="window.location.href='/producto.html?slug=${p.slug}'">

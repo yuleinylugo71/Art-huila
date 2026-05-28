@@ -509,6 +509,10 @@
     "goToLogin": "Go to login"
   },
   "home": {
+    "welcomeBack": "Welcome back,",
+    "promoTag": "2026 Collection",
+    "promoDiscount": "Up to 30% off on selected items!",
+    "promoBuy": "Shop now",
     "title": "Art Huila — Handicrafts with History",
     "brandSubtitle": "ANCESTRAL MASTERY",
     "heroSubtitle": "Discover unique pieces created by master hands, where each technique tells a millenary story.",
