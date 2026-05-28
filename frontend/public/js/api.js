@@ -1,6 +1,6 @@
-let API = window.VITE_API_URL || 'http://localhost:3000/api/v1';
+let API = '/api/v1';
 
-const BASE_URL = API.replace('/api/v1', '');
+const BASE_URL = '';
 window.BASE_URL = BASE_URL; // Asegurar disponibilidad global para otros archivos
 
 const Auth = {
@@ -78,7 +78,7 @@ async function apiFetch(endpoint, options = {}) {
 
   let res = await fetch(`${API}${endpoint}`, { ...fetchOptions, headers });
 
-  if (res.status === 401 && !skipAuthRefresh && endpoint !== '/auth/refresh') {
+  if (res.status === 401 && !skipAuthRefresh && endpoint !== '/auth/refresh' && endpoint !== '/auth/login' && !endpoint.startsWith('/auth/register')) {
     try {
       const newAccessToken = await requestNewAccessToken();
       const retryHeaders = { ...headers, Authorization: `Bearer ${newAccessToken}` };
@@ -150,11 +150,11 @@ const Cart = {
     Cart.updateNav();
   },
   updateNav: () => {
-    const countEls = document.querySelectorAll('#nav-cart-count, #cart-count');
+    const countEls = document.querySelectorAll('#nav-cart-count, #cart-count, #mobile-cart-count');
     const cart = Cart.get();
     const total = cart.reduce((sum, item) => sum + item.quantity, 0);
     countEls.forEach(el => {
-      if (el.classList.contains('cart-badge') || el.id === 'cart-count') {
+      if (el.classList.contains('cart-badge') || el.id === 'cart-count' || el.id === 'mobile-cart-count') {
         el.textContent = total;
         if (el.classList.contains('cart-badge')) {
           el.style.display = total > 0 ? 'flex' : 'none';
@@ -299,4 +299,49 @@ function renderGlobalLayout() {
     
     oldFooter.replaceWith(footer);
   }
+
+  // 3. BARRA DE NAVEGACIÓN MÓVIL INFERIOR DINÁMICA (Estilo Nativo App)
+  let bottomNav = document.getElementById('global-mobile-bottom-nav');
+  if (!bottomNav) {
+    bottomNav = document.createElement('div');
+    bottomNav.id = 'global-mobile-bottom-nav';
+    bottomNav.className = 'mobile-bottom-nav';
+    document.body.appendChild(bottomNav);
+  }
+
+  const user = Auth.getUser();
+  let panelUrl = 'login.html';
+  let panelLabel = i18next.t('nav.login', { defaultValue: 'Ingresar' });
+  let panelIcon = 'fa-right-to-bracket';
+  
+  if (user) {
+    panelLabel = i18next.t('nav.myPanel', { defaultValue: 'Mi Panel' });
+    panelIcon = 'fa-user-gear';
+    if (user.role === 'artesano') panelUrl = 'dashboard-artesano.html';
+    else if (user.role === 'admin') panelUrl = 'dashboard-admin.html';
+    else panelUrl = 'dashboard-comprador.html';
+  }
+
+  bottomNav.innerHTML = `
+    <a href="index.html" class="mobile-bottom-nav-item ${isHome ? 'active' : ''}">
+      <i class="fa-solid fa-house"></i>
+      <span data-i18n="nav.home">${i18next.t('nav.home', { defaultValue: 'Inicio' })}</span>
+    </a>
+    <a href="catalogo.html" class="mobile-bottom-nav-item ${isCatalog ? 'active' : ''}">
+      <i class="fa-solid fa-store"></i>
+      <span data-i18n="nav.viewCatalog">${i18next.t('nav.viewCatalog', { defaultValue: 'Catálogo' })}</span>
+    </a>
+    <a href="carrito.html" class="mobile-bottom-nav-item ${isCart ? 'active' : ''}">
+      <i class="fa-solid fa-cart-shopping"></i>
+      <span id="mobile-cart-count" class="cart-badge">0</span>
+      <span>Carrito</span>
+    </a>
+    <a href="${panelUrl}" class="mobile-bottom-nav-item ${window.location.pathname.includes(panelUrl) ? 'active' : ''}">
+      <i class="fa-solid ${panelIcon}"></i>
+      <span>${panelLabel}</span>
+    </a>
+  `;
+
+  // Asegurar que el contador del carrito del menú móvil se inicialice
+  Cart.updateNav();
 }

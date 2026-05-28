@@ -802,45 +802,52 @@ footer a:hover { color: var(--color-primary-light); }
 
 /* Mobile Responsiveness for Global elements */
 @media (max-width: 768px) {
-  /* 📱 Navbar Global Adaptada para Móviles */
+  /* 📱 Global html/body constraint to prevent any overflow leaking */
+  html, body {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    overflow-x: hidden !important;
+  }
+
+  /* 📱 Navbar Global Adaptada para Móviles (Ancho Completo y Premium) */
   .navbar-global {
-    flex-direction: column !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
     height: auto !important;
     padding: 0.6rem 1rem !important;
     gap: 0.5rem !important;
     width: 100% !important;
+    max-width: 100% !important;
     box-sizing: border-box !important;
     margin: 0 !important;
     left: 0 !important;
     right: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: var(--shadow-sm) !important;
   }
   
-  .navbar-global .navbar-left,
-  .navbar-global .navbar-right {
-    width: 100% !important;
-    justify-content: space-between !important;
+  .navbar-global .navbar-left {
+    display: flex !important;
+    align-items: center !important;
+    width: auto !important;
+    justify-content: flex-start !important;
     gap: 0.5rem !important;
   }
   
-  .navbar-global .navbar-center {
+  .navbar-global .navbar-right {
     display: flex !important;
-    width: 100% !important;
-    justify-content: center !important;
-    border-top: 1px solid var(--color-border) !important;
-    padding-top: 0.6rem !important;
-    margin-top: 0.2rem !important;
+    align-items: center !important;
+    width: auto !important;
+    justify-content: flex-end !important;
+    gap: 0.65rem !important;
   }
   
-  .navbar-global .navbar-nav {
-    width: 100% !important;
-    justify-content: space-around !important;
-    gap: 0.25rem !important;
-  }
-  
-  .navbar-global .navbar-nav a {
-    font-size: 0.8rem !important;
-    padding: 0.4rem 0.55rem !important;
-    gap: 0.35rem !important;
+  .navbar-global .navbar-center {
+    display: none !important; /* Escondido por defecto en móviles, gestionado por bottom nav */
   }
   
   .navbar-global .lang-switcher {
@@ -1003,9 +1010,11 @@ footer a:hover { color: var(--color-primary-light); }
   /* 📱 Footer Global */
   .footer-global {
     width: 100% !important;
+    max-width: 100% !important;
     box-sizing: border-box !important;
     margin: 0 !important;
     padding: 3rem 1.5rem !important;
+    border-radius: 0 !important;
   }
 
   .footer-global .footer-grid {
