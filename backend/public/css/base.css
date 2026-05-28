@@ -797,15 +797,167 @@ footer a:hover { color: var(--color-primary-light); }
 
 /* Mobile Responsiveness for Global elements */
 @media (max-width: 768px) {
+  /* 📱 Navbar Global Adaptada para Móviles */
   .navbar-global {
-    padding: 0.75rem 1.2rem;
+    flex-direction: column !important;
+    height: auto !important;
+    padding: 0.6rem 1rem !important;
+    gap: 0.5rem !important;
   }
+  
+  .navbar-global .navbar-left,
+  .navbar-global .navbar-right {
+    width: 100% !important;
+    justify-content: space-between !important;
+    gap: 0.5rem !important;
+  }
+  
   .navbar-global .navbar-center {
-    display: none;
+    display: flex !important;
+    width: 100% !important;
+    justify-content: center !important;
+    border-top: 1px solid var(--color-border) !important;
+    padding-top: 0.6rem !important;
+    margin-top: 0.2rem !important;
   }
+  
+  .navbar-global .navbar-nav {
+    width: 100% !important;
+    justify-content: space-around !important;
+    gap: 0.25rem !important;
+  }
+  
+  .navbar-global .navbar-nav a {
+    font-size: 0.8rem !important;
+    padding: 0.4rem 0.55rem !important;
+    gap: 0.35rem !important;
+  }
+  
+  .navbar-global .lang-switcher {
+    border-left: none !important;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+  }
+
+  /* 📱 Contenedores y Secciones */
+  .container {
+    padding: 0 1rem !important;
+  }
+  
+  .section {
+    padding: 2.5rem 0 !important;
+  }
+  
+  .section-warm {
+    padding: 2.5rem 1rem !important;
+  }
+
+  /* 📱 Portada Hero (index.html) */
+  .hero {
+    padding: 3.5rem 1rem !important;
+  }
+  
+  .hero-title {
+    font-size: 2rem !important;
+    line-height: 1.2 !important;
+  }
+  
+  .hero-subtitle {
+    font-size: 0.9rem !important;
+    margin-bottom: 2rem !important;
+  }
+  
+  .hero-actions {
+    flex-direction: column !important;
+    gap: 0.75rem !important;
+  }
+  
+  .hero-actions .btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* 📱 Grillas Genéricas (Fuerza a 1 sola columna en pantallas pequeñas) */
+  .grid-2, .grid-3, .grid-4, .grid-5 {
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem !important;
+  }
+
+  /* 📱 Tarjetas de Carrito y Listados */
+  .cart-item {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1rem !important;
+    padding: 1.2rem !important;
+  }
+  
+  .cart-item img {
+    width: 100% !important;
+    height: 160px !important;
+    border-radius: var(--radius-md) !important;
+  }
+  
+  .cart-actions {
+    justify-content: center !important;
+    margin-top: 0.5rem !important;
+  }
+  
+  .cart-item-details {
+    text-align: center !important;
+  }
+
+  /* 📱 Vista de Producto Individual */
+  .product-detail-container {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+
+  /* 📱 Formularios de Autenticación (Login, Registro) */
+  .auth-card {
+    padding: 1.5rem !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    border-radius: var(--radius-md) !important;
+  }
+
+  /* 📱 Dashboards (Admin, Artesano, Comprador) */
+  .dashboard-container {
+    flex-direction: column !important;
+  }
+  
+  .dashboard-sidebar {
+    width: 100% !important;
+    position: static !important;
+    height: auto !important;
+    border-right: none !important;
+    border-bottom: 1.5px solid var(--color-border) !important;
+    padding: 1rem !important;
+  }
+  
+  .dashboard-content {
+    padding: 1rem !important;
+  }
+  
+  .dashboard-stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  /* 📱 Footer Global */
   .footer-global .footer-grid {
-    grid-template-columns: 1fr;
-    gap: 2.5rem;
+    grid-template-columns: 1fr !important;
+    gap: 2.5rem !important;
+    text-align: center !important;
+  }
+  
+  .footer-global .footer-links h4::after,
+  .footer-global .footer-legal h4::after {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+  }
+  
+  .footer-global ul {
+    align-items: center !important;
   }
 }
 
