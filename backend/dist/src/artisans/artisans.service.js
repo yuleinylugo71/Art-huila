@@ -26,25 +26,35 @@ let ArtisansService = class ArtisansService {
         this.galleryRepo = galleryRepo;
     }
     async findByUserId(userId) {
-        return this.profileRepo.findOne({
+        const profile = await this.profileRepo.findOne({
             where: { user: { id: userId } },
             relations: ['user', 'category', 'region', 'gallery'],
         });
+        if (profile)
+            profile.status = profile.verification_status;
+        return profile;
     }
     async findById(id) {
-        return this.profileRepo.findOne({
+        const profile = await this.profileRepo.findOne({
             where: { id },
             relations: ['user', 'category', 'region', 'gallery'],
         });
+        if (profile)
+            profile.status = profile.verification_status;
+        return profile;
     }
     async findAll(status) {
         const where = {};
         if (status)
             where.verification_status = status;
-        return this.profileRepo.find({
+        const profiles = await this.profileRepo.find({
             where,
             relations: ['user', 'category', 'region'],
             order: { created_at: 'DESC' },
+        });
+        return profiles.map((profile) => {
+            profile.status = profile.verification_status;
+            return profile;
         });
     }
     async addGalleryImage(profileId, url, publicId) {
@@ -79,7 +89,7 @@ let ArtisansService = class ArtisansService {
     }
     async findFeatured() {
         return this.profileRepo.find({
-            where: { verification_status: artisan_profile_entity_1.VerificationStatus.VERIFIED },
+            where: { verification_status: artisan_profile_entity_1.ArtisanStatus.VERIFIED },
             relations: ['user', 'region'],
             take: 3,
             order: { created_at: 'DESC' },

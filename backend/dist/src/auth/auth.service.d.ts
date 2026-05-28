@@ -3,11 +3,11 @@ import { ConfigService } from '@nestjs/config';
 import { UsersService } from '../users/users.service';
 import { MailService } from '../mail/mail.service';
 import { LoginDto, RegisterDto, RegisterArtisanDto } from './dto/auth.dto';
-import { UserRole } from '../users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { ArtisanProfile } from '../artisans/entities/artisan-profile.entity';
 import { Category } from '../categories/entities/category.entity';
 import { Region } from '../regions/entities/region.entity';
+import { RefreshToken } from './entities/refresh-token.entity';
 export declare class AuthService {
     private readonly usersService;
     private readonly jwtService;
@@ -16,7 +16,8 @@ export declare class AuthService {
     private readonly artisanRepo;
     private readonly categoryRepo;
     private readonly regionRepo;
-    constructor(usersService: UsersService, jwtService: JwtService, configService: ConfigService, mailService: MailService, artisanRepo: Repository<ArtisanProfile>, categoryRepo: Repository<Category>, regionRepo: Repository<Region>);
+    private readonly refreshTokenRepo;
+    constructor(usersService: UsersService, jwtService: JwtService, configService: ConfigService, mailService: MailService, artisanRepo: Repository<ArtisanProfile>, categoryRepo: Repository<Category>, regionRepo: Repository<Region>, refreshTokenRepo: Repository<RefreshToken>);
     private uploadToCloudinary;
     private generateTokens;
     login(dto: LoginDto): Promise<{
@@ -24,7 +25,7 @@ export declare class AuthService {
             id: string;
             email: string;
             full_name: string;
-            role: UserRole;
+            role: import("../users/entities/user.entity").Role;
         };
         access_token: string;
         refresh_token: string;
@@ -32,7 +33,7 @@ export declare class AuthService {
     registerBuyer(dto: RegisterDto): Promise<{
         message: string;
     }>;
-    registerArtisan(dto: RegisterArtisanDto, idDocumentFrontFile?: Express.Multer.File, idDocumentBackFile?: Express.Multer.File, galleryFiles?: Express.Multer.File[]): Promise<{
+    registerArtisan(dto: RegisterArtisanDto, idDocumentFrontFile?: Express.Multer.File, idDocumentBackFile?: Express.Multer.File, galleryFiles?: Express.Multer.File[], clientIp?: string): Promise<{
         message: string;
     }>;
     verifyEmail(token: string): Promise<{
@@ -41,5 +42,8 @@ export declare class AuthService {
     refresh(refreshToken: string): Promise<{
         access_token: string;
         refresh_token: string;
+    }>;
+    logout(refreshToken: string): Promise<{
+        message: string;
     }>;
 }

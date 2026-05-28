@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Post, Query, UseGuards, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { Req, Body, Controller, Get, Post, Query, UseGuards, UseInterceptors, UploadedFiles } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { Request } from 'express';
 import { AuthService } from './auth.service';
 import { LoginDto, LogoutDto, RefreshDto, RegisterArtisanDto, RegisterDto } from './dto/auth.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -24,14 +25,31 @@ export class AuthController {
     FileFieldsInterceptor([
       { name: 'id_document_front', maxCount: 1 },
       { name: 'id_document_back', maxCount: 1 },
-      { name: 'gallery', maxCount: 5 },
+      { name: 'gallery', maxCount: 10 },
     ]),
   )
   registerArtisan(
     @Body() dto: RegisterArtisanDto,
     @UploadedFiles() files: { id_document_front?: Express.Multer.File[], id_document_back?: Express.Multer.File[], gallery?: Express.Multer.File[] },
+    @Req() req: any,
   ) {
-    return this.authService.registerArtisan(dto, files.id_document_front?.[0], files.id_document_back?.[0], files.gallery);
+    const xForwardedFor = req.headers['x-forwarded-for'];
+    let clientIp = '';
+    if (typeof xForwardedFor === 'string') {
+      clientIp = xForwardedFor.split(',')[0].trim();
+    } else if (Array.isArray(xForwardedFor)) {
+      clientIp = xForwardedFor[0]?.trim() || '';
+    } else {
+      clientIp = req.socket?.remoteAddress || req.ip || '';
+    }
+
+    return this.authService.registerArtisan(
+      dto,
+      files.id_document_front?.[0],
+      files.id_document_back?.[0],
+      files.gallery,
+      clientIp,
+    );
   }
 
   @Get('verificar-email')

@@ -1,4 +1,7 @@
-const API = 'http://localhost:3000/api/v1';
+let API = window.VITE_API_URL || 'http://localhost:3000/api/v1';
+
+const BASE_URL = API.replace('/api/v1', '');
+window.BASE_URL = BASE_URL; // Asegurar disponibilidad global para otros archivos
 
 const Auth = {
   getToken: () => localStorage.getItem('accessToken'),
@@ -96,16 +99,28 @@ async function apiFetch(endpoint, options = {}) {
 }
 
 function showToast(msg, type = 'success') {
+  let container = document.querySelector('.toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.className = 'toast-container';
+    document.body.appendChild(container);
+  }
+
   const t = document.createElement('div');
   t.className = `toast toast-${type}`;
-  t.textContent = msg;
-  document.body.appendChild(t);
+  t.innerHTML = msg;
+  container.appendChild(t);
+
   setTimeout(() => t.classList.add('show'), 10);
-  setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 3000);
+  setTimeout(() => {
+    t.classList.remove('show');
+    setTimeout(() => t.remove(), 400);
+  }, 3500);
 }
 
 function formatPrice(p) {
-  return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(p);
+  const value = (p === null || p === undefined || isNaN(p) || typeof p === 'string' && p.trim() === '') ? 0 : Number(p);
+  return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(value);
 }
 
 const Cart = {
@@ -139,8 +154,11 @@ const Cart = {
     const cart = Cart.get();
     const total = cart.reduce((sum, item) => sum + item.quantity, 0);
     countEls.forEach(el => {
-      if (el.id === 'cart-count') {
+      if (el.classList.contains('cart-badge') || el.id === 'cart-count') {
         el.textContent = total;
+        if (el.classList.contains('cart-badge')) {
+          el.style.display = total > 0 ? 'flex' : 'none';
+        }
       } else {
         el.textContent = `Carrito (${total})`;
       }
@@ -150,4 +168,135 @@ const Cart = {
 
 document.addEventListener('DOMContentLoaded', () => {
   Cart.updateNav();
+  renderGlobalLayout();
 });
+
+document.addEventListener('i18nReady', () => {
+  renderGlobalLayout();
+});
+
+document.addEventListener('languageChanged', () => {
+  renderGlobalLayout();
+});
+
+// Scrolled header state
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('.navbar-global');
+  if (nav) {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+  }
+});
+
+function renderGlobalLayout() {
+  if (typeof i18next === 'undefined' || !i18next.isInitialized) {
+    return;
+  }
+  
+  const isHome = window.location.pathname === '/' || window.location.pathname.endsWith('/index.html') || window.location.pathname === '';
+  const isCatalog = window.location.pathname.includes('catalogo.html');
+  const isCart = window.location.pathname.includes('carrito.html');
+  
+  // 1. GLOBAL HEADER
+  const oldNav = document.querySelector('nav.navbar, nav.navbar-global');
+  if (oldNav) {
+    const header = document.createElement('nav');
+    header.className = 'navbar-global';
+    
+    // Add scrolled class if already scrolled
+    if (window.scrollY > 20) header.classList.add('scrolled');
+    
+    const user = Auth.getUser();
+    let authAreaHtml = '';
+    if (user) {
+      let dashboard = 'dashboard-comprador.html';
+      if (user.role === 'artesano') dashboard = 'dashboard-artesano.html';
+      if (user.role === 'admin') dashboard = 'dashboard-admin.html';
+      authAreaHtml = `
+        <a href="${dashboard}" class="btn btn-outline btn-sm" style="padding: 0.45rem 1rem;" data-i18n="nav.myPanel">${i18next.t('nav.myPanel')}</a>
+        <button class="btn btn-ghost btn-sm" onclick="Auth.logout()" style="color: var(--color-muted); border: none; background: transparent; font-weight: 600; cursor: pointer; padding: 0.45rem 0.5rem;" data-i18n="auth.logout">${i18next.t('auth.logout')}</button>
+      `;
+    } else {
+      authAreaHtml = `
+        <a href="login.html" class="btn btn-primary btn-sm" style="padding: 0.45rem 1rem;" data-i18n="auth.login">${i18next.t('auth.login')}</a>
+      `;
+    }
+    
+    header.innerHTML = `
+      <div class="navbar-left">
+        <a href="index.html" class="navbar-brand" data-subtitle="MAESTRÍA ANCESTRAL">Art <span>Huila</span></a>
+      </div>
+      
+      <div class="navbar-center">
+        <ul class="navbar-nav">
+          <li><a href="index.html" id="nav-link-home" class="${isHome ? 'active' : ''}" data-i18n="nav.home">${i18next.t('nav.home')}</a></li>
+          <li><a href="catalogo.html" id="nav-link-catalog" class="${isCatalog ? 'active' : ''}" data-i18n="nav.viewCatalog">${i18next.t('nav.viewCatalog')}</a></li>
+          <li><a href="carrito.html" id="nav-link-cart" class="cart-nav-btn ${isCart ? 'active' : ''}">
+            <i class="fa-solid fa-cart-shopping"></i> <span data-i18n="cart.navbarCart" style="display:none;">Carrito</span>
+            <span id="nav-cart-count" class="cart-badge">0</span>
+          </a></li>
+        </ul>
+      </div>
+      
+      <div class="navbar-right">
+        <div id="nav-auth-area" style="display: flex; align-items: center; gap: 0.5rem;">${authAreaHtml}</div>
+        <div id="nav-auth" style="display:none;"></div>
+        
+        <div class="lang-switcher">
+          <button id="btn-lang-es" class="lang-btn" onclick="window.changeLanguage('es')">ES</button>
+          <span style="color: var(--color-border); font-size: 0.8rem; user-select: none;">|</span>
+          <button id="btn-lang-en" class="lang-btn" onclick="window.changeLanguage('en')">EN</button>
+        </div>
+      </div>
+    `;
+    
+    oldNav.replaceWith(header);
+    
+    // Update language buttons active class
+    const lang = i18next.language || 'es';
+    const btnEs = document.getElementById('btn-lang-es');
+    const btnEn = document.getElementById('btn-lang-en');
+    if (btnEs) btnEs.classList.toggle('active', lang === 'es');
+    if (btnEn) btnEn.classList.toggle('active', lang === 'en');
+    
+    Cart.updateNav();
+  }
+  
+  // 2. GLOBAL FOOTER
+  const oldFooter = document.querySelector('footer, footer.footer-global');
+  if (oldFooter) {
+    const footer = document.createElement('footer');
+    footer.className = 'footer-global';
+    
+    footer.innerHTML = `
+      <div class="footer-container">
+        <div class="footer-grid">
+          <div class="footer-info">
+            <div class="brand">Art <span>Huila</span></div>
+            <p class="subtitle" style="font-size:0.92rem;line-height:1.6;opacity:0.75;max-width:420px;">${i18next.t('home.heroSubtitle')}</p>
+          </div>
+          <div class="footer-links">
+            <h4 style="font-family: var(--font-display); color: white; font-size: 1.15rem; font-weight: 700; margin-bottom: 1.25rem;">Navegación</h4>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; padding-left: 0;">
+              <li><a href="index.html" style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.65); transition: all 0.2s;">Inicio</a></li>
+              <li><a href="catalogo.html" style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.65); transition: all 0.2s;">${i18next.t('nav.viewCatalog')}</a></li>
+              <li><a href="carrito.html" style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.65); transition: all 0.2s;">Mi Carrito</a></li>
+            </ul>
+          </div>
+          <div class="footer-legal">
+            <h4 style="font-family: var(--font-display); color: white; font-size: 1.15rem; font-weight: 700; margin-bottom: 1.25rem;">Legal</h4>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; padding-left: 0;">
+              <li><a href="#" data-i18n="home.privacy" style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.65); transition: all 0.2s;">${i18next.t('home.privacy')}</a></li>
+              <li><a href="#" data-i18n="home.terms" style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.65); transition: all 0.2s;">${i18next.t('home.terms')}</a></li>
+              <li><a href="#" data-i18n="home.contact" style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.65); transition: all 0.2s;">${i18next.t('home.contact')}</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2026 Art Huila. Orgullosamente huilense. Hecho con ❤️ para el mundo.</p>
+        </div>
+      </div>
+    `;
+    
+    oldFooter.replaceWith(footer);
+  }
+}

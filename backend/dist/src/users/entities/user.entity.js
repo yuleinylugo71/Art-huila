@@ -9,14 +9,19 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = exports.UserRole = void 0;
+exports.User = exports.UserRole = exports.Role = void 0;
 const typeorm_1 = require("typeorm");
-var UserRole;
-(function (UserRole) {
-    UserRole["ARTISAN"] = "artesano";
-    UserRole["BUYER"] = "comprador";
-    UserRole["ADMIN"] = "admin";
-})(UserRole || (exports.UserRole = UserRole = {}));
+var Role;
+(function (Role) {
+    Role["ADMIN"] = "admin";
+    Role["ARTESANO"] = "artesano";
+    Role["COMPRADOR"] = "comprador";
+})(Role || (exports.Role = Role = {}));
+exports.UserRole = {
+    ADMIN: Role.ADMIN,
+    ARTISAN: Role.ARTESANO,
+    BUYER: Role.COMPRADOR,
+};
 let User = class User {
     id;
     full_name;
@@ -24,6 +29,7 @@ let User = class User {
     password_hash;
     role;
     email_verified;
+    verifiedAt;
     email_verification_token;
     email_token_expires_at;
     failed_login_attempts;
@@ -49,13 +55,17 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "password_hash", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: UserRole, default: UserRole.BUYER }),
+    (0, typeorm_1.Column)({ type: 'enum', enum: Role, default: Role.COMPRADOR }),
     __metadata("design:type", String)
 ], User.prototype, "role", void 0);
 __decorate([
     (0, typeorm_1.Column)({ default: false }),
     __metadata("design:type", Boolean)
 ], User.prototype, "email_verified", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'timestamp', nullable: true }),
+    __metadata("design:type", Object)
+], User.prototype, "verifiedAt", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)

@@ -9,6 +9,7 @@ export enum AuditAction {
   UPDATE_ORDER = 'update_order',
   HIDE_PRODUCT = 'hide_product',
   DELETE_PRODUCT = 'delete_product',
+  BULK_UPLOAD_PRODUCTS = 'bulk_upload_products',
 }
 
 @Entity('admin_audit_log')

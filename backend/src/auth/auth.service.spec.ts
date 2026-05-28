@@ -183,6 +183,7 @@ describe('AuthService HU-02', () => {
       email: 'artisan@example.com',
       password: 'Password1',
       role: 'artesano',
+      id_number: '12345678',
       cultural_history: 'Historia',
       category_id: 'cat-1',
       region_id: 'reg-1',

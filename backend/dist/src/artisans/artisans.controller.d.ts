@@ -10,6 +10,7 @@ export declare class ArtisansController {
         bio: string;
         avatar_url: string;
         verified: boolean;
+        status: import("./entities/artisan-profile.entity").ArtisanStatus;
     }[]>;
     getMyProfile(user: any): Promise<import("./entities/artisan-profile.entity").ArtisanProfile | null>;
     getProfile(id: string): Promise<import("./entities/artisan-profile.entity").ArtisanProfile | null>;

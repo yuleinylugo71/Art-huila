@@ -24,18 +24,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('page-title').textContent = `${artisan.user.full_name} | Art Huila`;
 
     const status = artisan.status || artisan.verification_status;
-    let badge = '';
-    if (status === 'verified') badge = '<span class="badge badge-verified"><i class="fa-solid fa-check"></i> Verificado ✓</span>';
-    else if (status === 'active' || status === 'pending') badge = '<span class="badge badge-pending"><i class="fa-solid fa-hourglass-half"></i> Por verificar</span>';
+    let badgeHtml = '';
+    if (status === 'active' || status === 'pending') {
+      badgeHtml = '<div style="margin-top: 0.5rem;"><span class="badge badge-pending"><i class="fa-solid fa-hourglass-half"></i> Por verificar</span></div>';
+    }
 
     container.innerHTML = `
       <div class="artisan-header">
         ${artisan.avatar_url 
           ? `<div class="artisan-avatar-lg" style="padding:0; overflow:hidden;"><img src="${artisan.avatar_url}" style="width:100%;height:100%;object-fit:cover;"/></div>`
           : `<div class="artisan-avatar-lg"><i class="fa-solid fa-user"></i></div>`}
-        <h1 class="artisan-name">${artisan.user.full_name}</h1>
+        <h1 class="artisan-name" style="display:flex;align-items:center;justify-content:center;gap:0.45rem;">
+          ${artisan.user.full_name}
+          ${status === 'verified' ? `<i class="fa-solid fa-circle-check" style="color: var(--color-verified); font-size: 1.4rem;" title="Vendedor Verificado"></i>` : ''}
+        </h1>
         <div style="color:var(--color-muted);margin-bottom:1rem;font-size:1.1rem;"><i class="fa-solid fa-location-dot"></i> ${artisan.region?.name || 'Huila'}</div>
-        <div>${badge}</div>
+        ${badgeHtml}
       </div>
 
       <div style="background:var(--color-bg1);padding:2rem;border-radius:var(--radius-lg);border:1px solid var(--color-border);line-height:1.7;">

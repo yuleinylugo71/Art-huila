@@ -19,7 +19,8 @@
     "backToCatalog": "Volver al catálogo",
     "backToDashboard": "Volver al panel",
     "myPanel": "Mi Panel",
-    "viewCatalog": "Ver catálogo"
+    "viewCatalog": "Ver catálogo",
+    "home": "Inicio"
   },
   "auth": {
     "emailLabel": "Correo electrónico",
@@ -452,7 +453,7 @@
     "ctaTitle": "¿Eres un maestro artesano?",
     "ctaSubtitle": "Únete a la plataforma que valora tu historia, protege tu técnica y conecta tu arte con el mundo.",
     "ctaButton": "Empezar a vender hoy",
-    "footerText": "<i class='fa-regular fa-copyright'></i> 2026 Art Huila. Orgullosamente huilense.",
+    "footerText": "2026 Art Huila. Orgullosamente huilense.",
     "privacy": "Privacidad",
     "terms": "Términos",
     "contact": "Contacto",

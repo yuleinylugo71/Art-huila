@@ -25,7 +25,7 @@ import { LogisticsModule } from './logistics/logistics.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '../.env',
+      envFilePath: ['.env', '../.env'],
       isGlobal: true,
       validationSchema: Joi.object({
         DATABASE_URL: Joi.string().required(),

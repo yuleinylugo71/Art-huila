@@ -1,5 +1,7 @@
 // catalogo.js — Catálogo filtrable con URL params e i18n completo
 let currentPage = 1;
+let cachedCategories = [];
+let cachedRegions = [];
 
 document.addEventListener('i18nReady', () => {
   if (typeof applyTranslations === 'function') applyTranslations();
@@ -11,12 +13,29 @@ document.addEventListener('languageChanged', () => {
   initCatalog(); 
 });
 
-
 function getUrlParams() {
   const p = new URLSearchParams(window.location.search);
+  
+  // Soporta tanto 'categories' (plural) como 'category' (singular, enviado desde index.html)
+  const rawCategoryParam = p.get('categories') || p.get('category') || '';
+  
+  // Si las categorías ya están en caché, resuelve slugs a nombres de categoría oficiales en la DB
+  let resolvedCategories = '';
+  if (rawCategoryParam && cachedCategories.length > 0) {
+    resolvedCategories = rawCategoryParam.split(',').map(raw => {
+      const matched = cachedCategories.find(c => 
+        c.name.toLowerCase() === raw.toLowerCase() || 
+        c.slug.toLowerCase() === raw.toLowerCase()
+      );
+      return matched ? matched.name : raw;
+    }).join(',');
+  } else {
+    resolvedCategories = rawCategoryParam;
+  }
+
   return {
     regions: p.get('regions') || '',
-    categories: p.get('categories') || '',
+    categories: resolvedCategories,
     minPrice: p.get('minPrice') || '',
     maxPrice: p.get('maxPrice') || '',
     sortBy: p.get('sortBy') || 'newest',
@@ -32,6 +51,9 @@ function syncFiltersToUrl(params) {
 
 async function loadFilters() {
   const [cats, regs] = await Promise.all([apiFetch('/categories'), apiFetch('/regions')]);
+  cachedCategories = cats;
+  cachedRegions = regs;
+
   const params = getUrlParams();
   const selectedRegions = params.regions ? params.regions.split(',') : [];
   const selectedCats = params.categories ? params.categories.split(',') : [];
@@ -47,7 +69,7 @@ async function loadFilters() {
   if (categoryFilters) {
     categoryFilters.innerHTML = cats.map(c => `
       <label class="filter-option">
-        <input type="checkbox" name="category" value="${c.name}" ${selectedCats.includes(c.name) ? 'checked' : ''}/>
+        <input type="checkbox" name="category" value="${c.name}" ${selectedCats.includes(c.name) ? 'checked' : ''} onchange="applyFilters()"/>
         ${c.name}
       </label>
     `).join('');
@@ -102,22 +124,18 @@ async function loadProducts(page = 1) {
     }
 
     grid.innerHTML = filteredData.map(p => `
-      <div class="card product-card" onclick="window.location.href='/producto.html?slug=${p.slug}'">
+      <div class="product-card" onclick="window.location.href='/producto.html?slug=${p.slug}'">
         ${p.images && p.images[0]
-          ? `<div class="product-card-image" style="aspect-ratio:1/1;"><img src="${p.images[0].url}" alt="${p.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover;"/></div>`
-          : `<div class="product-img-placeholder" style="aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;background:var(--color-bg2);font-size:3rem;"><i class="fa-solid fa-vase"></i></div>`}
-        <div class="card-body" style="padding:1rem;">
-          <div class="product-name" style="font-size:1.15rem;font-weight:700;line-height:1.2;margin-bottom:0.25rem;">${p.name}</div>
-          <div class="product-artisan" style="font-size:0.85rem;color:var(--color-muted);margin-bottom:0.75rem;">${i18next.t('catalog.byArtisan')}<strong>${p.artisan?.user?.full_name || i18next.t('catalog.anonymousArtisan')}</strong></div>
-          <div class="product-price" style="font-size:1.3rem;font-weight:800;color:var(--color-primary);margin-bottom:0.5rem;">${formatPrice(p.price)}</div>
-          <div class="product-meta">
-            <span><i class="fa-solid fa-location-dot"></i> ${p.region?.name || 'Huila'}</span>
-            <span class="badge badge-primary">${p.category?.name || ''}</span>
-          </div>
-          <div class="product-meta mt-1">
-            <span>${i18next.t('catalog.stockLabel')}${p.stock}</span>
+          ? `<div class="product-card-image"><img src="${p.images[0].url}" alt="${p.name}" loading="lazy"/></div>`
+          : `<div class="product-card-image product-img-placeholder" style="display:flex;align-items:center;justify-content:center;font-size:3rem;"><i class="fa-solid fa-vase"></i></div>`}
+        <div class="product-card-body">
+          <div class="product-card-name">${p.name}</div>
+          <div class="product-artisan">
+            <i class="fa-solid fa-store"></i>
+            <span><strong>${p.artisan?.user?.full_name || i18next.t('catalog.anonymousArtisan')}</strong></span>
             ${renderTrustBadge(p.artisan?.status || p.artisan?.verification_status)}
           </div>
+          <div class="product-price">${formatPrice(p.price)}</div>
         </div>
       </div>
     `).join('');
@@ -130,10 +148,7 @@ async function loadProducts(page = 1) {
 
 function renderTrustBadge(status) {
   if (status === 'verified') {
-    return `<span class="badge badge-verified"><i class="fa-solid fa-check"></i> Verificado ✓</span>`;
-  }
-  if (status === 'active' || status === 'pending') {
-    return `<span class="badge badge-pending"><i class="fa-solid fa-hourglass-half"></i> Por verificar</span>`;
+    return `<i class="fa-solid fa-circle-check" style="color: var(--color-verified); font-size: 0.9rem; margin-left: 0.25rem;" title="Vendedor Verificado"></i>`;
   }
   return '';
 }
@@ -156,14 +171,25 @@ function goToPage(page) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function applyFilters() {
-  const regions = document.getElementById('region-select').value;
-  const categories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(el => el.value).join(',');
-  const minPrice = document.getElementById('min-price').value;
-  const maxPrice = document.getElementById('max-price').value;
-  const sortBy = document.getElementById('sort-select').value;
-  syncFiltersToUrl({ regions, categories, minPrice, maxPrice, sortBy });
-  loadProducts(1);
+let filterTimeout;
+function applyFilters(debounceMs = 0) {
+  clearTimeout(filterTimeout);
+  
+  const execute = () => {
+    const regions = document.getElementById('region-select').value;
+    const categories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(el => el.value).join(',');
+    const minPrice = document.getElementById('min-price').value;
+    const maxPrice = document.getElementById('max-price').value;
+    const sortBy = document.getElementById('sort-select').value;
+    syncFiltersToUrl({ regions, categories, minPrice, maxPrice, sortBy });
+    loadProducts(1);
+  };
+
+  if (debounceMs > 0) {
+    filterTimeout = setTimeout(execute, debounceMs);
+  } else {
+    execute();
+  }
 }
 
 function clearFilters() {

@@ -9,8 +9,19 @@ async function bootstrap() {
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
+  const frontendUrl = process.env.FRONTEND_URL;
+  const origins = ['http://localhost:5173', 'http://127.0.0.1:5500', 'http://localhost:5500', 'http://localhost:8080'];
+  if (frontendUrl) {
+    const splitOrigins = frontendUrl.split(',').map(o => o.trim());
+    splitOrigins.forEach(o => {
+      if (o && !origins.includes(o)) {
+        origins.push(o);
+      }
+    });
+  }
+
   app.enableCors({
-    origin: ['http://localhost:5173', 'http://127.0.0.1:5500', 'http://localhost:5500', 'http://localhost:8080'],
+    origin: origins,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });

@@ -6,12 +6,19 @@ export declare class AdminController {
     approve(id: string, user: any): Promise<{
         message: string;
     }>;
+    verificarArtesano(id: string, reason: string, user: any): Promise<{
+        message: string;
+    }>;
     reject(id: string, reason: string, user: any): Promise<{
         message: string;
     }>;
-    suspend(id: string, user: any): Promise<{
+    suspend(id: string, reason: string, user: any): Promise<{
         message: string;
     }>;
+    suspenderArtesano(id: string, reason: string, user: any): Promise<{
+        message: string;
+    }>;
+    getArtisanAudit(id: string): Promise<import("../artisans/entities/artisan-audit-log.entity").ArtisanAuditLog[]>;
     getOrders(start?: string, end?: string): Promise<import("../orders/entities/order.entity").Order[]>;
     deleteReview(id: string, reason: string, user: any): Promise<{
         message: string;

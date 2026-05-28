@@ -29,11 +29,20 @@ let AdminController = class AdminController {
     approve(id, user) {
         return this.adminService.approveArtisan(user.id, id);
     }
+    verificarArtesano(id, reason, user) {
+        return this.adminService.verifyArtisan(user.id, id, reason);
+    }
     reject(id, reason, user) {
         return this.adminService.rejectArtisan(user.id, id, reason);
     }
-    suspend(id, user) {
-        return this.adminService.suspendArtisan(user.id, id);
+    suspend(id, reason, user) {
+        return this.adminService.suspendArtisan(user.id, id, reason);
+    }
+    suspenderArtesano(id, reason, user) {
+        return this.adminService.suspendArtisan(user.id, id, reason);
+    }
+    getArtisanAudit(id) {
+        return this.adminService.getArtisanAudit(id);
     }
     getOrders(start, end) {
         return this.adminService.getAllOrders(start, end);
@@ -77,6 +86,15 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AdminController.prototype, "approve", null);
 __decorate([
+    (0, common_1.Patch)('artesanos/:id/verificar'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)('reason')),
+    __param(2, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "verificarArtesano", null);
+__decorate([
     (0, common_1.Patch)('artisans/:id/reject'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)('reason')),
@@ -88,11 +106,28 @@ __decorate([
 __decorate([
     (0, common_1.Patch)('artisans/:id/suspend'),
     __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Body)('reason')),
+    __param(2, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [String, String, Object]),
     __metadata("design:returntype", void 0)
 ], AdminController.prototype, "suspend", null);
+__decorate([
+    (0, common_1.Patch)('artesanos/:id/suspender'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)('reason')),
+    __param(2, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Object]),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "suspenderArtesano", null);
+__decorate([
+    (0, common_1.Get)('artesanos/:id/auditoria'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], AdminController.prototype, "getArtisanAudit", null);
 __decorate([
     (0, common_1.Get)('orders'),
     __param(0, (0, common_1.Query)('start')),

@@ -30,14 +30,28 @@ let AuthController = class AuthController {
     registerBuyer(dto) {
         return this.authService.registerBuyer(dto);
     }
-    registerArtisan(dto, files) {
-        return this.authService.registerArtisan(dto, files.id_document_front?.[0], files.id_document_back?.[0], files.gallery);
+    registerArtisan(dto, files, req) {
+        const xForwardedFor = req.headers['x-forwarded-for'];
+        let clientIp = '';
+        if (typeof xForwardedFor === 'string') {
+            clientIp = xForwardedFor.split(',')[0].trim();
+        }
+        else if (Array.isArray(xForwardedFor)) {
+            clientIp = xForwardedFor[0]?.trim() || '';
+        }
+        else {
+            clientIp = req.socket?.remoteAddress || req.ip || '';
+        }
+        return this.authService.registerArtisan(dto, files.id_document_front?.[0], files.id_document_back?.[0], files.gallery, clientIp);
     }
     verifyEmail(token) {
         return this.authService.verifyEmail(token);
     }
     refresh(dto) {
         return this.authService.refresh(dto.refresh_token);
+    }
+    logout(dto) {
+        return this.authService.logout(dto.refresh_token);
     }
     me(user) {
         return user;
@@ -63,12 +77,13 @@ __decorate([
     (0, common_1.UseInterceptors)((0, platform_express_1.FileFieldsInterceptor)([
         { name: 'id_document_front', maxCount: 1 },
         { name: 'id_document_back', maxCount: 1 },
-        { name: 'gallery', maxCount: 5 },
+        { name: 'gallery', maxCount: 10 },
     ])),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.UploadedFiles)()),
+    __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [auth_dto_1.RegisterArtisanDto, Object]),
+    __metadata("design:paramtypes", [auth_dto_1.RegisterArtisanDto, Object, Object]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "registerArtisan", null);
 __decorate([
@@ -85,6 +100,13 @@ __decorate([
     __metadata("design:paramtypes", [auth_dto_1.RefreshDto]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "refresh", null);
+__decorate([
+    (0, common_1.Post)('logout'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [auth_dto_1.LogoutDto]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "logout", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)('me'),

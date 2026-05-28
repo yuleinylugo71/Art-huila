@@ -41,8 +41,11 @@ let ProductsService = class ProductsService {
         const profile = await this.artisansService.findByUserId(userId);
         if (!profile)
             throw new common_1.ForbiddenException('Solo artesanos pueden crear productos');
-        if (profile.verification_status !== artisan_profile_entity_1.VerificationStatus.VERIFIED) {
-            throw new common_1.ForbiddenException('Tu cuenta aún no está verificada por el administrador');
+        if (profile.verification_status === artisan_profile_entity_1.ArtisanStatus.SUSPENDED) {
+            throw new common_1.ForbiddenException('Tu cuenta se encuentra suspendida y no puede publicar productos');
+        }
+        if (profile.verification_status === artisan_profile_entity_1.ArtisanStatus.PENDING) {
+            throw new common_1.ForbiddenException('Debes confirmar tu correo antes de publicar productos');
         }
         let slug = slugify(data.name);
         const existing = await this.productRepo.findOneBy({ slug });
@@ -67,8 +70,9 @@ let ProductsService = class ProductsService {
             where: { slug },
             relations: ['artisan', 'artisan.user', 'artisan.region', 'category', 'region', 'images'],
         });
-        if (!product)
+        if (!product || product.artisan.verification_status === artisan_profile_entity_1.ArtisanStatus.SUSPENDED)
             throw new common_1.NotFoundException('Producto no encontrado');
+        product.artisan.status = product.artisan.verification_status;
         return product;
     }
     async update(productId, userId, data) {
@@ -156,7 +160,8 @@ let ProductsService = class ProductsService {
             .leftJoinAndSelect('product.artisan', 'artisan')
             .leftJoinAndSelect('artisan.user', 'user')
             .leftJoinAndSelect('product.images', 'images')
-            .where('product.status = :status', { status: product_entity_1.ProductStatus.PUBLISHED });
+            .where('product.status = :status', { status: product_entity_1.ProductStatus.PUBLISHED })
+            .andWhere('artisan.verification_status != :suspended', { suspended: artisan_profile_entity_1.ArtisanStatus.SUSPENDED });
         if (query) {
             qb.andWhere('(product.name ILIKE :q OR product.cultural_origin ILIKE :q)', { q: `%${query}%` });
         }
@@ -166,7 +171,11 @@ let ProductsService = class ProductsService {
         if (limit) {
             qb.take(limit);
         }
-        return qb.getMany();
+        const products = await qb.getMany();
+        return products.map((product) => {
+            product.artisan.status = product.artisan.verification_status;
+            return product;
+        });
     }
     async getCount() {
         return this.productRepo.count();
