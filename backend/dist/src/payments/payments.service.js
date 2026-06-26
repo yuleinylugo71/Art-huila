@@ -62,8 +62,8 @@ let PaymentsService = class PaymentsService {
     }
     async handleWebhook(data) {
         try {
-            const p_cust_id_client = this.configService.get('EPAYCO_P_CUST_ID');
-            const p_key = this.configService.get('EPAYCO_P_KEY');
+            const p_cust_id_client = this.configService.get('EPAYCO_P_CUST_ID') || this.configService.get('EPAYCO_P_CUST_ID_CLIENTE');
+            const p_key = this.configService.get('EPAYCO_P_KEY') || this.configService.get('EPAYCO_PRIVATE_KEY');
             const x_ref_payco = data.x_ref_payco;
             const x_transaction_id = data.x_transaction_id;
             const x_amount = data.x_amount;
@@ -79,11 +79,41 @@ let PaymentsService = class PaymentsService {
                 .update(`${p_cust_id_client}^${p_key}^${x_ref_payco}^${x_transaction_id}^${x_amount}^${x_currency_code}`)
                 .digest('hex');
             if (signature === x_signature) {
-                const x_cod_response = data.x_cod_response;
-                if (x_cod_response === 1 || x_cod_response === '1') {
-                    if (x_id_invoice) {
-                        await this.ordersService.markAsPaid(x_id_invoice, x_ref_payco);
-                        console.log(`Order ${x_id_invoice} marked as PAID via Webhook (ePayco)`);
+                const x_cod_response = Number(data.x_cod_response);
+                const x_transaction_state = data.x_transaction_state;
+                if (x_id_invoice) {
+                    if (x_cod_response === 1 ||
+                        x_transaction_state === 'Aceptada' ||
+                        x_transaction_state === 'Approved') {
+                        await this.ordersService.markPaymentApproved(x_id_invoice, x_ref_payco);
+                        console.log(`[EPAYCO] Order ${x_id_invoice} approved`);
+                    }
+                    else if (x_cod_response === 2 ||
+                        x_transaction_state === 'Rechazada' ||
+                        x_transaction_state === 'Rejected') {
+                        await this.ordersService.markPaymentRejected(x_id_invoice, x_ref_payco);
+                        console.log(`[EPAYCO] Order ${x_id_invoice} rejected`);
+                    }
+                    else if (x_cod_response === 3 ||
+                        x_transaction_state === 'Pendiente' ||
+                        x_transaction_state === 'Pending') {
+                        await this.ordersService.markPaymentPending(x_id_invoice, x_ref_payco);
+                        console.log(`[EPAYCO] Order ${x_id_invoice} pending`);
+                    }
+                    else if (x_cod_response === 4 ||
+                        x_transaction_state === 'Fallida' ||
+                        x_transaction_state === 'Failed') {
+                        await this.ordersService.markPaymentFailed(x_id_invoice, x_ref_payco);
+                        console.log(`[EPAYCO] Order ${x_id_invoice} failed`);
+                    }
+                    else if (x_cod_response === 10 ||
+                        x_transaction_state === 'Cancelada' ||
+                        x_transaction_state === 'Cancelled') {
+                        await this.ordersService.markPaymentCancelled(x_id_invoice, x_ref_payco);
+                        console.log(`[EPAYCO] Order ${x_id_invoice} cancelled`);
+                    }
+                    else {
+                        console.warn(`[EPAYCO] Unknown response code ${x_cod_response} / status ${x_transaction_state} for Order ${x_id_invoice}`);
                     }
                 }
             }

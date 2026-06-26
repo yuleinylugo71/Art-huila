@@ -15,6 +15,21 @@ export declare class OrdersController {
         carrier: any;
         fallbackMessage: null;
         options: any;
+    } | {
+        isFallback: boolean;
+        originCity: string;
+        cost: number;
+        estimatedDays: number;
+        carrier: string;
+        fallbackMessage: string;
+        options: {
+            carrier: string;
+            price: number;
+            estimatedDays: number;
+        }[];
+    }>;
+    getShippingCoverage(): Promise<{
+        [department: string]: string[];
     }>;
     findArtisanSales(user: any): Promise<import("./entities/order-item.entity").OrderItem[]>;
     findAll(user: any): Promise<import("./entities/order.entity").Order[]>;

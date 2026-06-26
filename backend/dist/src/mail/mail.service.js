@@ -62,20 +62,28 @@ let MailService = class MailService {
         });
     }
     async sendVerificationEmail(to, name, token, frontendUrl) {
-        const link = `${frontendUrl}/auth/verificar-email?token=${token}`;
+        const link = `${frontendUrl}/verificar-email.html?token=${token}`;
         console.log(`[MailService] Sending verification email to ${to}`);
         console.log(`[MailService] Verification Link: ${link}`);
+        console.log(`[MailService] Verification Code: ${token}`);
         try {
             await this.transporter.sendMail({
                 from: `"Art Huila" <${this.fromEmail}>`,
                 to,
-                subject: '🎨 Verifica tu cuenta en Art Huila',
+                subject: 'Verifica tu cuenta en Art Huila',
                 html: `
-          <div style="font-family: Arial, sans-serif; background:#f8f4ef; padding:40px; border-radius:12px; max-width:600px; margin:0 auto;">
-            <h1 style="color:#7c3d12;">¡Bienvenido/a a Art Huila, ${name}!</h1>
-            <p style="color:#44403c; font-size:16px;">Gracias por registrarte. Por favor confirma tu correo electrónico haciendo clic en el botón de abajo.</p>
-            <a href="${link}" style="display:inline-block; background:#dc6f21; color:#fff; padding:14px 28px; border-radius:8px; text-decoration:none; font-size:16px; margin:20px 0;">Verificar mi cuenta</a>
-            <p style="color:#78716c; font-size:13px;">Este enlace expira en 48 horas. Si no creaste esta cuenta, ignora este mensaje.</p>
+          <div style="font-family: Arial, sans-serif; background:#f8f4ef; padding:40px; border-radius:12px; max-width:600px; margin:0 auto; text-align: center; border: 1.5px solid #ebdcd0;">
+            <h1 style="color:#7c3d12; font-family: 'Crimson Pro', Georgia, serif; font-size: 24px; margin-bottom: 20px;">¡Bienvenido/a a Art Huila, ${name}!</h1>
+            <p style="color:#44403c; font-size:16px; margin-bottom: 20px;">Gracias por registrarte. Por favor confirma tu correo electrónico ingresando el código de abajo o haciendo clic en el botón.</p>
+            
+            <div style="background: white; border: 1.5px solid #ebdcd0; border-radius: 12px; padding: 15px 30px; display: inline-block; font-size: 32px; font-weight: 800; letter-spacing: 6px; color: #dc6f21; margin: 10px 0 25px 0; font-family: monospace;">
+              ${token}
+            </div>
+            
+            <div>
+              <a href="${link}" style="display:inline-block; background:#dc6f21; color:#fff; padding:14px 28px; border-radius:99px; text-decoration:none; font-size:15px; font-weight: bold; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(220,111,33,0.2);">Verificar mi cuenta</a>
+            </div>
+            <p style="color:#78716c; font-size:12px; margin-top: 15px;">Este código y enlace expiran en 48 horas. Si no creaste esta cuenta, puedes ignorar este mensaje.</p>
           </div>
         `,
             });
@@ -91,7 +99,7 @@ let MailService = class MailService {
             await this.transporter.sendMail({
                 from: `"Art Huila" <${this.fromEmail}>`,
                 to,
-                subject: '✅ ¡Tu perfil de artesano ha sido aprobado! | Art Huila',
+                subject: '¡Tu perfil de artesano ha sido aprobado! | Art Huila',
                 html: `
           <div style="font-family: Arial, sans-serif; background:#f0fdf4; padding:40px; border-radius:12px; max-width:600px; margin:0 auto;">
             <h1 style="color:#166534;">¡Felicitaciones, ${name}!</h1>
@@ -176,7 +184,7 @@ let MailService = class MailService {
             await this.transporter.sendMail({
                 from: `"Art Huila" <${this.fromEmail}>`,
                 to,
-                subject: `💰 ¡Has realizado una venta! | Art Huila`,
+                subject: `¡Has realizado una venta! | Art Huila`,
                 html: `
           <div style="font-family: Arial, sans-serif; background:#f0f9ff; padding:40px; border-radius:12px; max-width:600px; margin:0 auto;">
             <h1 style="color:#0369a1;">¡Buenas noticias, ${artisanName}!</h1>
@@ -197,7 +205,7 @@ let MailService = class MailService {
             await this.transporter.sendMail({
                 from: `"Art Huila" <${this.fromEmail}>`,
                 to,
-                subject: `💬 El artesano ha respondido a tu reseña | Art Huila`,
+                subject: `El artesano ha respondido a tu reseña | Art Huila`,
                 html: `
           <div style="font-family: Arial, sans-serif; background:#fdfcfb; padding:40px; border-radius:12px; max-width:600px; margin:0 auto; border:1px solid #eee;">
             <h1 style="color:#7c3d12;">Hola ${buyerName},</h1>
@@ -209,6 +217,38 @@ let MailService = class MailService {
         }
         catch (err) {
             console.error('[MailService] Error sending artisan response email:', err);
+            throw err;
+        }
+    }
+    async sendPasswordResetEmail(to, token, userName) {
+        const frontendUrl = this.configService.get('FRONTEND_URL') || 'http://localhost:5173';
+        const link = `${frontendUrl}/nueva-contrasena.html?token=${token}`;
+        console.log(`[MailService] Sending password reset email to ${to}`);
+        console.log(`[MailService] Reset Link: ${link}`);
+        try {
+            await this.transporter.sendMail({
+                from: `"Art Huila" <${this.fromEmail}>`,
+                to,
+                subject: 'Recupera tu contraseña - ArtHuila',
+                html: `
+          <div style="font-family: Arial, sans-serif; background:#f8f4ef; padding:40px; border-radius:12px; max-width:600px; margin:0 auto; text-align: center; border: 1.5px solid #ebdcd0;">
+            <h1 style="color:#7c3d12; font-family: 'Crimson Pro', Georgia, serif; font-size: 24px; margin-bottom: 20px;">Restablecer contraseña</h1>
+            <p style="color:#44403c; font-size:16px; margin-bottom: 20px;">Hola, ${userName}. Recibimos una solicitud para restablecer la contraseña de tu cuenta en ArtHuila.</p>
+            
+            <p style="color:#44403c; font-size:16px; margin-bottom: 20px;">Haz clic en el siguiente botón para establecer una nueva contraseña:</p>
+            
+            <div>
+              <a href="${link}" style="display:inline-block; background:#C84B11; color:#fff; padding:14px 28px; border-radius:99px; text-decoration:none; font-size:15px; font-weight: bold; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(200,75,17,0.2);">Restablecer contraseña</a>
+            </div>
+            
+            <p style="color:#78716c; font-size:12px; margin-top: 15px;">Este enlace expira en 1 hora. Si no solicitaste este cambio, puedes ignorar este correo de forma segura.</p>
+          </div>
+        `,
+            });
+            console.log('[MailService] Password reset email sent successfully');
+        }
+        catch (err) {
+            console.error('[MailService] Error sending password reset email:', err);
             throw err;
         }
     }

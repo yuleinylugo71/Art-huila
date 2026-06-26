@@ -95,6 +95,28 @@
     });
   };
 
+  window.translateCategory = function (name) {
+    if (!name) return '';
+    const norm = name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if (norm.includes('tejeduria')) return i18next.t('home.categoryTejeduria');
+    if (norm.includes('ceramica')) return i18next.t('home.categoryCeramica');
+    if (norm.includes('talla')) return i18next.t('home.categoryTalla');
+    if (norm.includes('orfebreria')) return i18next.t('home.categoryOrfebreria');
+    if (norm.includes('joyeria')) return i18next.t('home.categoryJoyeria');
+    if (norm.includes('sombrero') || norm.includes('sombrereria')) return i18next.t('home.categorySombreros');
+    return name;
+  };
+
+  window.translateProduct = function (p) {
+    if (!p) return '';
+    const name = typeof p === 'string' ? p : p.name;
+    let slug = typeof p === 'string' ? null : p.slug;
+    if (!slug) {
+      slug = name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    }
+    return i18next.t('products.' + slug, { defaultValue: name });
+  };
+
   // 5. ACTUALIZAR CLASE ACTIVE EN EL SELECTOR DE IDIOMA
   function updateSwitcherButtons(lang) {
     document.querySelectorAll('.btn-lang-es, #btn-lang-es').forEach(btn => {
@@ -112,6 +134,11 @@
         btn.classList.remove('active');
       }
     });
+
+    const mobileToggle = document.getElementById('mobile-lang-toggle');
+    if (mobileToggle) {
+      mobileToggle.textContent = lang.toUpperCase();
+    }
   }
 })();
 

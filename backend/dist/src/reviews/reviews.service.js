@@ -40,10 +40,7 @@ let ReviewsService = class ReviewsService {
         const deliveredOrders = orders.filter(o => o.status === order_entity_1.OrderStatus.DELIVERED);
         const hasBought = deliveredOrders.some(o => o.items.some(i => i.product.id === data.productId));
         if (!hasBought) {
-            const orderCount = orders.length;
-            const deliveredCount = deliveredOrders.length;
-            throw new common_1.BadRequestException(`No se pudo verificar la compra. Pedidos totales: ${orderCount}, Entregados: ${deliveredCount}. ` +
-                `Para calificar, el pedido debe estar en estado 'delivered'.`);
+            throw new common_1.BadRequestException('Solo puedes dejar una reseña si has comprado este producto y tu pedido ha sido entregado exitosamente.');
         }
         const review = this.reviewRepo.create({
             rating: data.rating,

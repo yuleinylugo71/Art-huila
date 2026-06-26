@@ -12,4 +12,8 @@ export declare class ArtisansService {
     updateStatus(id: string, status: ArtisanStatus, rejectionReason?: string): Promise<ArtisanProfile>;
     updateProfile(userId: string, data: any): Promise<ArtisanProfile | null>;
     findFeatured(): Promise<ArtisanProfile[]>;
+    apply(userId: string, data: any, idDocumentFrontUrl: string | null, idDocumentBackUrl: string | null, galleryUrls: {
+        url: string;
+        public_id: string;
+    }[], clientIp: string): Promise<ArtisanProfile | null>;
 }

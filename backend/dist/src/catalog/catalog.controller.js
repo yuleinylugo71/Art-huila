@@ -20,16 +20,18 @@ let CatalogController = class CatalogController {
     constructor(catalogService) {
         this.catalogService = catalogService;
     }
-    findAll(regions, categories, minPrice, maxPrice, sortBy, page, limit, artisanId) {
+    findAll(regions, categories, materials, minPrice, maxPrice, sortBy, page, limit, artisanId, search) {
         return this.catalogService.findAll({
             regions: regions ? regions.split(',') : undefined,
             categories: categories ? categories.split(',') : undefined,
+            materials: materials ? materials.split(',') : undefined,
             minPrice: minPrice ? parseFloat(minPrice) : undefined,
             maxPrice: maxPrice ? parseFloat(maxPrice) : undefined,
             sortBy,
             page: page ? parseInt(page) : 1,
             limit: limit ? parseInt(limit) : 20,
             artisanId,
+            search,
         });
     }
 };
@@ -38,14 +40,16 @@ __decorate([
     (0, common_1.Get)(),
     __param(0, (0, common_1.Query)('regions')),
     __param(1, (0, common_1.Query)('categories')),
-    __param(2, (0, common_1.Query)('minPrice')),
-    __param(3, (0, common_1.Query)('maxPrice')),
-    __param(4, (0, common_1.Query)('sortBy')),
-    __param(5, (0, common_1.Query)('page')),
-    __param(6, (0, common_1.Query)('limit')),
-    __param(7, (0, common_1.Query)('artisanId')),
+    __param(2, (0, common_1.Query)('materials')),
+    __param(3, (0, common_1.Query)('minPrice')),
+    __param(4, (0, common_1.Query)('maxPrice')),
+    __param(5, (0, common_1.Query)('sortBy')),
+    __param(6, (0, common_1.Query)('page')),
+    __param(7, (0, common_1.Query)('limit')),
+    __param(8, (0, common_1.Query)('artisanId')),
+    __param(9, (0, common_1.Query)('search')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, String, String, String, String, String]),
+    __metadata("design:paramtypes", [String, String, String, String, String, String, String, String, String, String]),
     __metadata("design:returntype", void 0)
 ], CatalogController.prototype, "findAll", null);
 exports.CatalogController = CatalogController = __decorate([

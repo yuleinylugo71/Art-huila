@@ -43,4 +43,9 @@ export declare class ArtisansController {
         id_document_back_url: string;
         message?: undefined;
     }>;
+    apply(user: any, files: {
+        id_document_front?: Express.Multer.File[];
+        id_document_back?: Express.Multer.File[];
+        gallery?: Express.Multer.File[];
+    }, body: any, req: any): Promise<import("./entities/artisan-profile.entity").ArtisanProfile | null>;
 }

@@ -21,6 +21,12 @@ export declare class User {
     email_token_expires_at: Date | null;
     failed_login_attempts: number;
     locked_until: Date | null;
+    reset_password_token: string;
+    reset_password_expires: Date;
+    address: string;
+    city: string;
+    phone: string;
+    department: string;
     created_at: Date;
     updated_at: Date;
 }

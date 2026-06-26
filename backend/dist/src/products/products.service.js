@@ -44,9 +44,6 @@ let ProductsService = class ProductsService {
         if (profile.verification_status === artisan_profile_entity_1.ArtisanStatus.SUSPENDED) {
             throw new common_1.ForbiddenException('Tu cuenta se encuentra suspendida y no puede publicar productos');
         }
-        if (profile.verification_status === artisan_profile_entity_1.ArtisanStatus.PENDING) {
-            throw new common_1.ForbiddenException('Debes confirmar tu correo antes de publicar productos');
-        }
         let slug = slugify(data.name);
         const existing = await this.productRepo.findOneBy({ slug });
         if (existing)
@@ -68,7 +65,7 @@ let ProductsService = class ProductsService {
     async findBySlug(slug) {
         const product = await this.productRepo.findOne({
             where: { slug },
-            relations: ['artisan', 'artisan.user', 'artisan.region', 'category', 'region', 'images'],
+            relations: ['artisan', 'artisan.user', 'artisan.region', 'category', 'region', 'images', 'reviews'],
         });
         if (!product || product.artisan.verification_status === artisan_profile_entity_1.ArtisanStatus.SUSPENDED)
             throw new common_1.NotFoundException('Producto no encontrado');
@@ -160,6 +157,7 @@ let ProductsService = class ProductsService {
             .leftJoinAndSelect('product.artisan', 'artisan')
             .leftJoinAndSelect('artisan.user', 'user')
             .leftJoinAndSelect('product.images', 'images')
+            .leftJoinAndSelect('product.reviews', 'reviews')
             .where('product.status = :status', { status: product_entity_1.ProductStatus.PUBLISHED })
             .andWhere('artisan.verification_status != :suspended', { suspended: artisan_profile_entity_1.ArtisanStatus.SUSPENDED });
         if (query) {

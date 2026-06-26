@@ -30,11 +30,8 @@ export class ReviewsService {
     );
 
     if (!hasBought) {
-      const orderCount = orders.length;
-      const deliveredCount = deliveredOrders.length;
       throw new BadRequestException(
-        `No se pudo verificar la compra. Pedidos totales: ${orderCount}, Entregados: ${deliveredCount}. ` +
-        `Para calificar, el pedido debe estar en estado 'delivered'.`
+        'Solo puedes dejar una reseña si has comprado este producto y tu pedido ha sido entregado exitosamente.'
       );
     }
 

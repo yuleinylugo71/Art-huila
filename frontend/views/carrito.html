@@ -4,20 +4,21 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Carrito de Compras — Art Huila</title>
-  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/base.css?v=13">
   <link rel="stylesheet" href="/css/carrito.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
-<nav class="navbar">
+<!-- Desktop Navbar -->
+<nav class="navbar desktop-only">
   <div style="display:flex;align-items:center;gap:0.75rem;">
     <a href="catalogo.html" style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:var(--color-bg2);color:var(--color-text);text-decoration:none;font-size:1.1rem;transition:all 0.2s;border:1px solid var(--color-border);" title="Seguir comprando">←</a>
     <a href="index.html" class="navbar-brand">Art <span>Huila</span></a>
   </div>
   <ul class="navbar-nav">
     <li><a href="catalogo.html">Catálogo</a></li>
-    <li><a href="carrito.html" id="nav-cart-count" style="font-weight:bold;color:var(--color-primary);"><i class="fa-solid fa-cart-shopping"></i> Carrito (0)</a></li>
+    <li><a href="carrito.html" style="font-weight:bold;color:var(--color-primary);"><i class="fa-solid fa-cart-shopping"></i> Carrito (0)</a></li>
   </ul>
   <div class="lang-switcher">
     <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
@@ -26,19 +27,44 @@
   </div>
 </nav>
 
-<div class="container section">
-  <h1 class="section-title">Tu Carrito de Compras</h1>
+<!-- Mobile Premium Header -->
+<header class="mobile-only" style="background: white; border-bottom: 1.5px solid var(--color-border); padding: 1rem; position: sticky; top: 0; z-index: 1000;">
+  <div style="display: flex; align-items: center; justify-content: space-between;">
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <button onclick="window.history.back()" style="background: none; border: none; color: var(--color-text); font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Volver"><i class="fa-solid fa-arrow-left"></i></button>
+      <span id="mobile-cart-badge" style="background: #c1440e; color: white; font-weight: 800; font-size: 0.75rem; padding: 0.35rem 0.85rem; border-radius: 99px; font-family: var(--font-body);">0 artículos</span>
+    </div>
+    
+    <div class="lang-switcher" style="margin-left: 0;">
+      <button id="mobile-lang-es" class="btn-lang-es active" onclick="window.changeLanguage('es')">ES</button>
+      <span style="font-size: 0.7rem; color: var(--color-border);">|</span>
+      <button id="mobile-lang-en" class="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Title Section -->
+<div class="mobile-only" style="padding: 1.25rem 1rem 0 1rem;">
+  <h2 style="font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; color: #261f1b; margin: 0;" data-i18n="cart.heading">Mi Carrito de Compras</h2>
+  <p style="font-size: 0.85rem; color: var(--color-muted); margin: 0.25rem 0 0 0;" data-i18n="cart.subtitle">Apoya el arte local con cada compra</p>
+</div>
+
+
+<div class="container section" style="padding-top: 0.5rem;">
+  <h1 class="section-title desktop-only" style="margin-bottom: 2rem;">Tu Carrito de Compras</h1>
   
   <div id="cart-empty" style="display: none; text-align: center; padding: 4rem 0;">
+    <div style="font-size: 3rem; color: var(--color-muted); margin-bottom: 1rem;"><i class="fa-solid fa-cart-shopping"></i></div>
     <h2>Tu carrito está vacío</h2>
     <p style="color: var(--color-muted); margin-bottom: 2rem;">Explora el catálogo para descubrir artesanías increíbles.</p>
-    <a href="/catalogo.html" class="btn btn-primary">Ir al Catálogo</a>
+    <a href="/catalogo.html" class="btn btn-primary" style="border-radius: 99px; padding: 0.6rem 2rem;">Ir al Catálogo</a>
   </div>
 
   <div id="cart-content" class="cart-grid" style="display: none;">
     <div class="cart-items" id="cart-items-container">
       <!-- Items renderizados dinámicamente -->
     </div>
+    
     <div class="cart-summary">
       <h3 style="margin-bottom: 1.25rem; font-family: 'Crimson Pro', serif; font-size: 1.3rem;">Resumen del Pedido</h3>
 
@@ -56,43 +82,61 @@
         <span id="summary-subtotal">$0</span>
       </div>
 
+      <!-- Datos de Envío -->
       <div class="shipping-calculator" style="margin: 1rem 0; padding: 1rem; background: var(--color-bg2); border-radius: 8px; border: 1px solid var(--color-border);">
-        <h4 style="margin-bottom: 0.6rem; font-size: 0.9rem; display:flex; align-items:center; gap:0.4rem;">
-          <i class="fa-solid fa-truck" style="color: var(--color-primary);"></i> Ciudad de destino
+        <h4 style="margin-bottom: 0.6rem; font-size: 0.95rem; display:flex; justify-content:space-between; align-items:center;">
+          <span><i class="fa-solid fa-truck" style="color: var(--color-primary);"></i> <span data-i18n="cart.shippingDetailsTitle">Datos de Envío</span></span>
+          <button id="btn-edit-shipping" class="btn btn-ghost btn-sm" style="font-size:0.75rem; color:var(--color-primary); padding:0.2rem 0.5rem; display:none;" onclick="toggleShippingEdit(true)">
+            <i class="fa-solid fa-pen"></i> <span data-i18n="cart.editShippingDetailsBtn">Editar</span>
+          </button>
         </h4>
-        <select id="destination-city" style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-bg); color: var(--color-text);">
-          <option value="">Selecciona tu ciudad...</option>
-          <option value="Bogotá">Bogotá</option>
-          <option value="Medellín">Medellín</option>
-          <option value="Cali">Cali</option>
-          <option value="Barranquilla">Barranquilla</option>
-          <option value="Cartagena">Cartagena</option>
-          <option value="Neiva">Neiva (envío local)</option>
-          <option value="Bucaramanga">Bucaramanga</option>
-          <option value="Pereira">Pereira</option>
-          <option value="Santa Marta">Santa Marta</option>
-          <option value="Ibagué">Ibagué</option>
-          <option value="Pitalito">Pitalito</option>
-          <option value="Garzón">Garzón</option>
-          <option value="La Plata">La Plata</option>
-        </select>
-        <button id="btn-quote-shipping" class="btn btn-secondary btn-block" style="font-size: 0.85rem; padding: 0.5rem; background: transparent; border: 1px solid var(--color-primary); color: var(--color-primary); border-radius: 6px; cursor: pointer; transition: all 0.2s; width:100%;" onclick="calculateShipping()">
-          <i class="fa-solid fa-calculator"></i> Calcular Envío
-        </button>
-        <div id="shipping-result" style="margin-top: 0.75rem; font-size: 0.85rem; display: none;"></div>
-      </div>
 
-      <!-- Dirección de envío (aparece tras calcular) -->
-      <div id="address-section" style="margin: 0.75rem 0; padding: 1rem; background: var(--color-bg2); border-radius: 8px; border: 1px solid var(--color-border); display:none;">
-        <h4 style="margin-bottom: 0.75rem; font-size: 0.9rem; display:flex; align-items:center; gap:0.4rem;">
-          <i class="fa-solid fa-location-dot" style="color: var(--color-primary);"></i> Dirección de entrega
-        </h4>
-        <input type="text" id="shipping-street" placeholder="Calle / Carrera / Avenida (ej: Cra 5 # 10-25)" style="width:100%; padding:0.5rem 0.65rem; border:1.5px solid var(--color-border); border-radius:6px; font-size:0.88rem; background:var(--color-bg); color:var(--color-text); margin-bottom:0.5rem; box-sizing:border-box;" />
-        <input type="text" id="shipping-barrio" placeholder="Barrio / Urbanización (opcional)" style="width:100%; padding:0.5rem 0.65rem; border:1.5px solid var(--color-border); border-radius:6px; font-size:0.88rem; background:var(--color-bg); color:var(--color-text); margin-bottom:0.5rem; box-sizing:border-box;" />
-        <input type="text" id="shipping-ref" placeholder="Referencia (ej: Apto 301, casa amarilla...)" style="width:100%; padding:0.5rem 0.65rem; border:1.5px solid var(--color-border); border-radius:6px; font-size:0.88rem; background:var(--color-bg); color:var(--color-text); box-sizing:border-box;" />
-        <p style="font-size:0.75rem; color:var(--color-muted); margin-top:0.4rem; margin-bottom:0;">
-          <i class="fa-solid fa-circle-info"></i> Asegúrate de que la dirección sea completa para facilitar la entrega.
-        </p>
+        <!-- Shipping Summary Preview (Logged in users) -->
+        <div id="shipping-summary-preview" style="display:none; background:var(--color-bg); border:1px solid var(--color-border); border-radius:6px; padding:0.65rem; font-size:0.85rem; line-height:1.4; margin-bottom:0.75rem;">
+          <div><strong><span data-i18n="cart.recipientNameLabel">Destinatario:</span></strong> <span id="shipping-preview-name">—</span></div>
+          <div><strong>Teléfono:</strong> <span id="shipping-preview-phone">—</span></div>
+          <div><strong>Dirección:</strong> <span id="shipping-preview-address">—</span></div>
+          <div><strong>Ciudad/Dpto:</strong> <span id="shipping-preview-city">—</span> / <span id="shipping-preview-dept">—</span></div>
+        </div>
+
+        <!-- Shipping Input Form (Toggleable) -->
+        <div id="shipping-edit-fields">
+          <div style="margin-bottom: 0.65rem;">
+            <label style="display:block; font-size:0.75rem; font-weight:700; margin-bottom:0.25rem; color:var(--color-text-muted);" data-i18n="buyer.fullNameLabel">Nombre Completo</label>
+            <input type="text" id="shipping-name" placeholder="Nombre del destinatario" style="width: 100%; padding: 0.5rem; border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-bg); color: var(--color-text); box-sizing: border-box;" />
+          </div>
+
+          <div style="margin-bottom: 0.65rem;">
+            <label style="display:block; font-size:0.75rem; font-weight:700; margin-bottom:0.25rem; color:var(--color-text-muted);" data-i18n="buyer.phoneLabel">Teléfono</label>
+            <input type="text" id="shipping-phone" placeholder="Ej: 3001234567" style="width: 100%; padding: 0.5rem; border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-bg); color: var(--color-text); box-sizing: border-box;" />
+          </div>
+
+          <div style="margin-bottom: 0.65rem;">
+            <label style="display:block; font-size:0.75rem; font-weight:700; margin-bottom:0.25rem; color:var(--color-text-muted);" data-i18n="buyer.departmentLabel">Departamento</label>
+            <select id="shipping-department" style="width: 100%; padding: 0.5rem; border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-bg); color: var(--color-text); box-sizing: border-box;">
+              <option value="" disabled selected>Cargando departamentos...</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom: 0.65rem;">
+            <label style="display:block; font-size:0.75rem; font-weight:700; margin-bottom:0.25rem; color:var(--color-text-muted);" data-i18n="cart.cityLabel">Ciudad / Municipio</label>
+            <select id="destination-city" style="width: 100%; padding: 0.5rem; border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-bg); color: var(--color-text); box-sizing: border-box;" disabled>
+              <option value="" disabled selected>Selecciona departamento primero...</option>
+            </select>
+          </div>
+
+          <div style="margin-bottom: 0.65rem;">
+            <label style="display:block; font-size:0.75rem; font-weight:700; margin-bottom:0.25rem; color:var(--color-text-muted);" data-i18n="buyer.addressLabel">Dirección de entrega</label>
+            <input type="text" id="shipping-street" placeholder="ej: Calle 12 #8-45" style="width: 100%; padding: 0.5rem; border: 1px solid var(--color-border); border-radius: 4px; background: var(--color-bg); color: var(--color-text); box-sizing: border-box;" onchange="updateAddress()" />
+          </div>
+
+          <button id="btn-save-shipping" class="btn btn-primary btn-sm" style="width:100%; justify-content:center; margin-top:0.5rem; display:none;" onclick="saveShippingDetailsInline()">
+            <i class="fa-solid fa-check"></i> <span data-i18n="cart.saveShippingDetailsBtn">Guardar Datos</span>
+          </button>
+        </div>
+
+        <!-- Shipping carrier options lists (if any) -->
+        <div id="shipping-result" style="display: none; margin-top: 0.75rem;"></div>
       </div>
 
       <!-- Panel tarjetas de prueba ePayco (visible en modo test) -->
@@ -103,16 +147,15 @@
         </div>
         <div style="font-size:0.78rem; color:#0369a1; line-height:1.7;">
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.25rem 1rem;">
-            <span><strong>Visa:</strong> 4575 2362 5326 0168</span>
-            <span><strong>Master:</strong> 5170 6952 0831 6840</span>
-            <span><strong>Amex:</strong> 3757 5217 5049 510</span>
-            <span><strong>Diners:</strong> 3607 0509 1685 70</span>
+            <span style="cursor:pointer;" onclick="copyCardNumber('4111111111111111')"><strong>Visa:</strong> 4111 1111 1111 1111</span>
+            <span style="cursor:pointer;" onclick="copyCardNumber('5500000000000004')"><strong>Master:</strong> 5500 0000 0000 0004</span>
+            <span style="cursor:pointer;" onclick="copyCardNumber('371449635398431')"><strong>Amex:</strong> 3714 496353 98431</span>
           </div>
           <div style="margin-top:0.4rem;">
-            <span><strong>CVV:</strong> 123 &nbsp;·&nbsp; <strong>Venc.:</strong> 12/21 &nbsp;·&nbsp; <strong>Cuotas:</strong> 1</span>
+            <span><strong>CVV:</strong> 123 &nbsp;·&nbsp; <strong>Venc.:</strong> 12/26 &nbsp;·&nbsp; <strong>Cuotas:</strong> 1</span>
           </div>
           <div style="margin-top:0.3rem; font-style:italic;">
-            <i class="fa-solid fa-triangle-exclamation"></i> Usa cualquier nombre y correo. No se cobra dinero real.
+            <i class="fa-solid fa-triangle-exclamation"></i> Haz clic en una tarjeta para copiar. No se cobra dinero real.
           </div>
         </div>
       </div>
@@ -145,6 +188,9 @@
 <script src="https://checkout.epayco.co/checkout.js"></script>
 <script src="/js/api.js"></script>
 <script src="/js/i18n.js"></script>
+<script>
+  window.EPAYCO_PUBLIC_KEY = 'dbd7a03c714989a6ef54be89c2e2e5ab';
+</script>
 <script src="/js/carrito.js"></script>
 </body>
 </html>

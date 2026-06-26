@@ -9,10 +9,11 @@ export declare class ProductsController {
         name: string;
         slug: string;
         price: number;
-        status: string;
+        status: import("../artisans/entities/artisan-profile.entity").ArtisanStatus;
         artisan: {
             name: string;
             avatar_url: string;
+            status: import("../artisans/entities/artisan-profile.entity").ArtisanStatus;
         };
         rating: number;
         review_count: number;

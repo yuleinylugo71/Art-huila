@@ -92,7 +92,7 @@ function initRegistro() {
             role: 'comprador',
           }),
         });
-        window.location.href = '/verificar-email.html';
+        window.location.href = '/login.html?registered=true';
       } catch (err) {
         const el = document.getElementById('error-msg');
         el.textContent = err.message; el.classList.remove('hidden');
@@ -126,6 +126,7 @@ function initRegistro() {
         formData.append('email', document.getElementById('a-email').value);
         formData.append('password', document.getElementById('a-pass').value);
         formData.append('role', 'artesano');
+        formData.append('id_number', document.getElementById('a-id-number').value);
         formData.append('cultural_history', document.getElementById('a-historia').value);
         formData.append('category_id', document.getElementById('a-categoria').value);
         formData.append('region_id', document.getElementById('a-region').value);

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -45,11 +45,15 @@ export class OrdersService {
       for (const itemDto of createOrderDto.items) {
         const product = await queryRunner.manager.findOne(Product, {
           where: { id: itemDto.productId },
-          relations: ['artisan', 'artisan.region']
+          relations: ['artisan', 'artisan.user', 'artisan.region']
         });
 
         if (!product) {
           throw new NotFoundException(`Product ${itemDto.productId} not found`);
+        }
+
+        if (product.artisan && product.artisan.user && product.artisan.user.id === user.id) {
+          throw new BadRequestException(`No puedes comprar tu propio producto: ${product.name}`);
         }
 
         if (product.stock < itemDto.quantity) {
@@ -164,12 +168,17 @@ export class OrdersService {
   }
 
   async markAsPaid(orderId: string, paymentId: string) {
+    return this.markPaymentApproved(orderId, paymentId);
+  }
+
+  async markPaymentApproved(orderId: string, paymentId: string) {
     const order = await this.ordersRepository.findOne({ where: { id: orderId } });
     if (!order) {
       throw new NotFoundException(`Order ${orderId} not found`);
     }
 
     order.status = OrderStatus.PAID;
+    order.payment_status = 'approved';
     order.payment_id = paymentId;
     
     const savedOrder = await this.ordersRepository.save(order);
@@ -208,6 +217,50 @@ export class OrdersService {
     }
 
     return savedOrder;
+  }
+
+  async markPaymentRejected(orderId: string, paymentId: string) {
+    const order = await this.ordersRepository.findOne({ where: { id: orderId } });
+    if (!order) {
+      throw new NotFoundException(`Order ${orderId} not found`);
+    }
+
+    order.payment_status = 'rejected';
+    order.payment_id = paymentId;
+    return this.ordersRepository.save(order);
+  }
+
+  async markPaymentFailed(orderId: string, paymentId: string) {
+    const order = await this.ordersRepository.findOne({ where: { id: orderId } });
+    if (!order) {
+      throw new NotFoundException(`Order ${orderId} not found`);
+    }
+
+    order.payment_status = 'failed';
+    order.payment_id = paymentId;
+    return this.ordersRepository.save(order);
+  }
+
+  async markPaymentPending(orderId: string, paymentId: string) {
+    const order = await this.ordersRepository.findOne({ where: { id: orderId } });
+    if (!order) {
+      throw new NotFoundException(`Order ${orderId} not found`);
+    }
+
+    order.payment_status = 'pending';
+    order.payment_id = paymentId;
+    return this.ordersRepository.save(order);
+  }
+
+  async markPaymentCancelled(orderId: string, paymentId: string) {
+    const order = await this.ordersRepository.findOne({ where: { id: orderId } });
+    if (!order) {
+      throw new NotFoundException(`Order ${orderId} not found`);
+    }
+
+    order.payment_status = 'cancelled';
+    order.payment_id = paymentId;
+    return this.ordersRepository.save(order);
   }
 
   async updateStatus(id: string, status: OrderStatus, user?: any) {
@@ -252,15 +305,33 @@ export class OrdersService {
   }
 
   async updateTracking(id: string, trackingNumber: string, shippingCompany: string) {
-    const order = await this.ordersRepository.findOne({ where: { id } });
+    const order = await this.ordersRepository.findOne({ 
+      where: { id },
+      relations: ['items', 'items.product', 'user']
+    });
     if (!order) {
       throw new NotFoundException('Order not found');
     }
 
-    order.tracking_number = trackingNumber;
-    order.shipping_company = shippingCompany;
-    order.status = OrderStatus.SHIPPED; // Auto-update to SHIPPED when tracking is added? Usually yes.
-    
+    // Si se pide generación automática con MiPaquete
+    if (shippingCompany === 'MIPAQUETE' || !trackingNumber) {
+      try {
+        const guide = await this.mipaqueteService.generateGuide(order);
+        order.tracking_number = guide.guideNumber;
+        order.shipping_company = guide.carrier;
+        order.tracking_url = guide.trackingUrl;
+      } catch (error) {
+        throw new InternalServerErrorException(
+          `No se pudo generar la guía con MiPaquete: ${error.message}`
+        );
+      }
+    } else {
+      // Guía manual ingresada por admin/artesano
+      order.tracking_number = trackingNumber;
+      order.shipping_company = shippingCompany;
+    }
+
+    order.status = OrderStatus.SHIPPED;
     return this.ordersRepository.save(order);
   }
 
@@ -270,5 +341,9 @@ export class OrdersService {
       relations: ['order', 'order.user', 'product', 'product.images'],
       order: { order: { created_at: 'DESC' } },
     });
+  }
+
+  async getShippingCoverage() {
+    return this.mipaqueteService.getCoverageLocations();
   }
 }

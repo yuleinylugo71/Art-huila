@@ -57,6 +57,16 @@ export class AuthController {
     return this.authService.verifyEmail(token);
   }
 
+  @Post('recuperar-contrasena')
+  requestPasswordReset(@Body('email') email: string) {
+    return this.authService.requestPasswordReset(email);
+  }
+
+  @Post('nueva-contrasena')
+  resetPassword(@Body() body: any) {
+    return this.authService.resetPassword(body.token, body.password);
+  }
+
   @Post('refresh')
   refresh(@Body() dto: RefreshDto) {
     return this.authService.refresh(dto.refresh_token);

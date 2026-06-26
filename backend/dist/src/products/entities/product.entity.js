@@ -15,6 +15,7 @@ const artisan_profile_entity_1 = require("../../artisans/entities/artisan-profil
 const category_entity_1 = require("../../categories/entities/category.entity");
 const region_entity_1 = require("../../regions/entities/region.entity");
 const product_image_entity_1 = require("./product-image.entity");
+const review_entity_1 = require("../../reviews/entities/review.entity");
 var ProductStatus;
 (function (ProductStatus) {
     ProductStatus["DRAFT"] = "draft";
@@ -43,6 +44,7 @@ let Product = class Product {
     meta_title;
     meta_description;
     images;
+    reviews;
     created_at;
     updated_at;
 };
@@ -134,6 +136,10 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => product_image_entity_1.ProductImage, image => image.product),
     __metadata("design:type", Array)
 ], Product.prototype, "images", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => review_entity_1.Review, review => review.product),
+    __metadata("design:type", Array)
+], Product.prototype, "reviews", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)

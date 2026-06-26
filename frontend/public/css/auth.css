@@ -32,6 +32,12 @@ body {
 /* Make registration card wider dynamically if needed */
 .auth-layout-register {
   max-width: 960px;
+  height: auto;
+  min-height: 620px;
+}
+.auth-layout-register .auth-right {
+  height: auto;
+  overflow-y: visible;
 }
 
 /* ─────────────────────────────────────────
@@ -213,7 +219,7 @@ body {
   background: var(--color-surface);
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   padding: 3.5rem 3rem 3rem 4rem;
   position: relative;
   z-index: 0;
@@ -521,6 +527,131 @@ input[type="file"].form-control:hover {
   transform: translateY(0);
 }
 
+/* Layout helper classes */
+.mobile-only {
+  display: none !important;
+}
+.desktop-only {
+  display: block !important;
+}
+nav.desktop-only {
+  display: flex !important;
+}
+
+/* Password field wrapper */
+.password-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+.password-input-wrapper .form-control {
+  padding-right: 2.5rem !important;
+}
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-muted);
+  cursor: pointer;
+  font-size: 1.05rem;
+  transition: color 0.2s ease;
+  z-index: 10;
+}
+.toggle-password:hover {
+  color: var(--color-primary);
+}
+
+/* Forgot password link styles */
+.forgot-password-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.4rem;
+}
+.forgot-password-link {
+  font-size: 0.8rem;
+  color: #c1440e;
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+.forgot-password-link:hover {
+  opacity: 0.8;
+}
+
+/* Artisan section subheader */
+.artisan-section-divider {
+  margin: 2rem 0 1.25rem 0;
+  border-top: 1px solid var(--color-border);
+  padding-top: 1.5rem;
+}
+.artisan-section-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #c1440e;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Custom Dotted Dragzone File Upload */
+.custom-file-upload {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.25rem;
+  border: 1.5px dashed #ebdcd0;
+  border-radius: 16px;
+  background: #faf8f5;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  margin-top: 0.35rem;
+  position: relative;
+  box-sizing: border-box;
+}
+.custom-file-upload:hover {
+  border-color: var(--color-primary);
+  background: #ffffff;
+}
+.custom-file-upload i {
+  font-size: 1.75rem;
+  color: var(--color-muted);
+  opacity: 0.7;
+}
+.custom-file-upload .upload-text-container {
+  flex-grow: 1;
+}
+.custom-file-upload .upload-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 0.15rem;
+}
+.custom-file-upload .upload-subtitle {
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  margin-top: 0.15rem;
+}
+.custom-file-upload .btn-upload {
+  background: transparent;
+  color: #c1440e;
+  border: 1px solid #c1440e;
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none; /* Let label handling click it */
+}
+
+/* ─── CHIPS / SELECTOR OVERRIDES ─── */
+.type-icon-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* ─────────────────────────────────────────
    RESPONSIVE LAYOUT
    ───────────────────────────────────────── */
@@ -528,6 +659,14 @@ input[type="file"].form-control:hover {
   body {
     padding: 0;
     align-items: stretch;
+    background: #faf8f5 !important;
+  }
+
+  .mobile-only {
+    display: block !important;
+  }
+  .desktop-only {
+    display: none !important;
   }
 
   .auth-layout, .auth-layout-register {
@@ -536,14 +675,13 @@ input[type="file"].form-control:hover {
     border: none;
     box-shadow: none;
     min-height: 100vh;
-    height: auto; /* Reset fixed height on mobile */
+    height: auto;
     max-width: 100%;
+    background: #faf8f5 !important;
   }
 
   .auth-left {
-    width: 100%;
-    min-height: 260px;
-    padding: 2.5rem 2rem;
+    display: none !important; /* Hide left panel completely on mobile */
   }
 
   .wave-divider {
@@ -551,8 +689,222 @@ input[type="file"].form-control:hover {
   }
 
   .auth-right {
-    width: 100%;
-    padding: 3rem 2rem;
+    width: 100% !important;
+    padding: 0.5rem 1.25rem 3rem 1.25rem !important;
+    background: #faf8f5 !important;
     overflow-y: visible;
+    box-sizing: border-box;
+  }
+
+  /* White premium overlay card */
+  .auth-box {
+    width: 100%;
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 2rem 1.5rem;
+    box-shadow: 0 12px 40px rgba(139, 90, 43, 0.05);
+    border: 1.5px solid #ebdcd0;
+    box-sizing: border-box;
+  }
+
+  /* Form Titles */
+  .auth-box h2 {
+    font-size: 1.35rem !important;
+    font-weight: 800 !important;
+    font-family: var(--font-display) !important;
+    color: #261f1b !important;
+    margin-bottom: 0.4rem !important;
+  }
+
+  /* Capsule/Pill form fields */
+  .form-control {
+    border: 1.5px solid #ebdcd0 !important;
+    border-radius: 16px !important;
+    background: #faf8f5 !important;
+    padding: 0.75rem 1.1rem !important;
+    font-size: 0.92rem !important;
+    color: var(--color-text) !important;
+    box-sizing: border-box !important;
+    height: auto !important;
+    transition: all 0.25s ease !important;
+    width: 100% !important;
+  }
+
+  .form-control:focus {
+    border-color: var(--color-primary) !important;
+    background: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(193, 68, 14, 0.05) !important;
+  }
+
+  /* Textarea custom padding */
+  textarea.form-control {
+    border-radius: 16px !important;
+    padding: 0.85rem 1.1rem !important;
+    min-height: 100px !important;
+  }
+
+  /* Dotted file uploads fine-tuning */
+  .custom-file-upload {
+    background: #faf8f5 !important;
+    border: 1.5px dashed #ebdcd0 !important;
+  }
+  .custom-file-upload:hover {
+    background: #ffffff !important;
+    border-color: var(--color-primary) !important;
+  }
+
+  /* Button styling */
+  .btn {
+    border-radius: 24px !important;
+    padding: 0.85rem 2rem !important;
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    height: auto !important;
+  }
+
+  /* Role toggle segmented bar styling */
+  .type-selector {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 4px !important;
+    background: #faf8f5 !important;
+    border: 1.5px solid #ebdcd0 !important;
+    border-radius: 16px !important;
+    padding: 4px !important;
+    margin-bottom: 1.5rem !important;
+  }
+
+  .type-card {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    padding: 0.65rem 1rem !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    transform: none !important;
+    margin: 0 !important;
+    height: auto !important;
+  }
+  .type-card:hover {
+    transform: none !important;
+    background: rgba(193, 68, 14, 0.05) !important;
+  }
+
+  .type-card .type-title {
+    font-size: 0.88rem !important;
+    font-weight: 700 !important;
+    color: var(--color-muted) !important;
+    margin: 0 !important;
+    transition: color 0.2s !important;
+  }
+
+  .type-card .type-desc {
+    display: none !important; /* Hide description on mobile */
+  }
+
+  .type-card .type-icon-wrapper i {
+    font-size: 1rem !important;
+    color: var(--color-muted) !important;
+    margin: 0 !important;
+    transition: color 0.2s !important;
+  }
+
+  /* Active toggled role style */
+  .type-card.active {
+    background: #c1440e !important; /* Rust orange active */
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(193, 68, 14, 0.15) !important;
+  }
+  .type-card.active .type-title {
+    color: #ffffff !important;
+  }
+  .type-card.active .type-icon-wrapper i {
+    color: #ffffff !important;
+  }
+
+  /* Mobile page header (Crear Cuenta) */
+  .mobile-auth-header {
+    display: flex !important;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem 0.5rem 1.5rem 0.5rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .mobile-page-title {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #261f1b;
+    margin: 0;
+  }
+  .mobile-back-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #261f1b;
+    border: 1px solid #ebdcd0;
+    text-decoration: none;
+    font-size: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    transition: all 0.2s;
+  }
+
+  /* Mobile Login Header (Brand Logo Banner) */
+  .mobile-auth-header-login {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    padding: 2.25rem 0.5rem 2.25rem 0.5rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .mobile-auth-header-login .mobile-back-arrow {
+    position: absolute;
+    left: 0.5rem;
+    top: 1rem;
+  }
+  .mobile-logo-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.65rem;
+  }
+  .mobile-logo-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: #c1440e; /* Terracotta block */
+    color: #ffffff;
+    font-size: 1.85rem;
+    box-shadow: 0 8px 24px rgba(193, 68, 14, 0.25);
+  }
+  .mobile-brand-title {
+    font-family: var(--font-display);
+    font-size: 1.85rem;
+    font-weight: 900;
+    color: #261f1b;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .mobile-brand-subtitle {
+    font-size: 0.85rem;
+    color: var(--color-muted);
+    margin: 0;
+    font-weight: 500;
   }
 }

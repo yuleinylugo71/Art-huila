@@ -20,13 +20,14 @@ document.addEventListener('languageChanged', () => {
   if (activeSection === 'mi-perfil') loadProfile();
   if (activeSection === 'mis-productos') loadMyProducts();
   if (activeSection === 'mis-ventas') loadMySales();
+  if (activeSection === 'mis-compras') loadMyPurchases();
   
   // Re-run selects to translate placeholders
   initSelects();
 });
 
 function getActiveSectionName() {
-  const sections = ['resumen', 'mis-productos', 'nuevo-producto', 'mi-perfil', 'mis-ventas'];
+  const sections = ['resumen', 'mis-productos', 'nuevo-producto', 'mi-perfil', 'mis-ventas', 'mis-compras'];
   for (let s of sections) {
     const el = document.getElementById(`section-${s}`);
     if (el && !el.classList.contains('hidden')) return s;
@@ -44,10 +45,14 @@ function updateWelcomeMessage() {
   if (welcome) {
     welcome.textContent = i18next.t('artisan.hello', { name: artisanProfile?.user?.full_name || Auth.getUser().full_name });
   }
+  const mobileWelcome = document.getElementById('mobile-welcome-msg');
+  if (mobileWelcome) {
+    mobileWelcome.textContent = artisanProfile?.user?.full_name || Auth.getUser().full_name;
+  }
 }
 
 function showSection(name) {
-  ['resumen', 'mis-productos', 'nuevo-producto', 'mi-perfil', 'mis-ventas'].forEach(s => {
+  ['resumen', 'mis-productos', 'nuevo-producto', 'mi-perfil', 'mis-ventas', 'mis-compras'].forEach(s => {
     const el = document.getElementById(`section-${s}`);
     if (el) el.classList.add('hidden');
   });
@@ -75,56 +80,184 @@ function showSection(name) {
     }
   });
 
+  // Keep Perfil active in mobile bottom nav
+  document.querySelectorAll('.mobile-bottom-nav .nav-item').forEach(link => {
+    link.classList.remove('active');
+  });
+  const mNavPerfil = document.getElementById('m-nav-perfil');
+  if (mNavPerfil) {
+    mNavPerfil.classList.add('active');
+  }
+
+  // Update active status on mobile pill tabs
+  document.querySelectorAll('.mobile-pill-tabs .pill-tab').forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.getAttribute('onclick') === `showSection('${name}')`) {
+      btn.classList.add('active');
+    }
+  });
+
   if (name === 'resumen') updateTasksAndMetrics();
   if (name === 'mi-perfil') loadProfile();
   if (name === 'mis-productos') loadMyProducts();
   if (name === 'mis-ventas') loadMySales();
+  if (name === 'mis-compras') loadMyPurchases();
 }
 
 async function loadMySales() {
   const list = document.getElementById('sales-list');
+  const mobileContainer = document.getElementById('sales-cards-mobile');
+  
   list.innerHTML = `<tr><td colspan="6" style="text-align:center;"><div class="spinner"></div></td></tr>`;
+  if (mobileContainer) mobileContainer.innerHTML = `<div style="text-align:center;padding:2rem;"><div class="spinner"></div></div>`;
+  
   try {
     const sales = await apiFetch('/orders/artisan/sales');
     if (sales.length === 0) {
       list.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--color-muted);padding:2rem;">${i18next.t('artisan.noSalesYet')}</td></tr>`;
+      if (mobileContainer) mobileContainer.innerHTML = `<div style="text-align:center;color:var(--color-muted);padding:2rem;">${i18next.t('artisan.noSalesYet')}</div>`;
       return;
     }
-    list.innerHTML = sales.map(s => `
-      <tr>
-        <td style="font-size:0.85rem;">${new Date(s.order.created_at).toLocaleDateString(i18next.language === 'es' ? 'es-CO' : 'en-US')}</td>
-        <td>
-          <div style="display:flex; align-items:center; gap:0.5rem;">
-            <img src="${s.product?.images?.[0]?.url || '/img/placeholder.jpg'}" style="width:30px;height:30px;object-fit:cover;border-radius:4px;"/>
-            <span style="font-weight:500;">${s.product?.name || i18next.t('artisan.productDeleted')}</span>
+    // Group sales (order items) by order ID
+    const groupedSales = {};
+    sales.forEach(s => {
+      const orderId = s.order.id;
+      if (!groupedSales[orderId]) {
+        groupedSales[orderId] = {
+          order: s.order,
+          items: []
+        };
+      }
+      groupedSales[orderId].items.push(s);
+    });
+
+    // Convert grouped object to array sorted by order date DESC
+    const sortedGroups = Object.values(groupedSales).sort((a, b) => {
+      return new Date(b.order.created_at).getTime() - new Date(a.order.created_at).getTime();
+    });
+
+    list.innerHTML = sortedGroups.map(g => {
+      const o = g.order;
+      const totalQty = g.items.reduce((sum, item) => sum + item.quantity, 0);
+      const totalAmount = g.items.reduce((sum, item) => sum + item.subtotal, 0);
+
+      // Generate HTML for products in this order
+      const productsHtml = g.items.map(item => `
+        <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom: 0.25rem;">
+          <img src="${item.product?.images?.[0]?.url || '/img/placeholder.jpg'}" style="width:30px;height:30px;object-fit:cover;border-radius:4px;"/>
+          <span style="font-weight:500;">${item.product?.name || i18next.t('artisan.productDeleted')}</span>
+          <span style="color:var(--color-muted); font-size:0.8rem; font-weight:600;">(x${item.quantity})</span>
+        </div>
+      `).join('');
+
+      let statusHtml = '';
+      if (o.status === 'paid') {
+        statusHtml = `
+          <select onchange="updateArtisanOrderStatus('${o.id}', this.value)" class="form-control-sm" style="color:#16a34a; border-color:#22c55e; font-weight:700; padding:2px 5px; border-radius:4px; outline:none;">
+            <option value="paid" selected style="color:#16a34a; font-weight:700;">🟢 ${i18next.t('order.statusPaid')}</option>
+            <option value="preparing" style="color:#d97706; font-weight:700;">🟡 ${i18next.t('order.statusPreparing')}</option>
+          </select>
+        `;
+      } else if (o.status === 'preparing') {
+        statusHtml = `
+          <select onchange="updateArtisanOrderStatus('${o.id}', this.value)" class="form-control-sm" style="color:#d97706; border-color:#f59e0b; font-weight:700; padding:2px 5px; border-radius:4px; outline:none;">
+            <option value="preparing" selected style="color:#d97706; font-weight:700;">🟡 ${i18next.t('order.statusPreparing')}</option>
+            <option value="shipped" style="color:#7c3aed; font-weight:700;">🚀 ${i18next.t('order.statusShipped')}</option>
+          </select>
+        `;
+      } else if (o.status === 'shipped') {
+        statusHtml = `<span style="color:#7c3aed; background:#f5f3ff; padding:0.25rem 0.5rem; border-radius:6px; border:1px solid #ddd6fe; font-weight:700; font-size:0.8rem; display:inline-block;"><i class="fa-solid fa-rocket"></i> ${i18next.t('order.statusShipped')}</span>`;
+      } else if (o.status === 'delivered') {
+        statusHtml = `<span style="color:#10b981; background:#ecfdf5; padding:0.25rem 0.5rem; border-radius:6px; border:1px solid #a7f3d0; font-weight:700; font-size:0.8rem; display:inline-block;"><i class="fa-solid fa-check"></i> ${i18next.t('order.statusDelivered')}</span>`;
+      } else if (o.status === 'pending') {
+        statusHtml = `<span style="color:#d97706; background:#fffbeb; padding:0.25rem 0.5rem; border-radius:6px; border:1px solid #fef3c7; font-weight:700; font-size:0.8rem; display:inline-block;"><i class="fa-solid fa-hourglass-half"></i> ${i18next.t('order.statusPending')}</span>`;
+      } else {
+        statusHtml = `<span style="color:#dc2626; background:#fef2f2; padding:0.25rem 0.5rem; border-radius:6px; border:1px solid #fecaca; font-weight:700; font-size:0.8rem; display:inline-block;"><i class="fa-solid fa-xmark"></i> ${i18next.t('order.statusCancelled', { defaultValue: 'Cancelado' })}</span>`;
+      }
+
+      return `
+        <tr>
+          <td style="font-size:0.85rem; vertical-align: middle;">${new Date(o.created_at).toLocaleDateString(i18next.language === 'es' ? 'es-CO' : 'en-US')}</td>
+          <td style="vertical-align: middle;">
+            ${productsHtml}
+          </td>
+          <td style="font-size:0.85rem; vertical-align: middle;">${o.user.full_name}</td>
+          <td style="text-align:center; vertical-align: middle; font-weight: 550;">${totalQty}</td>
+          <td style="font-weight:600; color:var(--color-primary); vertical-align: middle;">${formatPrice(totalAmount)}</td>
+          <td style="vertical-align: middle;">
+            ${statusHtml}
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    // Render mobile cards
+    if (mobileContainer) {
+      mobileContainer.innerHTML = sortedGroups.map(g => {
+        const o = g.order;
+        const totalQty = g.items.reduce((sum, item) => sum + item.quantity, 0);
+        const totalAmount = g.items.reduce((sum, item) => sum + item.subtotal, 0);
+        const productsText = g.items.map(item => `${item.product?.name || i18next.t('artisan.productDeleted')} (x${item.quantity})`).join(', ');
+        const dateStr = new Date(o.created_at).toLocaleDateString(i18next.language === 'es' ? 'es-CO' : 'en-US');
+        
+        let statusHtml = '';
+        if (o.status === 'paid') {
+          statusHtml = `
+            <select onchange="updateArtisanOrderStatus('${o.id}', this.value)" class="form-control-sm" style="color:#16a34a; border-color:#22c55e; font-weight:700; padding:4px 8px; border-radius:6px; outline:none; font-size:0.8rem; width:100%;">
+              <option value="paid" selected style="color:#16a34a;">🟢 ${i18next.t('order.statusPaid')}</option>
+              <option value="preparing" style="color:#d97706;">🟡 ${i18next.t('order.statusPreparing')}</option>
+            </select>
+          `;
+        } else if (o.status === 'preparing') {
+          statusHtml = `
+            <select onchange="updateArtisanOrderStatus('${o.id}', this.value)" class="form-control-sm" style="color:#d97706; border-color:#f59e0b; font-weight:700; padding:4px 8px; border-radius:6px; outline:none; font-size:0.8rem; width:100%;">
+              <option value="preparing" selected style="color:#d97706;">🟡 ${i18next.t('order.statusPreparing')}</option>
+              <option value="shipped" style="color:#7c3aed;">🚀 ${i18next.t('order.statusShipped')}</option>
+            </select>
+          `;
+        } else if (o.status === 'shipped') {
+          statusHtml = `<span style="color:#7c3aed; background:#f5f3ff; padding:0.25rem 0.5rem; border-radius:6px; border:1px solid #ddd6fe; font-weight:700; font-size:0.8rem; display:inline-block; text-align:center; width:100%; box-sizing:border-box;"><i class="fa-solid fa-rocket"></i> ${i18next.t('order.statusShipped')}</span>`;
+        } else if (o.status === 'delivered') {
+          statusHtml = `<span style="color:#10b981; background:#ecfdf5; padding:0.25rem 0.5rem; border-radius:6px; border:1px solid #a7f3d0; font-weight:700; font-size:0.8rem; display:inline-block; text-align:center; width:100%; box-sizing:border-box;"><i class="fa-solid fa-check"></i> ${i18next.t('order.statusDelivered')}</span>`;
+        } else if (o.status === 'pending') {
+          statusHtml = `<span style="color:#d97706; background:#fffbeb; padding:0.25rem 0.5rem; border-radius:6px; border:1px solid #fef3c7; font-weight:700; font-size:0.8rem; display:inline-block; text-align:center; width:100%; box-sizing:border-box;"><i class="fa-solid fa-hourglass-half"></i> ${i18next.t('order.statusPending')}</span>`;
+        } else {
+          statusHtml = `<span style="color:#dc2626; background:#fef2f2; padding:0.25rem 0.5rem; border-radius:6px; border:1px solid #fecaca; font-weight:700; font-size:0.8rem; display:inline-block; text-align:center; width:100%; box-sizing:border-box;"><i class="fa-solid fa-xmark"></i> ${i18next.t('order.statusCancelled', { defaultValue: 'Cancelado' })}</span>`;
+        }
+
+        const productImagesHtml = g.items.map(item => 
+          `<img src="${item.product?.images?.[0]?.url || '/img/placeholder.jpg'}" style="width:40px;height:40px;object-fit:cover;border-radius:8px;border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.1);" alt=""/>`
+        ).join('');
+
+        return `
+          <div class="sale-mobile-card">
+            <div class="sale-card-header">
+              <div class="sale-card-images">${productImagesHtml}</div>
+              <div class="sale-card-date"><i class="fa-regular fa-calendar"></i> ${dateStr}</div>
+            </div>
+            <div class="sale-card-body">
+              <div class="sale-card-products">${productsText}</div>
+              <div class="sale-card-row">
+                <span class="sale-card-label">${i18next.t('admin.thCustomer')}:</span>
+                <span class="sale-card-value">${o.user.full_name}</span>
+              </div>
+              <div class="sale-card-row">
+                <span class="sale-card-label">${i18next.t('buyer.quantityLabelShort')}:</span>
+                <span class="sale-card-value">${totalQty}</span>
+              </div>
+              <div class="sale-card-row">
+                <span class="sale-card-label">${i18next.t('admin.thTotal')}:</span>
+                <span class="sale-card-value sale-card-total">${formatPrice(totalAmount)}</span>
+              </div>
+            </div>
+            <div class="sale-card-footer">${statusHtml}</div>
           </div>
-        </td>
-        <td style="font-size:0.85rem;">${s.order.user.full_name}</td>
-        <td style="text-align:center;">${s.quantity}</td>
-        <td style="font-weight:600;color:var(--color-primary);">${formatPrice(s.subtotal)}</td>
-        <td>
-          ${s.order.status === 'paid'
-            ? `<select onchange="updateArtisanOrderStatus('${s.order.id}', this.value)" class="form-control-sm" style="color:#16a34a; border-color:#22c55e; font-weight:700; padding:2px 5px; border-radius:4px; outline:none;">
-                 <option value="paid" selected style="color:#16a34a; font-weight:700;">🟢 ${i18next.t('order.statusPaid')}</option>
-                 <option value="preparing" style="color:#d97706; font-weight:700;">🟡 ${i18next.t('order.statusPreparing')}</option>
-               </select>`
-            : s.order.status === 'preparing'
-              ? `<select onchange="updateArtisanOrderStatus('${s.order.id}', this.value)" class="form-control-sm" style="color:#d97706; border-color:#f59e0b; font-weight:700; padding:2px 5px; border-radius:4px; outline:none;">
-                   <option value="preparing" selected style="color:#d97706; font-weight:700;">🟡 ${i18next.t('order.statusPreparing')}</option>
-                   <option value="shipped" style="color:#7c3aed; font-weight:700;">🚀 ${i18next.t('order.statusShipped')}</option>
-                 </select>`
-              : s.order.status === 'shipped'
-                ? `<span style="color:#7c3aed; background:#f5f3ff; padding:0.25rem 0.5rem; border-radius:6px; border:1px solid #ddd6fe; font-weight:700; font-size:0.8rem; display:inline-block;"><i class="fa-solid fa-rocket"></i> ${i18next.t('order.statusShipped')}</span>`
-                : s.order.status === 'delivered'
-                  ? `<span style="color:#10b981; background:#ecfdf5; padding:0.25rem 0.5rem; border-radius:6px; border:1px solid #a7f3d0; font-weight:700; font-size:0.8rem; display:inline-block;"><i class="fa-solid fa-check"></i> ${i18next.t('order.statusDelivered')}</span>`
-                  : s.order.status === 'pending'
-                    ? `<span style="color:#d97706; background:#fffbeb; padding:0.25rem 0.5rem; border-radius:6px; border:1px solid #fef3c7; font-weight:700; font-size:0.8rem; display:inline-block;"><i class="fa-solid fa-hourglass-half"></i> ${i18next.t('order.statusPending')}</span>`
-                    : `<span style="color:#dc2626; background:#fef2f2; padding:0.25rem 0.5rem; border-radius:6px; border:1px solid #fecaca; font-weight:700; font-size:0.8rem; display:inline-block;"><i class="fa-solid fa-xmark"></i> ${i18next.t('order.statusCancelled', { defaultValue: 'Cancelado' })}</span>`}
-        </td>
-      </tr>
-    `).join('');
+        `;
+      }).join('');
+    }
   } catch (e) {
     list.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--color-danger);">${e.message}</td></tr>`;
+    if (mobileContainer) mobileContainer.innerHTML = `<div style="text-align:center;color:var(--color-danger);padding:2rem;">${e.message}</div>`;
   }
 }
 
@@ -171,6 +304,9 @@ async function initProfile() {
     }
     updateWelcomeMessage();
     updateTasksAndMetrics();
+    if (typeof window.updateMobileAvatar === 'function') {
+      window.updateMobileAvatar(artisanProfile?.avatar_url);
+    }
   } catch (e) { 
     console.error(e); 
   }
@@ -193,17 +329,27 @@ async function loadMyProducts() {
     }
     grid.innerHTML = products.map(p => `
       <div class="card product-card">
-        ${p.images && p.images[0] ? `<img class="product-img" src="${p.images[0].url}" alt="${p.name}" loading="lazy"/>` : '<div class="product-img-placeholder"><i class="fa-solid fa-vase"></i></div>'}
-        <div class="card-body">
-          <div class="product-name">${p.name}</div>
+        <div class="product-img-wrapper">
+          ${p.images && p.images[0] ? `<img class="product-img" src="${p.images[0].url}" alt="${p.name}" loading="lazy"/>` : '<div class="product-img-placeholder"><i class="fa-solid fa-palette fa-2x"></i></div>'}
+          ${p.stock === 0 ? `<span class="product-badge badge-out-of-stock">${i18next.t('catalog.outOfStock', { defaultValue: 'Agotado' })}</span>` : ''}
+        </div>
+        <div class="product-card-body">
+          <h4 class="product-name">${p.name}</h4>
           <div class="product-price">${formatPrice(p.price)}</div>
           <div class="product-meta">
-            <span>Stock: ${p.stock}</span>
-            <span class="badge badge-verified">${i18next.t('artisan.publishedStatus')}</span>
+            <span class="stock-label">
+              ${p.stock === 0 
+                ? `<span style="color:#dc2626;font-weight:700;"><i class="fa-solid fa-circle-xmark"></i> Sin stock</span>`
+                : p.stock <= 3
+                  ? `<span style="color:#d97706;font-weight:700;"><i class="fa-solid fa-triangle-exclamation"></i> ¡Últimas ${p.stock}!</span>`
+                  : `Stock: <strong>${p.stock}</strong>`
+              }
+            </span>
+            <span class="badge badge-verified" style="background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0;"><i class="fa-solid fa-circle-check"></i> ${i18next.t('artisan.publishedStatus', { defaultValue: 'Publicado' })}</span>
           </div>
-          <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
-            <a href="producto.html?slug=${p.slug}" class="btn btn-ghost btn-sm">${i18next.t('common.view')}</a>
-            <button onclick="editProduct('${p.slug}')" class="btn btn-outline btn-sm">${i18next.t('common.edit')}</button>
+          <div class="product-card-actions">
+            <a href="producto.html?slug=${p.slug}" class="btn btn-ghost btn-sm" style="flex:1;"><i class="fa-regular fa-eye"></i> ${i18next.t('common.view')}</a>
+            <button onclick="editProduct('${p.slug}')" class="btn btn-outline btn-sm" style="flex:1;"><i class="fa-solid fa-pen-to-square"></i> ${i18next.t('common.edit')}</button>
           </div>
         </div>
       </div>
@@ -218,6 +364,25 @@ async function loadProfile() {
     const p = await apiFetch('/artisans/me');
     artisanProfile = p;
     
+    // Fill display header details
+    const dispName = document.getElementById('profile-display-name');
+    if (dispName) dispName.textContent = p.user?.full_name || Auth.getUser().full_name;
+    
+    const dispCat = document.getElementById('profile-display-category');
+    if (dispCat) dispCat.innerHTML = `<i class="fa-solid fa-palette"></i> ${p.category?.name || 'Artesano'}`;
+    
+    const dispReg = document.getElementById('profile-display-region');
+    if (dispReg) dispReg.innerHTML = `<i class="fa-solid fa-location-dot"></i> ${p.region?.name || 'Huila'}`;
+
+    const headerAvatar = document.getElementById('avatar-preview-header');
+    if (headerAvatar) {
+      if (p.avatar_url) {
+        headerAvatar.innerHTML = `<img src="${p.avatar_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;"/>`;
+      } else {
+        headerAvatar.innerHTML = '<i class="fa-solid fa-user"></i>';
+      }
+    }
+
     // Fill basic details
     document.getElementById('profile-full-name').value = p.user?.full_name || Auth.getUser().full_name;
     document.getElementById('profile-email').value = p.user?.email || Auth.getUser().email;
@@ -235,6 +400,9 @@ async function loadProfile() {
       document.getElementById('avatar-preview').innerHTML = `<img src="${p.avatar_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;"/>`;
     } else {
       document.getElementById('avatar-preview').innerHTML = '<i class="fa-solid fa-user"></i>';
+    }
+    if (typeof window.updateMobileAvatar === 'function') {
+      window.updateMobileAvatar(p.avatar_url);
     }
 
     // Document previews (Front & Back)
@@ -299,20 +467,49 @@ async function updateTasksAndMetrics() {
     if (totalRevenue === null || totalRevenue === undefined || isNaN(totalRevenue)) {
       totalRevenue = 0;
     }
-    document.getElementById('metric-revenue').textContent = formatPrice(totalRevenue);
+    const metricRevenueEl = document.getElementById('metric-revenue');
+    if (metricRevenueEl) metricRevenueEl.textContent = formatPrice(totalRevenue);
 
     const totalStock = products.reduce((acc, curr) => acc + (curr.stock || 0), 0);
-    document.getElementById('metric-stock').textContent = totalStock;
+    const metricStockEl = document.getElementById('metric-stock');
+    if (metricStockEl) metricStockEl.textContent = totalStock;
 
     const now = new Date();
     const currentMonthSales = sales.filter(s => {
       const sDate = new Date(s.order.created_at);
       return sDate.getMonth() === now.getMonth() && sDate.getFullYear() === now.getFullYear();
     }).length;
-    document.getElementById('metric-sales').textContent = currentMonthSales;
+    const metricSalesEl = document.getElementById('metric-sales');
+    if (metricSalesEl) metricSalesEl.textContent = currentMonthSales;
 
     const pendingOrders = sales.filter(s => s.order.status === 'paid' || s.order.status === 'preparing').length;
-    document.getElementById('metric-orders').textContent = pendingOrders;
+    const metricOrdersEl = document.getElementById('metric-orders');
+    if (metricOrdersEl) metricOrdersEl.textContent = pendingOrders;
+
+    // Calculate and populate Rating and Last Order on desktop
+    const metricLastOrderEl = document.getElementById('metric-last-order');
+    if (metricLastOrderEl) {
+      if (sales && sales.length > 0) {
+        const sortedSales = [...sales].sort((a, b) => new Date(b.order.created_at).getTime() - new Date(a.order.created_at).getTime());
+        const latestSale = sortedSales[0];
+        const prodName = latestSale.product?.name || 'Producto';
+        const orderDate = new Date(latestSale.order.created_at).toLocaleDateString(i18next.language === 'es' ? 'es-ES' : 'en-US', { day: 'numeric', month: 'short' });
+        metricLastOrderEl.textContent = `${prodName} — ${orderDate}`;
+      } else {
+        metricLastOrderEl.textContent = i18next.t('artisan.noneYet');
+      }
+    }
+
+    const metricRatingEl = document.getElementById('metric-rating');
+    if (metricRatingEl) {
+      if (sales && sales.length > 0) {
+        const reviewCount = Math.max(1, Math.round(sales.length * 0.75));
+        const reviewText = reviewCount > 1 ? i18next.t('artisan.reviewsSuffix') : i18next.t('artisan.reviewSuffix');
+        metricRatingEl.innerHTML = `4.8 <i class="fa-solid fa-star" style="color:var(--color-primary-light);"></i> (${reviewCount} ${reviewText})`;
+      } else {
+        metricRatingEl.innerHTML = `5.0 <i class="fa-solid fa-star" style="color:var(--color-primary-light);"></i> (0 ${i18next.t('artisan.reviewsSuffix')})`;
+      }
+    }
 
     // Update profile completeness card
     updateProfileCompleteness(sales, products);
@@ -443,72 +640,11 @@ function updateProfileCompleteness(sales, products) {
   const percentage = Math.round((completedItemsCount / 5) * 100);
 
   const card = document.getElementById('profile-completeness-card');
-  const promotedGrid = document.getElementById('promoted-metrics-grid');
-  const bottomGrid = document.getElementById('metrics-grid-bottom');
 
   if (percentage === 100) {
-    // 1. HIDE WHEN COMPLETE
     if (card) card.classList.add('hidden');
-    if (bottomGrid) bottomGrid.classList.add('hidden');
-    
-    // 2. PROMOTE METRICS ON COMPLETION
-    if (promotedGrid) {
-      promotedGrid.classList.remove('hidden');
-      
-      // Populate Promoted Metrics Grid
-      let totalRevenue = sales ? sales.reduce((acc, curr) => acc + (curr.subtotal || 0), 0) : 0;
-      if (totalRevenue === null || totalRevenue === undefined || isNaN(totalRevenue)) {
-        totalRevenue = 0;
-      }
-      const totalStock = products ? products.reduce((acc, curr) => acc + (curr.stock || 0), 0) : 0;
-      const now = new Date();
-      const currentMonthSales = sales ? sales.filter(s => {
-        const sDate = new Date(s.order.created_at);
-        return sDate.getMonth() === now.getMonth() && sDate.getFullYear() === now.getFullYear();
-      }).length : 0;
-      const pendingOrders = sales ? sales.filter(s => s.order.status === 'paid' || s.order.status === 'preparing').length : 0;
-
-      const pRevenue = document.getElementById('promoted-revenue');
-      const pStock = document.getElementById('promoted-stock');
-      const pSales = document.getElementById('promoted-sales');
-      const pOrders = document.getElementById('promoted-orders');
-
-      if (pRevenue) pRevenue.textContent = formatPrice(totalRevenue);
-      if (pStock) pStock.textContent = totalStock;
-      if (pSales) pSales.textContent = currentMonthSales;
-      if (pOrders) pOrders.textContent = pendingOrders;
-
-      // Last Order Received calculation
-      const pLastOrder = document.getElementById('promoted-last-order');
-      if (pLastOrder) {
-        if (sales && sales.length > 0) {
-          const sortedSales = [...sales].sort((a, b) => new Date(b.order.created_at).getTime() - new Date(a.order.created_at).getTime());
-          const latestSale = sortedSales[0];
-          const prodName = latestSale.product?.name || 'Producto';
-          const orderDate = new Date(latestSale.order.created_at).toLocaleDateString(i18next.language === 'es' ? 'es-ES' : 'en-US', { day: 'numeric', month: 'short' });
-          pLastOrder.textContent = `${prodName} — ${orderDate}`;
-        } else {
-          pLastOrder.textContent = i18next.t('artisan.noneYet');
-        }
-      }
-
-      // Average Rating with star display
-      const pRating = document.getElementById('promoted-rating');
-      if (pRating) {
-        if (sales && sales.length > 0) {
-          const reviewCount = Math.max(1, Math.round(sales.length * 0.75));
-          const reviewText = reviewCount > 1 ? i18next.t('artisan.reviewsSuffix') : i18next.t('artisan.reviewSuffix');
-          pRating.innerHTML = `4.8 <i class="fa-solid fa-star" style="color:var(--color-primary-light);"></i> (${reviewCount} ${reviewText})`;
-        } else {
-          pRating.innerHTML = `5.0 <i class="fa-solid fa-star" style="color:var(--color-primary-light);"></i> (0 ${i18next.t('artisan.reviewsSuffix')})`;
-        }
-      }
-    }
   } else {
-    // 3. PARTIAL COMPLETION: Show card, hide promoted metrics
     if (card) card.classList.remove('hidden');
-    if (promotedGrid) promotedGrid.classList.add('hidden');
-    if (bottomGrid) bottomGrid.classList.remove('hidden');
 
     const bar = document.getElementById('profile-completeness-bar');
     const text = document.getElementById('profile-completeness-percentage');
@@ -902,11 +1038,39 @@ window.cancelEdit = function() {
   document.getElementById('btn-publish').disabled = false;
 };
 
-// Dual Panel drawer toggle behaviors
+// Dual Panel drawer toggle behaviors with Mobile Overlay Support
 window.toggleRightPanel = function() {
   const layout = document.querySelector('.dashboard-layout');
   if (layout) {
     layout.classList.toggle('right-panel-collapsed');
+    const overlay = document.getElementById('right-panel-overlay');
+    if (overlay) {
+      if (layout.classList.contains('right-panel-collapsed')) {
+        overlay.classList.remove('open');
+      } else {
+        overlay.classList.add('open');
+      }
+    }
+  }
+};
+
+// Toggle Mobile Menu Drawer
+window.toggleMobileMenu = function() {
+  const drawer = document.getElementById('mobile-drawer');
+  if (drawer) {
+    drawer.classList.toggle('open');
+  }
+};
+
+// Update Mobile Welcome Avatar Circle
+window.updateMobileAvatar = function(avatarUrl) {
+  const avatarCircle = document.querySelector('.mobile-avatar-circle');
+  if (avatarCircle) {
+    if (avatarUrl) {
+      avatarCircle.innerHTML = `<img src="${avatarUrl}" alt="Avatar" style="width:100%;height:100%;border-radius:50%;object-fit:cover;"/>`;
+    } else {
+      avatarCircle.innerHTML = `<img src="/img/artisan-bear.png" alt="Oso Artesano" style="width:100%;height:100%;border-radius:50%;object-fit:cover;"/>`;
+    }
   }
 };
 
@@ -931,4 +1095,169 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Init
-showSection('resumen');
+const urlParams = new URLSearchParams(window.location.search);
+const sectionParam = urlParams.get('section');
+if (sectionParam) {
+  showSection(sectionParam);
+} else {
+  showSection('resumen');
+}
+
+// ── BUYER ORDERS ON ARTISAN DASHBOARD LOGIC ──
+let allBuyerOrders = [];
+let currentBuyerOrdersPage = 1;
+const BUYER_ORDERS_PER_PAGE = 3;
+
+async function loadMyPurchases() {
+  const container = document.getElementById('orders-container');
+  try {
+    allBuyerOrders = await apiFetch('/orders');
+    currentBuyerOrdersPage = 1;
+    renderBuyerStats();
+    renderBuyerOrdersPage();
+  } catch (e) {
+    container.innerHTML = `<div class="error-msg">${i18next.t('buyer.errorLoadingOrders')}${e.message}</div>`;
+  }
+}
+
+function renderBuyerStats() {
+  const statsContainer = document.getElementById('buyer-stats-container');
+  if (!statsContainer) return;
+
+  const totalOrders = allBuyerOrders.length;
+  const totalSpent = allBuyerOrders.reduce((sum, o) => sum + Number(o.total_amount), 0);
+
+  statsContainer.innerHTML = `
+      <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 100px; background: white; border: 1.2px solid #ebdcd0; border-radius: 16px; padding: 0.85rem; text-align: center; box-shadow: var(--shadow-xs);">
+          <div style="font-size: 1.25rem; font-weight: 800; color: #261f1b; font-family: var(--font-display);">${totalOrders}</div>
+          <div style="font-size: 0.62rem; font-weight: 700; color: var(--color-muted); text-transform: uppercase; margin-top: 0.15rem; letter-spacing: 0.03em;">Pedidos</div>
+        </div>
+        <div style="flex: 1; min-width: 100px; background: white; border: 1.2px solid #ebdcd0; border-radius: 16px; padding: 0.85rem; text-align: center; box-shadow: var(--shadow-xs);">
+          <div style="font-size: 1.25rem; font-weight: 800; color: #C84B11; font-family: var(--font-display);">$${Number(totalSpent).toLocaleString('es-CO')}</div>
+          <div style="font-size: 0.62rem; font-weight: 700; color: var(--color-muted); text-transform: uppercase; margin-top: 0.15rem; letter-spacing: 0.03em;">Inversión</div>
+        </div>
+      </div>
+  `;
+}
+
+function renderBuyerOrdersPage() {
+  const container = document.getElementById('orders-container');
+  if (allBuyerOrders.length === 0) {
+    container.innerHTML = `
+        <div class="empty-state" style="text-align:center; padding:3rem 1.5rem;">
+            <h3>${i18next.t('buyer.noOrdersTitle') || 'No tienes pedidos'}</h3>
+            <p>${i18next.t('buyer.noOrdersDesc') || 'Aún no has realizado ninguna compra.'}</p>
+            <a href="/catalogo.html" class="btn btn-primary mt-2">${i18next.t('nav.viewCatalog') || 'Ver catálogo'}</a>
+        </div>
+    `;
+    document.getElementById('buyer-orders-pagination').innerHTML = '';
+    return;
+  }
+
+  const paginated = allBuyerOrders.slice((currentBuyerOrdersPage - 1) * BUYER_ORDERS_PER_PAGE, currentBuyerOrdersPage * BUYER_ORDERS_PER_PAGE);
+  const dateLocale = i18next.language === 'es' ? 'es-CO' : 'en-US';
+
+  container.innerHTML = paginated.map(order => `
+      <div class="order-card">
+          <div class="order-header">
+              <div>
+                  <div style="font-weight: bold; font-size:1.05rem; color:var(--color-text);">${i18next.t('buyer.orderIdLabel', { id: order.id.substring(0, 8) })}</div>
+                  <div style="font-size: 0.85rem; color: var(--color-muted); margin-top: 0.15rem;">${new Date(order.created_at).toLocaleDateString(dateLocale, { dateStyle: 'medium' })}</div>
+              </div>
+              <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 0.25rem;">
+                  <span class="badge ${getStatusBadge(order.status)}">${translateStatus(order.status)}</span>
+                  <span class="badge ${getPaymentStatusBadge(order.payment_status || 'pending')}">${translatePaymentStatus(order.payment_status || 'pending')}</span>
+                  <div style="font-weight: bold; color: var(--color-primary); margin-top: 0.1rem; font-size: 1.1rem;">$${Number(order.total_amount).toLocaleString('es-CO')}</div>
+              </div>
+          </div>
+          <div class="order-items">
+              ${order.items.map(item => `
+                  <div class="order-item">
+                      <img src="${getImageUrl(item.product?.images?.[0]?.url)}" alt="${item.product?.name || i18next.t('buyer.productDeleted')}" />
+                      <div style="flex: 1;">
+                          <div style="font-weight: 600; font-size:0.95rem;">${item.product?.name || i18next.t('buyer.productDeleted')}</div>
+                          <div style="font-size: 0.85rem; color: var(--color-muted); margin-top:0.15rem;">${i18next.t('buyer.quantityLabel') || 'Cantidad: '}${item.quantity} | ${i18next.t('buyer.priceLabel') || 'Precio: '}$${Number(item.unit_price || 0).toLocaleString('es-CO')}</div>
+                      </div>
+                      ${order.status === 'delivered' && item.product ? `
+                          <a href="/producto.html?slug=${item.product.slug}#reviews-section" class="btn btn-ghost btn-sm" style="color:var(--color-primary); border: 1px solid var(--color-primary); border-radius:4px;">${i18next.t('buyer.rateBtn') || 'Calificar'}</a>
+                      ` : ''}
+                  </div>
+              `).join('')}
+          </div>
+          ${order.tracking_number ? `
+              <div style="display: flex; align-items: center; gap: 0.4rem; margin-top: 0.65rem; margin-bottom: 0.25rem; background: #faf8f5; border: 1.2px solid #ebdcd0; border-radius: 8px; padding: 0.4rem 0.65rem; width: fit-content; box-shadow: var(--shadow-xs);">
+                  <span style="font-size: 0.72rem; font-weight: 700; color: #4a3e35; font-family: var(--font-body);"><i class="fa-solid fa-truck" style="color:#C84B11; margin-right: 0.15rem;"></i> Guía: <code style="font-family: monospace; font-size: 0.78rem; font-weight: 800; color: #261f1b;">${order.tracking_number}</code></span>
+                  <button onclick="event.stopPropagation(); navigator.clipboard.writeText('${order.tracking_number}'); showToast('Guía copiada', 'success')" style="background: none; border: none; color: #64748b; font-size: 0.75rem; cursor: pointer; padding: 0.15rem; display: flex; align-items: center;" title="Copiar guía"><i class="fa-regular fa-copy"></i></button>
+              </div>
+          ` : ''}
+          <div class="order-footer" style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--color-border); padding-top:0.85rem; margin-top:0.85rem;">
+              <span style="font-size:0.85rem; color:var(--color-muted); font-weight:500;">${order.items.reduce((sum, i) => sum + i.quantity, 0)} artículos</span>
+              <a href="/pedido-detalle.html?id=${order.id}" class="btn btn-outline btn-sm" style="padding:0.4rem 0.8rem; font-size:0.8rem; display:inline-flex; align-items:center; gap:0.35rem; font-weight:600; border-color:var(--color-primary); color:var(--color-primary);">${i18next.t('buyer.viewDetailBtn') || 'Ver detalle'}</a>
+          </div>
+      </div>
+  `).join('');
+
+  renderPaginationControls(allBuyerOrders.length);
+}
+
+function renderPaginationControls(totalItems) {
+  const container = document.getElementById('buyer-orders-pagination');
+  if (!container) return;
+
+  if (totalItems <= BUYER_ORDERS_PER_PAGE) {
+    container.innerHTML = '';
+    return;
+  }
+
+  const totalPages = Math.ceil(totalItems / BUYER_ORDERS_PER_PAGE);
+
+  container.innerHTML = `
+      <div class="pagination-info">
+          Página <strong>${currentBuyerOrdersPage}</strong> de <strong>${totalPages}</strong> (${totalItems} pedidos)
+      </div>
+      <div class="pagination-buttons">
+          <button class="pagination-btn" ${currentBuyerOrdersPage === 1 ? 'disabled' : ''} onclick="changeBuyerOrdersPage(${currentBuyerOrdersPage - 1})">
+              <i class="fa-solid fa-chevron-left"></i> Anterior
+          </button>
+          <button class="pagination-btn" ${currentBuyerOrdersPage === totalPages ? 'disabled' : ''} onclick="changeBuyerOrdersPage(${currentBuyerOrdersPage + 1})">
+              Siguiente <i class="fa-solid fa-chevron-right"></i>
+          </button>
+      </div>
+  `;
+}
+
+window.changeBuyerOrdersPage = function(page) {
+  currentBuyerOrdersPage = page;
+  renderBuyerOrdersPage();
+};
+
+function getImageUrl(url) {
+  if (!url) return '/img/placeholder.jpg';
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  return `${BASE_URL}${url.startsWith('/') ? '' : '/'}${url}`;
+}
+
+function getStatusBadge(status) {
+  const map = {
+      'pending': 'badge-pending',
+      'paid': 'badge-paid',
+      'preparing': 'badge-preparing',
+      'shipped': 'badge-shipped',
+      'delivered': 'badge-delivered',
+      'cancelled': 'badge-cancelled'
+  };
+  return map[status] || '';
+}
+
+function translateStatus(status) {
+  return i18next.t(`order.status${status.charAt(0).toUpperCase() + status.slice(1)}`);
+}
+
+function getPaymentStatusBadge(status) {
+  return status === 'paid' ? 'badge-paid' : 'badge-pending';
+}
+
+function translatePaymentStatus(status) {
+  return status === 'paid' ? i18next.t('order.paymentPaid') : i18next.t('order.paymentPending');
+}

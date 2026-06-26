@@ -31,6 +31,7 @@ let PaymentsController = class PaymentsController {
     async getEpaycoConfig() {
         return {
             publicKey: this.configService.get('EPAYCO_PUBLIC_KEY'),
+            backendUrlPublic: this.configService.get('BACKEND_URL_PUBLIC'),
         };
     }
     async createPreference(orderId, user) {

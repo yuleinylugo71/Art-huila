@@ -26,6 +26,12 @@ export declare class AuthController {
     verifyEmail(token: string): Promise<{
         message: string;
     }>;
+    requestPasswordReset(email: string): Promise<{
+        message: string;
+    }>;
+    resetPassword(body: any): Promise<{
+        message: string;
+    }>;
     refresh(dto: RefreshDto): Promise<{
         access_token: string;
         refresh_token: string;

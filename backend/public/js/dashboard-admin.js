@@ -111,6 +111,10 @@ window.showSection = function(name) {
   if (name === 'resenas')      loadReportedReviews();
   if (name === 'estadisticas') loadStats();
   if (name === 'auditoria')    loadAudit();
+
+  if (window.innerWidth <= 768) {
+    document.querySelector('.dashboard-layout')?.classList.remove('sidebar-expanded');
+  }
 };
 
 // ─── STATS GLOBALES ────────────────────────────────────────────────────────
@@ -192,6 +196,40 @@ function renderArtisansPage() {
   `).join('');
 
   renderPaginationControls('artisans-pagination', globalArtisans.length, currentArtisansPage, ITEMS_PER_PAGE, 'changeArtisansPage');
+
+  // Mobile cards view
+  const mobileList = document.getElementById('artisans-cards-mobile');
+  if (mobileList) {
+    if (paginated.length === 0) {
+      mobileList.innerHTML = '<div class="table-empty" style="padding:2rem;text-align:center;">No hay artesanos en este estado</div>';
+    } else {
+      mobileList.innerHTML = paginated.map(a => `
+        <div class="mobile-card-item">
+          <div class="mc-row">
+            <div>
+              <div class="td-name" onclick="viewArtisan('${a.id}')">${a.user?.full_name || '—'}</div>
+              <div class="td-sub">${a.user?.email || ''}</div>
+            </div>
+            ${badgeStatus(a.verification_status)}
+          </div>
+          <div class="mc-row">
+            <span class="mc-label">Región</span>
+            <span class="mc-value td-location"><i class="fa-solid fa-location-dot"></i> ${a.region?.name || '—'}</span>
+          </div>
+          <div class="mc-row">
+            <span class="mc-label">Fecha Registro</span>
+            <span class="mc-value td-sub">${new Date(a.created_at).toLocaleDateString('es-CO')}</span>
+          </div>
+          <div class="mc-actions">
+            <button class="btn btn-ghost btn-sm" onclick="viewArtisan('${a.id}')" style="flex:0;"><i class="fa-solid fa-eye"></i></button>
+            ${a.verification_status !== 'verified' ? `<button class="btn btn-success btn-sm" onclick="approveArtisan('${a.id}')"><i class="fa-solid fa-check"></i> Aprobar</button>` : ''}
+            ${a.verification_status === 'pending' ? `<button class="btn btn-danger btn-sm" onclick="openReasonModal('Rechazar artesano','Se notificará al artesano por email.',() => rejectArtisan('${a.id}'))"><i class="fa-solid fa-xmark"></i> Rechazar</button>` : ''}
+            ${a.verification_status === 'verified' ? `<button class="btn btn-warning btn-sm" onclick="openReasonModal('Suspender artesano','El artesano perderá visibilidad en el catálogo.',() => suspendArtisan('${a.id}'))"><i class="fa-solid fa-ban"></i> Suspender</button>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+  }
 }
 
 window.viewArtisan = function(id) {
@@ -378,6 +416,46 @@ function renderCatalogPage() {
   `).join('');
 
   renderPaginationControls('catalog-pagination', filteredProducts.length, currentCatalogPage, ITEMS_PER_PAGE, 'changeCatalogPage');
+
+  // Mobile cards view
+  const mobileList = document.getElementById('products-cards-mobile');
+  if (mobileList) {
+    if (paginated.length === 0) {
+      mobileList.innerHTML = '<div class="table-empty" style="padding:2rem;text-align:center;">No hay productos</div>';
+    } else {
+      mobileList.innerHTML = paginated.map(p => `
+        <div class="mobile-card-item ${p.status === 'hidden' ? 'row-dimmed' : ''}">
+          <div class="mc-row">
+            <div>
+              <div class="td-name">${p.name}</div>
+              <div class="td-sub">${p.artisan?.user?.full_name || '—'}</div>
+            </div>
+            ${p.status === 'hidden'
+              ? '<span class="badge badge-hidden"><i class="fa-solid fa-eye-slash"></i> Oculto</span>'
+              : '<span class="badge badge-visible"><i class="fa-solid fa-eye"></i> Visible</span>'}
+          </div>
+          <div class="mc-row">
+            <span class="mc-label">Categoría</span>
+            <span class="badge badge-category">${p.category?.name || '—'}</span>
+          </div>
+          <div class="mc-row">
+            <span class="mc-label">Stock</span>
+            <span class="stock-badge ${p.stock <= 0 ? 'stock-out' : p.stock <= 5 ? 'stock-low' : ''}">${p.stock}</span>
+          </div>
+          <div class="mc-row">
+            <span class="mc-label">Precio</span>
+            <span class="td-price">${formatPrice(p.price)}</span>
+          </div>
+          <div class="mc-actions">
+            <button class="btn btn-outline btn-sm" title="${p.status === 'hidden' ? 'Mostrar' : 'Ocultar'}" onclick="toggleProductVisibility('${p.id}', '${p.status}')">
+              <i class="fa-solid ${p.status === 'hidden' ? 'fa-eye' : 'fa-eye-slash'}"></i> ${p.status === 'hidden' ? 'Mostrar' : 'Ocultar'}
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="openReasonModal('Eliminar producto','Esta acción notificará al artesano y no se puede deshacer.',() => deleteProduct('${p.id}'))"><i class="fa-solid fa-trash"></i> Eliminar</button>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
 }
 
 window.filterProducts = function() {
@@ -495,6 +573,44 @@ function renderOrdersPage() {
       </td>
     </tr>
   `).join('');
+  // Mobile cards view
+  const mobileList = document.getElementById('orders-cards-mobile');
+  if (mobileList) {
+    if (paginated.length === 0) {
+      mobileList.innerHTML = '<div class="table-empty" style="padding:2rem;text-align:center;">No hay pedidos</div>';
+    } else {
+      mobileList.innerHTML = paginated.map(o => `
+        <div class="mobile-card-item">
+          <div class="mc-row">
+            <div>
+              <div class="td-name">${o.user?.full_name || '—'}</div>
+              <div class="td-sub">${o.user?.email || ''}</div>
+            </div>
+            ${badgeOrderStatus(o.status)}
+          </div>
+          <div class="mc-row">
+            <span class="mc-label">Pedido</span>
+            <code class="order-id">#${o.id.substring(0,8)}</code>
+          </div>
+          <div class="mc-row">
+            <span class="mc-label">Fecha</span>
+            <span class="td-sub">${new Date(o.created_at).toLocaleDateString('es-CO')}</span>
+          </div>
+          <div class="mc-row">
+            <span class="mc-label">Total</span>
+            <span class="td-price">${formatPrice(o.total_amount)}</span>
+          </div>
+          ${o.tracking_number ? `<div class="mc-row"><span class="mc-label">Guía</span><code style="font-size:0.75rem;">${o.shipping_company || ''} · ${o.tracking_number}</code></div>` : ''}
+          <div class="mc-actions">
+            <button class="btn btn-outline btn-sm" onclick="viewOrder('${o.id}')"><i class="fa-solid fa-eye"></i> Ver</button>
+            ${o.status !== 'delivered' && o.status !== 'cancelled' ? `<button class="btn btn-primary btn-sm" onclick="openTrackingModal('${o.id}')"><i class="fa-solid fa-truck"></i> Guía</button>` : ''}
+            ${o.status !== 'cancelled' && o.status !== 'delivered' ? `<button class="btn btn-danger btn-sm" onclick="cancelOrder('${o.id}')"><i class="fa-solid fa-ban"></i></button>` : ''}
+            ${o.status === 'shipped' ? `<button class="btn btn-success btn-sm" onclick="markDelivered('${o.id}')"><i class="fa-solid fa-check"></i> Entregado</button>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+  }
 }
 
 window.filterOrders = function() {
@@ -875,6 +991,31 @@ function renderAuditPage() {
   `).join('');
 
   renderPaginationControls('audit-pagination', globalAuditLogs.length, currentAuditPage, ITEMS_PER_PAGE, 'changeAuditPage');
+
+  // Mobile cards view
+  const mobileList = document.getElementById('audit-cards-mobile');
+  if (mobileList) {
+    if (paginated.length === 0) {
+      mobileList.innerHTML = '<div class="table-empty" style="padding:2rem;text-align:center;">Sin registros de auditoría</div>';
+    } else {
+      mobileList.innerHTML = paginated.map(l => `
+        <div class="mobile-card-item">
+          <div class="mc-row">
+            <div>
+              <div class="td-name">${l.admin?.full_name || 'Admin'}</div>
+              <div class="td-sub">${new Date(l.created_at).toLocaleString('es-CO')}</div>
+            </div>
+            ${badgeAuditAction(l.action)}
+          </div>
+          <div class="mc-row">
+            <span class="mc-label">Referencia</span>
+            <code style="font-size:0.75rem;">${(l.target_id || '').substring(0,12)}</code>
+          </div>
+          ${l.details ? `<div class="mc-row"><span class="mc-label">Detalles</span><span class="td-sub">${l.details}</span></div>` : ''}
+        </div>
+      `).join('');
+    }
+  }
 }
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────

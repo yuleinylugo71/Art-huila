@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="payment.successTitle">Pago Exitoso — Art Huila</title>
-  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/base.css?v=18">
   <link rel="stylesheet" href="/css/pago-exitoso.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -18,34 +18,107 @@
   </div>
 </nav>
 
-<div class="success-container">
-  <div class="success-icon"><i class="fa-solid fa-check"></i></div>
-  <h1 class="success-title" data-i18n="payment.completedHeading">¡Pago Completado!</h1>
-  <p style="color:var(--color-muted);max-width:480px;margin-bottom:1rem;" data-i18n="payment.successDesc">
+<div class="success-container flex flex-col items-center justify-center min-height-80vh text-center px-4 py-8 bg-gray-50 pb-20">
+  <div class="success-icon text-green-600 bg-green-50 w-16 h-16 rounded-full flex items-center justify-center text-3xl mb-4 shadow-sm border border-green-200" style="color: #16a34a; font-size: 2.5rem; margin-bottom: 1.5rem;"><i class="fa-solid fa-circle-check"></i></div>
+  <h1 class="success-title text-2xl md:text-3xl font-extrabold text-gray-900 mb-2 font-display" style="font-family: var(--font-display); font-size: 2rem; font-weight: 800; color: #261f1b; margin: 0 0 0.5rem 0;" data-i18n="payment.completedHeading">¡Pago Completado!</h1>
+  <p class="text-sm text-gray-500 max-w-md mb-4" style="color: var(--color-muted); font-size: 0.88rem; line-height: 1.4; max-width: 440px; margin: 0 auto 1.5rem auto;" data-i18n="payment.successDesc">
     Gracias por apoyar a los artesanos del Huila. Tu pedido está siendo procesado. Recibirás un correo de confirmación.
   </p>
 
   <!-- Simulated mode badge -->
-  <div id="sim-badge" style="display:none; background:#fef9c3; border:1px solid #fde68a; color:#92400e; border-radius:20px; padding:0.4rem 1rem; font-size:0.78rem; font-weight:700; margin-bottom:1rem; display:none; align-items:center; gap:0.4rem;">
+  <div id="sim-badge" style="display:none; background:#fef9c3; border:1px solid #fde68a; color:#92400e; border-radius:20px; padding:0.4rem 1rem; font-size:0.78rem; font-weight:700; margin-bottom:1rem; align-items:center; gap:0.4rem;">
     <i class="fa-solid fa-flask"></i> Pago simulado — Sin cargo real
   </div>
 
-  <div class="success-card" id="order-info">
+  <!-- Shipment Timeline -->
+  <div id="shipment-timeline" class="w-full max-w-md my-4 px-4 bg-white border border-gray-200 rounded-2xl p-4 shadow-sm" style="background: white; border-radius: 20px; border: 1.2px solid #ebdcd0; padding: 1.25rem; width: 100%; max-width: 440px; box-shadow: var(--shadow-sm); box-sizing: border-box; margin-bottom: 1rem;">
+    <h3 class="text-xs font-bold text-gray-800 uppercase tracking-wider text-left mb-4 flex items-center gap-1.5" style="font-family: var(--font-body); font-size: 0.8rem; font-weight: 700; color: #261f1b; margin: 0 0 1rem 0; text-align: left; text-transform: uppercase;">
+      <i class="fa-solid fa-route" style="color: #C84B11;"></i> Estado del Envío
+    </h3>
+    <div class="relative flex items-center justify-between w-full px-2" style="position: relative; display: flex; justify-content: space-between; align-items: center;">
+      <!-- Connecting Line -->
+      <div class="absolute left-0 right-0 top-[16px] h-1 bg-gray-100 z-0" style="position: absolute; left: 16px; right: 16px; top: 16px; height: 3px; background: #e5e7eb; z-index: 1;"></div>
+      <div id="timeline-bar" class="absolute left-0 top-[16px] h-1 bg-orange-600 z-0 transition-all duration-500" style="position: absolute; left: 16px; top: 16px; height: 3px; background: #C84B11; z-index: 2; width: 25%; transition: width 0.5s ease;"></div>
+      
+      <!-- Steps -->
+      <div class="step-node z-10 flex flex-col items-center" style="position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; width: 20%;">
+        <div class="w-8 h-8 rounded-full flex items-center justify-center bg-orange-600 text-white text-xs font-bold shadow-sm" style="width: 32px; height: 32px; border-radius: 50%; background: #C84B11; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; box-shadow: var(--shadow-xs);">
+          <i class="fa-solid fa-check"></i>
+        </div>
+        <span class="text-[10px] font-bold text-gray-800 mt-2" style="font-size: 0.65rem; font-weight: 700; color: #261f1b; margin-top: 0.35rem;">Pago</span>
+      </div>
+      <div class="step-node z-10 flex flex-col items-center" style="position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; width: 20%;">
+        <div id="step-preparing-node" class="w-8 h-8 rounded-full flex items-center justify-center bg-white border-2 border-orange-600 text-orange-600 text-xs font-bold shadow-sm" style="width: 32px; height: 32px; border-radius: 50%; background: white; border: 2px solid #e5e7eb; color: #9ca3af; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; box-shadow: var(--shadow-xs);">
+          <i class="fa-solid fa-hammer"></i>
+        </div>
+        <span class="text-[10px] font-bold text-gray-800 mt-2" style="font-size: 0.65rem; font-weight: 700; color: var(--color-muted); margin-top: 0.35rem;">Preparación</span>
+      </div>
+      <div class="step-node z-10 flex flex-col items-center" style="position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; width: 20%;">
+        <div id="step-shipped-node" class="w-8 h-8 rounded-full flex items-center justify-center bg-white border-2 border-gray-100 text-gray-400 text-xs font-bold shadow-sm" style="width: 32px; height: 32px; border-radius: 50%; background: white; border: 2px solid #e5e7eb; color: #9ca3af; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; box-shadow: var(--shadow-xs);">
+          <i class="fa-solid fa-truck"></i>
+        </div>
+        <span class="text-[10px] font-bold text-gray-400 mt-2" style="font-size: 0.65rem; font-weight: 700; color: var(--color-muted); margin-top: 0.35rem;">Despachado</span>
+      </div>
+      <div class="step-node z-10 flex flex-col items-center" style="position: relative; z-index: 3; display: flex; flex-direction: column; align-items: center; width: 20%;">
+        <div id="step-delivered-node" class="w-8 h-8 rounded-full flex items-center justify-center bg-white border-2 border-gray-100 text-gray-400 text-xs font-bold shadow-sm" style="width: 32px; height: 32px; border-radius: 50%; background: white; border: 2px solid #e5e7eb; color: #9ca3af; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold; box-shadow: var(--shadow-xs);">
+          <i class="fa-solid fa-house-chimney"></i>
+        </div>
+        <span class="text-[10px] font-bold text-gray-400 mt-2" style="font-size: 0.65rem; font-weight: 700; color: var(--color-muted); margin-top: 0.35rem;">Entregado</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Artisan Card Section -->
+  <div id="artisan-shipment-card" class="w-full max-w-md bg-white border border-gray-200 rounded-2xl p-4 my-3 shadow-sm text-left" style="display: none; background: white; border-radius: 20px; border: 1.2px solid #ebdcd0; padding: 1.25rem; width: 100%; max-width: 440px; box-shadow: var(--shadow-sm); box-sizing: border-box; text-align: left; margin-bottom: 1rem;">
+    <div class="flex items-center gap-3" style="display: flex; align-items: center; gap: 0.75rem;">
+      <div class="w-12 h-12 rounded-full overflow-hidden border border-gray-200 bg-gray-50 flex-shrink-0" style="width: 48px; height: 48px; border-radius: 50%; overflow: hidden; border: 1.5px solid white; box-shadow: var(--shadow-xs); flex-shrink: 0; background: #faf8f5;">
+        <img id="artisan-avatar" src="/img/placeholder-avatar.jpg" class="w-full h-full object-cover" style="width: 100%; height: 100%; object-fit: cover;" />
+      </div>
+      <div class="flex-1" style="flex: 1;">
+        <div class="text-[10px] font-extrabold uppercase tracking-wider text-orange-600" style="font-size: 0.65rem; font-weight: 800; color: #C84B11; text-transform: uppercase; letter-spacing: 0.05em;">Tu artesano a cargo</div>
+        <h4 id="artisan-name" class="font-bold text-gray-900 text-sm leading-tight" style="font-family: var(--font-display); font-size: 0.95rem; font-weight: 800; color: #261f1b; margin: 0.1rem 0 0.15rem 0;">Nombre del Artesano</h4>
+        <div class="text-xs text-gray-500 flex items-center gap-1 mt-0.5" style="font-size: 0.72rem; color: var(--color-muted); font-weight: 600; display: flex; align-items: center; gap: 0.25rem;">
+          <i class="fa-solid fa-location-dot" style="color: #C84B11;"></i> <span id="artisan-location">Huila, Colombia</span>
+        </div>
+      </div>
+      <span class="bg-green-50 text-green-700 text-[10px] font-extrabold px-2 py-0.5 rounded-full flex items-center gap-1 border border-green-200" style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 0.65rem; font-weight: 700; padding: 0.2rem 0.55rem; border-radius: 99px; display: inline-flex; align-items: center; gap: 0.25rem; font-family: var(--font-body);">
+        <span class="w-1.5 h-1.5 bg-green-600 rounded-full animate-pulse" style="width: 6px; height: 6px; border-radius: 50%; background: #16a34a; display: inline-block;"></span> Activo
+      </span>
+    </div>
+    <div class="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between" style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1.2px solid #f2ece6; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
+      <p class="text-xs text-gray-600 leading-normal flex-1 pr-3" style="font-size: 0.75rem; color: #4a3e35; font-weight: 500; margin: 0; line-height: 1.35; flex: 1;">
+        El maestro está preparando con dedicación tu pieza única para ser despachada.
+      </p>
+      <button id="btn-msg-artisan" class="bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 rounded-full px-3 py-1.5 text-xs font-bold flex items-center gap-1 transition-all cursor-pointer" style="background: #faf8f5; border: 1px solid #ebdcd0; color: #C84B11; border-radius: 99px; padding: 0.45rem 1rem; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 0.35rem; transition: all 0.2s;">
+        <i class="fa-solid fa-message"></i> Perfil
+      </button>
+    </div>
+  </div>
+
+  <div class="success-card" id="order-info" style="background: white; border-radius: 20px; border: 1.2px solid #ebdcd0; padding: 1.25rem; width: 100%; max-width: 440px; box-shadow: var(--shadow-sm); box-sizing: border-box; text-align: left; margin-bottom: 1.5rem; margin-top: 0;">
     <div class="info-row">
       <span style="color:var(--color-muted);" data-i18n="payment.transactionId">ID de transacción</span>
-      <span id="txn-id" style="font-weight:600;">—</span>
+      <span id="txn-id" style="font-weight:600;">N/A</span>
     </div>
-    <div class="info-row" id="row-amount" style="display:none;">
+    <div class="info-row" id="row-amount">
       <span style="color:var(--color-muted);" data-i18n="payment.amountPaid">Monto pagado</span>
-      <span id="txn-amount" style="font-weight:700; color:var(--color-primary);">—</span>
+      <span id="txn-amount" style="font-weight:700; color:#c1440e;">N/A</span>
     </div>
-    <div class="info-row" id="row-method" style="display:none;">
-      <span style="color:var(--color-muted);" data-i18n="payment.paymentMethod">Método de pago</span>
-      <span id="txn-method" style="font-weight:600;">—</span>
+    <div class="info-row" id="row-method">
+      <span style="color:var(--color-muted);" data-i18n="payment.paymentMethod">Franquicia</span>
+      <span id="txn-method" style="font-weight:600;">N/A</span>
     </div>
-    <div class="info-row" id="row-date" style="display:none;">
+    <div class="info-row" id="row-bank">
+      <span style="color:var(--color-muted);">Banco</span>
+      <span id="txn-bank" style="font-weight:600;">N/A</span>
+    </div>
+    <div class="info-row" id="row-date">
       <span style="color:var(--color-muted);" data-i18n="payment.date">Fecha</span>
-      <span id="txn-date" style="font-weight:600;">—</span>
+      <span id="txn-date" style="font-weight:600;">N/A</span>
+    </div>
+    <div class="info-row" id="row-response">
+      <span style="color:var(--color-muted);">Resultado</span>
+      <span id="txn-response" style="font-weight:600;">N/A</span>
     </div>
     <div class="info-row">
       <span style="color:var(--color-muted);" data-i18n="payment.statusLabel">Estado</span>
@@ -53,19 +126,29 @@
     </div>
   </div>
 
-  <div class="nav-actions">
-    <a href="dashboard-comprador.html" class="btn btn-primary btn-lg"><i class="fa-solid fa-box"></i> <span data-i18n="payment.viewOrdersBtn">Ver mis pedidos</span></a>
-    <a href="catalogo.html" class="btn btn-outline btn-lg" data-i18n="payment.continueShoppingBtn">← Seguir comprando</a>
+  <div class="nav-actions" style="margin-top: 0.5rem; width: 100%; max-width: 440px; display: flex; gap: 0.75rem;">
+    <a href="dashboard-comprador.html" class="btn btn-primary btn-lg" style="flex: 1; border-radius: 99px; text-align: center; justify-content: center; display: flex; align-items: center; gap: 0.5rem; padding: 0.85rem; font-size: 0.85rem; font-weight: 700; background: #c1440e; border: none; color: white;"><i class="fa-solid fa-box"></i> <span data-i18n="payment.viewOrdersBtn">Ver mis pedidos</span></a>
+    <a href="catalogo.html" class="btn btn-outline btn-lg" style="flex: 1; border-radius: 99px; text-align: center; justify-content: center; display: flex; align-items: center; gap: 0.5rem; padding: 0.85rem; font-size: 0.85rem; font-weight: 700; background: white; border: 1.5px solid #ebdcd0; color: #4a3e35;" data-i18n="payment.continueShoppingBtn">← Seguir comprando</a>
   </div>
 </div>
 
 <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
 <script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
+<script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
 <script src="/js/api.js"></script>
 <script src="/js/i18n.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
+
+    // Check if user is artisan and update orders link
+    const user = typeof Auth !== 'undefined' ? Auth.getUser() : null;
+    if (user && user.role === 'artesano') {
+      const viewOrdersBtn = document.querySelector('a[href="dashboard-comprador.html"]');
+      if (viewOrdersBtn) {
+        viewOrdersBtn.setAttribute('href', 'dashboard-artesano.html?section=mis-compras');
+      }
+    }
 
     // Check simulated mode
     const isSimulated = params.get('simulated') === 'true';
@@ -74,42 +157,139 @@
       simBadge.style.display = 'flex';
     }
 
-    // ID / referencia
-    const txnId = params.get('x_ref_payco') || params.get('ref_payco') || params.get('id');
-    if (txnId) {
-      document.getElementById('txn-id').textContent = txnId;
-    }
+    // ID / referencia (x_ref_payco)
+    const txnId = params.get('x_ref_payco') || params.get('ref_payco') || params.get('id') || 'N/A';
+    document.getElementById('txn-id').textContent = txnId;
 
-    // Monto
+    // Monto (x_amount)
     const amount = params.get('x_amount') || params.get('x_amount_ok');
     if (amount) {
       const num = parseFloat(amount);
       if (!isNaN(num)) {
         document.getElementById('txn-amount').textContent =
           new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(num);
-        document.getElementById('row-amount').style.display = 'flex';
+      } else {
+        document.getElementById('txn-amount').textContent = amount;
       }
+    } else {
+      document.getElementById('txn-amount').textContent = 'N/A';
     }
 
-    // Método de pago
-    const method = params.get('x_franchise') || params.get('x_type_operation');
-    if (method) {
-      document.getElementById('txn-method').textContent = method;
-      document.getElementById('row-method').style.display = 'flex';
-    }
+    // Franquicia (x_franchise)
+    const method = params.get('x_franchise') || params.get('x_type_operation') || 'N/A';
+    document.getElementById('txn-method').textContent = method;
 
-    // Fecha
-    const date = params.get('x_transaction_date');
-    if (date) {
-      document.getElementById('txn-date').textContent = date;
-      document.getElementById('row-date').style.display = 'flex';
+    // Banco (x_bank_name)
+    const bank = params.get('x_bank_name') || 'N/A';
+    document.getElementById('txn-bank').textContent = bank;
+
+    // Fecha (x_transaction_date)
+    const date = params.get('x_transaction_date') || 'N/A';
+    document.getElementById('txn-date').textContent = date;
+
+    // Resultado (x_response)
+    const response = params.get('x_response') || 'N/A';
+    document.getElementById('txn-response').textContent = response;
+
+    // Fetch order details if order_id is present
+    const orderId = params.get('order_id');
+    if (orderId) {
+      apiFetch(`/orders/${orderId}`)
+        .then(order => {
+          if (!order) return;
+          
+          // Update timeline bar and step nodes based on status
+          const timelineBar = document.getElementById('timeline-bar');
+          const stepPreparingNode = document.getElementById('step-preparing-node');
+          const stepShippedNode = document.getElementById('step-shipped-node');
+          const stepDeliveredNode = document.getElementById('step-delivered-node');
+          
+          if (order.status === 'paid' || order.status === 'preparing') {
+            if (timelineBar) timelineBar.style.width = '50%';
+            if (stepPreparingNode) {
+              stepPreparingNode.style.background = '#C84B11';
+              stepPreparingNode.style.borderColor = '#C84B11';
+              stepPreparingNode.style.color = 'white';
+            }
+          } else if (order.status === 'shipped') {
+            if (timelineBar) timelineBar.style.width = '75%';
+            if (stepPreparingNode) {
+              stepPreparingNode.style.background = '#C84B11';
+              stepPreparingNode.style.borderColor = '#C84B11';
+              stepPreparingNode.style.color = 'white';
+            }
+            if (stepShippedNode) {
+              stepShippedNode.style.background = '#C84B11';
+              stepShippedNode.style.borderColor = '#C84B11';
+              stepShippedNode.style.color = 'white';
+            }
+          } else if (order.status === 'delivered') {
+            if (timelineBar) timelineBar.style.width = '100%';
+            if (stepPreparingNode) {
+              stepPreparingNode.style.background = '#C84B11';
+              stepPreparingNode.style.borderColor = '#C84B11';
+              stepPreparingNode.style.color = 'white';
+            }
+            if (stepShippedNode) {
+              stepShippedNode.style.background = '#C84B11';
+              stepShippedNode.style.borderColor = '#C84B11';
+              stepShippedNode.style.color = 'white';
+            }
+            if (stepDeliveredNode) {
+              stepDeliveredNode.style.background = '#C84B11';
+              stepDeliveredNode.style.borderColor = '#C84B11';
+              stepDeliveredNode.style.color = 'white';
+            }
+          }
+
+          // Populate Artisan Card details
+          const uniqueArtisans = [];
+          if (order.items && order.items.length > 0) {
+            order.items.forEach(item => {
+              const artisan = item.product?.artisan;
+              if (artisan && !uniqueArtisans.some(a => a.id === artisan.id)) {
+                uniqueArtisans.push(artisan);
+              }
+            });
+          }
+
+          if (uniqueArtisans.length > 0) {
+            const firstArtisan = uniqueArtisans[0];
+            const nameEl = document.getElementById('artisan-name');
+            const avatarEl = document.getElementById('artisan-avatar');
+            const locEl = document.getElementById('artisan-location');
+            const cardEl = document.getElementById('artisan-shipment-card');
+            
+            if (nameEl) {
+              nameEl.textContent = firstArtisan.user?.full_name || 'Maestro Artesano';
+              if (uniqueArtisans.length > 1) {
+                nameEl.textContent += ` y ${uniqueArtisans.length - 1} más`;
+              }
+            }
+            if (avatarEl && firstArtisan.avatar_url) {
+              avatarEl.src = firstArtisan.avatar_url;
+            }
+            if (locEl && firstArtisan.region) {
+              locEl.textContent = firstArtisan.region.name || 'Huila, Colombia';
+            }
+            if (cardEl) {
+              cardEl.style.display = 'block';
+            }
+
+            const msgBtn = document.getElementById('btn-msg-artisan');
+            if (msgBtn) {
+              msgBtn.onclick = () => {
+                window.location.href = `/artesano.html?id=${firstArtisan.id}`;
+              };
+            }
+          }
+        })
+        .catch(err => console.error('Error loading order for success page:', err));
     }
 
     // Limpiar carrito
     if (typeof Cart !== 'undefined') Cart.clear();
   });
-
 </script>
 </body>
 </html>
-

@@ -60,24 +60,36 @@ async function initHome() {
   // Load Categories
   try {
     const categories = await apiFetch('/categories');
-    categoriesGrid.innerHTML = categories.map(c => `
-      <div class="category-card" onclick="window.location.href='/catalogo.html?category=${c.slug}'">
-        <span class="category-icon">${c.icon_emoji}</span>
-        <div class="category-name">${c.name}</div>
-        <div style="font-size:0.75rem;color:var(--color-muted);margin-top:0.3rem;">${c.count}${i18next.t('home.productsSuffix')}</div>
-      </div>
-    `).join('');
+    const categoryImages = {
+      'tejeduria': '/img/cat-tejeduria.jpg',
+      'ceramica': '/img/cat-ceramica.jpg',
+      'talla-en-madera': '/img/cat-talla.jpg',
+      'orfebreria': '/img/cat-orfebreria.jpg',
+      'sombrereria': '/img/cat-sombrereria.jpg'
+    };
+
+    categoriesGrid.innerHTML = categories.map(c => {
+      const cleanSlug = (c.slug || '').normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      return `
+        <div class="category-card-circular" onclick="window.location.href='/catalogo.html?category=${c.slug}'">
+          <div class="category-img-circle">
+            <img src="${categoryImages[cleanSlug] || '/img/placeholder.jpg'}" alt="${window.translateCategory(c.name)}">
+          </div>
+          <div class="category-name-new">${window.translateCategory(c.name)}</div>
+        </div>
+      `;
+    }).join('');
 
     // Load Mobile categories scrolling pills
     const mobileHomeCategories = document.getElementById('mobile-home-categories');
     if (mobileHomeCategories) {
       mobileHomeCategories.innerHTML = `
-        <button class="category-chip active" onclick="window.location.href='/catalogo.html'">
-          Todos
+        <button class="category-chip active" onclick="window.location.href='/catalogo.html'" data-i18n="catalog.allCategories">
+          ${i18next.t('catalog.allCategories')}
         </button>
       ` + categories.map(c => `
         <button class="category-chip" onclick="window.location.href='/catalogo.html?category=${c.slug}'">
-          ${c.icon_emoji} ${c.name}
+          ${c.icon_emoji} ${window.translateCategory(c.name)}
         </button>
       `).join('');
     }
@@ -102,10 +114,7 @@ async function initHome() {
         return `
           <div class="product-card" onclick="window.location.href='/producto.html?slug=${p.slug}'">
             <div class="product-card-image" style="position:relative;">
-              <img src="${imgUrl}" alt="${p.name}" loading="lazy"/>
-              
-              <!-- Price pill floating over image -->
-              <div class="product-price-pill">${formatPrice(p.price)}</div>
+              <img src="${imgUrl}" alt="${window.translateProduct(p)}" onerror="this.onerror=null; this.src='/img/placeholder.jpg';" loading="lazy"/>
               
               <!-- Heart Wishlist button floating over image -->
               <button class="btn-wishlist ${isWish ? 'active' : ''}" data-id="${p.id}" onclick="event.stopPropagation(); if (typeof Wishlist !== 'undefined') Wishlist.toggle('${p.id}')" title="Favoritos">
@@ -113,7 +122,7 @@ async function initHome() {
               </button>
             </div>
             <div class="product-card-body">
-              <div class="product-card-name" style="font-weight:700;">${p.name}</div>
+              <div class="product-card-name" style="font-weight:700;">${window.translateProduct(p)}</div>
               <div class="product-artisan" style="margin-top:0.15rem;">
                 <i class="fa-solid fa-store" style="font-size:0.75rem;"></i>
                 <span style="font-size:0.75rem;"><strong>${artisanName}</strong></span>
@@ -128,13 +137,14 @@ async function initHome() {
                 </div>
               </div>
 
-              <!-- Compact Premium Cart Button -->
-              <div style="display:flex;justify-content:flex-end;margin-top:auto;padding-top:0.4rem;">
+              <!-- Product Footer (Price & Orange Cart Button) -->
+              <div class="product-card-footer-new" style="display:flex;justify-content:space-between;align-items:center;margin-top:0.5rem;">
+                <span class="product-price-new">${formatPrice(p.price)}</span>
                 <button class="btn-card-cart ${isOutOfStock ? 'disabled' : ''}" 
                         onclick="event.stopPropagation(); ${isOutOfStock ? '' : `addToCart('${p.id}')`}" 
                         title="${isOutOfStock ? 'Sin stock' : 'Agregar al carrito'}"
                         ${isOutOfStock ? 'disabled' : ''}>
-                  <i class="${isOutOfStock ? 'fa-solid fa-circle-xmark' : 'fa-solid fa-cart-plus'}"></i>
+                  <i class="${isOutOfStock ? 'fa-solid fa-circle-xmark' : 'fa-solid fa-plus'}"></i>
                 </button>
               </div>
             </div>
@@ -168,7 +178,7 @@ async function initHome() {
     }
     const imgUrl = p.image_url || '';
     const artisanName = p.artisan?.name || '';
-    Cart.add({ id: p.id, name: p.price, price: p.price, image: imgUrl, artisanName }, 1);
+    Cart.add({ id: p.id, name: p.name, price: p.price, image: imgUrl, artisanName }, 1);
   }
   window.addToCart = addToCart;
 
@@ -180,9 +190,9 @@ async function initHome() {
       let dashboard = 'dashboard-comprador.html';
       if (user.role === 'artesano') dashboard = 'dashboard-artesano.html';
       if (user.role === 'admin') dashboard = 'dashboard-admin.html';
-      navAuth.innerHTML = `<a href="${dashboard}" class="btn btn-outline btn-sm" data-i18n="nav.myPanel">Mi Panel</a>`;
+      navAuth.innerHTML = `<a href="${dashboard}" class="btn-mi-cuenta" data-i18n="nav.myPanel">Mi Panel</a>`;
     } else {
-      navAuth.innerHTML = `<a href="login.html" data-i18n="auth.login">Iniciar sesión</a>`;
+      navAuth.innerHTML = `<a href="login.html" class="btn-mi-cuenta" data-i18n="auth.login">Iniciar sesión</a>`;
     }
     if (typeof applyTranslations === 'function') applyTranslations();
   }
@@ -203,4 +213,109 @@ async function initHome() {
   }, observerOptions);
 
   document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  // --- HERO SLIDER ---
+  let currentSlideIndex = 0;
+  const sliderContainer = document.getElementById('hero-slider');
+  if (sliderContainer) {
+    const items = sliderContainer.querySelectorAll('.slider-item');
+    const prevBtn = document.getElementById('slider-prev-btn');
+    const nextBtn = document.getElementById('slider-next-btn');
+    const dotsContainer = document.getElementById('slider-dots-container');
+
+    const updateSlider = () => {
+      const dots = dotsContainer ? dotsContainer.querySelectorAll('.dot') : [];
+      items.forEach((item, i) => {
+        item.classList.remove('active', 'left-1', 'right-1', 'left-2', 'right-2');
+        if (i === currentSlideIndex) {
+          item.classList.add('active');
+        } else if (i === (currentSlideIndex - 1 + items.length) % items.length) {
+          item.classList.add('left-1');
+        } else if (i === (currentSlideIndex + 1) % items.length) {
+          item.classList.add('right-1');
+        } else if (i === (currentSlideIndex - 2 + items.length) % items.length) {
+          item.classList.add('left-2');
+        } else if (i === (currentSlideIndex + 2) % items.length) {
+          item.classList.add('right-2');
+        }
+      });
+
+      dots.forEach((dot, i) => {
+        if (i === currentSlideIndex) {
+          dot.classList.add('active');
+        } else {
+          dot.classList.remove('active');
+        }
+      });
+
+      const activeItem = items[currentSlideIndex];
+      if (activeItem) {
+        const isEn = (i18next.language || 'es').startsWith('en');
+        const nameAttr = isEn ? 'data-name-en' : 'data-name-es';
+        const name = activeItem.getAttribute(nameAttr) || activeItem.getAttribute('data-name-es');
+        const price = activeItem.getAttribute('data-price');
+
+        const nameEl = document.getElementById('slider-item-name');
+        const priceEl = document.getElementById('slider-item-price');
+
+        if (nameEl) nameEl.textContent = name;
+        if (priceEl && price) {
+          priceEl.textContent = formatPrice(Number(price));
+        }
+      }
+    };
+
+    const nextSlide = () => {
+      currentSlideIndex = (currentSlideIndex + 1) % items.length;
+      updateSlider();
+    };
+
+    const prevSlide = () => {
+      currentSlideIndex = (currentSlideIndex - 1 + items.length) % items.length;
+      updateSlider();
+    };
+
+    if (prevBtn) {
+      prevBtn.onclick = (e) => {
+        e.preventDefault();
+        prevSlide();
+      };
+    }
+    if (nextBtn) {
+      nextBtn.onclick = (e) => {
+        e.preventDefault();
+        nextSlide();
+      };
+    }
+
+    if (dotsContainer) {
+      dotsContainer.querySelectorAll('.dot').forEach((dot, idx) => {
+        dot.onclick = (e) => {
+          e.preventDefault();
+          currentSlideIndex = idx;
+          updateSlider();
+        };
+      });
+    }
+
+    // Autoplay logic
+    if (window.heroSliderInterval) {
+      clearInterval(window.heroSliderInterval);
+    }
+    window.heroSliderInterval = setInterval(nextSlide, 3500);
+
+    const sliderWrapper = document.querySelector('.hero-slider-wrapper');
+    if (sliderWrapper) {
+      sliderWrapper.onmouseenter = () => {
+        if (window.heroSliderInterval) clearInterval(window.heroSliderInterval);
+      };
+      sliderWrapper.onmouseleave = () => {
+        if (window.heroSliderInterval) clearInterval(window.heroSliderInterval);
+        window.heroSliderInterval = setInterval(nextSlide, 3500);
+      };
+    }
+
+    // Initial load
+    updateSlider();
+  }
 }

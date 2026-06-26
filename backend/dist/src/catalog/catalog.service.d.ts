@@ -6,12 +6,14 @@ export declare class CatalogService {
     findAll(params: {
         regions?: string[];
         categories?: string[];
+        materials?: string[];
         minPrice?: number;
         maxPrice?: number;
         sortBy?: string;
         page?: number;
         limit?: number;
         artisanId?: string;
+        search?: string;
     }): Promise<{
         data: Product[];
         meta: {

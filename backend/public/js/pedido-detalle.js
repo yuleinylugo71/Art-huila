@@ -17,8 +17,16 @@ document.addEventListener('languageChanged', () => {
 function initPage() {
     const params = new URLSearchParams(window.location.search);
     currentOrderId = params.get('id');
+    const user = Auth.getUser();
+    const defaultDashboard = (user && user.role === 'artesano') ? '/dashboard-artesano.html?section=mis-compras' : '/dashboard-comprador.html';
+
+    // Dynamically adjust any back button to point to the correct dashboard
+    document.querySelectorAll('a[href="/dashboard-comprador.html"], a[href="dashboard-comprador.html"]').forEach(a => {
+        a.setAttribute('href', defaultDashboard);
+    });
+
     if (!currentOrderId) {
-        window.location.href = '/dashboard-comprador.html';
+        window.location.href = defaultDashboard;
         return;
     }
     loadOrderDetail(currentOrderId);
@@ -33,7 +41,9 @@ async function loadOrderDetail(orderId) {
         const order = await apiFetch(`/orders/${orderId}`);
         if (!order) {
             showToast(i18next.t('order.errorNotFound'), 'error');
-            setTimeout(() => { window.location.href = '/dashboard-comprador.html'; }, 2000);
+            const user = Auth.getUser();
+            const defaultDashboard = (user && user.role === 'artesano') ? '/dashboard-artesano.html?section=mis-compras' : '/dashboard-comprador.html';
+            setTimeout(() => { window.location.href = defaultDashboard; }, 2000);
             return;
         }
 
@@ -75,6 +85,31 @@ async function loadOrderDetail(orderId) {
         document.getElementById('bill-subtotal').textContent = `$${subtotal.toLocaleString('es-CO')}`;
         document.getElementById('bill-shipping').textContent = `$${Number(order.shipping_cost || 0).toLocaleString('es-CO')}`;
         document.getElementById('bill-total').textContent = `$${Number(order.total_amount).toLocaleString('es-CO')}`;
+
+        // Payment Status
+        const paymentStatusEl = document.getElementById('detail-payment-status');
+        if (paymentStatusEl) {
+            const payStatus = order.payment_status || 'pending';
+            paymentStatusEl.className = `badge ${getPaymentStatusBadgeClass(payStatus)}`;
+            paymentStatusEl.textContent = translatePaymentStatus(payStatus);
+        }
+
+        // Retry Payment Button Logic
+        const retryContainer = document.getElementById('retry-payment-container');
+        if (retryContainer) {
+            const payStatus = order.payment_status || 'pending';
+            if (order.status === 'pending' && (payStatus === 'rejected' || payStatus === 'failed')) {
+                retryContainer.style.display = 'block';
+                const retryBtn = document.getElementById('btn-retry-payment');
+                if (retryBtn) {
+                    const newBtn = retryBtn.cloneNode(true);
+                    retryBtn.parentNode.replaceChild(newBtn, retryBtn);
+                    newBtn.addEventListener('click', () => initiateEpaycoRetry(order));
+                }
+            } else {
+                retryContainer.style.display = 'none';
+            }
+        }
 
         // Tracking Info
         const badgeContainer = document.getElementById('detail-status-badge');
@@ -170,6 +205,7 @@ function updateTracker(status) {
         const firstStep = document.getElementById('step-pending');
         if (firstStep) {
             firstStep.classList.add('active');
+            firstStep.classList.add('cancelled');
             const iconEl = firstStep.querySelector('.step-icon');
             if (iconEl) iconEl.innerHTML = '<i class="fa-solid fa-xmark"></i>';
             const labelEl = firstStep.querySelector('.step-label');
@@ -200,9 +236,11 @@ function updateTracker(status) {
     if (lineProgress) {
         if (currentIdx === -1) {
             lineProgress.style.width = '0%';
+            lineProgress.style.height = '0%';
         } else {
             const percentage = (currentIdx / (steps.length - 1)) * 100;
             lineProgress.style.width = `${percentage}%`;
+            lineProgress.style.height = `${percentage}%`;
         }
     }
 }
@@ -235,6 +273,77 @@ function translateStatus(status) {
         'cancelled': i18next.t('order.statusCancelled', { defaultValue: 'Cancelado' })
     };
     return map[status] || status;
+}
+
+function getPaymentStatusBadgeClass(status) {
+    const map = {
+        'pending': 'badge-pending',
+        'approved': 'badge-delivered',
+        'rejected': 'badge-cancelled',
+        'failed': 'badge-cancelled',
+        'cancelled': 'badge-cancelled'
+    };
+    return map[status] || '';
+}
+
+function translatePaymentStatus(status) {
+    const map = {
+        'pending': i18next.t('order.paymentStatusPending'),
+        'approved': i18next.t('order.paymentStatusApproved'),
+        'rejected': i18next.t('order.paymentStatusRejected'),
+        'failed': i18next.t('order.paymentStatusFailed'),
+        'cancelled': i18next.t('order.paymentStatusCancelled')
+    };
+    return map[status] || status;
+}
+
+async function initiateEpaycoRetry(order) {
+    const retryBtn = document.getElementById('btn-retry-payment');
+    const originalText = retryBtn.innerHTML;
+    retryBtn.disabled = true;
+    retryBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...';
+
+    try {
+        const epaycoConfig = await apiFetch('/payments/epayco-config');
+        const publicKey = epaycoConfig.publicKey || window.EPAYCO_PUBLIC_KEY;
+        const backendUrl = epaycoConfig.backendUrlPublic || 'http://localhost:3000/api/v1';
+
+        const handler = ePayco.checkout.configure({
+            key: publicKey,
+            test: true
+        });
+
+        const confirmationUrl = backendUrl.endsWith('/') 
+            ? backendUrl + 'payments/webhook' 
+            : backendUrl + '/payments/webhook';
+
+        const buyer = Auth.getUser();
+
+        handler.open({
+            name: 'ArtHuila',
+            description: 'Compra de artesanías - Orden #' + order.id,
+            invoice: String(order.id),
+            currency: 'cop',
+            amount: String(Math.round(order.total_amount)),
+            tax_base: '0',
+            tax: '0',
+            country: 'co',
+            lang: 'es',
+            external: false,
+            response: window.location.origin + '/pago-resultado',
+            confirmation: confirmationUrl,
+            name_billing: buyer?.full_name || '',
+            address_billing: buyer?.address || '',
+            mobilephone_billing: buyer?.phone || '',
+            email_billing: buyer?.email || ''
+        });
+    } catch (e) {
+        console.error('Retry payment error:', e);
+        showToast('Error al iniciar la pasarela de pago: ' + e.message, 'error');
+    } finally {
+        retryBtn.disabled = false;
+        retryBtn.innerHTML = originalText;
+    }
 }
 
 function getTrackingUrl(carrier, trackingNumber) {

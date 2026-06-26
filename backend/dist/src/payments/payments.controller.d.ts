@@ -8,6 +8,7 @@ export declare class PaymentsController {
     constructor(paymentsService: PaymentsService, ordersService: OrdersService, configService: ConfigService);
     getEpaycoConfig(): Promise<{
         publicKey: string | undefined;
+        backendUrlPublic: string | undefined;
     }>;
     createPreference(orderId: string, user: any): Promise<{
         status: string;

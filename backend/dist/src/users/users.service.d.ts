@@ -11,4 +11,5 @@ export declare class UsersService {
     resetFailedLogins(userId: string): Promise<void>;
     hashPassword(password: string): Promise<string>;
     update(id: string, data: Partial<User>): Promise<User>;
+    findByResetToken(token: string): Promise<User | null>;
 }

@@ -24,7 +24,7 @@ let CatalogService = class CatalogService {
         this.productRepo = productRepo;
     }
     async findAll(params) {
-        const { regions, categories, minPrice, maxPrice, sortBy = 'newest', page = 1, limit = 20, artisanId } = params;
+        const { regions, categories, materials, minPrice, maxPrice, sortBy = 'newest', page = 1, limit = 20, artisanId, search } = params;
         const qb = this.productRepo
             .createQueryBuilder('product')
             .leftJoinAndSelect('product.artisan', 'artisan')
@@ -32,8 +32,12 @@ let CatalogService = class CatalogService {
             .leftJoinAndSelect('product.category', 'category')
             .leftJoinAndSelect('product.region', 'region')
             .leftJoinAndSelect('product.images', 'images')
+            .leftJoinAndSelect('product.reviews', 'reviews')
             .where('product.status = :status', { status: product_entity_1.ProductStatus.PUBLISHED })
             .andWhere('artisan.verification_status != :suspended', { suspended: artisan_profile_entity_1.ArtisanStatus.SUSPENDED });
+        if (search) {
+            qb.andWhere('(product.name ILIKE :search OR product.cultural_origin ILIKE :search OR artisan_user.full_name ILIKE :search)', { search: `%${search}%` });
+        }
         if (artisanId) {
             qb.andWhere('artisan.id = :artisanId', { artisanId });
         }
@@ -42,6 +46,14 @@ let CatalogService = class CatalogService {
         }
         if (categories && categories.length > 0) {
             qb.andWhere('category.name IN (:...categories)', { categories });
+        }
+        if (materials && materials.length > 0) {
+            const materialConditions = materials.map((m, idx) => `product.materials ILIKE :material_${idx}`);
+            const parameters = {};
+            materials.forEach((m, idx) => {
+                parameters[`material_${idx}`] = `%${m}%`;
+            });
+            qb.andWhere(`(${materialConditions.join(' OR ')})`, parameters);
         }
         if (minPrice !== undefined) {
             qb.andWhere('product.price >= :minPrice', { minPrice });
@@ -56,8 +68,16 @@ let CatalogService = class CatalogService {
         else
             qb.orderBy('product.created_at', 'DESC');
         const total = await qb.getCount();
-        const data = (await qb.skip((page - 1) * limit).take(limit).getMany()).map((product) => {
+        const rawData = await qb.skip((page - 1) * limit).take(limit).getMany();
+        const data = rawData.map((product) => {
             product.artisan.status = product.artisan.verification_status;
+            const reviews = product.reviews || [];
+            const reviewCount = reviews.length;
+            const avgRating = reviewCount > 0
+                ? parseFloat((reviews.reduce((acc, r) => acc + r.rating, 0) / reviewCount).toFixed(1))
+                : 0;
+            product.rating = avgRating;
+            product.review_count = reviewCount;
             return product;
         });
         return {

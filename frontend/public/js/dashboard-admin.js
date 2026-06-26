@@ -5,9 +5,13 @@ if (!Auth.requireRole('admin')) throw new Error('Acceso denegado');
 
 // ─── Estado global ─────────────────────────────────────────────────────────
 const user = Auth.getUser();
-document.getElementById('admin-welcome').textContent = `Bienvenido/a, ${user.full_name}`;
-document.getElementById('sidebar-admin-name').textContent = user.full_name;
-document.getElementById('admin-avatar-letter').textContent = (user.full_name || 'A')[0].toUpperCase();
+
+function setWelcome() {
+  const welcome = i18next.t('admin.controlPanelWelcome', { name: user.full_name });
+  document.getElementById('admin-welcome').textContent = welcome;
+  document.getElementById('sidebar-admin-name').textContent = user.full_name;
+  document.getElementById('admin-avatar-letter').textContent = (user.full_name || 'A')[0].toUpperCase();
+}
 
 let allProducts   = [];
 let allOrders     = [];
@@ -43,17 +47,20 @@ function renderPaginationControls(containerId, totalItems, currentPage, limit, o
   }
 
   const totalPages = Math.ceil(totalItems / limit);
+  const pageLabel = i18next.t('admin.paginationPage', { page: currentPage, total: totalPages });
+  const prevLabel = i18next.t('admin.paginationPrev');
+  const nextLabel = i18next.t('admin.paginationNext');
 
   container.innerHTML = `
     <div class="pagination-info">
-      Página <strong>${currentPage}</strong> de <strong>${totalPages}</strong> (${totalItems} elementos)
+      ${pageLabel} (${totalItems} ${i18next.t('common.loading').includes('...') ? '' : ''})
     </div>
     <div class="pagination-buttons">
       <button class="pagination-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="${onPageChangeName}(${currentPage - 1})">
-        <i class="fa-solid fa-chevron-left"></i> Anterior
+        <i class="fa-solid fa-chevron-left"></i> ${prevLabel}
       </button>
       <button class="pagination-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="${onPageChangeName}(${currentPage + 1})">
-        Siguiente <i class="fa-solid fa-chevron-right"></i>
+        ${nextLabel} <i class="fa-solid fa-chevron-right"></i>
       </button>
     </div>
   `;
@@ -94,16 +101,16 @@ window.showSection = function(name) {
   document.getElementById(`section-${name}`)?.classList.remove('hidden');
   document.getElementById(`nav-${name}`)?.classList.add('active');
 
-  const titles = {
-    overview: 'Resumen General',
-    artesanos: 'Validación de Artesanos',
-    catalogo: 'Control de Catálogo',
-    pedidos: 'Gestión de Órdenes',
-    resenas: 'Moderación de Reseñas',
-    estadisticas: 'Reportes y Métricas',
-    auditoria: 'Bitácora de Auditoría',
+  const titleKeys = {
+    overview:     'admin.menuOverviewLabel',
+    artesanos:    'admin.artisanValidation',
+    catalogo:     'admin.productControl',
+    pedidos:      'admin.orderManagement',
+    resenas:      'admin.reportedReviewsHeading',
+    estadisticas: 'admin.statsAndAnalytics',
+    auditoria:    'admin.auditLogHeading',
   };
-  document.getElementById('section-title').textContent = titles[name] || name;
+  document.getElementById('section-title').textContent = i18next.t(titleKeys[name] || name);
 
   if (name === 'artesanos')    loadArtisans();
   if (name === 'catalogo')     loadAllProducts();
@@ -111,6 +118,10 @@ window.showSection = function(name) {
   if (name === 'resenas')      loadReportedReviews();
   if (name === 'estadisticas') loadStats();
   if (name === 'auditoria')    loadAudit();
+
+  if (window.innerWidth <= 768) {
+    document.querySelector('.dashboard-layout')?.classList.remove('sidebar-expanded');
+  }
 };
 
 // ─── STATS GLOBALES ────────────────────────────────────────────────────────
@@ -192,6 +203,40 @@ function renderArtisansPage() {
   `).join('');
 
   renderPaginationControls('artisans-pagination', globalArtisans.length, currentArtisansPage, ITEMS_PER_PAGE, 'changeArtisansPage');
+
+  // Mobile cards view
+  const mobileList = document.getElementById('artisans-cards-mobile');
+  if (mobileList) {
+    if (paginated.length === 0) {
+      mobileList.innerHTML = '<div class="table-empty" style="padding:2rem;text-align:center;">No hay artesanos en este estado</div>';
+    } else {
+      mobileList.innerHTML = paginated.map(a => `
+        <div class="mobile-card-item">
+          <div class="mc-row">
+            <div>
+              <div class="td-name" onclick="viewArtisan('${a.id}')">${a.user?.full_name || '—'}</div>
+              <div class="td-sub">${a.user?.email || ''}</div>
+            </div>
+            ${badgeStatus(a.verification_status)}
+          </div>
+          <div class="mc-row">
+            <span class="mc-label">Región</span>
+            <span class="mc-value td-location"><i class="fa-solid fa-location-dot"></i> ${a.region?.name || '—'}</span>
+          </div>
+          <div class="mc-row">
+            <span class="mc-label">Fecha Registro</span>
+            <span class="mc-value td-sub">${new Date(a.created_at).toLocaleDateString('es-CO')}</span>
+          </div>
+          <div class="mc-actions">
+            <button class="btn btn-ghost btn-sm" onclick="viewArtisan('${a.id}')" style="flex:0;"><i class="fa-solid fa-eye"></i></button>
+            ${a.verification_status !== 'verified' ? `<button class="btn btn-success btn-sm" onclick="approveArtisan('${a.id}')"><i class="fa-solid fa-check"></i> Aprobar</button>` : ''}
+            ${a.verification_status === 'pending' ? `<button class="btn btn-danger btn-sm" onclick="openReasonModal('Rechazar artesano','Se notificará al artesano por email.',() => rejectArtisan('${a.id}'))"><i class="fa-solid fa-xmark"></i> Rechazar</button>` : ''}
+            ${a.verification_status === 'verified' ? `<button class="btn btn-warning btn-sm" onclick="openReasonModal('Suspender artesano','El artesano perderá visibilidad en el catálogo.',() => suspendArtisan('${a.id}'))"><i class="fa-solid fa-ban"></i> Suspender</button>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+  }
 }
 
 window.viewArtisan = function(id) {
@@ -200,11 +245,11 @@ window.viewArtisan = function(id) {
 
   const galleryHtml = a.gallery?.length
     ? `<div class="gallery-grid">${a.gallery.map(img => `<img src="${img.url}" class="gallery-thumb" onclick="window.open('${img.url}')" title="Ampliar"/>`).join('')}</div>`
-    : '<span class="td-sub">Sin galería de ejemplo</span>';
+    : `<span class="td-sub">${i18next.t('admin.artisanDetailNoGallery')}</span>`;
 
   const docs = [
-    a.id_document_front_url && `<a href="${a.id_document_front_url}" target="_blank" class="btn btn-outline btn-sm"><i class="fa-solid fa-file-lines"></i> Frente</a>`,
-    a.id_document_back_url  && `<a href="${a.id_document_back_url}" target="_blank" class="btn btn-outline btn-sm"><i class="fa-solid fa-file-lines"></i> Reverso</a>`,
+    a.id_document_front_url && `<a href="${a.id_document_front_url}" target="_blank" class="btn btn-outline btn-sm"><i class="fa-solid fa-file-lines"></i> ${i18next.t('admin.artisanDetailDocFront')}</a>`,
+    a.id_document_back_url  && `<a href="${a.id_document_back_url}" target="_blank" class="btn btn-outline btn-sm"><i class="fa-solid fa-file-lines"></i> ${i18next.t('admin.artisanDetailDocBack')}</a>`,
   ].filter(Boolean);
 
   document.getElementById('artisan-modal-content').innerHTML = `
@@ -218,35 +263,35 @@ window.viewArtisan = function(id) {
       </div>
       <div style="text-align:right;">
         ${badgeStatus(a.verification_status)}
-        <div class="td-sub" style="margin-top:0.5rem;">Registro: ${new Date(a.created_at).toLocaleDateString('es-CO')}</div>
+        <div class="td-sub" style="margin-top:0.5rem;">${i18next.t('admin.artisanDetailRegistered')} ${new Date(a.created_at).toLocaleDateString()}</div>
       </div>
     </div>
 
     <div class="detail-section">
-      <div class="detail-section-title"><i class="fa-solid fa-scroll"></i> Historia Cultural</div>
-      <div class="detail-text">${a.cultural_history || 'No especificada'}</div>
+      <div class="detail-section-title"><i class="fa-solid fa-scroll"></i> ${i18next.t('admin.artisanDetailHistory')}</div>
+      <div class="detail-text">${a.cultural_history || i18next.t('admin.artisanDetailNoHistory')}</div>
     </div>
 
     <div class="detail-section">
-      <div class="detail-section-title"><i class="fa-solid fa-id-card"></i> Documentos de Identidad</div>
-      <div class="btn-group">${docs.length ? docs.join('') : '<span class="td-sub">No subidos</span>'}</div>
+      <div class="detail-section-title"><i class="fa-solid fa-id-card"></i> ${i18next.t('admin.artisanDetailDocs')}</div>
+      <div class="btn-group">${docs.length ? docs.join('') : `<span class="td-sub">${i18next.t('admin.artisanDetailNoDocs')}</span>`}</div>
     </div>
 
     <div class="detail-section">
-      <div class="detail-section-title"><i class="fa-solid fa-images"></i> Galería</div>
+      <div class="detail-section-title"><i class="fa-solid fa-images"></i> ${i18next.t('admin.artisanDetailGallery')}</div>
       ${galleryHtml}
     </div>
   `;
 
   let actionBtns = '';
   if (a.verification_status !== 'verified') {
-    actionBtns += `<button class="btn btn-success" onclick="closeArtisanModal(); approveArtisan('${a.id}')"><i class="fa-solid fa-check"></i> Aprobar Artesano</button>`;
+    actionBtns += `<button class="btn btn-success" onclick="closeArtisanModal(); approveArtisan('${a.id}')"><i class="fa-solid fa-check"></i> ${i18next.t('admin.approveArtisanBtn')}</button>`;
   }
   if (a.verification_status === 'pending') {
-    actionBtns += `<button class="btn btn-danger" onclick="closeArtisanModal(); openReasonModal('Rechazar artesano','Se notificará al artesano por email.',() => rejectArtisan('${a.id}'))">Rechazar</button>`;
+    actionBtns += `<button class="btn btn-danger" onclick="closeArtisanModal(); openReasonModal('${i18next.t('admin.rejectArtisanHeading')}','${i18next.t('admin.rejectArtisanConfirm')}',() => rejectArtisan('${a.id}'))">${i18next.t('admin.rejectBtn')}</button>`;
   }
   if (a.verification_status === 'verified') {
-    actionBtns += `<button class="btn btn-warning" onclick="closeArtisanModal(); openReasonModal('Suspender artesano','El artesano perderá visibilidad en el catálogo.',() => suspendArtisan('${a.id}'))">Suspender</button>`;
+    actionBtns += `<button class="btn btn-warning" onclick="closeArtisanModal(); openReasonModal('${i18next.t('admin.suspendBtn')}','${i18next.t('admin.suspendArtisanConfirm')}',() => suspendArtisan('${a.id}'))">${i18next.t('admin.suspendBtn')}</button>`;
   }
   document.getElementById('artisan-modal-actions').innerHTML = actionBtns;
   document.getElementById('artisan-modal').classList.remove('hidden');
@@ -259,7 +304,7 @@ window.closeArtisanModal = function() {
 async function approveArtisan(id) {
   try {
     await apiFetch(`/admin/artisans/${id}/approve`, { method: 'PATCH' });
-    showToast('<i class="fa-solid fa-check"></i> Artesano aprobado y notificado por email', 'success');
+    showToast(i18next.t('admin.toastArtisanApproved'), 'success');
     loadArtisans();
     loadGlobalStats();
   } catch (e) {
@@ -269,24 +314,22 @@ async function approveArtisan(id) {
 
 async function rejectArtisan(id) {
   const reason = document.getElementById('modal-reason-text').value.trim();
-  if (!reason) { showToast('El motivo es obligatorio', 'warning'); return; }
+  if (!reason) { showToast(i18next.t('admin.modalActionReason'), 'warning'); return; }
   try {
     await apiFetch(`/admin/artisans/${id}/reject`, { method: 'PATCH', body: JSON.stringify({ reason }) });
-    showToast('Artesano rechazado y notificado', 'warning');
+    showToast(i18next.t('admin.toastArtisanRejected'), 'warning');
     closeReasonModal();
     loadArtisans();
     loadGlobalStats();
   } catch (e) {
     showToast(e.message, 'error');
   }
-}
-
 async function suspendArtisan(id) {
   const reason = document.getElementById('modal-reason-text').value.trim();
-  if (!reason) { showToast('El motivo es obligatorio', 'warning'); return; }
+  if (!reason) { showToast(i18next.t('admin.modalActionReason'), 'warning'); return; }
   try {
     await apiFetch(`/admin/artisans/${id}/suspend`, { method: 'PATCH', body: JSON.stringify({ reason }) });
-    showToast('Artesano suspendido y notificado', 'warning');
+    showToast(i18next.t('admin.toastArtisanSuspendedEmail'), 'warning');
     closeReasonModal();
     loadArtisans();
     loadGlobalStats();
@@ -378,6 +421,46 @@ function renderCatalogPage() {
   `).join('');
 
   renderPaginationControls('catalog-pagination', filteredProducts.length, currentCatalogPage, ITEMS_PER_PAGE, 'changeCatalogPage');
+
+  // Mobile cards view
+  const mobileList = document.getElementById('products-cards-mobile');
+  if (mobileList) {
+    if (paginated.length === 0) {
+      mobileList.innerHTML = '<div class="table-empty" style="padding:2rem;text-align:center;">No hay productos</div>';
+    } else {
+      mobileList.innerHTML = paginated.map(p => `
+        <div class="mobile-card-item ${p.status === 'hidden' ? 'row-dimmed' : ''}">
+          <div class="mc-row">
+            <div>
+              <div class="td-name">${p.name}</div>
+              <div class="td-sub">${p.artisan?.user?.full_name || '—'}</div>
+            </div>
+            ${p.status === 'hidden'
+              ? '<span class="badge badge-hidden"><i class="fa-solid fa-eye-slash"></i> Oculto</span>'
+              : '<span class="badge badge-visible"><i class="fa-solid fa-eye"></i> Visible</span>'}
+          </div>
+          <div class="mc-row">
+            <span class="mc-label">Categoría</span>
+            <span class="badge badge-category">${p.category?.name || '—'}</span>
+          </div>
+          <div class="mc-row">
+            <span class="mc-label">Stock</span>
+            <span class="stock-badge ${p.stock <= 0 ? 'stock-out' : p.stock <= 5 ? 'stock-low' : ''}">${p.stock}</span>
+          </div>
+          <div class="mc-row">
+            <span class="mc-label">Precio</span>
+            <span class="td-price">${formatPrice(p.price)}</span>
+          </div>
+          <div class="mc-actions">
+            <button class="btn btn-outline btn-sm" title="${p.status === 'hidden' ? 'Mostrar' : 'Ocultar'}" onclick="toggleProductVisibility('${p.id}', '${p.status}')">
+              <i class="fa-solid ${p.status === 'hidden' ? 'fa-eye' : 'fa-eye-slash'}"></i> ${p.status === 'hidden' ? 'Mostrar' : 'Ocultar'}
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="openReasonModal('Eliminar producto','Esta acción notificará al artesano y no se puede deshacer.',() => deleteProduct('${p.id}'))"><i class="fa-solid fa-trash"></i> Eliminar</button>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
 }
 
 window.filterProducts = function() {
@@ -477,7 +560,7 @@ function renderOrdersPage() {
         ${o.tracking_number
           ? `<div class="td-name" style="font-size:0.8rem;">${o.shipping_company || ''}</div>
              <code class="td-sub">${o.tracking_number}</code>`
-          : '<span class="td-sub">Sin guía</span>'}
+          : `<span class="td-sub">${i18next.t('admin.noTrackingGuide')}</span>`}
       </td>
       <td>
         <div class="btn-group">
@@ -495,6 +578,44 @@ function renderOrdersPage() {
       </td>
     </tr>
   `).join('');
+  // Mobile cards view
+  const mobileList = document.getElementById('orders-cards-mobile');
+  if (mobileList) {
+    if (paginated.length === 0) {
+      mobileList.innerHTML = '<div class="table-empty" style="padding:2rem;text-align:center;">No hay pedidos</div>';
+    } else {
+      mobileList.innerHTML = paginated.map(o => `
+        <div class="mobile-card-item">
+          <div class="mc-row">
+            <div>
+              <div class="td-name">${o.user?.full_name || '—'}</div>
+              <div class="td-sub">${o.user?.email || ''}</div>
+            </div>
+            ${badgeOrderStatus(o.status)}
+          </div>
+          <div class="mc-row">
+            <span class="mc-label">${i18next.t('admin.thId')}</span>
+            <code class="order-id">#${o.id.substring(0,8)}</code>
+          </div>
+          <div class="mc-row">
+            <span class="mc-label">${i18next.t('admin.thDate')}</span>
+            <span class="td-sub">${new Date(o.created_at).toLocaleDateString()}</span>
+          </div>
+          <div class="mc-row">
+            <span class="mc-label">${i18next.t('admin.thTotal')}</span>
+            <span class="td-price">${formatPrice(o.total_amount)}</span>
+          </div>
+          ${o.tracking_number ? `<div class="mc-row"><span class="mc-label">${i18next.t('admin.orderDetailTracking')}</span><code style="font-size:0.75rem;">${o.shipping_company || ''} · ${o.tracking_number}</code></div>` : ''}
+          <div class="mc-actions">
+            <button class="btn btn-outline btn-sm" onclick="viewOrder('${o.id}')"><i class="fa-solid fa-eye"></i> ${i18next.t('common.view')}</button>
+            ${o.status !== 'delivered' && o.status !== 'cancelled' ? `<button class="btn btn-primary btn-sm" onclick="openTrackingModal('${o.id}')"><i class="fa-solid fa-truck"></i> ${i18next.t('admin.orderDetailTracking')}</button>` : ''}
+            ${o.status !== 'cancelled' && o.status !== 'delivered' ? `<button class="btn btn-danger btn-sm" onclick="cancelOrder('${o.id}')"><i class="fa-solid fa-ban"></i></button>` : ''}
+            ${o.status === 'shipped' ? `<button class="btn btn-success btn-sm" onclick="markDelivered('${o.id}')"><i class="fa-solid fa-check"></i> ${i18next.t('order.statusDelivered')}</button>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+  }
 }
 
 window.filterOrders = function() {
@@ -533,39 +654,39 @@ window.viewOrder = function(id) {
   document.getElementById('order-modal-content').innerHTML = `
     <div class="order-detail-header">
       <div>
-        <div class="td-name" style="font-size:1.1rem;">Pedido #${o.id.substring(0,8)}</div>
-        <div class="td-sub">${new Date(o.created_at).toLocaleString('es-CO')}</div>
+        <div class="td-name" style="font-size:1.1rem;">${i18next.t('order.idLabel', { id: o.id.substring(0,8) })}</div>
+        <div class="td-sub">${new Date(o.created_at).toLocaleString()}</div>
       </div>
       <div>${badgeOrderStatus(o.status)}</div>
     </div>
 
     <div class="order-detail-grid">
       <div class="detail-section">
-        <div class="detail-section-title"><i class="fa-solid fa-user"></i> Cliente</div>
+        <div class="detail-section-title"><i class="fa-solid fa-user"></i> ${i18next.t('admin.orderDetailClient')}</div>
         <div class="td-name">${o.user?.full_name || '—'}</div>
         <div class="td-sub">${o.user?.email || ''}</div>
       </div>
       <div class="detail-section">
-        <div class="detail-section-title"><i class="fa-solid fa-location-dot"></i> Dirección de Envío</div>
+        <div class="detail-section-title"><i class="fa-solid fa-location-dot"></i> ${i18next.t('admin.orderDetailShipping')}</div>
         <div class="td-name">${o.shipping_address?.city || '—'}</div>
         <div class="td-sub">${o.shipping_address?.address || ''}</div>
       </div>
     </div>
 
     <div class="detail-section">
-      <div class="detail-section-title"><i class="fa-solid fa-boxes-stacked"></i> Productos del Pedido</div>
-      <div class="order-items-list">${itemsHtml || '<span class="td-sub">Sin ítems</span>'}</div>
+      <div class="detail-section-title"><i class="fa-solid fa-boxes-stacked"></i> ${i18next.t('admin.orderDetailProducts')}</div>
+      <div class="order-items-list">${itemsHtml || `<span class="td-sub">${i18next.t('admin.noItems')}</span>`}</div>
     </div>
 
     <div class="order-totals">
-      <div class="total-row"><span>Subtotal</span><span>${formatPrice(Number(o.total_amount) - Number(o.shipping_cost || 0))}</span></div>
-      <div class="total-row"><span>Envío (${o.shipping_company || '—'})</span><span>${formatPrice(o.shipping_cost || 0)}</span></div>
-      <div class="total-row total-final"><span>Total</span><span>${formatPrice(o.total_amount)}</span></div>
+      <div class="total-row"><span>${i18next.t('admin.orderDetailSubtotal')}</span><span>${formatPrice(Number(o.total_amount) - Number(o.shipping_cost || 0))}</span></div>
+      <div class="total-row"><span>${i18next.t('admin.orderDetailShippingCost')} (${o.shipping_company || '—'})</span><span>${formatPrice(o.shipping_cost || 0)}</span></div>
+      <div class="total-row total-final"><span>${i18next.t('admin.orderDetailTotal')}</span><span>${formatPrice(o.total_amount)}</span></div>
     </div>
 
     ${o.tracking_number ? `
     <div class="detail-section" style="margin-top:1rem;">
-      <div class="detail-section-title"><i class="fa-solid fa-truck"></i> Guía de Envío</div>
+      <div class="detail-section-title"><i class="fa-solid fa-truck"></i> ${i18next.t('admin.orderDetailTracking')}</div>
       <div class="tracking-info">
         <span class="td-name">${o.shipping_company}</span>
         <code>${o.tracking_number}</code>
@@ -575,13 +696,13 @@ window.viewOrder = function(id) {
 
   document.getElementById('order-modal-actions').innerHTML = `
     ${o.status !== 'cancelled' && o.status !== 'delivered'
-      ? `<button class="btn btn-primary" onclick="closeOrderModal(); openTrackingModal('${o.id}')"><i class="fa-solid fa-truck"></i> Actualizar Guía</button>`
+      ? `<button class="btn btn-primary" onclick="closeOrderModal(); openTrackingModal('${o.id}')"><i class="fa-solid fa-truck"></i> ${i18next.t('admin.updateTrackingTitle')}</button>`
       : ''}
     ${o.status === 'shipped'
-      ? `<button class="btn btn-success" onclick="closeOrderModal(); markDelivered('${o.id}')"><i class="fa-solid fa-check"></i> Marcar Entregado</button>`
+      ? `<button class="btn btn-success" onclick="closeOrderModal(); markDelivered('${o.id}')"><i class="fa-solid fa-check"></i> ${i18next.t('admin.markDeliveredOption')}</button>`
       : ''}
     ${o.status !== 'cancelled' && o.status !== 'delivered'
-      ? `<button class="btn btn-danger" onclick="closeOrderModal(); cancelOrder('${o.id}')"><i class="fa-solid fa-ban"></i> Cancelar Pedido</button>`
+      ? `<button class="btn btn-danger" onclick="closeOrderModal(); cancelOrder('${o.id}')"><i class="fa-solid fa-ban"></i> ${i18next.t('admin.cancelOrderOption')}</button>`
       : ''}
   `;
 
@@ -596,7 +717,7 @@ async function cancelOrder(id) {
   if (!confirm('¿Confirmas la cancelación de este pedido? Se devolverá el stock.')) return;
   try {
     await apiFetch(`/orders/${id}/status`, { method: 'POST', body: JSON.stringify({ status: 'cancelled' }) });
-    showToast('Pedido cancelado', 'warning');
+    showToast(i18next.t('admin.toastOrderCancelled'), 'warning');
     loadOrders();
     loadGlobalStats();
   } catch (e) {
@@ -607,7 +728,7 @@ async function cancelOrder(id) {
 async function markDelivered(id) {
   try {
     await apiFetch(`/orders/${id}/status`, { method: 'POST', body: JSON.stringify({ status: 'delivered' }) });
-    showToast('<i class="fa-solid fa-check"></i> Pedido marcado como entregado', 'success');
+    showToast(i18next.t('admin.toastMarkedDelivered'), 'success');
     loadOrders();
     loadGlobalStats();
   } catch (e) {
@@ -633,7 +754,7 @@ window.confirmUpdateTracking = async function() {
   const trackingNumber  = document.getElementById('tracking-number-input').value.trim();
   const shippingCompany = document.getElementById('tracking-carrier-input').value.trim();
   if (!trackingNumber || !shippingCompany) {
-    showToast('Completa el número de guía y la transportadora', 'warning');
+    showToast(i18next.t('admin.trackingNumberLabel'), 'warning');
     return;
   }
   try {
@@ -641,7 +762,7 @@ window.confirmUpdateTracking = async function() {
       method: 'PATCH',
       body: JSON.stringify({ tracking_number: trackingNumber, shipping_company: shippingCompany }),
     });
-    showToast('<i class="fa-solid fa-truck"></i> Guía actualizada. Pedido marcado como Despachado.', 'success');
+    showToast(i18next.t('admin.toastTrackingUpdated'), 'success');
     closeTrackingModal();
     loadOrders();
   } catch (e) {
@@ -676,8 +797,8 @@ function renderReviews(list) {
     container.innerHTML = `
       <div class="empty-state">
         <i class="fa-solid fa-flag-checkered fa-3x" style="color:#22c55e;margin-bottom:1rem;"></i>
-        <h3>Sin reseñas reportadas</h3>
-        <p>Todas las reseñas están en orden. ¡Buen trabajo moderando!</p>
+        <h3>${i18next.t('admin.noReportedReviews')}</h3>
+        <p>${i18next.t('admin.noReportedDesc')}</p>
       </div>`;
     return;
   }
@@ -686,22 +807,22 @@ function renderReviews(list) {
     <div class="review-card">
       <div class="review-card-header">
         <div>
-          <div class="review-product"><i class="fa-solid fa-box"></i> ${r.product?.name || 'Producto desconocido'}</div>
-          <div class="review-author">por <strong>${r.user?.full_name || 'Usuario'}</strong> · ${renderStars(r.rating)}</div>
+          <div class="review-product"><i class="fa-solid fa-box"></i> ${r.product?.name || i18next.t('admin.otherCategory')}</div>
+          <div class="review-author">${i18next.t('admin.reviewBy')} <strong>${r.user?.full_name || 'Usuario'}</strong> · ${renderStars(r.rating)}</div>
         </div>
         <div class="review-meta">
-          ${r.report_count > 1 ? `<span class="badge badge-red">${r.report_count} reportes</span>` : '<span class="badge badge-red">Reportada</span>'}
-          <span class="td-sub">${new Date(r.created_at).toLocaleDateString('es-CO')}</span>
+          ${r.report_count > 1 ? `<span class="badge badge-red">${i18next.t('admin.badgeReports', { count: r.report_count })}</span>` : `<span class="badge badge-red">${i18next.t('admin.badgeReported')}</span>`}
+          <span class="td-sub">${new Date(r.created_at).toLocaleDateString()}</span>
         </div>
       </div>
       <div class="review-comment">"${r.comment}"</div>
-      <div class="review-reason"><i class="fa-solid fa-triangle-exclamation"></i> Motivo del reporte: <strong>${r.report_reason || 'No especificado'}</strong></div>
+      <div class="review-reason"><i class="fa-solid fa-triangle-exclamation"></i> ${i18next.t('admin.thReason')}: <strong>${r.report_reason || i18next.t('admin.notSpecified')}</strong></div>
       <div class="review-actions">
         <button class="btn btn-success btn-sm" onclick="keepReview('${r.id}')">
-          <i class="fa-solid fa-check"></i> Reseña válida — Descartar reporte
+          <i class="fa-solid fa-check"></i> ${i18next.t('admin.dismissReportBtn')}
         </button>
-        <button class="btn btn-danger btn-sm" onclick="openReasonModal('Eliminar reseña','Se eliminará permanentemente y se notificará.',() => deleteReview('${r.id}'))">
-          <i class="fa-solid fa-trash"></i> Eliminar reseña
+        <button class="btn btn-danger btn-sm" onclick="openReasonModal('${i18next.t('admin.deleteReviewHeading')}','',() => deleteReview('${r.id}'))">
+          <i class="fa-solid fa-trash"></i> ${i18next.t('admin.deleteReviewBtn')}
         </button>
       </div>
     </div>
@@ -717,7 +838,7 @@ function renderStars(rating) {
 async function keepReview(id) {
   try {
     await apiFetch(`/admin/reviews/${id}/keep`, { method: 'PATCH' });
-    showToast('<i class="fa-solid fa-check-circle"></i> Reporte descartado. La reseña se mantiene publicada.', 'success');
+    showToast(i18next.t('admin.toastReportDismissed'), 'success');
     loadReportedReviews();
     loadGlobalStats();
   } catch (e) {
@@ -729,7 +850,7 @@ async function deleteReview(id) {
   const reason = document.getElementById('modal-reason-text').value.trim();
   try {
     await apiFetch(`/admin/reviews/${id}`, { method: 'DELETE', body: JSON.stringify({ reason }) });
-    showToast('<i class="fa-solid fa-trash"></i> Reseña eliminada correctamente', 'success');
+    showToast(i18next.t('admin.toastReviewDeleted'), 'success');
     closeReasonModal();
     loadReportedReviews();
     loadGlobalStats();
@@ -875,6 +996,31 @@ function renderAuditPage() {
   `).join('');
 
   renderPaginationControls('audit-pagination', globalAuditLogs.length, currentAuditPage, ITEMS_PER_PAGE, 'changeAuditPage');
+
+  // Mobile cards view
+  const mobileList = document.getElementById('audit-cards-mobile');
+  if (mobileList) {
+    if (paginated.length === 0) {
+      mobileList.innerHTML = '<div class="table-empty" style="padding:2rem;text-align:center;">Sin registros de auditoría</div>';
+    } else {
+      mobileList.innerHTML = paginated.map(l => `
+        <div class="mobile-card-item">
+          <div class="mc-row">
+            <div>
+              <div class="td-name">${l.admin?.full_name || 'Admin'}</div>
+              <div class="td-sub">${new Date(l.created_at).toLocaleString('es-CO')}</div>
+            </div>
+            ${badgeAuditAction(l.action)}
+          </div>
+          <div class="mc-row">
+            <span class="mc-label">Referencia</span>
+            <code style="font-size:0.75rem;">${(l.target_id || '').substring(0,12)}</code>
+          </div>
+          ${l.details ? `<div class="mc-row"><span class="mc-label">Detalles</span><span class="td-sub">${l.details}</span></div>` : ''}
+        </div>
+      `).join('');
+    }
+  }
 }
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────

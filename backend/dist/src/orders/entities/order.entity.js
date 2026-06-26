@@ -29,6 +29,7 @@ let Order = class Order {
     user;
     total_amount;
     status;
+    payment_status;
     shipping_cost;
     estimated_delivery_days;
     shipping_address;
@@ -36,6 +37,7 @@ let Order = class Order {
     payment_id;
     tracking_number;
     shipping_company;
+    tracking_url;
     items;
     created_at;
     updated_at;
@@ -58,6 +60,10 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'enum', enum: OrderStatus, default: OrderStatus.PENDING }),
     __metadata("design:type", String)
 ], Order.prototype, "status", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 50, default: 'pending' }),
+    __metadata("design:type", String)
+], Order.prototype, "payment_status", void 0);
 __decorate([
     (0, typeorm_1.Column)('numeric', { precision: 10, scale: 2, default: 0 }),
     __metadata("design:type", Number)
@@ -86,6 +92,10 @@ __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], Order.prototype, "shipping_company", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Order.prototype, "tracking_url", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)(() => order_item_entity_1.OrderItem, item => item.order, { cascade: true }),
     __metadata("design:type", Array)

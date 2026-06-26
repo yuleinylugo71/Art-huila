@@ -15,6 +15,7 @@ export declare class Order {
     user: User;
     total_amount: number;
     status: OrderStatus;
+    payment_status: string;
     shipping_cost: number;
     estimated_delivery_days: number;
     shipping_address: any;
@@ -22,6 +23,7 @@ export declare class Order {
     payment_id: string;
     tracking_number: string;
     shipping_company: string;
+    tracking_url: string;
     items: OrderItem[];
     created_at: Date;
     updated_at: Date;

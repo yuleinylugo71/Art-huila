@@ -1,3 +1,159 @@
+let coverageData = {};
+
+function handleDepartmentChange(deptName, selectCityValue = null) {
+  const citySelect = document.getElementById('destination-city');
+  if (!citySelect) return;
+
+  // Clear previous city & options
+  citySelect.innerHTML = '<option value="" disabled selected>Cargando ciudades...</option>';
+  citySelect.disabled = true;
+
+  // Clear visual status of shipping cost
+  window.currentDestinationCity = null;
+  const badgeEl = document.getElementById('shipping-cost-badge');
+  if (badgeEl) badgeEl.textContent = 'Por calcular';
+  const summaryShippingEl = document.getElementById('summary-shipping');
+  if (summaryShippingEl) {
+    summaryShippingEl.textContent = 'Por calcular';
+    summaryShippingEl.style.color = 'var(--color-muted)';
+  }
+  const resultDiv = document.getElementById('shipping-result');
+  if (resultDiv) {
+    resultDiv.innerHTML = '';
+    resultDiv.style.display = 'none';
+  }
+  
+  // Recalculate summary total without shipping
+  const cart = Cart.get();
+  let subtotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  document.getElementById('summary-total').textContent = formatPrice(subtotal);
+
+  // Get cities of selected department
+  const cities = coverageData[deptName] || [];
+  if (cities.length > 0) {
+    citySelect.innerHTML = '<option value="" disabled selected>Selecciona una ciudad...</option>';
+    cities.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c;
+      opt.textContent = c;
+      citySelect.appendChild(opt);
+    });
+    citySelect.disabled = false;
+
+    // Preselect city if provided
+    if (selectCityValue) {
+      // Find case-insensitive match or standard match
+      const matchedCity = cities.find(c => c.toLowerCase() === selectCityValue.toLowerCase());
+      if (matchedCity) {
+        citySelect.value = matchedCity;
+        window.currentDestinationCity = matchedCity;
+        calculateShipping();
+      }
+    }
+  } else {
+    citySelect.innerHTML = '<option value="" disabled selected>Sin ciudades con cobertura</option>';
+    citySelect.disabled = true;
+  }
+}
+
+async function loadCoverageAndInit() {
+  const deptSelect = document.getElementById('shipping-department');
+  try {
+    const data = await apiFetch('/orders/shipping-coverage');
+    coverageData = data || {};
+  } catch (err) {
+    console.error('Error loading shipping coverage from backend:', err);
+    // Local fallback
+    coverageData = {
+      'HUILA': [
+        'Neiva', 'Pitalito', 'Garzón', 'La Plata', 'Campoalegre', 'Palermo',
+        'Rivera', 'Algeciras', 'Yaguará', 'Agrado', 'Tarqui', 'Suaza', 'Acevedo',
+        'San Agustín', 'Isnos', 'Timaná', 'Nátaga', 'Tesalia'
+      ],
+      'TOLIMA': ['Ibagué', 'Espinal', 'Honda'],
+      'CAQUETA': ['Florencia'],
+      'PUTUMAYO': ['Mocoa', 'Puerto Asís'],
+      'CAUCA': ['Popayán', 'Santander de Quilichao'],
+      'CUNDINAMARCA': ['Bogotá', 'Soacha', 'Zipaquirá', 'Chía'],
+      'VALLE DEL CAUCA': ['Cali', 'Palmira', 'Buenaventura', 'Cartago', 'Buga', 'Tuluá'],
+      'RISARALDA': ['Pereira', 'Dosquebradas'],
+      'CALDAS': ['Manizales'],
+      'QUINDIO': ['Armenia'],
+      'META': ['Villavicencio'],
+      'BOYACA': ['Tunja'],
+      'ANTIOQUIA': ['Medellín', 'Bello', 'Itagüí', 'Envigado', 'Rionegro'],
+      'SANTANDER': ['Barrancabermeja', 'Bucaramanga', 'Girón', 'Floridablanca'],
+      'NORTE DE SANTANDER': ['Cúcuta'],
+      'ATLANTICO': ['Barranquilla', 'Soledad'],
+      'BOLIVAR': ['Cartagena'],
+      'MAGDALENA': ['Santa Marta'],
+      'CORDOBA': ['Montería'],
+      'SUCRE': ['Sincelejo'],
+      'CESAR': ['Valledupar'],
+      'LA GUAJIRA': ['Riohacha'],
+      'AMAZONAS': ['Leticia'],
+      'VAUPES': ['Mitú'],
+      'GUAINIA': ['Puerto Inírida'],
+      'GUAVIARE': ['San José del Guaviare'],
+      'CHOCO': ['Quibdó'],
+      'ARAUCA': ['Arauca'],
+      'CASANARE': ['Yopal'],
+      'SAN ANDRES Y PROVIDENCIA': ['San Andrés', 'Providencia'],
+      'VICHADA': ['Puerto Carreño']
+    };
+  }
+
+  // Populate department dropdown
+  if (deptSelect) {
+    deptSelect.innerHTML = '<option value="" disabled selected>Selecciona un departamento...</option>';
+    const depts = Object.keys(coverageData).sort();
+    depts.forEach(d => {
+      const opt = document.createElement('option');
+      opt.value = d;
+      opt.textContent = d.charAt(0).toUpperCase() + d.slice(1).toLowerCase();
+      deptSelect.appendChild(opt);
+    });
+
+    // Set change listener
+    deptSelect.addEventListener('change', (e) => {
+      handleDepartmentChange(e.target.value);
+    });
+  }
+
+  // Set city change listener
+  const citySelect = document.getElementById('destination-city');
+  if (citySelect) {
+    citySelect.addEventListener('change', (e) => {
+      const selectedCity = e.target.value;
+      window.currentDestinationCity = selectedCity;
+      calculateShipping();
+    });
+  }
+
+  // Proceed with user profile load and prefilling
+  if (Auth.getToken()) {
+    const testPanel = document.getElementById('epayco-test-panel');
+    if (testPanel) testPanel.style.display = 'block';
+
+    try {
+      const freshUser = await apiFetch('/users/me');
+      if (freshUser) {
+        localStorage.setItem('art_huila_user', JSON.stringify(freshUser));
+        prefillShippingDetails(freshUser);
+      }
+    } catch (err) {
+      console.error('Failed to pre-fill from profile:', err);
+      const cachedUser = Auth.getUser();
+      if (cachedUser) prefillShippingDetails(cachedUser);
+    }
+  } else {
+    // If not logged in, just check if there is an anonymous calculation needed
+    if (Cart.get().length > 0 && window.currentDestinationCity) {
+      calculateShipping();
+    }
+  }
+}
+
 const initCart = () => {
   const params = new URLSearchParams(window.location.search);
 
@@ -23,11 +179,7 @@ const initCart = () => {
   renderCart();
   document.getElementById('btn-checkout')?.addEventListener('click', proceedToCheckout);
 
-  // Show ePayco test cards panel if user is logged in
-  if (Auth.getToken()) {
-    const testPanel = document.getElementById('epayco-test-panel');
-    if (testPanel) testPanel.style.display = 'block';
-  }
+  loadCoverageAndInit();
 };
 
 if (window.i18nReadyProcessed) {
@@ -69,9 +221,9 @@ function renderCart() {
     const div = document.createElement('div');
     div.className = 'cart-item';
     div.innerHTML = `
-      <img src="${imgUrl}" alt="${item.name}" />
+      <img src="${imgUrl}" alt="${window.translateProduct(item)}" onerror="this.onerror=null; this.src='/img/placeholder.jpg';" />
       <div class="cart-item-details">
-        <h4>${item.name}</h4>
+        <h4 class="cart-item-name">${window.translateProduct(item)}</h4>
         <p style="font-size: 0.85rem; color: var(--color-muted);">${i18next.t('cart.artisanNameLabel')}${item.artisanName || 'N/A'}</p>
         <div class="cart-item-price">${formatPrice(item.price)}</div>
       </div>
@@ -81,7 +233,9 @@ function renderCart() {
         <button class="quantity-btn" onclick="updateQuantity(${index}, 1)">+</button>
       </div>
       <div style="margin-left: 1rem;">
-        <button class="btn-remove" onclick="removeFromCart(${index})">${i18next.t('common.delete')}</button>
+        <button class="btn-remove" onclick="removeFromCart(${index})" title="${i18next.t('common.delete')}">
+          <i class="fa-regular fa-trash-can"></i>
+        </button>
       </div>
     `;
     container.appendChild(div);
@@ -121,9 +275,13 @@ function normalizeImage(url) {
 
 window.calculateShipping = async function() {
   const citySelect = document.getElementById('destination-city');
-  const city = citySelect.value;
+  const city = citySelect?.value;
   if (!city) {
-    showToast(i18next.t('cart.errorSelectCity'), 'warning');
+    const summaryShipping = document.getElementById('summary-shipping');
+    if (summaryShipping) {
+      summaryShipping.textContent = 'Por calcular';
+      summaryShipping.style.color = '';
+    }
     return;
   }
 
@@ -131,9 +289,11 @@ window.calculateShipping = async function() {
   if (cart.length === 0) return;
 
   const btn = document.getElementById('btn-quote-shipping');
-  const originalHTML = btn.innerHTML;
-  btn.disabled = true;
-  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ' + i18next.t('cart.calculatingShipping');
+  const originalHTML = btn ? btn.innerHTML : '';
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ' + i18next.t('cart.calculatingShipping');
+  }
 
   try {
     const payload = {
@@ -153,8 +313,11 @@ window.calculateShipping = async function() {
 
     renderShippingOptions(quote.options || [], city, quote.cost);
 
-    document.getElementById('summary-shipping').textContent = formatPrice(quote.cost);
-    document.getElementById('summary-shipping').style.color = '';
+    const summaryShipping = document.getElementById('summary-shipping');
+    if (summaryShipping) {
+      summaryShipping.textContent = formatPrice(quote.cost);
+      summaryShipping.style.color = '';
+    }
     renderCart();
 
     // Reveal address section
@@ -168,8 +331,10 @@ window.calculateShipping = async function() {
     console.error('Error calculating shipping', error);
     showToast(i18next.t('cart.errorCalculatingShipping') + ': ' + (error.message || 'Intenta de nuevo'), 'error');
   } finally {
-    btn.disabled = false;
-    btn.innerHTML = originalHTML;
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = originalHTML;
+    }
   }
 };
 
@@ -279,28 +444,75 @@ async function proceedToCheckout() {
   const cart = Cart.get();
   if (cart.length === 0) return;
 
-  if (!window.currentDestinationCity) {
-    showToast(i18next.t('cart.errorCalculateShippingFirst'), 'warning');
+  // Read shipping fields
+  const name = document.getElementById('shipping-name')?.value.trim();
+  const phone = document.getElementById('shipping-phone')?.value.trim();
+  const department = document.getElementById('shipping-department')?.value;
+  const city = document.getElementById('destination-city')?.value;
+  const streetInput = document.getElementById('shipping-street');
+  const street = streetInput ? streetInput.value.trim() : '';
+
+  // Strict validation (Problem 8)
+  if (!name || name.length < 3) {
+    showToast('Por favor ingresa un nombre completo válido (mínimo 3 caracteres).', 'warning');
+    toggleShippingEdit(true);
+    document.getElementById('shipping-name')?.focus();
     return;
   }
-
-  // Validate address
-  const streetInput = document.getElementById('shipping-street');
-  const barrioInput = document.getElementById('shipping-barrio');
-  const refInput   = document.getElementById('shipping-ref');
-  const street  = streetInput ? streetInput.value.trim() : '';
-  const barrio  = barrioInput ? barrioInput.value.trim() : '';
-  const ref     = refInput    ? refInput.value.trim()    : '';
-
-  if (!street) {
-    showToast('<i class="fa-solid fa-location-dot"></i> Por favor ingresa tu dirección de entrega (calle / carrera).', 'warning');
+  if (!phone || phone.length < 7) {
+    showToast('Por favor ingresa un número de teléfono de contacto válido.', 'warning');
+    toggleShippingEdit(true);
+    document.getElementById('shipping-phone')?.focus();
+    return;
+  }
+  if (!department) {
+    showToast('Por favor selecciona el departamento de destino.', 'warning');
+    toggleShippingEdit(true);
+    document.getElementById('shipping-department')?.focus();
+    return;
+  }
+  if (!city) {
+    showToast('Por favor selecciona la ciudad o municipio de destino.', 'warning');
+    toggleShippingEdit(true);
+    document.getElementById('destination-city')?.focus();
+    return;
+  }
+  if (!street || street.length < 5) {
+    showToast('Por favor ingresa una dirección de entrega válida.', 'warning');
+    toggleShippingEdit(true);
     if (streetInput) streetInput.focus();
     return;
   }
 
-  let fullAddress = street;
-  if (barrio) fullAddress += `, ${barrio}`;
-  if (ref)    fullAddress += ` (${ref})`;
+  // Auto-save changes dynamically (Problem 2)
+  const currentUser = Auth.getUser() || {};
+  const hasChanges = currentUser.full_name !== name || 
+                     currentUser.phone !== phone || 
+                     currentUser.department !== department || 
+                     currentUser.city !== city || 
+                     currentUser.address !== street;
+                     
+  if (hasChanges) {
+    try {
+      const updatedUser = await apiFetch('/users/me', {
+        method: 'PATCH',
+        body: JSON.stringify({
+          full_name: name,
+          phone,
+          address: street,
+          city,
+          department
+        })
+      });
+      localStorage.setItem('art_huila_user', JSON.stringify(updatedUser));
+      updateShippingPreviewText(updatedUser);
+    } catch (e) {
+      console.warn('Failed to auto-save profile details:', e);
+    }
+  }
+
+  window.currentDestinationCity = city;
+  window.currentShippingAddress = street;
 
   const btn = document.getElementById('btn-checkout');
   const originalText = btn.innerHTML;
@@ -309,7 +521,7 @@ async function proceedToCheckout() {
 
   const payload = {
     items: cart.map(i => ({ productId: i.id, quantity: i.quantity })),
-    shipping_address: { city: window.currentDestinationCity, address: fullAddress },
+    shipping_address: { city: window.currentDestinationCity, address: street },
     payment_method: 'EPAYCO'
   };
 
@@ -526,3 +738,161 @@ window.simulatePayment = async function(orderId, totalAmount) {
     showToast('<i class="fa-solid fa-circle-xmark"></i> Error al procesar el pago: ' + (e.message || 'Intenta de nuevo'), 'error');
   }
 };
+
+function prefillShippingDetails(user) {
+  if (document.getElementById('shipping-name')) {
+    document.getElementById('shipping-name').value = user.full_name || '';
+  }
+  if (document.getElementById('shipping-phone')) {
+    document.getElementById('shipping-phone').value = user.phone || '';
+  }
+  if (document.getElementById('shipping-street')) {
+    document.getElementById('shipping-street').value = user.address || '';
+  }
+
+  // Pre-fill department and city dropdowns
+  const deptSelect = document.getElementById('shipping-department');
+  if (deptSelect && user.department) {
+    const upperDept = user.department.toUpperCase();
+    if (coverageData[upperDept]) {
+      deptSelect.value = upperDept;
+      handleDepartmentChange(upperDept, user.city);
+    }
+  }
+
+  // Update preview
+  updateShippingPreviewText(user);
+
+  // Collapse if user has complete details, otherwise keep open
+  const hasDetails = user.full_name && user.phone && user.address && user.city && user.department;
+  if (hasDetails) {
+    toggleShippingEdit(false);
+  } else {
+    toggleShippingEdit(true);
+  }
+  
+  // Show edit button
+  const editBtn = document.getElementById('btn-edit-shipping');
+  if (editBtn) editBtn.style.display = 'inline-block';
+}
+
+function updateShippingPreviewText(user) {
+  if (document.getElementById('shipping-preview-name')) {
+    document.getElementById('shipping-preview-name').textContent = user.full_name || '—';
+  }
+  if (document.getElementById('shipping-preview-phone')) {
+    document.getElementById('shipping-preview-phone').textContent = user.phone || '—';
+  }
+  if (document.getElementById('shipping-preview-address')) {
+    document.getElementById('shipping-preview-address').textContent = user.address || '—';
+  }
+  if (document.getElementById('shipping-preview-city')) {
+    document.getElementById('shipping-preview-city').textContent = user.city || '—';
+  }
+  if (document.getElementById('shipping-preview-dept')) {
+    document.getElementById('shipping-preview-dept').textContent = user.department || '—';
+  }
+}
+
+window.toggleShippingEdit = function(isEdit) {
+  const preview = document.getElementById('shipping-summary-preview');
+  const editFields = document.getElementById('shipping-edit-fields');
+  const saveBtn = document.getElementById('btn-save-shipping');
+  const editBtn = document.getElementById('btn-edit-shipping');
+
+  if (isEdit) {
+    if (preview) preview.style.display = 'none';
+    if (editFields) editFields.style.display = 'block';
+    if (saveBtn) saveBtn.style.display = 'inline-flex';
+    if (editBtn) editBtn.style.display = 'none';
+  } else {
+    if (preview) preview.style.display = 'block';
+    if (editFields) editFields.style.display = 'none';
+    if (saveBtn) saveBtn.style.display = 'none';
+    if (editBtn) editBtn.style.display = 'inline-block';
+  }
+};
+
+window.saveShippingDetailsInline = async function() {
+  const name = document.getElementById('shipping-name')?.value.trim();
+  const phone = document.getElementById('shipping-phone')?.value.trim();
+  const address = document.getElementById('shipping-street')?.value.trim();
+  const city = document.getElementById('destination-city')?.value;
+  const department = document.getElementById('shipping-department')?.value;
+
+  if (!name || name.length < 3) {
+    showToast('Por favor ingresa un nombre completo válido (mínimo 3 caracteres).', 'warning');
+    document.getElementById('shipping-name')?.focus();
+    return;
+  }
+  if (!phone || phone.length < 7) {
+    showToast('Por favor ingresa un número de teléfono de contacto válido.', 'warning');
+    document.getElementById('shipping-phone')?.focus();
+    return;
+  }
+  if (!department) {
+    showToast('Por favor selecciona el departamento de destino.', 'warning');
+    document.getElementById('shipping-department')?.focus();
+    return;
+  }
+  if (!city) {
+    showToast('Por favor selecciona la ciudad o municipio de destino.', 'warning');
+    document.getElementById('destination-city')?.focus();
+    return;
+  }
+  if (!address || address.length < 5) {
+    showToast('Por favor ingresa una dirección de entrega válida.', 'warning');
+    document.getElementById('shipping-street')?.focus();
+    return;
+  }
+
+  const saveBtn = document.getElementById('btn-save-shipping');
+  const originalText = saveBtn ? saveBtn.innerHTML : '';
+  if (saveBtn) {
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
+  }
+
+  try {
+    const updatedUser = await apiFetch('/users/me', {
+      method: 'PATCH',
+      body: JSON.stringify({
+        full_name: name,
+        phone,
+        address,
+        city,
+        department
+      })
+    });
+
+    localStorage.setItem('art_huila_user', JSON.stringify(updatedUser));
+    
+    // Update preview UI
+    updateShippingPreviewText(updatedUser);
+    window.currentDestinationCity = city;
+    window.currentShippingAddress = address;
+
+    // Calculate shipping for new city
+    await calculateShipping();
+
+    // Hide editor
+    toggleShippingEdit(false);
+    showToast('Datos de envío actualizados correctamente.', 'success');
+  } catch (err) {
+    showToast('Error al actualizar datos de envío: ' + err.message, 'error');
+  } finally {
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = originalText;
+    }
+  }
+};
+
+window.copyCardNumber = function(number) {
+  navigator.clipboard.writeText(number).then(() => {
+    showToast('Número de tarjeta copiado: ' + number, 'success');
+  }).catch(err => {
+    console.error('Error copying text: ', err);
+  });
+};
+

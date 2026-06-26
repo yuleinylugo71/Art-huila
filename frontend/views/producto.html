@@ -4,31 +4,50 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title id="page-title">Producto — Art Huila</title>
-  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/base.css?v=13">
   <link rel="stylesheet" href="/css/producto.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
-<nav class="navbar">
-  <div style="display:flex;align-items:center;gap:0.75rem;">
-    <a href="catalogo.html" class="nav-back" title="Volver al catálogo">←</a>
-    <a href="index.html" class="navbar-brand">Art <span>Huila</span></a>
-  </div>
-  <ul class="navbar-nav">
-    <li id="auth-links"></li>
-    <li><a href="carrito.html" style="font-weight:bold;color:var(--color-primary);"><i class="fa-solid fa-cart-shopping"></i> <span id="cart-count">0</span></a></li>
-  </ul>
-  <div class="lang-switcher">
-    <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
-    <span>|</span>
-    <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
-  </div>
-</nav>
+  <!-- Desktop Navbar -->
+  <nav class="navbar desktop-only">
+    <div style="display:flex;align-items:center;gap:0.75rem;">
+      <a href="catalogo.html" class="nav-back" title="Volver al catálogo">←</a>
+      <a href="index.html" class="navbar-brand">Art <span>Huila</span></a>
+    </div>
+    <ul class="navbar-nav">
+      <li id="auth-links"></li>
+      <li><a href="carrito.html" style="font-weight:bold;color:var(--color-primary);"><i class="fa-solid fa-cart-shopping"></i> <span id="cart-count">0</span></a></li>
+    </ul>
+    <div class="lang-switcher">
+      <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+      <span>|</span>
+      <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+    </div>
+  </nav>
 
-<div class="container section" id="product-container" style="min-height: 60vh;">
-  <!-- JS Hidratación -->
-</div>
+  <!-- Mobile Premium Header -->
+  <header class="mobile-only" style="background: white; border-bottom: 1.5px solid var(--color-border); padding: 1rem; position: sticky; top: 0; z-index: 1000;">
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <a href="javascript:window.history.back()" style="color: var(--color-text); font-size: 1.2rem;"><i class="fa-solid fa-arrow-left"></i></a>
+        <h1 style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 800; color: #261f1b; margin: 0;" data-i18n="product.detailHeadingMobile">Detalle</h1>
+      </div>
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <div class="lang-switcher" style="margin-left: 0;">
+          <button id="mobile-lang-es" class="btn-lang-es active" onclick="window.changeLanguage('es')">ES</button>
+          <span style="font-size: 0.7rem;">|</span>
+          <button id="mobile-lang-en" class="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+        </div>
+        <button onclick="window.shareProduct()" style="background: none; border: none; color: var(--color-text); font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="Compartir"><i class="fa-solid fa-share-nodes"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container section" id="product-container" style="min-height: 60vh; padding: 0;">
+    <!-- JS Hidratación -->
+  </div>
 
 <footer>
   <div class="brand">Art <span>Huila</span></div>

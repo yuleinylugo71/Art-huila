@@ -32,6 +32,9 @@ let OrdersController = class OrdersController {
     async getShippingQuote(body) {
         return this.ordersService.getShippingQuoteForCart(body.destinationCity, body.items);
     }
+    async getShippingCoverage() {
+        return this.ordersService.getShippingCoverage();
+    }
     findArtisanSales(user) {
         return this.ordersService.findArtisanSales(user.id);
     }
@@ -68,6 +71,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], OrdersController.prototype, "getShippingQuote", null);
+__decorate([
+    (0, public_decorator_1.Public)(),
+    (0, common_1.Get)('shipping-coverage'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], OrdersController.prototype, "getShippingCoverage", null);
 __decorate([
     (0, common_1.Get)('artisan/sales'),
     __param(0, (0, current_user_decorator_1.CurrentUser)()),
@@ -111,6 +121,8 @@ __decorate([
 ], OrdersController.prototype, "updateStatus", null);
 __decorate([
     (0, common_1.Patch)(':id/tracking'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, jwt_auth_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)('admin', 'artesano'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)('tracking_number')),
     __param(2, (0, common_1.Body)('shipping_company')),

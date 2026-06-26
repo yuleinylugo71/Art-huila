@@ -92,7 +92,7 @@ function initRegistro() {
             role: 'comprador',
           }),
         });
-        window.location.href = '/verificar-email.html';
+        window.location.href = '/login.html?registered=true';
       } catch (err) {
         const el = document.getElementById('error-msg');
         el.textContent = err.message; el.classList.remove('hidden');

@@ -11,4 +11,5 @@ export declare class MailService {
     sendOrderConfirmationEmail(to: string, name: string, orderId: string, total: number): Promise<void>;
     sendSaleNotificationEmail(to: string, artisanName: string, productName: string, quantity: number): Promise<void>;
     sendArtisanResponseEmail(to: string, buyerName: string, artisanName: string, productName: string): Promise<void>;
+    sendPasswordResetEmail(to: string, token: string, userName: string): Promise<void>;
 }

@@ -152,7 +152,7 @@ let AuthService = class AuthService {
     }
     async registerArtisan(dto, idDocumentFrontFile, idDocumentBackFile, galleryFiles, clientIp) {
         const passwordHash = await bcrypt.hash(dto.password, 10);
-        const verificationToken = crypto.randomBytes(32).toString('hex');
+        const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
         const expires = new Date();
         expires.setHours(expires.getHours() + 48);
         const category = await this.categoryRepo.findOneBy({ id: dto.category_id });
@@ -161,6 +161,10 @@ let AuthService = class AuthService {
         const region = await this.regionRepo.findOneBy({ id: dto.region_id });
         if (!region)
             throw new common_1.BadRequestException('Región no válida');
+        const existingArtisan = await this.artisanRepo.findOne({ where: { id_number: dto.id_number } });
+        if (existingArtisan) {
+            throw new common_1.ConflictException('El número de cédula (ID) ya se encuentra registrado');
+        }
         let idDocumentFrontUrl = null;
         if (idDocumentFrontFile) {
             const upload = await this.uploadToCloudinary(idDocumentFrontFile, 'artisans/documents');
@@ -246,6 +250,35 @@ let AuthService = class AuthService {
     async logout(refreshToken) {
         await this.refreshTokenRepo.delete({ token: refreshToken });
         return { message: 'Sesion cerrada correctamente' };
+    }
+    async requestPasswordReset(email) {
+        const genericMsg = 'Si el correo existe, recibirás instrucciones para restablecer tu contraseña.';
+        const user = await this.usersService.findByEmail(email);
+        if (!user) {
+            return { message: genericMsg };
+        }
+        const token = crypto.randomBytes(32).toString('hex');
+        user.reset_password_token = token;
+        user.reset_password_expires = new Date(Date.now() + 3600000);
+        await this.usersService.save(user);
+        try {
+            await this.mailService.sendPasswordResetEmail(user.email, token, user.full_name);
+        }
+        catch (err) {
+            console.error('Error sending password reset email:', err);
+        }
+        return { message: genericMsg };
+    }
+    async resetPassword(token, newPassword) {
+        const user = await this.usersService.findByResetToken(token);
+        if (!user || !user.reset_password_expires || user.reset_password_expires < new Date()) {
+            throw new common_1.BadRequestException('Token inválido o expirado');
+        }
+        user.password_hash = await bcrypt.hash(newPassword, 10);
+        user.reset_password_token = null;
+        user.reset_password_expires = null;
+        await this.usersService.save(user);
+        return { message: 'Contraseña actualizada correctamente' };
     }
 };
 exports.AuthService = AuthService;

@@ -2,6 +2,7 @@ import { ArtisanProfile } from '../../artisans/entities/artisan-profile.entity';
 import { Category } from '../../categories/entities/category.entity';
 import { Region } from '../../regions/entities/region.entity';
 import { ProductImage } from './product-image.entity';
+import { Review } from '../../reviews/entities/review.entity';
 export declare enum ProductStatus {
     DRAFT = "draft",
     PUBLISHED = "published",
@@ -29,6 +30,7 @@ export declare class Product {
     meta_title: string;
     meta_description: string;
     images: ProductImage[];
+    reviews: Review[];
     created_at: Date;
     updated_at: Date;
 }

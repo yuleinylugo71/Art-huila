@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Panel Admin — Art Huila</title>
-  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/base.css?v=18">
   <link rel="stylesheet" href="/css/dashboard-admin.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -19,9 +19,14 @@
       </div>
     </div>
 
-    <div class="sidebar-header">
-      <a href="index.html" class="sidebar-back"><i class="fa-solid fa-arrow-left"></i></a>
-      <a href="index.html" class="sidebar-brand">Art <span>Huila</span></a>
+    <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <a href="index.html" class="sidebar-back"><i class="fa-solid fa-arrow-left"></i></a>
+        <a href="index.html" class="sidebar-brand">Art <span>Huila</span></a>
+      </div>
+      <button class="mobile-only" onclick="document.querySelector('.dashboard-layout').classList.remove('sidebar-expanded')" style="background: none; border: none; color: white; font-size: 1.25rem; cursor: pointer; padding: 0.25rem;">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
     </div>
 
     <div class="sidebar-admin-info" id="sidebar-admin-info">
@@ -68,12 +73,19 @@
     </div>
   </aside>
 
+  <div class="sidebar-overlay mobile-only" onclick="document.querySelector('.dashboard-layout').classList.remove('sidebar-expanded')"></div>
+
   <!-- ─── MAIN CONTENT ─── -->
   <main class="main-content">
     <header class="dash-header">
-      <div>
-        <h1 id="section-title">Resumen</h1>
-        <p id="admin-welcome" class="dash-subtitle">Cargando...</p>
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <button class="mobile-menu-toggle mobile-only" id="mobile-menu-btn" onclick="document.querySelector('.dashboard-layout').classList.toggle('sidebar-expanded')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--color-text, #1a1208); padding: 0.25rem;">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div>
+          <h1 id="section-title" style="margin: 0; font-size: 1.5rem;">Resumen</h1>
+          <p id="admin-welcome" class="dash-subtitle">Cargando...</p>
+        </div>
       </div>
       <div class="dash-header-right">
         <div class="lang-switcher">
@@ -217,6 +229,7 @@
             <tbody id="artisans-table"></tbody>
           </table>
         </div>
+        <div class="mobile-card-list" id="artisans-cards-mobile"></div>
         <div class="pagination-controls" id="artisans-pagination"></div>
       </section>
 
@@ -251,6 +264,7 @@
             <tbody id="products-table"></tbody>
           </table>
         </div>
+        <div class="mobile-card-list" id="products-cards-mobile"></div>
         <div class="pagination-controls" id="catalog-pagination"></div>
       </section>
 
@@ -289,6 +303,7 @@
             <tbody id="orders-table"></tbody>
           </table>
         </div>
+        <div class="mobile-card-list" id="orders-cards-mobile"></div>
         <div class="pagination-controls" id="orders-pagination"></div>
       </section>
 
@@ -385,6 +400,7 @@
             <tbody id="audit-table"></tbody>
           </table>
         </div>
+        <div class="mobile-card-list" id="audit-cards-mobile"></div>
         <div class="pagination-controls" id="audit-pagination"></div>
       </section>
 

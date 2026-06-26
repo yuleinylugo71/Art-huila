@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="artisans.title">Artesanos — Art Huila</title>
+  <meta name="description" content="Conoce a los maestros artesanos del Huila. Descubre sus historias y técnicas ancestrales."/>
+  <link rel="stylesheet" href="/css/base.css?v=18">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    /* Custom styles to guarantee consistent layout */
+    .artisan-card {
+      background: white;
+      border: 1.2px solid var(--color-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition);
+      display: flex;
+      flex-direction: column;
+    }
+    .artisan-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-sm);
+    }
+    .artisan-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    @media (max-width: 768px) {
+      .artisan-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding-bottom: 5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Desktop Navigation -->
+<div class="desktop-only">
+  <nav class="navbar">
+    <div style="display:flex;align-items:center;gap:0.75rem;">
+      <a href="index.html" class="nav-back" data-i18n="nav.backToHome" title="Volver al inicio">←</a>
+      <a href="index.html" class="navbar-brand">Art <span>Huila</span></a>
+    </div>
+    <ul class="navbar-nav">
+      <li><a href="catalogo.html" data-i18n="nav.viewCatalog">Catálogo</a></li>
+      <li><a href="artesanos.html" class="active" data-i18n="nav.artisans">Artesanos</a></li>
+      <li><a href="carrito.html" style="font-weight:bold;color:var(--color-primary);"><i class="fa-solid fa-cart-shopping"></i> Carrito (0)</a></li>
+      <li id="nav-auth"></li>
+    </ul>
+    <div class="lang-switcher">
+      <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+      <span>|</span>
+      <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+    </div>
+  </nav>
+</div>
+
+<!-- Mobile Header Bar -->
+<div class="mobile-only" style="background: var(--color-surface); border-bottom: 1.5px solid var(--color-border); padding: 1rem; position: sticky; top: 0; z-index: 1000;">
+  <div style="display: flex; align-items: center; justify-content: space-between;">
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <a href="index.html" style="color: var(--color-text); font-size: 1.2rem;"><i class="fa-solid fa-arrow-left"></i></a>
+      <h1 style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 800; color: #261f1b; margin: 0;" data-i18n="artisans.headingMobile">Nuestros Artesanos</h1>
+    </div>
+    <div class="lang-switcher" style="margin-left: 0;">
+      <button id="mobile-lang-es" class="btn-lang-es active" onclick="window.changeLanguage('es')">ES</button>
+      <span style="font-size: 0.7rem; color: var(--color-border);">|</span>
+      <button id="mobile-lang-en" class="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+    </div>
+  </div>
+</div>
+
+<section class="section" style="padding-top: 2.0rem; min-height: 80vh;">
+  <div class="container">
+    <div class="desktop-only">
+      <h1 class="section-title" data-i18n="artisans.heading">Maestros Artesanos</h1>
+      <p class="section-subtitle" data-i18n="artisans.subtitle">Conoce a las manos creadoras de la maestría ancestral del Huila</p>
+    </div>
+
+    <!-- Search/Filter Input -->
+    <div style="max-width: 500px; margin: 0 auto 2rem auto; position: relative;">
+      <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--color-muted);"></i>
+      <input type="text" id="artisan-search" class="form-control" style="width: 100%; padding-left: 2.5rem; border-radius: 99px; border: 1.5px solid var(--color-border);" placeholder="Buscar artesano por nombre o municipio..." oninput="filterArtisans()"/>
+    </div>
+
+    <div id="artisans-list-container">
+      <div class="spinner" style="text-align: center; padding: 3rem;"><i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--color-primary);"></i></div>
+    </div>
+  </div>
+</section>
+
+<div class="desktop-only">
+  <footer>
+    <div class="brand">Art <span>Huila</span></div>
+    <p style="font-size:0.85rem;margin-top:0.5rem;">&copy; 2026 Art Huila</p>
+  </footer>
+</div>
+
+<script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+<script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
+<script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/i18n.js"></script>
+<script src="/js/artesanos.js"></script>
+</body>
+</html>

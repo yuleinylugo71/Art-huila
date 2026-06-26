@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="catalog.title">Catálogo — Art Huila</title>
   <meta name="description" content="Explora el catálogo de artesanías del Huila. Filtra por región, categoría y precio."/>
-  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/base.css?v=18">
   <link rel="stylesheet" href="/css/catalogo.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -20,7 +20,7 @@
     </div>
     <ul class="navbar-nav">
       <li><a href="catalogo.html" class="active" data-i18n="nav.viewCatalog">Catálogo</a></li>
-      <li><a href="carrito.html" id="nav-cart-count" style="font-weight:bold;color:var(--color-primary);"><i class="fa-solid fa-cart-shopping"></i> Carrito (0)</a></li>
+      <li><a href="carrito.html" style="font-weight:bold;color:var(--color-primary);"><i class="fa-solid fa-cart-shopping"></i> Carrito (0)</a></li>
       <li id="nav-auth"></li>
     </ul>
     <div class="lang-switcher">
@@ -32,31 +32,44 @@
 </div>
 
 <!-- Mobile Screen 2 Header Bar -->
-<div class="mobile-only mobile-catalog-header">
-  <div class="mobile-search-nav-bar">
-    <a href="index.html" class="mobile-back-arrow">
-      <i class="fa-solid fa-arrow-left"></i>
-    </a>
-    <div class="mobile-catalog-search-wrapper">
-      <i class="fa-solid fa-magnifying-glass"></i>
-      <input type="text" id="mobile-search-input" placeholder="Buscar artesanía..." oninput="window.applyFilters(400)" />
+<div class="mobile-only" style="background: white; border-bottom: 1.5px solid var(--color-border); padding: 1rem; position: sticky; top: 0; z-index: 1000;">
+  <div style="display: flex; align-items: center; justify-content: space-between;">
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <a href="index.html" style="color: var(--color-text); font-size: 1.2rem;"><i class="fa-solid fa-arrow-left"></i></a>
     </div>
-    <div class="lang-switcher">
-      <button class="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
-      <span style="color:var(--color-border);">|</span>
-      <button class="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
-    </div>
-    <div class="mobile-sort-select-wrapper">
-      <select id="mobile-sort-select" onchange="window.syncMobileSort(this)">
-        <option value="newest">🕒</option>
-        <option value="price_asc">💵↑</option>
-        <option value="price_desc">💵↓</option>
+    <div style="display: flex; align-items: center; gap: 0.65rem;">
+      <div class="lang-switcher" style="margin-left: 0;">
+        <button id="mobile-lang-es" class="btn-lang-es active" onclick="window.changeLanguage('es')">ES</button>
+        <span style="font-size: 0.7rem; color: var(--color-border);">|</span>
+        <button id="mobile-lang-en" class="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+      </div>
+      <select id="mobile-sort-select" onchange="window.syncMobileSort(this)" style="border: none; background: transparent; font-family: var(--font-body); font-size: 0.72rem; font-weight: 700; color: var(--color-primary); cursor: pointer; outline: none; text-align-last: right;">
+        <option value="newest" data-i18n="catalog.sortNewest">Más recientes</option>
+        <option value="price_asc" data-i18n="catalog.sortPriceAsc">Precio: menor a mayor</option>
+        <option value="price_desc" data-i18n="catalog.sortPriceDesc">Precio: mayor a menor</option>
       </select>
     </div>
   </div>
 </div>
 
-<section class="section" style="padding-top: 1.5rem;">
+<!-- Mobile Title Section -->
+<div class="mobile-only" style="padding: 1.25rem 1rem 0 1rem; background: var(--color-bg);">
+  <h1 style="font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; color: #261f1b; margin: 0;" data-i18n="catalog.heading">Catálogo de Artesanías</h1>
+  <p style="font-size: 0.82rem; color: var(--color-muted); margin: 0.25rem 0 0 0;" data-i18n="catalog.subtitle">Piezas únicas con valor cultural y tradición familiar</p>
+</div>
+
+<!-- Mobile search and filters row -->
+<div class="mobile-only" style="padding: 0.75rem 1rem 0.5rem 1rem; display: flex; gap: 0.75rem; align-items: center; background: var(--color-bg);">
+  <div style="flex: 1; position: relative; display: flex; align-items: center;">
+    <i class="fa-solid fa-magnifying-glass" style="position: absolute; left: 1rem; color: var(--color-muted);"></i>
+    <input type="text" id="mobile-search-input" class="form-control" style="width: 100%; padding-left: 2.5rem; border-radius: 99px; border: 1.5px solid var(--color-border); background: white;" placeholder="Buscar artesanía..." oninput="window.applyFilters(400)" />
+  </div>
+  <button onclick="window.toggleFilterSidebar(true)" style="background: #C84B11; color: white; border: none; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1.05rem; box-shadow: var(--shadow-xs); cursor: pointer;" title="Filtros">
+    <i class="fa-solid fa-sliders"></i>
+  </button>
+</div>
+
+<section class="section" style="padding-top: 0.5rem;">
   <div class="container">
     
     <div class="desktop-only">
@@ -64,26 +77,6 @@
       <p class="section-subtitle" data-i18n="catalog.subtitle">Descubre piezas únicas hechas a mano por artesanos verificados del Huila</p>
     </div>
 
-    <!-- Mobile Circular Categories Carousel (Figma Screen 2) -->
-    <div class="mobile-only mobile-categories-carousel" id="mobile-categories-carousel">
-      <!-- Cargado dinámicamente por JS -->
-    </div>
-
-    <!-- Mobile Filter Pills Row -->
-    <div class="mobile-only mobile-filter-pills-row">
-      <button class="mobile-filter-pill" onclick="document.querySelector('.filter-sidebar').classList.toggle('open')">
-        <i class="fa-solid fa-sliders"></i> Filtros
-      </button>
-      <button class="mobile-filter-pill" onclick="window.toggleQuickFilter('region')">
-        📍 Región <i class="fa-solid fa-chevron-down" style="font-size:0.6rem;margin-left:2px;"></i>
-      </button>
-      <button class="mobile-filter-pill" onclick="window.toggleQuickFilter('price')">
-        💰 Precio <i class="fa-solid fa-chevron-down" style="font-size:0.6rem;margin-left:2px;"></i>
-      </button>
-      <button class="mobile-filter-pill" onclick="window.clearFilters()">
-        🧹 Limpiar
-      </button>
-    </div>
 
     <div class="catalog-layout">
       <!-- Sidebar Filters (Drawer-style on mobile) -->
@@ -91,7 +84,7 @@
         <div class="filter-content">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
             <h3 class="filter-title" style="font-size:1.1rem; margin-bottom: 0;" data-i18n="catalog.filtersTitle">Filtros</h3>
-            <button class="mobile-only btn btn-sm btn-outline" style="padding: 0.35rem 0.65rem; border-radius: 50%;" onclick="document.querySelector('.filter-sidebar').classList.remove('open')">×</button>
+            <button class="mobile-only btn btn-sm btn-outline" style="padding: 0.35rem 0.65rem; border-radius: 50%;" onclick="window.toggleFilterSidebar(false)">×</button>
           </div>
 
           <!-- Search Filter (Hidden on mobile drawer since we have it on header) -->
@@ -124,8 +117,8 @@
         </div>
 
         <div class="filter-footer">
-          <button class="btn btn-primary btn-full" onclick="applyFilters(); document.querySelector('.filter-sidebar').classList.remove('open')" style="box-shadow:var(--shadow-sm);" data-i18n="catalog.applyFilters">Aplicar filtros</button>
-          <button class="btn btn-ghost btn-full mt-1" onclick="clearFilters(); document.querySelector('.filter-sidebar').classList.remove('open')" data-i18n="catalog.clearFilters">Limpiar filtros</button>
+          <button class="btn btn-primary btn-full" onclick="applyFilters(); window.toggleFilterSidebar(false)" style="box-shadow:var(--shadow-sm);" data-i18n="catalog.applyFilters">Aplicar filtros</button>
+          <button class="btn btn-ghost btn-full mt-1" onclick="clearFilters(); window.toggleFilterSidebar(false)" data-i18n="catalog.clearFilters">Limpiar filtros</button>
         </div>
       </aside>
 
@@ -167,6 +160,6 @@
 <script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
 <script src="/js/api.js"></script>
 <script src="/js/i18n.js"></script>
-<script src="/js/catalogo.js"></script>
+<script src="/js/catalogo.js?v=17"></script>
 </body>
 </html>

@@ -27,12 +27,32 @@ export declare class OrdersService {
         carrier: any;
         fallbackMessage: null;
         options: any;
+    } | {
+        isFallback: boolean;
+        originCity: string;
+        cost: number;
+        estimatedDays: number;
+        carrier: string;
+        fallbackMessage: string;
+        options: {
+            carrier: string;
+            price: number;
+            estimatedDays: number;
+        }[];
     }>;
     findByUser(userId: string): Promise<Order[]>;
     findOne(id: string, user: User): Promise<Order | null>;
     processPayment(id: string, user: User): Promise<Order>;
     markAsPaid(orderId: string, paymentId: string): Promise<Order>;
+    markPaymentApproved(orderId: string, paymentId: string): Promise<Order>;
+    markPaymentRejected(orderId: string, paymentId: string): Promise<Order>;
+    markPaymentFailed(orderId: string, paymentId: string): Promise<Order>;
+    markPaymentPending(orderId: string, paymentId: string): Promise<Order>;
+    markPaymentCancelled(orderId: string, paymentId: string): Promise<Order>;
     updateStatus(id: string, status: OrderStatus, user?: any): Promise<Order>;
     updateTracking(id: string, trackingNumber: string, shippingCompany: string): Promise<Order>;
     findArtisanSales(userId: string): Promise<OrderItem[]>;
+    getShippingCoverage(): Promise<{
+        [department: string]: string[];
+    }>;
 }

@@ -49,6 +49,24 @@ export class User {
   @Column({ type: 'timestamp', nullable: true })
   locked_until: Date | null;
 
+  @Column({ nullable: true })
+  reset_password_token: string;
+
+  @Column({ type: 'timestamp', nullable: true })
+  reset_password_expires: Date;
+
+  @Column({ nullable: true })
+  address: string;
+
+  @Column({ nullable: true })
+  city: string;
+
+  @Column({ nullable: true })
+  phone: string;
+
+  @Column({ nullable: true })
+  department: string;
+
   @CreateDateColumn()
   created_at: Date;
 

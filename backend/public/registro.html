@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title data-i18n="register.title">Registro — Art Huila</title>
-  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/base.css?v=18">
   <link rel="stylesheet" href="/css/auth.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -58,21 +58,37 @@
 
   <!-- ── RIGHT: FORM PANEL ── -->
   <div class="auth-right">
+    
+    <!-- Mobile Screen Header (Mockup Style) -->
+    <div class="mobile-only mobile-auth-header" style="justify-content: space-between;">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <a href="index.html" class="mobile-back-arrow">
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <h1 class="mobile-page-title" data-i18n="register.heading">Crear Cuenta</h1>
+      </div>
+      <div class="lang-switcher" style="margin: 0; padding: 0;">
+        <button id="mobile-lang-es" class="btn-lang-es active" onclick="window.changeLanguage('es')">ES</button>
+        <span style="font-size: 0.7rem; color: var(--color-border);">|</span>
+        <button id="mobile-lang-en" class="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+      </div>
+    </div>
+
     <div class="auth-box">
-      <a href="index.html" class="navbar-brand">Art <span>Huila</span></a>
-      <h2 data-i18n="register.heading">Crear cuenta</h2>
+      <a href="index.html" class="navbar-brand desktop-only">Art <span>Huila</span></a>
+      <h2 class="desktop-only" data-i18n="register.heading">Crear cuenta</h2>
       <p class="text-muted" data-i18n="register.howToRegister">¿Cómo deseas registrarte?</p>
 
       <!-- Type selector (Comprador vs Artesano) -->
       <div id="type-selector" class="type-selector">
         <div class="card type-card" id="type-comprador" onclick="selectType('comprador')">
-          <div><i class="fa-solid fa-bag-shopping fa-2x"></i></div>
-          <div class="type-title" data-i18n="register.buyerRole">Comprador</div>
+          <div class="type-icon-wrapper"><i class="fa-solid fa-cart-shopping"></i></div>
+          <span class="type-title" data-i18n="register.buyerRole">Comprador</span>
           <div class="type-desc" data-i18n="register.buyerRoleDesc">Explora y compra artesanías</div>
         </div>
         <div class="card type-card" id="type-artesano" onclick="selectType('artesano')">
-          <div><i class="fa-solid fa-screwdriver-wrench fa-2x"></i></div>
-          <div class="type-title" data-i18n="register.artisanRole">Artesano</div>
+          <div class="type-icon-wrapper"><i class="fa-solid fa-palette"></i></div>
+          <span class="type-title" data-i18n="register.artisanRole">Artesano</span>
           <div class="type-desc" data-i18n="register.artisanRoleDesc">Vende tus creaciones</div>
         </div>
       </div>
@@ -92,7 +108,10 @@
         </div>
         <div class="form-group">
           <label class="form-label" data-i18n="auth.passwordLabel">Contraseña</label>
-          <input type="password" id="c-pass" class="form-control" data-i18n-placeholder="auth.passwordPlaceholder" placeholder="Mínimo 8 caracteres" required/>
+          <div class="password-input-wrapper">
+            <input type="password" id="c-pass" class="form-control" data-i18n-placeholder="auth.passwordPlaceholder" placeholder="Mínimo 8 caracteres" required/>
+            <i class="fa-solid fa-eye-slash toggle-password" onclick="togglePasswordVisibility('c-pass', this)"></i>
+          </div>
           <div class="form-hint" data-i18n="auth.passwordRequirementsHint">Mínimo 8 caracteres, 1 mayúscula y 1 número</div>
         </div>
         <button type="submit" class="btn btn-primary btn-full" id="btn-comprador" data-i18n="register.createBuyerAccountBtn">Crear cuenta de comprador</button>
@@ -110,12 +129,37 @@
         </div>
         <div class="form-group">
           <label class="form-label" data-i18n="auth.passwordLabel">Contraseña</label>
-          <input type="password" id="a-pass" class="form-control" data-i18n-placeholder="auth.passwordPlaceholder" placeholder="Mínimo 8 caracteres" required/>
+          <div class="password-input-wrapper">
+            <input type="password" id="a-pass" class="form-control" data-i18n-placeholder="auth.passwordPlaceholder" placeholder="Mínimo 8 caracteres" required/>
+            <i class="fa-solid fa-eye-slash toggle-password" onclick="togglePasswordVisibility('a-pass', this)"></i>
+          </div>
           <div class="form-hint" data-i18n="auth.passwordRequirementsHint">Mínimo 8 caracteres, 1 mayúscula y 1 número</div>
         </div>
+
+        <!-- Artisan Section Header -->
+        <div class="artisan-section-divider">
+          <h3 class="artisan-section-title">
+            <i class="fa-solid fa-palette"></i> <span data-i18n="register.artisanDataHeader">Datos de Artesano</span>
+          </h3>
+        </div>
+
+        <div class="form-group upload-group">
+          <label class="form-label" data-i18n="register.galleryLabel">Foto de Perfil / Galería del Taller</label>
+          <label class="custom-file-upload" for="a-galeria">
+            <i class="fa-solid fa-camera"></i>
+            <div class="upload-text-container">
+              <div class="upload-title">Foto de Perfil / Galería</div>
+              <div class="upload-subtitle">Se carga en Cloudinary</div>
+            </div>
+            <span class="btn-upload">Subir foto</span>
+          </label>
+          <input type="file" id="a-galeria" multiple accept="image/*" required style="display:none;" onchange="updateUploadLabel(this, 'Se carga en Cloudinary')"/>
+          <div class="form-hint" data-i18n="register.galleryHint">Muestra tus mejores obras</div>
+        </div>
+
         <div class="form-group">
-          <label class="form-label" data-i18n="register.culturalHistoryLabel">Historia cultural de tu oficio</label>
-          <textarea id="a-historia" class="form-control" data-i18n-placeholder="register.culturalHistoryPlaceholder" placeholder="Cuéntanos sobre tu tradición artesanal, cómo aprendiste, qué te inspira..." required></textarea>
+          <label class="form-label" data-i18n="register.culturalHistoryLabel">Biografía / Historia cultural de tu oficio</label>
+          <textarea id="a-historia" class="form-control" data-i18n-placeholder="register.culturalHistoryPlaceholder" placeholder="Cuéntanos tu historia como artesano, tu técnica y tu inspiración..." required></textarea>
         </div>
         <div class="form-group">
           <label class="form-label" data-i18n="register.categoryLabel">Oficio (ej: tejido, cerámica, talla en madera...)</label>
@@ -129,19 +173,32 @@
             <option value="" data-i18n="common.loading">Cargando municipios...</option>
           </select>
         </div>
-        <div class="form-group">
-          <label class="form-label" data-i18n="register.galleryLabel">Galería fotográfica (máx 5 imágenes)</label>
-          <input type="file" id="a-galeria" class="form-control" multiple accept="image/*" required/>
-          <div class="form-hint" data-i18n="register.galleryHint">Muestra tus mejores obras</div>
-        </div>
-        <div class="form-group">
+
+        <div class="form-group upload-group">
           <label class="form-label" data-i18n="register.docFrontLabel">Cédula (Cara frontal)</label>
-          <input type="file" id="a-document-front" class="form-control" accept="image/*,application/pdf" required/>
+          <label class="custom-file-upload" for="a-document-front">
+            <i class="fa-solid fa-camera"></i>
+            <div class="upload-text-container">
+              <div class="upload-title">Cédula Cara Frontal</div>
+              <div class="upload-subtitle">Se carga de forma segura</div>
+            </div>
+            <span class="btn-upload">Subir foto</span>
+          </label>
+          <input type="file" id="a-document-front" accept="image/*,application/pdf" required style="display:none;" onchange="updateUploadLabel(this, 'Se carga de forma segura')"/>
           <div class="form-hint" data-i18n="register.docFrontHint">Sube una foto legible del frente de tu documento</div>
         </div>
-        <div class="form-group">
+
+        <div class="form-group upload-group">
           <label class="form-label" data-i18n="register.docBackLabel">Cédula (Cara posterior)</label>
-          <input type="file" id="a-document-back" class="form-control" accept="image/*,application/pdf" required/>
+          <label class="custom-file-upload" for="a-document-back">
+            <i class="fa-solid fa-camera"></i>
+            <div class="upload-text-container">
+              <div class="upload-title">Cédula Cara Posterior</div>
+              <div class="upload-subtitle">Se carga de forma segura</div>
+            </div>
+            <span class="btn-upload">Subir foto</span>
+          </label>
+          <input type="file" id="a-document-back" accept="image/*,application/pdf" required style="display:none;" onchange="updateUploadLabel(this, 'Se carga de forma segura')"/>
           <div class="form-hint" data-i18n="register.docBackHint">Sube una foto legible del reverso de tu documento</div>
         </div>
         

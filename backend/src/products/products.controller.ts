@@ -20,20 +20,28 @@ export class ProductsController {
     @Query('limit') limit?: string,
   ) {
     const products = await this.productsService.findFiltered(query, featured === 'true', limit ? parseInt(limit) : undefined);
-    return products.map(p => ({
-      id: p.id,
-      name: p.name,
-      slug: p.slug,
-      price: p.price,
-      status: p.artisan.verification_status === 'verified' ? 'verified' : 'pending',
-      artisan: {
-        name: p.artisan.user.full_name,
-        avatar_url: p.artisan.avatar_url,
-      },
-      rating: 4.5 + Math.random() * 0.5, // Dummy for now
-      review_count: Math.floor(Math.random() * 50) + 5, // Dummy for now
-      image_url: p.images?.[0]?.url || '',
-    }));
+    return products.map(p => {
+      const reviews = p.reviews || [];
+      const reviewCount = reviews.length;
+      const avgRating = reviewCount > 0
+        ? parseFloat((reviews.reduce((acc, r) => acc + r.rating, 0) / reviewCount).toFixed(1))
+        : 0;
+      return {
+        id: p.id,
+        name: p.name,
+        slug: p.slug,
+        price: p.price,
+        status: p.artisan.verification_status,
+        artisan: {
+          name: p.artisan.user.full_name,
+          avatar_url: p.artisan.avatar_url,
+          status: p.artisan.verification_status,
+        },
+        rating: avgRating,
+        review_count: reviewCount,
+        image_url: p.images?.[0]?.url || '',
+      };
+    });
   }
 
   @Get(':slug')

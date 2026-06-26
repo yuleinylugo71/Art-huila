@@ -5,98 +5,222 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Art Huila — Artesanías con Historia</title>
-  <link rel="stylesheet" href="/css/base.css">
-  <link rel="stylesheet" href="/css/index.css">
+  <link rel="stylesheet" href="/css/base.css?v=18">
+  <link rel="stylesheet" href="/css/index.css?v=11">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    /* Force CTA Banner to go edge-to-edge and touch the footer */
+    .cta-banner {
+      background: linear-gradient(135deg, #d35400 0%, #c1440e 50%, #8e2c02 100%) !important;
+      border-radius: 0 !important;
+      margin: 0 !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+      padding: 6.5rem 2rem !important;
+    }
+    .cta-banner::before {
+      content: '' !important;
+      position: absolute !important;
+      inset: 0 !important;
+      background: 
+        radial-gradient(circle at center, rgba(255, 255, 255, 0.15) 0%, transparent 70%),
+        url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.035'%3E%3Ccircle cx='40' cy='40' r='38'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat !important;
+      opacity: 0.9 !important;
+      pointer-events: none !important;
+    }
+    .cta-banner h2 {
+      font-family: var(--font-display) !important;
+      font-size: clamp(2rem, 5vw, 3.2rem) !important;
+      font-weight: 800 !important;
+      color: #ffffff !important;
+      margin-bottom: 1rem !important;
+      line-height: 1.15 !important;
+      letter-spacing: -0.01em !important;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.15) !important;
+    }
+    .cta-banner p {
+      font-family: var(--font-body) !important;
+      color: rgba(255, 255, 255, 0.9) !important;
+      margin-bottom: 2.25rem !important;
+      font-size: clamp(1rem, 2vw, 1.25rem) !important;
+      line-height: 1.6 !important;
+      max-width: 650px !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      text-shadow: 0 1px 5px rgba(0, 0, 0, 0.1) !important;
+    }
+    .cta-banner .btn {
+      background: #ffffff !important;
+      color: var(--color-primary) !important;
+      border: none !important;
+      font-weight: 700 !important;
+      padding: 1rem 2.5rem !important;
+      border-radius: 50px !important;
+      box-shadow: 0 10px 25px rgba(193, 68, 14, 0.25) !important;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      letter-spacing: 0.02em !important;
+      text-transform: uppercase !important;
+      font-size: 0.85rem !important;
+      display: inline-block !important;
+      text-decoration: none !important;
+    }
+    .cta-banner .btn:hover {
+      background: var(--color-accent-warm) !important;
+      color: var(--color-primary-dark) !important;
+      box-shadow: 0 15px 35px rgba(193, 68, 14, 0.4) !important;
+      transform: translateY(-3px) !important;
+    }
+  </style>
 </head>
 
 <body>
 
   <!-- Desktop Layout -->
   <div class="desktop-only">
-    <nav class="navbar">
-      <div style="display:flex;align-items:center;gap:0.75rem;">
-        <a href="index.html" class="navbar-brand" data-subtitle="MAESTRÍA ANCESTRAL">Art <span>Huila</span></a>
-      </div>
-      <ul class="navbar-nav">
-        <li><a href="catalogo.html" data-i18n="nav.viewCatalog">Catálogo</a></li>
-        <li id="nav-auth-area"></li>
-        <li>
-          <a href="carrito.html" style="font-weight:bold;color:var(--color-primary);">
-            <i class="fa-solid fa-cart-shopping"></i> <span id="cart-count">0</span>
-          </a>
-        </li>
-      </ul>
-      <div class="lang-switcher">
-        <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
-        <span>|</span>
-        <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
-      </div>
-    </nav>
+    <div class="hero-wrapper">
+      <nav class="navbar hero-navbar">
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <a href="index.html" class="navbar-brand hero-navbar-brand">Art <span>Huila</span></a>
+        </div>
 
-    <main class="hero">
-      <div class="container">
-        <h1 class="hero-title">Artesanías con <span>Alma</span> del Huila</h1>
-        <p class="hero-subtitle" data-i18n="home.heroSubtitle">Descubre piezas únicas creadas por manos maestras, donde cada técnica cuenta una historia milenaria.</p>
-        <div class="hero-actions">
-          <a href="catalogo.html" class="btn btn-primary btn-lg" data-i18n="nav.viewCatalog">Explorar Catálogo</a>
-          <a href="registro.html" class="btn btn-outline btn-lg" style="border-color:white;color:white;" data-i18n="register.heading">Unirse como Artesano</a>
+        <div class="lang-switcher hero-lang-switcher">
+          <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+          <span>|</span>
+          <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+        </div>
+      </nav>
+
+      <!-- HERO GRID -->
+      <main class="hero-new container">
+        <div class="hero-text-col">
+          <span class="hero-tag-new" data-i18n="home.heroTag">Maestría Ancestral</span>
+          <h1 class="hero-title-new">
+            <span data-i18n="home.heroTitlePart1">Artesanías Con</span><br>
+            <span class="dorado-highlight" data-i18n="home.heroTitleAlma">Alma</span> <span data-i18n="home.heroTitlePart2Suffix">& Historia</span>
+          </h1>
+          <p class="hero-subtitle-new" data-i18n="home.heroSubtitle">Descubre piezas exclusivas tejidas y moldeadas a mano por los maestros artesanos del Huila. Cada técnica cuenta una tradición milenaria.</p>
+          <div class="hero-actions-new">
+            <a href="catalogo.html" class="btn-primary-new" data-i18n="home.btnBuy">Comprar ahora →</a>
+            <a href="#featured-section" class="btn-secondary-new">
+              <i class="fa-solid fa-circle-play"></i> <span data-i18n="home.btnExploreStore">Explorar tienda</span>
+            </a>
+          </div>
         </div>
         
-        <div class="hero-badges">
-          <span class="hero-badge" data-i18n="home.badgeArtisans">Artesanos verificados</span>
-          <span class="hero-badge" data-i18n="home.badgeShipping">Envíos seguros</span>
-          <span class="hero-badge" data-i18n="home.badgeAuthentic">Productos auténticos</span>
+        <div class="hero-image-col">
+          <div class="hero-slider-wrapper">
+            <div class="slider-container" id="hero-slider">
+              <!-- Item 1: Cerámica -->
+              <div class="slider-item active" data-index="0" data-name-es="Vasija de Barro Cocido" data-name-en="Clay Pottery Vessel" data-price="85000">
+                <img src="/img/clay_pottery.png" alt="Cerámica" />
+              </div>
+              <!-- Item 2: Tejido/Mochila -->
+              <div class="slider-item" data-index="1" data-name-es="Mochila Wayuu Tradicional" data-name-en="Traditional Wayuu Bag" data-price="120000">
+                <img src="/img/mochila_bag.png" alt="Tejido/mochila" />
+              </div>
+              <!-- Item 3: Sombrero -->
+              <div class="slider-item" data-index="2" data-name-es="Sombrero de Pindo" data-name-en="Pindo Straw Hat" data-price="95000">
+                <img src="/img/sombrero_pindo.png" alt="Sombrero" />
+              </div>
+              <!-- Item 4: Cerámica 2 -->
+              <div class="slider-item" data-index="3" data-name-es="Jarrón de Arcilla Esmaltada" data-name-en="Glazed Clay Vase" data-price="110000">
+                <img src="/img/glazed_ceramic.png" alt="Cerámica 2" />
+              </div>
+              <!-- Item 5: Madera -->
+              <div class="slider-item" data-index="4" data-name-es="Tallado en Madera Ancestral" data-name-en="Ancestral Wood Carving" data-price="78000">
+                <img src="/img/wood_carving.png" alt="Artesanía madera" />
+              </div>
+            </div>
+
+
+            <!-- Slider Info Overlay (Name & Price) -->
+            <div class="slider-info-card">
+              <span id="slider-item-name">Vasija de Barro Cocido</span>
+              <span id="slider-item-price" class="price-pill">$85,000</span>
+            </div>
+
+            <!-- Navigation Dots -->
+            <div class="slider-dots" id="slider-dots-container">
+              <span class="dot active" data-index="0"></span>
+              <span class="dot" data-index="1"></span>
+              <span class="dot" data-index="2"></span>
+              <span class="dot" data-index="3"></span>
+              <span class="dot" data-index="4"></span>
+            </div>
+
+
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- NEW FEATURES BAR -->
+    <section class="features-bar container">
+      <div class="feature-item-new">
+        <div class="feature-icon-new"><i class="fa-solid fa-hands"></i></div>
+        <div class="feature-text-new">
+          <h4 data-i18n="home.feature1Title">100% Hecho a Mano</h4>
+          <p data-i18n="home.feature1Desc">Artesanías auténticas</p>
         </div>
       </div>
-    </main>
-
-    <section class="stats-bar reveal">
-      <div class="stats-grid">
-        <div class="stat-item">
-          <h3 id="stat-artisans">+200</h3>
-          <p data-i18n="home.statArtisansLabel">Artesanos verificados</p>
+      <div class="feature-item-new">
+        <div class="feature-icon-new"><i class="fa-solid fa-truck-fast"></i></div>
+        <div class="feature-text-new">
+          <h4 data-i18n="home.feature2Title">Envíos Seguros</h4>
+          <p data-i18n="home.feature2Desc">A todo Colombia</p>
         </div>
-        <div class="stat-item">
-          <h3 id="stat-products">+1.400</h3>
-          <p data-i18n="home.statProductsLabel">Productos auténticos</p>
+      </div>
+      <div class="feature-item-new">
+        <div class="feature-icon-new"><i class="fa-solid fa-shield-halved"></i></div>
+        <div class="feature-text-new">
+          <h4 data-i18n="home.feature3Title">Pago Protegido</h4>
+          <p data-i18n="home.feature3Desc">Garantía de seguridad</p>
         </div>
-        <div class="stat-item">
-          <h3 id="stat-rating">4.8<i class="fa-solid fa-star"></i></h3>
-          <p data-i18n="home.statRatingLabel">Valoración promedio</p>
-        </div>
-        <div class="stat-item">
-          <h3 id="stat-delivery">3-5</h3>
-          <p data-i18n="home.statDeliveryLabel">Días de entrega</p>
+      </div>
+      <div class="feature-item-new">
+        <div class="feature-icon-new"><i class="fa-solid fa-heart"></i></div>
+        <div class="feature-text-new">
+          <h4 data-i18n="home.feature4Title">Apoyo Directo</h4>
+          <p data-i18n="home.feature4Desc">Fomento local</p>
         </div>
       </div>
     </section>
 
+    <!-- CATEGORIES SECTION -->
     <section class="section container reveal">
-      <div style="text-align: center; margin-bottom: 3rem;">
-        <h2 class="section-title" data-i18n="home.exploreCategories">Explora por Categoría</h2>
-        <p class="section-subtitle" data-i18n="home.exploreCategoriesSubtitle">Encuentra la maestría en cada oficio</p>
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2.5rem;">
+        <div>
+          <h2 class="section-title-new" style="margin-bottom:0.25rem;" data-i18n="home.exploreCategories">Compra por Oficio</h2>
+          <p class="section-subtitle-new" data-i18n="home.exploreCategoriesSubtitle">Encuentra la maestría en cada oficio</p>
+        </div>
+        <a href="catalogo.html" class="view-all-link-new" data-i18n="home.viewAllCrafts">Ver todos los oficios →</a>
       </div>
-      <div id="categories-grid" class="grid grid-5 reveal-stagger">
+      <div id="categories-grid" class="categories-grid-circular reveal-stagger">
         <!-- Cargado por JS -->
       </div>
     </section>
 
-    <section class="section-warm">
+    <!-- PRODUCTS & SIDEBAR SECTION -->
+    <section class="section-warm" id="featured-section">
       <div class="container reveal">
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem;">
-          <div>
-            <h2 class="section-title" data-i18n="home.featuredProducts">Productos Destacados</h2>
-            <p class="section-subtitle" data-i18n="home.featuredProductsSubtitle">Selección exclusiva de nuestras mejores piezas</p>
+        <div class="products-main-layout">
+          <!-- Left column (Products grid) -->
+          <div class="products-grid-wrapper">
+            <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2.5rem;">
+              <div>
+                <h2 class="section-title-new" style="margin-bottom:0.25rem;" data-i18n="home.featuredProducts">Productos Destacados</h2>
+                <p class="section-subtitle-new" data-i18n="home.featuredProductsSubtitle">Selección exclusiva de nuestras mejores piezas</p>
+              </div>
+            </div>
+            <div id="featured-grid" class="featured-products-grid-new">
+              <!-- Cargado por JS -->
+            </div>
           </div>
-          <a href="catalogo.html" class="btn btn-outline" data-i18n="home.viewAllCatalog">Ver todo el catálogo →</a>
-        </div>
-        <div id="featured-grid" class="grid grid-4 reveal-stagger">
-          <!-- Cargado por JS -->
         </div>
       </div>
     </section>
 
+    <!-- CTA BANNER -->
     <section class="cta-banner reveal">
       <div class="container">
         <h2 data-i18n="home.ctaTitle">¿Eres un maestro artesano?</h2>
@@ -109,11 +233,6 @@
       <div class="container">
         <div class="brand">Art <span>Huila</span></div>
         <p style="font-size:0.85rem;margin-top:0.5rem;opacity:0.6;" data-i18n="home.footerText">&copy;2026 Art Huila. Orgullosamente huilense.</p>
-        <div style="margin-top: 1.5rem; display: flex; gap: 1.5rem; justify-content: center; font-size: 0.8rem;">
-          <a href="#" data-i18n="home.privacy">Privacidad</a>
-          <a href="#" data-i18n="home.terms">Términos</a>
-          <a href="#" data-i18n="home.contact">Contacto</a>
-        </div>
       </div>
     </footer>
   </div>
@@ -126,7 +245,7 @@
         <img src="/img/artisan-bear.png" id="mobile-user-avatar" class="mobile-avatar" alt="Avatar" />
         <div class="welcome-texts">
           <span class="welcome-label" data-i18n="home.welcomeBack">Bienvenido de nuevo,</span>
-          <span class="welcome-username" id="mobile-welcome-username">Invitado 🏺</span>
+          <span class="welcome-username" id="mobile-welcome-username">Invitado </span>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:0.5rem;">
@@ -185,7 +304,7 @@
   <script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
   <script src="/js/api.js"></script>
   <script src="/js/i18n.js"></script>
-  <script src="/js/home.js"></script>
+  <script src="/js/home.js?v=17"></script>
 </body>
 
 </html>

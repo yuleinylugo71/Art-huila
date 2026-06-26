@@ -31,9 +31,6 @@ export class ProductsService {
     if (profile.verification_status === ArtisanStatus.SUSPENDED) {
       throw new ForbiddenException('Tu cuenta se encuentra suspendida y no puede publicar productos');
     }
-    if (profile.verification_status === ArtisanStatus.PENDING) {
-      throw new ForbiddenException('Debes confirmar tu correo antes de publicar productos');
-    }
 
     let slug = slugify(data.name!);
     const existing = await this.productRepo.findOneBy({ slug });
@@ -58,7 +55,7 @@ export class ProductsService {
   async findBySlug(slug: string) {
     const product = await this.productRepo.findOne({
       where: { slug },
-      relations: ['artisan', 'artisan.user', 'artisan.region', 'category', 'region', 'images'],
+      relations: ['artisan', 'artisan.user', 'artisan.region', 'category', 'region', 'images', 'reviews'],
     });
     if (!product || product.artisan.verification_status === ArtisanStatus.SUSPENDED) throw new NotFoundException('Producto no encontrado');
     (product.artisan as any).status = product.artisan.verification_status;
@@ -152,6 +149,7 @@ export class ProductsService {
       .leftJoinAndSelect('product.artisan', 'artisan')
       .leftJoinAndSelect('artisan.user', 'user')
       .leftJoinAndSelect('product.images', 'images')
+      .leftJoinAndSelect('product.reviews', 'reviews')
       .where('product.status = :status', { status: ProductStatus.PUBLISHED })
       .andWhere('artisan.verification_status != :suspended', { suspended: ArtisanStatus.SUSPENDED });
 

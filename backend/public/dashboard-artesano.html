@@ -4,11 +4,63 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="artisan.profileTitle">Mi Panel — Art Huila</title>
-  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/base.css?v=18">
   <link rel="stylesheet" href="/css/dashboard-artesano.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
+
+<!-- Mobile Header (Exact Mockup Style) -->
+<header class="mobile-header mobile-only">
+  <div class="mobile-header-top-row">
+    <div class="mobile-header-text">
+      <span class="mobile-panel-label" data-i18n="artisan.panelLabel">Panel Artesano</span>
+      <h1 class="mobile-artisan-name" id="mobile-welcome-msg">Deicy Quimbayo</h1>
+    </div>
+    <div class="mobile-header-actions">
+      <!-- Lang toggles integrated as tiny dots or pill next to bell, or just in header -->
+      <div class="mobile-lang-header-pill">
+        <button id="mobile-lang-es" onclick="changeLanguage('es')" class="btn-lang-es active">ES</button>
+        <span>|</span>
+        <button id="mobile-lang-en" onclick="changeLanguage('en')" class="btn-lang-en">EN</button>
+      </div>
+      <button class="mobile-header-circle-btn" onclick="toggleRightPanel('notifications')">
+        <i class="fa-regular fa-bell"></i>
+        <span class="bell-dot" id="mobile-notif-count-dot"></span>
+      </button>
+      <button class="mobile-header-circle-btn" onclick="Auth.logout()">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </button>
+    </div>
+  </div>
+  
+  <!-- Pill Tabs switcher -->
+  <div class="mobile-pill-tabs">
+    <button onclick="showSection('resumen')" class="pill-tab active" id="pill-tab-resumen" data-i18n="artisan.menuResumen">Resumen</button>
+    <button onclick="showSection('mis-productos')" class="pill-tab" id="pill-tab-productos" data-i18n="artisan.menuMyProductsLabel">Productos</button>
+    <button onclick="showSection('mis-ventas')" class="pill-tab" id="pill-tab-ventas" data-i18n="artisan.menuMySalesLabel">Ventas</button>
+    <button onclick="showSection('mis-compras')" class="pill-tab" id="pill-tab-compras" data-i18n="artisan.menuMyPurchasesLabel">Compras</button>
+    <button onclick="showSection('nuevo-producto')" class="pill-tab" id="pill-tab-nuevo" data-i18n="artisan.menuPublishProductLabel">+ Nuevo</button>
+  </div>
+</header>
+
+<!-- Mobile Drawer Overlay Menu -->
+<div class="mobile-drawer-overlay mobile-only" id="mobile-drawer" onclick="toggleMobileMenu()">
+  <div class="mobile-drawer-content" onclick="event.stopPropagation()">
+    <div class="drawer-header">
+      <div class="mobile-logo">Art<span>Huila</span></div>
+      <button class="drawer-close-btn" onclick="toggleMobileMenu()">×</button>
+    </div>
+    <ul class="drawer-nav">
+      <li><a href="#" onclick="showSection('resumen'); toggleMobileMenu();"><i class="fa-solid fa-table-columns"></i> <span data-i18n="artisan.menuResumen">Resumen</span></a></li>
+      <li><a href="#" onclick="showSection('mis-compras'); toggleMobileMenu();"><i class="fa-solid fa-bag-shopping"></i> <span data-i18n="artisan.menuMyPurchasesLabel">Mis compras</span></a></li>
+      <li><a href="#" onclick="showSection('nuevo-producto'); toggleMobileMenu();"><i class="fa-solid fa-plus"></i> <span data-i18n="artisan.menuPublishProductLabel">Publicar producto</span></a></li>
+      <li><a href="catalogo.html"><i class="fa-solid fa-store"></i> <span data-i18n="artisan.menuViewCatalogLabel">Ver catálogo</span></a></li>
+      <li><a href="#" onclick="Auth.logout()"><i class="fa-solid fa-right-from-bracket"></i> <span data-i18n="auth.logout">Cerrar sesión</span></a></li>
+    </ul>
+  </div>
+</div>
+
 <div class="dashboard-layout">
   <!-- ── COLUMN 1: LEFT SIDEBAR (Icon & Brand Panel) ── -->
   <aside class="sidebar">
@@ -21,6 +73,7 @@
       <li><a href="#" onclick="showSection('resumen')" class="active" data-i18n-tooltip="artisan.menuResumen"><i class="fa-solid fa-table-columns"></i> <span data-i18n="artisan.menuResumen">Resumen</span></a></li>
       <li><a href="#" onclick="showSection('mis-productos')" data-i18n-tooltip="artisan.menuMyProductsLabel"><i class="fa-solid fa-box"></i> <span data-i18n="artisan.menuMyProductsLabel">Mis productos</span></a></li>
       <li><a href="#" onclick="showSection('mis-ventas')" data-i18n-tooltip="artisan.menuMySalesLabel"><i class="fa-solid fa-sack-dollar"></i> <span data-i18n="artisan.menuMySalesLabel">Mis ventas</span></a></li>
+      <li><a href="#" onclick="showSection('mis-compras')" data-i18n-tooltip="artisan.menuMyPurchasesLabel"><i class="fa-solid fa-bag-shopping"></i> <span data-i18n="artisan.menuMyPurchasesLabel">Mis compras</span></a></li>
       <li><a href="#" onclick="showSection('nuevo-producto')" data-i18n-tooltip="artisan.menuPublishProductLabel"><i class="fa-solid fa-plus"></i> <span data-i18n="artisan.menuPublishProductLabel">Publicar producto</span></a></li>
       <li><a href="#" onclick="showSection('mi-perfil')" data-i18n-tooltip="artisan.menuMyProfileLabel"><i class="fa-solid fa-user"></i> <span data-i18n="artisan.menuMyProfileLabel">Mi perfil</span></a></li>
       <li><a href="catalogo.html" data-i18n-tooltip="artisan.menuViewCatalogLabel"><i class="fa-solid fa-store"></i> <span data-i18n="artisan.menuViewCatalogLabel">Ver catálogo</span></a></li>
@@ -129,52 +182,6 @@
               </li>
             </ul>
           </div>
-          
-          <!-- Promoted Metrics Grid (Only shown when 100% complete) -->
-          <div class="promoted-metrics-grid hidden" id="promoted-metrics-grid">
-            <div class="micro-metric-card">
-              <div class="micro-icon color-terracota"><i class="fa-solid fa-sack-dollar"></i></div>
-              <div class="micro-info">
-                <span class="micro-label" data-i18n="artisan.microRevenue">Ingresos Totales</span>
-                <span class="micro-value" id="promoted-revenue">$0</span>
-              </div>
-            </div>
-            <div class="micro-metric-card">
-              <div class="micro-icon color-amber"><i class="fa-solid fa-box"></i></div>
-              <div class="micro-info">
-                <span class="micro-label" data-i18n="artisan.microStock">Stock de Productos</span>
-                <span class="micro-value" id="promoted-stock">0</span>
-              </div>
-            </div>
-            <div class="micro-metric-card">
-              <div class="micro-icon color-gold"><i class="fa-solid fa-chart-line"></i></div>
-              <div class="micro-info">
-                <span class="micro-label" data-i18n="artisan.microSales">Ventas del Mes</span>
-                <span class="micro-value" id="promoted-sales">0</span>
-              </div>
-            </div>
-            <div class="micro-metric-card">
-              <div class="micro-icon color-olive"><i class="fa-solid fa-truck-ramp-box"></i></div>
-              <div class="micro-info">
-                <span class="micro-label" data-i18n="artisan.microOrders">Pedidos Pendientes</span>
-                <span class="micro-value" id="promoted-orders">0</span>
-              </div>
-            </div>
-            <div class="micro-metric-card double-width">
-              <div class="micro-icon color-blue"><i class="fa-solid fa-receipt"></i></div>
-              <div class="micro-info">
-                <span class="micro-label" data-i18n="artisan.microLastOrder">Último Pedido Recibido</span>
-                <span class="micro-value" id="promoted-last-order">Ninguno aún</span>
-              </div>
-            </div>
-            <div class="micro-metric-card double-width">
-              <div class="micro-icon color-stars"><i class="fa-solid fa-star"></i></div>
-              <div class="micro-info">
-                <span class="micro-label" data-i18n="artisan.microRating">Calificación Promedio</span>
-                <span class="micro-value" id="promoted-rating">5.0 ★ (0 reseñas)</span>
-              </div>
-            </div>
-          </div>
         </div>
         <div class="welcome-banner-graphic">
           <img src="/img/artisan-bear.png" alt="Oso Artesano" class="welcome-bear-img"/>
@@ -183,21 +190,14 @@
 
       <!-- Metrics Row Grid -->
       <div class="metrics-grid" id="metrics-grid-bottom">
-        <div class="metric-card">
-          <div class="metric-icon color-terracota"><i class="fa-solid fa-sack-dollar"></i></div>
+        <div class="metric-card" onclick="showSection('mis-ventas')" style="cursor: pointer;">
+          <div class="metric-icon color-olive"><i class="fa-solid fa-truck-ramp-box"></i></div>
           <div class="metric-info">
-            <span class="metric-label" data-i18n="artisan.microRevenue">Ingresos Totales</span>
-            <h3 class="metric-value" id="metric-revenue">$0</h3>
+            <span class="metric-label" data-i18n="artisan.microOrders">Pedidos Pendientes</span>
+            <h3 class="metric-value" id="metric-orders">0</h3>
           </div>
         </div>
-        <div class="metric-card">
-          <div class="metric-icon color-amber"><i class="fa-solid fa-box"></i></div>
-          <div class="metric-info">
-            <span class="metric-label" data-i18n="artisan.microStock">Stock de Productos</span>
-            <h3 class="metric-value" id="metric-stock">0</h3>
-          </div>
-        </div>
-        <div class="metric-card">
+        <div class="metric-card" onclick="showSection('mis-ventas')" style="cursor: pointer;">
           <div class="metric-icon color-gold"><i class="fa-solid fa-chart-line"></i></div>
           <div class="metric-info">
             <span class="metric-label" data-i18n="artisan.microSales">Ventas del Mes</span>
@@ -205,10 +205,10 @@
           </div>
         </div>
         <div class="metric-card">
-          <div class="metric-icon color-olive"><i class="fa-solid fa-truck-ramp-box"></i></div>
+          <div class="metric-icon color-blue"><i class="fa-solid fa-receipt"></i></div>
           <div class="metric-info">
-            <span class="metric-label" data-i18n="artisan.microOrders">Pedidos Pendientes</span>
-            <h3 class="metric-value" id="metric-orders">0</h3>
+            <span class="metric-label" data-i18n="artisan.microLastOrder">Último Pedido</span>
+            <h3 class="metric-value" id="metric-last-order">Ninguno aún</h3>
           </div>
         </div>
       </div>
@@ -222,10 +222,10 @@
     <!-- Section: Mis Ventas -->
     <section id="section-mis-ventas" class="hidden">
       <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
-        <a href="#" onclick="showSection('mis-productos')" class="nav-arrow">←</a>
         <h2 style="font-size:1.5rem;margin:0;" data-i18n="artisan.mySalesHeading">Mis ventas</h2>
       </div>
-      <div class="card">
+      <!-- Desktop Table -->
+      <div class="card desktop-only">
         <table class="table">
           <thead>
             <tr>
@@ -242,6 +242,22 @@
           </tbody>
         </table>
       </div>
+      <!-- Mobile Cards -->
+      <div id="sales-cards-mobile" class="mobile-only" style="display:flex;flex-direction:column;gap:1rem;">
+        <div class="spinner"></div>
+      </div>
+    </section>
+
+    <!-- Section: Mis Compras (Pedidos realizados como comprador) -->
+    <section id="section-mis-compras" class="hidden">
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
+        <h2 style="font-size:1.5rem;margin:0;" data-i18n="artisan.menuMyPurchasesLabel">Mis compras</h2>
+      </div>
+      <div id="buyer-stats-container" style="margin-bottom: 1.5rem;"></div>
+      <div id="orders-container" style="display:flex; flex-direction:column; gap:1.25rem;">
+        <div class="spinner"></div>
+      </div>
+      <div class="pagination-controls" id="buyer-orders-pagination" style="margin-top:1.5rem;"></div>
     </section>
 
     <!-- Section: Mis Productos -->
@@ -256,82 +272,101 @@
     <!-- Section: Nuevo Producto / Editar -->
     <section id="section-nuevo-producto" class="hidden">
       <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
-        <a href="#" onclick="showSection('mis-productos')" class="nav-arrow">←</a>
         <h2 style="font-size:1.5rem;margin:0;" data-i18n="artisan.publishProductHeading">Publicar nuevo producto</h2>
       </div>
       <div id="preview-box" class="hidden card card-body mb-3"></div>
-      <form id="product-form">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
-          <div class="form-group" style="grid-column:1/-1;">
-            <label class="form-label" data-i18n="artisan.productNameLabel">Nombre del producto *</label>
-            <input type="text" id="p-name" class="form-control" maxlength="120" data-i18n-placeholder="artisan.productNamePlaceholder" placeholder="Ej: Mochila Wayuu Tejida" required/>
-          </div>
-          <div class="form-group">
-            <label class="form-label" data-i18n="artisan.productPriceLabel">Precio (COP) *</label>
-            <input type="number" id="p-price" class="form-control" min="1" placeholder="150000" required/>
-          </div>
-          <div class="form-group">
-            <label class="form-label" data-i18n="artisan.productStockLabel">Stock *</label>
-            <input type="number" id="p-stock" class="form-control" min="0" placeholder="10" required/>
-          </div>
-          <div class="form-group">
-            <label class="form-label" data-i18n="artisan.productCategoryLabel">Categoría *</label>
-            <select id="p-category" class="form-control" required><option value="" data-i18n="common.loading">Cargando...</option></select>
-          </div>
-          <div class="form-group">
-            <label class="form-label" data-i18n="artisan.productRegionLabel">Municipio *</label>
-            <select id="p-region" class="form-control" required><option value="" data-i18n="common.loading">Cargando...</option></select>
-          </div>
-          <div class="form-group" style="grid-column:1/-1;">
-            <label class="form-label" data-i18n="artisan.productShortDescLabel">Descripción breve (gancho)</label>
-            <input type="text" id="p-short-desc" class="form-control" maxlength="150" placeholder="Ej: Pieza única tejida a mano que cuenta la historia de la tierra..."/>
-          </div>
-          <div class="form-group">
-            <label class="form-label" data-i18n="artisan.productMaterialsLabel">Materiales usados</label>
-            <input type="text" id="p-materials" class="form-control" placeholder="Ej: Lana de oveja, tintes naturales"/>
-          </div>
-          <div class="form-group">
-            <label class="form-label" data-i18n="artisan.productDimensionsLabel">Medidas / Tamaño</label>
-            <input type="text" id="p-dimensions" class="form-control" placeholder="Ej: 30cm x 20cm"/>
-          </div>
-          <div class="form-group">
-            <label class="form-label" data-i18n="artisan.productWeightLabel">Peso aproximado</label>
-            <input type="text" id="p-weight" class="form-control" placeholder="Ej: 500g"/>
-          </div>
-          <div class="form-group">
-            <label class="checkbox-label" style="display:flex;align-items:center;gap:0.5rem;margin-top:2rem;">
-              <input type="checkbox" id="p-handmade" checked/>
-              <span data-i18n="artisan.productIsHandmadeLabel">¿Es hecho a mano?</span>
-            </label>
-          </div>
-          <div class="form-group" style="grid-column:1/-1;">
-            <label class="form-label" data-i18n="artisan.productCareLabel">Cuidado y mantenimiento</label>
-            <textarea id="p-care" class="form-control" placeholder="Ej: Lavar a mano con agua fría y secar a la sombra..."></textarea>
-          </div>
-          <div class="form-group" style="grid-column:1/-1;">
-            <label class="form-label" data-i18n="artisan.productOriginLabel">Origen cultural *</label>
-            <textarea id="p-origin" class="form-control" placeholder="Describe el origen de esta artesanía..." required></textarea>
-          </div>
-          <div class="form-group" style="grid-column:1/-1;">
-            <label class="form-label" data-i18n="artisan.productTechniqueLabel">Técnica artesanal *</label>
-            <textarea id="p-technique" class="form-control" placeholder="Describe la técnica utilizada..." required></textarea>
-          </div>
-          <div class="form-group" style="grid-column:1/-1;">
-            <label class="form-label" data-i18n="artisan.productSignificanceLabel">Significado cultural *</label>
-            <textarea id="p-significance" class="form-control" placeholder="¿Qué significa esta pieza culturalmente?" required></textarea>
-          </div>
-          <div class="form-group" style="grid-column:1/-1;">
-            <label class="form-label" data-i18n="artisan.productImagesLabel">Imágenes del producto (máx. 10)</label>
-            <div class="image-uploader" id="img-uploader" onclick="document.getElementById('img-input').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondrop="handleDrop(event)">
-              <input type="file" id="img-input" accept="image/*" multiple onchange="handleFiles(this.files)"/>
-              <div style="font-size:2rem;margin-bottom:0.5rem;"><i class="fa-solid fa-camera-retro"></i></div>
-              <div style="font-weight:500;" data-i18n="artisan.productImagesUploadText">Haz clic o arrastra imágenes aquí</div>
-              <div style="font-size:0.8rem;color:var(--color-muted);" data-i18n="artisan.productImagesUploadSub">PNG, JPG, WEBP — máximo 10 imágenes</div>
+      <form id="product-form" class="product-form-container">
+        <div class="product-form-grid">
+          <!-- Columna Izquierda: Detalles del Producto -->
+          <div class="product-details-col">
+            <div class="card card-body mb-3">
+              <h3 class="section-title"><i class="fa-solid fa-circle-info"></i> <span data-i18n="artisan.basicInfoHeading">Información Básica</span></h3>
+              <div class="form-group">
+                <label class="form-label" data-i18n="artisan.productNameLabel">Nombre del producto *</label>
+                <input type="text" id="p-name" class="form-control" maxlength="120" data-i18n-placeholder="artisan.productNamePlaceholder" placeholder="Ej: Mochila Wayuu Tejida" required/>
+              </div>
+              <div class="form-row-grid">
+                <div class="form-group">
+                  <label class="form-label" data-i18n="artisan.productPriceLabel">Precio (COP) *</label>
+                  <input type="number" id="p-price" class="form-control" min="1" placeholder="150000" required/>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" data-i18n="artisan.productStockLabel">Stock *</label>
+                  <input type="number" id="p-stock" class="form-control" min="0" placeholder="10" required/>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="checkbox-label" style="display:flex;align-items:center;gap:0.5rem;margin-top:0.5rem;">
+                  <input type="checkbox" id="p-handmade" checked/>
+                  <span data-i18n="artisan.productIsHandmadeLabel">¿Es hecho a mano?</span>
+                </label>
+              </div>
+              <div class="form-row-grid mt-1">
+                <div class="form-group">
+                  <label class="form-label" data-i18n="artisan.productCategoryLabel">Categoría *</label>
+                  <select id="p-category" class="form-control" required><option value="" data-i18n="common.loading">Cargando...</option></select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" data-i18n="artisan.productRegionLabel">Municipio *</label>
+                  <select id="p-region" class="form-control" required><option value="" data-i18n="common.loading">Cargando...</option></select>
+                </div>
+              </div>
+              <div class="form-row-grid mt-1">
+                <div class="form-group">
+                  <label class="form-label" data-i18n="artisan.productWeightLabel">Peso aproximado</label>
+                  <input type="text" id="p-weight" class="form-control" placeholder="Ej: 500g"/>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" data-i18n="artisan.productDimensionsLabel">Medidas / Tamaño</label>
+                  <input type="text" id="p-dimensions" class="form-control" placeholder="Ej: 30cm x 20cm"/>
+                </div>
+              </div>
+              <div class="form-group" style="margin-top:1rem;">
+                <label class="form-label" data-i18n="artisan.productMaterialsLabel">Materiales usados</label>
+                <input type="text" id="p-materials" class="form-control" placeholder="Ej: Lana de oveja, tintes naturales"/>
+              </div>
             </div>
-            <div class="image-previews" id="img-previews"></div>
+            <div class="card card-body mb-3">
+              <h3 class="section-title"><i class="fa-solid fa-images"></i> <span data-i18n="artisan.productImagesLabel">Imágenes del producto (máx. 10)</span></h3>
+              <div class="form-group">
+                <div class="image-uploader" id="img-uploader" onclick="document.getElementById('img-input').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondrop="handleDrop(event)">
+                  <input type="file" id="img-input" accept="image/*" multiple onchange="handleFiles(this.files)" onclick="event.stopPropagation()"/>
+                  <div style="font-size:1.5rem;margin-bottom:0.25rem;"><i class="fa-solid fa-camera-retro"></i></div>
+                  <div style="font-weight:500;font-size:0.9rem;" data-i18n="artisan.productImagesUploadText">Haz clic o arrastra imágenes aquí</div>
+                  <div style="font-size:0.75rem;color:var(--color-muted);" data-i18n="artisan.productImagesUploadSub">PNG, JPG, WEBP — máximo 10 imágenes</div>
+                </div>
+                <div class="image-previews" id="img-previews"></div>
+              </div>
+            </div>
+          </div>
+          <!-- Columna Derecha: Historia y Narrativa del Producto (Origen y Técnica) -->
+          <div class="product-story-col">
+            <div class="card card-body mb-3">
+              <h3 class="section-title"><i class="fa-solid fa-scroll"></i> <span data-i18n="artisan.historyTraditionHeading">Origen y Técnica Cultural</span></h3>
+              <div class="form-group">
+                <label class="form-label" data-i18n="artisan.productShortDescLabel">Descripción breve (gancho)</label>
+                <input type="text" id="p-short-desc" class="form-control" maxlength="150" placeholder="Ej: Pieza única tejida a mano que cuenta la historia de la tierra..."/>
+              </div>
+              <div class="form-group">
+                <label class="form-label" data-i18n="artisan.productOriginLabel">Origen cultural *</label>
+                <textarea id="p-origin" class="form-control" rows="3" placeholder="Describe el origen de esta artesanía..." required></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label" data-i18n="artisan.productTechniqueLabel">Técnica artesanal *</label>
+                <textarea id="p-technique" class="form-control" rows="3" placeholder="Describe la técnica utilizada..." required></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label" data-i18n="artisan.productSignificanceLabel">Significado cultural *</label>
+                <textarea id="p-significance" class="form-control" rows="3" placeholder="¿Qué significa esta pieza culturalmente?" required></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label" data-i18n="artisan.productCareLabel">Cuidado y mantenimiento</label>
+                <textarea id="p-care" class="form-control" rows="2" placeholder="Ej: Lavar a mano con agua fría y secar a la sombra..."></textarea>
+              </div>
+            </div>
           </div>
         </div>
-        <div style="display:flex;gap:1rem;margin-top:1rem;">
+        <div class="form-actions-row">
           <button type="button" class="btn btn-outline" onclick="previewProduct()"><i class="fa-solid fa-eye"></i> <span data-i18n="artisan.previewBtn">Vista previa</span></button>
           <button type="submit" class="btn btn-primary" id="btn-publish"><i class="fa-solid fa-check"></i> <span data-i18n="artisan.publishBtn">Publicar producto</span></button>
         </div>
@@ -340,11 +375,28 @@
 
     <!-- Section: Mi Perfil (Rebuilt with Parity with Registration Data) -->
     <section id="section-mi-perfil" class="hidden">
-      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
-        <a href="#" onclick="showSection('mis-productos')" class="nav-arrow">←</a>
-        <div style="flex:1;display:flex;justify-content:space-between;align-items:center;">
-          <h2 style="font-size:1.5rem;margin:0;" data-i18n="artisan.profileHeading">Mi perfil artesanal</h2>
-          <button class="btn btn-outline btn-sm" id="btn-edit-profile" onclick="enableProfileEdit()"><i class="fa-solid fa-pen"></i> <span data-i18n="artisan.editProfileBtn">Editar perfil</span></button>
+      <!-- Title row -->
+      <div class="profile-title-row" style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
+        <h2 class="profile-heading-serif" style="font-size:1.6rem;margin:0;font-family:var(--font-display), serif;font-weight:800;color:var(--color-text);" data-i18n="artisan.profileHeading">Mi perfil artesanal</h2>
+        <button class="btn btn-primary btn-edit-premium" id="btn-edit-profile" onclick="enableProfileEdit()" style="margin-left:auto;">
+          <i class="fa-solid fa-pen"></i> <span data-i18n="artisan.editProfileBtn">Editar perfil</span>
+        </button>
+      </div>
+      
+      <!-- Premium Pinterest Cover Profile Header -->
+      <div class="profile-header-card">
+        <div class="profile-cover-banner"></div>
+        <div class="profile-avatar-wrapper">
+          <div id="avatar-preview-header" class="artisan-header-avatar">
+            <i class="fa-solid fa-user"></i>
+          </div>
+          <div class="profile-meta-info">
+            <h2 id="profile-display-name" class="profile-display-name">Artesano de Huila</h2>
+            <p class="profile-display-subtitle">
+              <span id="profile-display-category" class="profile-badge-tag"><i class="fa-solid fa-palette"></i> Artesanías</span>
+              <span id="profile-display-region" class="profile-badge-tag"><i class="fa-solid fa-location-dot"></i> Huila</span>
+            </p>
+          </div>
         </div>
       </div>
       
@@ -369,7 +421,7 @@
               <input type="text" id="profile-id-number" class="form-control" placeholder="Ej: 1075312456" disabled required />
             </div>
 
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+            <div class="form-row-grid">
               <div class="form-group">
                 <label class="form-label" data-i18n="artisan.categoryLabel">Oficio Artesanal *</label>
                 <select id="profile-category" class="form-control" disabled required>
@@ -461,7 +513,7 @@
         </div>
 
         <!-- Botones de Guardar (Abajo centrado) -->
-        <div class="form-group hidden" id="profile-save-controls" style="grid-column:1/-1; display:flex; justify-content:center; gap:1rem; margin-top:1rem;">
+        <div class="form-group hidden form-actions-row" id="profile-save-controls" style="grid-column:1/-1;">
           <button type="button" class="btn btn-primary" onclick="saveProfile()"><i class="fa-solid fa-check"></i> <span data-i18n="artisan.saveProfileBtn">Guardar perfil</span></button>
           <button type="button" class="btn btn-ghost" onclick="disableProfileEdit()" data-i18n="common.cancel">Cancelar</button>
         </div>
@@ -502,13 +554,38 @@
       </div>
     </div>
   </aside>
+  <!-- Overlay for Right Panel in Mobile -->
+  <div class="right-panel-overlay mobile-only" id="right-panel-overlay" onclick="toggleRightPanel('notifications')"></div>
 </div> <!-- /.dashboard-layout -->
+
+<!-- Mobile Bottom Navigation Bar (Mockup Style) -->
+<nav class="mobile-bottom-nav mobile-only">
+  <a href="index.html" class="nav-item" id="m-nav-inicio">
+    <i class="fa-solid fa-house"></i>
+    <span class="nav-label">Inicio</span>
+  </a>
+  <a href="catalogo.html" class="nav-item" id="m-nav-catalogo">
+    <i class="fa-solid fa-table-cells"></i>
+    <span class="nav-label">Catálogo</span>
+  </a>
+  <a href="carrito.html" class="nav-item" id="m-nav-carrito">
+    <div class="cart-badge-container">
+      <i class="fa-solid fa-cart-shopping"></i>
+      <span class="cart-badge">2</span>
+    </div>
+    <span class="nav-label">Carrito</span>
+  </a>
+  <a href="#" onclick="showSection('resumen')" class="nav-item active" id="m-nav-perfil">
+    <i class="fa-solid fa-user"></i>
+    <span class="nav-label">Perfil</span>
+  </a>
+</nav>
 
 <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
 <script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
 <script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
-<script src="/js/api.js"></script>
-<script src="/js/i18n.js"></script>
-<script src="/js/dashboard-artesano.js"></script>
+<script src="/js/api.js?v=2"></script>
+<script src="/js/i18n.js?v=2"></script>
+<script src="/js/dashboard-artesano.js?v=2"></script>
 </body>
 </html>

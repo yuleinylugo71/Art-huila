@@ -52,10 +52,13 @@ let OrdersService = class OrdersService {
             for (const itemDto of createOrderDto.items) {
                 const product = await queryRunner.manager.findOne(product_entity_1.Product, {
                     where: { id: itemDto.productId },
-                    relations: ['artisan', 'artisan.region']
+                    relations: ['artisan', 'artisan.user', 'artisan.region']
                 });
                 if (!product) {
                     throw new common_1.NotFoundException(`Product ${itemDto.productId} not found`);
+                }
+                if (product.artisan && product.artisan.user && product.artisan.user.id === user.id) {
+                    throw new common_1.BadRequestException(`No puedes comprar tu propio producto: ${product.name}`);
                 }
                 if (product.stock < itemDto.quantity) {
                     throw new common_1.BadRequestException(`Not enough stock for product: ${product.name}`);
@@ -126,11 +129,15 @@ let OrdersService = class OrdersService {
         return this.markAsPaid(id, `MOCK_PAY_${Date.now()}`);
     }
     async markAsPaid(orderId, paymentId) {
+        return this.markPaymentApproved(orderId, paymentId);
+    }
+    async markPaymentApproved(orderId, paymentId) {
         const order = await this.ordersRepository.findOne({ where: { id: orderId } });
         if (!order) {
             throw new common_1.NotFoundException(`Order ${orderId} not found`);
         }
         order.status = order_entity_1.OrderStatus.PAID;
+        order.payment_status = 'approved';
         order.payment_id = paymentId;
         const savedOrder = await this.ordersRepository.save(order);
         try {
@@ -152,6 +159,42 @@ let OrdersService = class OrdersService {
             console.error('Error sending order notification emails:', error);
         }
         return savedOrder;
+    }
+    async markPaymentRejected(orderId, paymentId) {
+        const order = await this.ordersRepository.findOne({ where: { id: orderId } });
+        if (!order) {
+            throw new common_1.NotFoundException(`Order ${orderId} not found`);
+        }
+        order.payment_status = 'rejected';
+        order.payment_id = paymentId;
+        return this.ordersRepository.save(order);
+    }
+    async markPaymentFailed(orderId, paymentId) {
+        const order = await this.ordersRepository.findOne({ where: { id: orderId } });
+        if (!order) {
+            throw new common_1.NotFoundException(`Order ${orderId} not found`);
+        }
+        order.payment_status = 'failed';
+        order.payment_id = paymentId;
+        return this.ordersRepository.save(order);
+    }
+    async markPaymentPending(orderId, paymentId) {
+        const order = await this.ordersRepository.findOne({ where: { id: orderId } });
+        if (!order) {
+            throw new common_1.NotFoundException(`Order ${orderId} not found`);
+        }
+        order.payment_status = 'pending';
+        order.payment_id = paymentId;
+        return this.ordersRepository.save(order);
+    }
+    async markPaymentCancelled(orderId, paymentId) {
+        const order = await this.ordersRepository.findOne({ where: { id: orderId } });
+        if (!order) {
+            throw new common_1.NotFoundException(`Order ${orderId} not found`);
+        }
+        order.payment_status = 'cancelled';
+        order.payment_id = paymentId;
+        return this.ordersRepository.save(order);
     }
     async updateStatus(id, status, user) {
         const order = await this.ordersRepository.findOne({
@@ -191,12 +234,28 @@ let OrdersService = class OrdersService {
         return this.ordersRepository.save(order);
     }
     async updateTracking(id, trackingNumber, shippingCompany) {
-        const order = await this.ordersRepository.findOne({ where: { id } });
+        const order = await this.ordersRepository.findOne({
+            where: { id },
+            relations: ['items', 'items.product', 'user']
+        });
         if (!order) {
             throw new common_1.NotFoundException('Order not found');
         }
-        order.tracking_number = trackingNumber;
-        order.shipping_company = shippingCompany;
+        if (shippingCompany === 'MIPAQUETE' || !trackingNumber) {
+            try {
+                const guide = await this.mipaqueteService.generateGuide(order);
+                order.tracking_number = guide.guideNumber;
+                order.shipping_company = guide.carrier;
+                order.tracking_url = guide.trackingUrl;
+            }
+            catch (error) {
+                throw new common_1.InternalServerErrorException(`No se pudo generar la guía con MiPaquete: ${error.message}`);
+            }
+        }
+        else {
+            order.tracking_number = trackingNumber;
+            order.shipping_company = shippingCompany;
+        }
         order.status = order_entity_1.OrderStatus.SHIPPED;
         return this.ordersRepository.save(order);
     }
@@ -206,6 +265,9 @@ let OrdersService = class OrdersService {
             relations: ['order', 'order.user', 'product', 'product.images'],
             order: { order: { created_at: 'DESC' } },
         });
+    }
+    async getShippingCoverage() {
+        return this.mipaqueteService.getCoverageLocations();
     }
 };
 exports.OrdersService = OrdersService;

@@ -3,6 +3,7 @@ import {
   UnauthorizedException,
   BadRequestException,
   NotFoundException,
+  ConflictException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -133,7 +134,7 @@ export class AuthService {
     clientIp?: string,
   ) {
     const passwordHash = await bcrypt.hash(dto.password, 10);
-    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const verificationToken = Math.floor(100000 + Math.random() * 900000).toString();
     const expires = new Date();
     expires.setHours(expires.getHours() + 48);
 
@@ -141,6 +142,11 @@ export class AuthService {
     if (!category) throw new BadRequestException('Categoría no válida');
     const region = await this.regionRepo.findOneBy({ id: dto.region_id });
     if (!region) throw new BadRequestException('Región no válida');
+
+    const existingArtisan = await this.artisanRepo.findOne({ where: { id_number: dto.id_number } });
+    if (existingArtisan) {
+      throw new ConflictException('El número de cédula (ID) ya se encuentra registrado');
+    }
 
     // Upload ID document if exists
     let idDocumentFrontUrl = null;
@@ -236,6 +242,43 @@ export class AuthService {
   async logout(refreshToken: string) {
     await this.refreshTokenRepo.delete({ token: refreshToken });
     return { message: 'Sesion cerrada correctamente' };
+  }
+
+  async requestPasswordReset(email: string) {
+    const genericMsg = 'Si el correo existe, recibirás instrucciones para restablecer tu contraseña.';
+    const user = await this.usersService.findByEmail(email);
+    if (!user) {
+      return { message: genericMsg };
+    }
+
+    const token = crypto.randomBytes(32).toString('hex');
+    user.reset_password_token = token;
+    user.reset_password_expires = new Date(Date.now() + 3600000); // 1 hora
+
+    await this.usersService.save(user);
+
+    try {
+      await this.mailService.sendPasswordResetEmail(user.email, token, user.full_name);
+    } catch (err) {
+      console.error('Error sending password reset email:', err);
+    }
+
+    return { message: genericMsg };
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    const user = await this.usersService.findByResetToken(token);
+    if (!user || !user.reset_password_expires || user.reset_password_expires < new Date()) {
+      throw new BadRequestException('Token inválido o expirado');
+    }
+
+    user.password_hash = await bcrypt.hash(newPassword, 10);
+    user.reset_password_token = null as any;
+    user.reset_password_expires = null as any;
+
+    await this.usersService.save(user);
+
+    return { message: 'Contraseña actualizada correctamente' };
   }
 }
 

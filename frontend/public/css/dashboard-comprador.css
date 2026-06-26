@@ -117,9 +117,13 @@
 
 /* Barra de Progreso Tracker Premium */
 .order-tracker-container {
-  padding: 2rem 1.5rem;
+  padding: 2.25rem 2rem;
   margin-bottom: 2rem;
   position: relative;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg, 16px);
+  box-shadow: var(--shadow-sm);
 }
 
 .tracker-steps {
@@ -135,20 +139,22 @@
 .tracker-steps::before {
   content: "";
   position: absolute;
-  top: 25px;
+  top: 27px;
   left: 0;
   right: 0;
   height: 4px;
-  background: #e2e8f0;
+  background: #f1ebd9; /* warm grey connector background */
+  border-radius: 99px;
   z-index: -2;
 }
 
 .tracker-line-progress {
   position: absolute;
-  top: 25px;
+  top: 27px;
   left: 0;
   height: 4px;
-  background: #16a34a; /* verde completado */
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+  border-radius: 99px;
   z-index: -1;
   transition: width 0.4s ease;
   width: 0%;
@@ -167,47 +173,64 @@
   width: 54px;
   height: 54px;
   border-radius: 50%;
-  background: #f1f5f9;
-  border: 3px solid #cbd5e1;
-  color: #64748b;
+  background: #fbfaf8; /* warm neutral background */
+  border: 3px solid #e8e0d8;
+  color: #a39589;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   font-weight: bold;
-  transition: all 0.3s ease;
-  box-shadow: var(--shadow-sm);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
 }
 
 .step-label {
-  margin-top: 0.75rem;
+  margin-top: 0.85rem;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #64748b;
+  color: #8c7e74;
   transition: color 0.3s ease;
 }
 
-/* Paso completado: verde */
+/* Paso completado: verde esmeralda premium */
 .step.completed .step-icon {
-  background: #16a34a;
-  border-color: #15803d;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border-color: #059669;
   color: white;
+  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.25);
 }
 .step.completed .step-label {
-  color: #15803d;
+  color: #059669;
+  font-weight: 700;
 }
 
-/* Paso actual: resaltado en color secundario/primario */
+/* Paso actual: pulsante color terracota de la marca */
+@keyframes tracker-pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(193, 68, 14, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(193, 68, 14, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(193, 68, 14, 0); }
+}
+
 .step.active .step-icon {
-  background: var(--color-primary);
-  border-color: var(--color-primary-dark, #a855f7);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark, #a83b0c) 100%);
+  border-color: var(--color-primary);
   color: white;
-  transform: scale(1.1);
-  box-shadow: 0 0 12px rgba(186, 73, 11, 0.3);
+  transform: scale(1.12);
+  animation: tracker-pulse-ring 2s infinite;
 }
 .step.active .step-label {
   color: var(--color-primary);
-  font-weight: 700;
+  font-weight: 800;
+}
+
+/* Paso cancelado: rojo premium */
+.step.cancelled .step-icon {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  border-color: #dc2626 !important;
+  color: white !important;
+  box-shadow: 0 4px 10px rgba(220, 38, 38, 0.25) !important;
+  animation: none !important;
 }
 
 /* Detalle Grid */
@@ -399,15 +422,53 @@
 }
 
 @media (max-width: 768px) {
+  .container.section {
+    padding: 1.5rem 1.25rem !important;
+  }
   .buyer-layout { grid-template-columns: 1fr; }
   .detail-grid { grid-template-columns: 1fr; }
+  
+  /* Vertical tracker steps for mobile screen sizes */
+  .tracker-steps {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+    padding-left: 1.5rem;
+  }
+  
+  .tracker-steps::before {
+    left: 46px;
+    top: 22px;
+    bottom: 22px;
+    width: 4px;
+    height: auto;
+  }
+  
+  .tracker-line-progress {
+    left: 46px;
+    top: 22px;
+    width: 4px;
+    background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+  }
+  
+  .step {
+    flex-direction: row;
+    align-items: center;
+    gap: 1.25rem;
+    text-align: left;
+    width: 100%;
+  }
+  
   .step-icon {
     width: 44px;
     height: 44px;
     font-size: 1.1rem;
+    flex-shrink: 0;
   }
-  .tracker-steps::before, .tracker-line-progress {
-    top: 20px;
+  
+  .step-label {
+    margin-top: 0;
+    font-size: 0.9rem;
   }
 }
 

@@ -46,4 +46,10 @@ export declare class AuthService {
     logout(refreshToken: string): Promise<{
         message: string;
     }>;
+    requestPasswordReset(email: string): Promise<{
+        message: string;
+    }>;
+    resetPassword(token: string, newPassword: string): Promise<{
+        message: string;
+    }>;
 }

@@ -14,9 +14,26 @@ export declare class MipaqueteService {
         carrier: any;
         fallbackMessage: null;
         options: any;
+    } | {
+        isFallback: boolean;
+        originCity: string;
+        cost: number;
+        estimatedDays: number;
+        carrier: string;
+        fallbackMessage: string;
+        options: {
+            carrier: string;
+            price: number;
+            estimatedDays: number;
+        }[];
     }>;
-    generateGuide(orderId: string): Promise<{
-        guideNumber: any;
-        trackingUrl: any;
+    generateGuide(order: any): Promise<{
+        guideNumber: string;
+        trackingUrl: string;
+        carrier: string;
     }>;
+    getCoverageLocations(): Promise<{
+        [department: string]: string[];
+    }>;
+    private getLocalFallbackCoverage;
 }

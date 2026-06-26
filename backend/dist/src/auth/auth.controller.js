@@ -47,6 +47,12 @@ let AuthController = class AuthController {
     verifyEmail(token) {
         return this.authService.verifyEmail(token);
     }
+    requestPasswordReset(email) {
+        return this.authService.requestPasswordReset(email);
+    }
+    resetPassword(body) {
+        return this.authService.resetPassword(body.token, body.password);
+    }
     refresh(dto) {
         return this.authService.refresh(dto.refresh_token);
     }
@@ -93,6 +99,20 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], AuthController.prototype, "verifyEmail", null);
+__decorate([
+    (0, common_1.Post)('recuperar-contrasena'),
+    __param(0, (0, common_1.Body)('email')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "requestPasswordReset", null);
+__decorate([
+    (0, common_1.Post)('nueva-contrasena'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], AuthController.prototype, "resetPassword", null);
 __decorate([
     (0, common_1.Post)('refresh'),
     __param(0, (0, common_1.Body)()),

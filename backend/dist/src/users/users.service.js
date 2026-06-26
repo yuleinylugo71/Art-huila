@@ -102,6 +102,9 @@ let UsersService = class UsersService {
         Object.assign(user, updateData);
         return this.userRepo.save(user);
     }
+    async findByResetToken(token) {
+        return this.userRepo.findOneBy({ reset_password_token: token });
+    }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([

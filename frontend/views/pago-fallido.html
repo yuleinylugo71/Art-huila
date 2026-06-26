@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="payment.failedTitle">Pago Rechazado — Art Huila</title>
-  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/base.css?v=13">
   <link rel="stylesheet" href="/css/pago-fallido.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -38,15 +38,19 @@
   <div class="failed-card" id="order-info">
     <div class="info-row">
       <span class="label"><i class="fa-solid fa-hashtag"></i> <span data-i18n="payment.failedReference">Referencia</span></span>
-      <span id="txn-ref" class="value">—</span>
+      <span id="txn-ref" class="value">N/A</span>
     </div>
     <div class="info-row">
       <span class="label"><i class="fa-solid fa-circle-xmark" style="color:#ef4444;"></i> <span data-i18n="payment.statusLabel">Estado</span></span>
       <span class="value" style="color:#ef4444; font-weight:700;" data-i18n="payment.rejectedStatus">Rechazado</span>
     </div>
-    <div class="info-row" id="row-reason" style="display:none;">
+    <div class="info-row" id="row-amount">
+      <span class="label"><i class="fa-solid fa-dollar-sign" style="color:var(--color-primary);"></i> Monto</span>
+      <span id="txn-amount" class="value" style="font-weight:700; color:var(--color-primary);">N/A</span>
+    </div>
+    <div class="info-row" id="row-reason">
       <span class="label"><i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b;"></i> <span data-i18n="payment.failedReason">Motivo</span></span>
-      <span id="txn-reason" class="value" style="color:var(--color-muted);"></span>
+      <span id="txn-reason" class="value" style="color:var(--color-muted);">N/A</span>
     </div>
   </div>
 
@@ -63,8 +67,8 @@
 
   <!-- Acciones -->
   <div class="nav-actions">
-    <a href="carrito.html" class="btn btn-primary btn-lg" id="btn-retry">
-      <i class="fa-solid fa-rotate-right"></i> <span data-i18n="payment.failedRetryBtn">Reintentar Pago</span>
+    <a href="carrito.html" class="btn btn-primary btn-lg">
+      <i class="fa-solid fa-cart-shopping"></i> <span>Volver al carrito</span>
     </a>
     <a href="dashboard-comprador.html" class="btn btn-outline btn-lg">
       <i class="fa-solid fa-house"></i> <span data-i18n="payment.failedHomeBtn">Ir al Dashboard</span>
@@ -91,18 +95,27 @@
   document.addEventListener('DOMContentLoaded', () => {
     const params = new URLSearchParams(window.location.search);
 
-    // Referencia de la transacción (ePayco envía x_ref_payco o ref_payco)
-    const ref = params.get('x_ref_payco') || params.get('ref_payco') || params.get('ref') || params.get('id');
-    if (ref) {
-      document.getElementById('txn-ref').textContent = ref.substring(0, 24) + (ref.length > 24 ? '...' : '');
+    // Referencia de la transacción (x_ref_payco)
+    const ref = params.get('x_ref_payco') || params.get('ref_payco') || params.get('ref') || params.get('id') || 'N/A';
+    document.getElementById('txn-ref').textContent = ref;
+
+    // Monto (x_amount)
+    const amount = params.get('x_amount');
+    if (amount) {
+      const num = parseFloat(amount);
+      if (!isNaN(num)) {
+        document.getElementById('txn-amount').textContent =
+          new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(num);
+      } else {
+        document.getElementById('txn-amount').textContent = amount;
+      }
+    } else {
+      document.getElementById('txn-amount').textContent = 'N/A';
     }
 
-    // Motivo del rechazo si viene en el callback
-    const reason = params.get('x_response_reason_text') || params.get('reason');
-    if (reason) {
-      document.getElementById('txn-reason').textContent = reason;
-      document.getElementById('row-reason').style.display = 'flex';
-    }
+    // Motivo del rechazo (x_response)
+    const reason = params.get('x_response') || params.get('x_response_reason_text') || params.get('reason') || 'N/A';
+    document.getElementById('txn-reason').textContent = reason;
 
     // NO limpiamos el carrito para que el usuario pueda reintentar
   });

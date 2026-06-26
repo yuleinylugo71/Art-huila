@@ -3,6 +3,7 @@ import { ArtisanProfile } from '../../artisans/entities/artisan-profile.entity';
 import { Category } from '../../categories/entities/category.entity';
 import { Region } from '../../regions/entities/region.entity';
 import { ProductImage } from './product-image.entity';
+import { Review } from '../../reviews/entities/review.entity';
 
 export enum ProductStatus {
   DRAFT = 'draft',
@@ -77,6 +78,9 @@ export class Product {
 
   @OneToMany(() => ProductImage, image => image.product)
   images: ProductImage[];
+
+  @OneToMany(() => Review, review => review.product)
+  reviews: Review[];
 
   @CreateDateColumn()
   created_at: Date;

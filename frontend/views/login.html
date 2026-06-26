@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="login.title">Iniciar sesión — Art Huila</title>
-  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/base.css?v=13">
   <link rel="stylesheet" href="/css/auth.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -58,8 +58,28 @@
 
   <!-- ── RIGHT: FORM PANEL ── -->
   <div class="auth-right">
+    
+    <!-- Mobile Screen Header (Mockup Style) -->
+    <div class="mobile-only mobile-auth-header-login">
+      <a href="index.html" class="mobile-back-arrow">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+      <div class="lang-switcher" style="position: absolute; right: 0.5rem; top: 1.2rem; margin: 0; padding: 0;">
+        <button id="mobile-lang-es" class="btn-lang-es active" onclick="window.changeLanguage('es')">ES</button>
+        <span style="font-size: 0.7rem; color: var(--color-border);">|</span>
+        <button id="mobile-lang-en" class="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+      </div>
+      <div class="mobile-logo-wrapper">
+        <div class="mobile-logo-box">
+          <i class="fa-solid fa-jar"></i>
+        </div>
+        <h1 class="mobile-brand-title">Art Huila</h1>
+        <p class="mobile-brand-subtitle">Artesanías con Alma del Huila</p>
+      </div>
+    </div>
+
     <div class="auth-box">
-      <a href="index.html" class="navbar-brand">Art <span>Huila</span></a>
+      <a href="index.html" class="navbar-brand desktop-only">Art <span>Huila</span></a>
       <h2 data-i18n="login.welcome">Bienvenido/a de nuevo</h2>
       <p class="text-muted" data-i18n="login.welcomeSub">Ingresa tus credenciales para continuar</p>
 
@@ -69,12 +89,18 @@
       <form id="login-form">
         <div class="form-group">
           <label class="form-label" for="email" data-i18n="auth.emailLabel">Correo electrónico</label>
-          <input type="email" id="email" class="form-control" data-i18n-placeholder="auth.emailPlaceholder" placeholder="tu@email.com" required autocomplete="email"/>
+          <input type="email" id="email" class="form-control" data-i18n-placeholder="auth.emailPlaceholder" placeholder="tu@correo.com" required autocomplete="email"/>
         </div>
         
         <div class="form-group">
           <label class="form-label" for="password" data-i18n="auth.passwordLabel">Contraseña</label>
-          <input type="password" id="password" class="form-control" data-i18n-placeholder="auth.passwordPlaceholder" placeholder="••••••••" required autocomplete="current-password"/>
+          <div class="password-input-wrapper">
+            <input type="password" id="password" class="form-control" data-i18n-placeholder="auth.passwordPlaceholder" placeholder="••••••••" required autocomplete="current-password"/>
+            <i class="fa-solid fa-eye-slash toggle-password" onclick="togglePasswordVisibility('password', this)"></i>
+          </div>
+          <div class="forgot-password-wrapper">
+            <a href="recuperar-contrasena.html" class="forgot-password-link" data-i18n="login.forgotPassword">¿Olvidaste tu contraseña?</a>
+          </div>
         </div>
         
         <button type="submit" class="btn btn-primary btn-full" id="submit-btn" data-i18n="login.btnText">

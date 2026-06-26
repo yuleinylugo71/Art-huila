@@ -75,7 +75,7 @@ async function loadFilters() {
     categoryFilters.innerHTML = cats.map(c => `
       <label class="filter-option">
         <input type="checkbox" name="category" value="${c.name}" ${selectedCats.includes(c.name) ? 'checked' : ''} onchange="applyFilters()"/>
-        ${c.name}
+        ${window.translateCategory(c.name)}
       </label>
     `).join('');
   }
@@ -103,6 +103,24 @@ async function loadFilters() {
   syncCategoryChips();
 }
 
+function getCategoryIcon(slug) {
+  const normalized = (slug || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const icons = {
+    'ceramica': 'fa-jar',
+    'ceramicas': 'fa-jar',
+    'orfebreria': 'fa-gem',
+    'orfebrerias': 'fa-gem',
+    'joyeria': 'fa-gem',
+    'sombrereria': 'fa-hat-cowboy',
+    'sombreros': 'fa-hat-cowboy',
+    'talla-en-madera': 'fa-tree',
+    'talla-madera': 'fa-tree',
+    'tejeduria': 'fa-scissors',
+    'tejedurias': 'fa-scissors'
+  };
+  return icons[normalized] || 'fa-palette';
+}
+
 function syncCategoryChips() {
   const chipsScroller = document.getElementById('category-chips-scroller');
   const checkedCats = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(el => el.value);
@@ -110,36 +128,37 @@ function syncCategoryChips() {
 
   if (chipsScroller && cachedCategories.length > 0) {
     let chipsHtml = `
-      <button class="category-chip ${allActive ? 'active' : ''}" onclick="selectCategoryChip('')">
-        Todos
+      <button class="category-chip ${allActive ? 'active' : ''}" onclick="selectCategoryChip('')" data-i18n="catalog.allCategories">
+        ${i18next.t('catalog.allCategories')}
       </button>
     `;
     chipsHtml += cachedCategories.map(c => {
       const isActive = checkedCats.includes(c.name);
       return `
         <button class="category-chip ${isActive ? 'active' : ''}" onclick="selectCategoryChip('${c.name}')">
-          ${c.name}
+          ${window.translateCategory(c.name)}
         </button>
       `;
     }).join('');
     chipsScroller.innerHTML = chipsHtml;
   }
   
-  // Render Figma circular categories
+  // Render mobile horizontal scrolling category chips (no emojis, active in terracota)
   const circularContainer = document.getElementById('mobile-categories-carousel');
   if (circularContainer && cachedCategories.length > 0) {
     let circularHtml = `
-      <button class="mobile-category-circle ${allActive ? 'active' : ''}" onclick="selectCategoryChip('')">
-        <div class="circle-icon">🏺</div>
-        <span class="circle-label">Todos</span>
+      <button class="mobile-category-chip-btn ${allActive ? 'active' : ''}" onclick="selectCategoryChip('')">
+        <i class="fa-solid fa-border-all"></i>
+        <span data-i18n="catalog.allCategories">${i18next.t('catalog.allCategories')}</span>
       </button>
     `;
     circularHtml += cachedCategories.map(c => {
       const isActive = checkedCats.includes(c.name);
+      const iconClass = getCategoryIcon(c.slug);
       return `
-        <button class="mobile-category-circle ${isActive ? 'active' : ''}" onclick="selectCategoryChip('${c.name}')">
-          <div class="circle-icon">${c.icon_emoji || '✨'}</div>
-          <span class="circle-label">${c.name}</span>
+        <button class="mobile-category-chip-btn ${isActive ? 'active' : ''}" onclick="selectCategoryChip('${c.name}')">
+          <i class="fa-solid ${iconClass}"></i>
+          <span>${window.translateCategory(c.name)}</span>
         </button>
       `;
     }).join('');
@@ -171,6 +190,7 @@ async function loadProducts(page = 1) {
   if (params.categories) qs.set('categories', params.categories);
   if (params.minPrice) qs.set('minPrice', params.minPrice);
   if (params.maxPrice) qs.set('maxPrice', params.maxPrice);
+  if (params.search) qs.set('search', params.search);
   qs.set('sortBy', params.sortBy);
   qs.set('page', page);
   qs.set('limit', 20);
@@ -179,23 +199,12 @@ async function loadProducts(page = 1) {
     const result = await apiFetch('/catalog?' + qs.toString());
     const { data, meta } = result;
 
-    // Client-side search keyword filtering
-    let filteredData = data;
-    const searchVal = (document.getElementById('search-input')?.value || document.getElementById('mobile-search-input')?.value || '').toLowerCase().trim();
-    if (searchVal) {
-      filteredData = data.filter(p => 
-        p.name.toLowerCase().includes(searchVal) || 
-        (p.artisan?.user?.full_name && p.artisan.user.full_name.toLowerCase().includes(searchVal))
-      );
-    }
-    const finalCount = searchVal ? filteredData.length : meta.total;
-
     // Cache the products for cart additions
-    cachedProducts = filteredData;
+    cachedProducts = data;
 
-    document.getElementById('results-count').textContent = i18next.t('catalog.resultCount', { count: finalCount });
+    document.getElementById('results-count').textContent = i18next.t('catalog.resultCount', { count: meta.total });
 
-    if (filteredData.length === 0) {
+    if (data.length === 0) {
       grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;">
         <div class="emoji"><i class="fa-solid fa-magnifying-glass"></i></div>
         <h3>${i18next.t('catalog.noResultsTitle')}</h3>
@@ -205,20 +214,28 @@ async function loadProducts(page = 1) {
       return;
     }
 
-    grid.innerHTML = filteredData.map(p => {
+    grid.innerHTML = data.map(p => {
       const isOutOfStock = p.stock !== undefined && p.stock < 1;
       const user = Auth.getUser();
       const isOwner = user && p.artisan?.user && user.id === p.artisan.user.id;
       const isWish = typeof Wishlist !== 'undefined' && Wishlist.has(p.id);
+      const artisanName = p.artisan?.user?.full_name || p.artisan?.name || i18next.t('catalog.anonymousArtisan');
+
+      // Match Figma mockups: select items have "OFERTA" badge
+      const hasOffer = p.name.toLowerCase().includes('sombrero') || p.name.toLowerCase().includes('mochila');
+      const offerBadge = hasOffer ? `<div class="product-offer-tag">OFERTA</div>` : '';
 
       return `
         <div class="product-card" onclick="window.location.href='/producto.html?slug=${p.slug}'">
           <div class="product-card-image" style="position:relative;">
             ${p.images && p.images[0]
-              ? `<img src="${p.images[0].url}" alt="${p.name}" loading="lazy"/>`
+              ? `<img src="${p.images[0].url}" alt="${window.translateProduct(p)}" onerror="this.onerror=null; this.src='/img/placeholder.jpg';" loading="lazy"/>`
               : `<div class="product-img-placeholder" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem;color:var(--color-muted);"><i class="fa-solid fa-vase"></i></div>`}
             
-            <!-- Price pill floating over image -->
+            <!-- Offer Tag floating over image -->
+            ${offerBadge}
+
+            <!-- Price pill floating over image (Hidden on Mobile) -->
             <div class="product-price-pill">${formatPrice(p.price)}</div>
             
             <!-- Heart Wishlist button floating over image -->
@@ -227,28 +244,37 @@ async function loadProducts(page = 1) {
             </button>
           </div>
           <div class="product-card-body">
-            <div class="product-card-name" style="font-weight:700;">${p.name}</div>
-            <div class="product-artisan" style="margin-top:0.15rem;">
+            <!-- Artisan Name in uppercase (Grey/Muted) -->
+            <div class="product-artisan-uppercase" style="font-size:0.65rem;text-transform:uppercase;letter-spacing:0.02em;color:var(--color-muted);margin-bottom:0.15rem; display: flex; align-items: center; flex-wrap: wrap; gap: 0.25rem;">
+              ${artisanName} ${renderTrustBadge(p.artisan?.status || p.artisan?.verification_status)}
+            </div>
+
+            <div class="product-card-name" style="font-weight:700;">${window.translateProduct(p)}</div>
+            
+            <div class="product-artisan desktop-only-flex" style="margin-top:0.15rem;display:none;">
               <i class="fa-solid fa-store" style="font-size:0.75rem;"></i>
-              <span style="font-size:0.75rem;"><strong>${p.artisan?.user?.full_name || i18next.t('catalog.anonymousArtisan')}</strong></span>
+              <span style="font-size:0.75rem;"><strong>${artisanName}</strong></span>
             </div>
             
             <!-- Stock & Stars Row -->
             <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.25rem;">
               <div class="product-card-stock">${isOutOfStock ? 'Sin stock' : `${p.stock || 5} disponibles`}</div>
-              <div class="product-card-stars">
-                <i class="fa-solid fa-star"></i>
-                <span>4.8 (8)</span>
-              </div>
+              ${p.review_count && p.review_count > 0 ? `
+                <div class="product-card-stars">
+                  <i class="fa-solid fa-star"></i>
+                  <span>${Number(p.rating).toFixed(1)} (${p.review_count})</span>
+                </div>
+              ` : ''}
             </div>
 
-            <!-- Compact Premium Cart Button -->
-            <div style="display:flex;justify-content:flex-end;margin-top:auto;padding-top:0.4rem;">
+            <!-- Cart & Mobile Price Row -->
+            <div class="product-card-footer-row" style="display:flex;justify-content:flex-end;align-items:center;margin-top:auto;padding-top:0.4rem;">
+              <span class="product-price-badge-mobile">${formatPrice(p.price)}</span>
               <button class="btn-card-cart ${isOutOfStock ? 'disabled' : ''} ${isOwner ? 'owner' : ''}" 
                       onclick="event.stopPropagation(); ${isOutOfStock ? '' : `addToCart('${p.id}')`}" 
                       title="${isOutOfStock ? 'Sin stock' : (isOwner ? 'Es tu producto' : 'Agregar al carrito')}"
                       ${isOutOfStock || isOwner ? 'disabled' : ''}>
-                <i class="${isOutOfStock ? 'fa-solid fa-circle-xmark' : 'fa-solid fa-cart-plus'}"></i>
+                <i class="${isOutOfStock ? 'fa-solid fa-circle-xmark' : 'fa-solid fa-plus'}"></i>
               </button>
             </div>
           </div>
@@ -264,9 +290,9 @@ async function loadProducts(page = 1) {
 
 function renderTrustBadge(status) {
   if (status === 'verified') {
-    return `<i class="fa-solid fa-circle-check" style="color: var(--color-verified); font-size: 0.9rem; margin-left: 0.25rem;" title="Vendedor Verificado"></i>`;
+    return `<span style="background-color: #f0fdf4; color: #16a34a; border: 1.5px solid #dcfce7; padding: 0.2rem 0.5rem; border-radius: 99px; font-size: 0.62rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.25rem; vertical-align: middle; margin-left: 0.35rem; text-transform: uppercase; font-family: var(--font-body);"><i class="fa-solid fa-circle-check" style="font-size: 0.65rem;"></i> Verificado</span>`;
   }
-  return '';
+  return `<span style="background-color: #fff7ed; color: #ea580c; border: 1.5px solid #ffedd5; padding: 0.2rem 0.5rem; border-radius: 99px; font-size: 0.62rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.25rem; vertical-align: middle; margin-left: 0.35rem; text-transform: uppercase; font-family: var(--font-body);"><i class="fa-solid fa-hourglass-half" style="font-size: 0.65rem;"></i> Por verificar</span>`;
 }
 
 function renderPagination(totalPages, current) {
@@ -366,7 +392,7 @@ window.syncMobileSort = (mobileSelect) => {
 window.toggleQuickFilter = (type) => {
   const sidebar = document.querySelector('.filter-sidebar');
   if (sidebar) {
-    sidebar.classList.add('open');
+    window.toggleFilterSidebar(true);
     let targetSection;
     if (type === 'region') {
       targetSection = document.getElementById('region-select');
@@ -410,3 +436,35 @@ function addToCart(productId) {
   const artisanName = p.artisan?.user?.full_name || '';
   Cart.add({ id: p.id, name: p.name, price: p.price, image: imgUrl, artisanName }, 1);
 }
+
+// Dynamic Filter Sidebar drawer controls
+window.toggleFilterSidebar = (isOpen) => {
+  const sidebar = document.querySelector('.filter-sidebar');
+  if (!sidebar) return;
+  
+  let backdrop = document.getElementById('filter-sidebar-backdrop');
+  if (!backdrop) {
+    backdrop = document.createElement('div');
+    backdrop.id = 'filter-sidebar-backdrop';
+    backdrop.className = 'filter-sidebar-backdrop';
+    backdrop.onclick = () => window.toggleFilterSidebar(false);
+    document.body.appendChild(backdrop);
+  }
+  
+  if (isOpen) {
+    sidebar.classList.add('open');
+    backdrop.style.display = 'block';
+    backdrop.offsetHeight; // force layout reflow
+    backdrop.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  } else {
+    sidebar.classList.remove('open');
+    backdrop.classList.remove('active');
+    document.body.style.overflow = '';
+    setTimeout(() => {
+      if (!sidebar.classList.contains('open')) {
+        backdrop.style.display = 'none';
+      }
+    }, 300);
+  }
+};

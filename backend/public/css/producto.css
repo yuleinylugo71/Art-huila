@@ -124,3 +124,24 @@
     gap: 2rem;
   }
 }
+
+/* Premium Mobile Tabbed details and overlays */
+.detail-tab-btn {
+  background: none;
+  border: none;
+  color: var(--color-muted);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  border-bottom: 2.5px solid transparent;
+  flex: 1;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.detail-tab-btn.active {
+  color: #c1440e;
+  border-bottom-color: #c1440e;
+}

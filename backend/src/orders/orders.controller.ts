@@ -23,6 +23,12 @@ export class OrdersController {
     return this.ordersService.getShippingQuoteForCart(body.destinationCity, body.items);
   }
 
+  @Public()
+  @Get('shipping-coverage')
+  async getShippingCoverage() {
+    return this.ordersService.getShippingCoverage();
+  }
+
   @Get('artisan/sales')
   findArtisanSales(@CurrentUser() user: any) {
     return this.ordersService.findArtisanSales(user.id);
@@ -55,6 +61,8 @@ export class OrdersController {
   }
 
   @Patch(':id/tracking')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'artesano')
   updateTracking(
     @Param('id') id: string,
     @Body('tracking_number') trackingNumber: string,

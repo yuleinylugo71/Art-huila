@@ -19,6 +19,23 @@ function initLogin() {
   const form = document.getElementById('login-form');
   if (!form) return;
 
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('registered') === 'true') {
+    const errorEl = document.getElementById('login-error');
+    if (errorEl) {
+      errorEl.textContent = '¡Registro exitoso! Ya puedes iniciar sesión de inmediato.';
+      errorEl.style.backgroundColor = '#e6fffa';
+      errorEl.style.color = '#007d69';
+      errorEl.style.border = '1px solid #b2f5ea';
+      errorEl.style.padding = '0.75rem 1rem';
+      errorEl.style.borderRadius = '8px';
+      errorEl.style.marginBottom = '1rem';
+      errorEl.style.textAlign = 'center';
+      errorEl.style.fontWeight = '500';
+      errorEl.classList.remove('hidden');
+    }
+  }
+
   // Remove existing event listener if any (by replacing the form cloned node or just setting simple listener)
   // Since we run initLogin only once on i18nReady, we can just attach it safely:
   form.onsubmit = async function(e) {

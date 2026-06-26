@@ -18,6 +18,7 @@ export class PaymentsController {
   async getEpaycoConfig() {
     return {
       publicKey: this.configService.get<string>('EPAYCO_PUBLIC_KEY'),
+      backendUrlPublic: this.configService.get<string>('BACKEND_URL_PUBLIC'),
     };
   }
 

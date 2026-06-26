@@ -63,4 +63,8 @@ export class UsersService {
     Object.assign(user, updateData);
     return this.userRepo.save(user);
   }
+
+  async findByResetToken(token: string): Promise<User | null> {
+    return this.userRepo.findOneBy({ reset_password_token: token });
+  }
 }

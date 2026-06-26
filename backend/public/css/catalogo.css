@@ -99,15 +99,18 @@
   display: flex;
   align-items: center;
   gap: 0.85rem;
-  margin-bottom: 0.75rem;
-  font-size: 0.92rem;
+  margin-bottom: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
   color: var(--color-muted);
   cursor: pointer;
-  font-weight: 500;
-  transition: color 0.25s;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.2s ease;
 }
 
 .filter-option:hover {
+  background: var(--color-accent-warm);
   color: var(--color-primary);
 }
 
@@ -149,7 +152,7 @@
 /* Select inputs and Price inputs */
 .form-control {
   border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-sm);
+  border-radius: 8px;
   padding: 0.65rem 1rem;
   font-family: var(--font-body);
   font-size: 0.88rem;
@@ -162,7 +165,7 @@
 .form-control:focus {
   border-color: var(--color-primary);
   background: var(--color-surface);
-  box-shadow: 0 0 0 3px rgba(193, 68, 14, 0.1);
+  box-shadow: 0 0 0 3px rgba(193, 68, 14, 0.08);
 }
 
 .price-inputs {
@@ -175,7 +178,7 @@
   width: 100%;
   padding: 0.65rem 0.8rem;
   border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-sm);
+  border-radius: 8px;
   font-family: var(--font-body);
   font-size: 0.88rem;
   background: var(--color-bg);
@@ -186,7 +189,7 @@
 .price-inputs input:focus {
   border-color: var(--color-primary);
   background: var(--color-surface);
-  box-shadow: 0 0 0 3px rgba(193, 68, 14, 0.1);
+  box-shadow: 0 0 0 3px rgba(193, 68, 14, 0.08);
 }
 
 /* Modernized Sort Bar */
@@ -311,11 +314,44 @@
   margin-bottom: 1.25rem;
 }
 
+/* Mobile category chip scroller */
+.mobile-category-chip-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.15rem;
+  border-radius: 99px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.76rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.25s var(--transition);
+  border: 1.5px solid var(--color-border);
+  background: white;
+  color: var(--color-text);
+  box-shadow: var(--shadow-xs);
+  outline: none;
+}
+
+.mobile-category-chip-btn:hover {
+  border-color: var(--color-primary-light);
+  color: var(--color-primary);
+  background: var(--color-accent-warm);
+}
+
+.mobile-category-chip-btn.active {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: white;
+  box-shadow: 0 4px 12px rgba(193, 68, 14, 0.2);
+}
+
 /* Responsive Layout */
 @media (max-width: 992px) {
   .catalog-layout {
     grid-template-columns: 1fr;
-    gap: 2rem;
+    gap: 1.5rem;
   }
   
   #mobile-filter-toggle {
@@ -327,31 +363,104 @@
   }
 
   .filter-sidebar {
-    display: none;
-    position: static;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 82%;
+    max-width: 290px;
+    background: var(--color-surface);
+    z-index: 100000;
+    display: flex !important;
+    flex-direction: column;
+    box-shadow: -6px 0 28px rgba(38, 31, 27, 0.18);
+    border: none;
+    border-left: 1.5px solid var(--color-border);
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     max-height: none;
-    overflow-y: visible;
-    margin-bottom: 1rem;
-    padding: 0; /* Reset parent padding to 0, matching desktop design */
+    overflow-y: hidden;
   }
 
   .filter-sidebar.open {
+    transform: translateX(0);
+    animation: none;
+  }
+
+  .filter-sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(38, 31, 27, 0.25);
+    z-index: 99999;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+
+  .filter-sidebar-backdrop.active {
     display: block;
-    animation: slideDown 0.35s var(--ease-out);
+    opacity: 1;
   }
 
   /* Refined, responsive spacing wrapper for filters on tablet/mobile views */
   .filter-content {
-    padding: 1.5rem 1.5rem 0 1.5rem;
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
   }
 
   /* Make actions static on mobile to flow naturally at the end of the container */
   .filter-footer {
     position: static;
-    padding: 1.25rem 1.5rem 1.5rem 1.5rem;
-    margin-top: 1.5rem;
-    border-bottom-left-radius: calc(var(--radius-lg) - 1.5px);
-    border-bottom-right-radius: calc(var(--radius-lg) - 1.5px);
+    padding: 1.25rem 1.5rem 2.25rem 1.5rem;
+    margin-top: auto;
+    border-top: 1.5px solid var(--color-border);
+    background: var(--color-surface);
+    border-radius: 0 !important;
+  }
+
+  /* Horizontal category chips inside the mobile filter drawer */
+  #category-filters {
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+  }
+
+  #category-filters .filter-option {
+    margin-bottom: 0;
+    padding: 0.4rem 0.85rem;
+    border-radius: 99px;
+    border: 1.5px solid var(--color-border);
+    background: var(--color-bg);
+    font-size: 0.78rem;
+    font-weight: 700;
+    gap: 0.4rem;
+    white-space: nowrap;
+  }
+
+  #category-filters .filter-option:hover {
+    border-color: var(--color-primary-light);
+    background: var(--color-accent-warm);
+    color: var(--color-primary);
+  }
+
+  /* Hide the checkbox on mobile, show only text as a chip */
+  #category-filters .filter-option input[type="checkbox"] {
+    width: 0;
+    height: 0;
+    opacity: 0;
+    position: absolute;
+    pointer-events: none;
+  }
+
+  /* Active/checked chip state */
+  #category-filters .filter-option:has(input:checked) {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+    box-shadow: 0 3px 10px rgba(193, 68, 14, 0.2);
   }
 }
 

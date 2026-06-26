@@ -18,6 +18,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const artisan_profile_entity_1 = require("./entities/artisan-profile.entity");
 const artisan_gallery_entity_1 = require("./entities/artisan-gallery.entity");
+const user_entity_1 = require("../users/entities/user.entity");
 let ArtisansService = class ArtisansService {
     profileRepo;
     galleryRepo;
@@ -111,6 +112,69 @@ let ArtisansService = class ArtisansService {
             take: 3,
             order: { created_at: 'DESC' },
         });
+    }
+    async apply(userId, data, idDocumentFrontUrl, idDocumentBackUrl, galleryUrls, clientIp) {
+        let profile = await this.profileRepo.findOne({
+            where: { user: { id: userId } },
+            relations: ['user', 'gallery'],
+        });
+        if (profile) {
+            if (profile.verification_status === artisan_profile_entity_1.ArtisanStatus.PENDING ||
+                profile.verification_status === artisan_profile_entity_1.ArtisanStatus.VERIFIED ||
+                profile.verification_status === artisan_profile_entity_1.ArtisanStatus.ACTIVE) {
+                throw new common_1.ConflictException('Ya tienes una solicitud pendiente, activa o verificada.');
+            }
+        }
+        const existingArtisan = await this.profileRepo.findOne({ where: { id_number: data.id_number } });
+        if (existingArtisan && (!profile || existingArtisan.id !== profile.id)) {
+            throw new common_1.ConflictException('El número de cédula (ID) ya se encuentra registrado');
+        }
+        const user = await this.profileRepo.manager.findOne(user_entity_1.User, { where: { id: userId } });
+        if (!user)
+            throw new common_1.NotFoundException('Usuario no encontrado');
+        user.role = user_entity_1.Role.ARTESANO;
+        await this.profileRepo.manager.save(user);
+        if (!profile) {
+            profile = this.profileRepo.create({
+                user,
+                id_number: data.id_number,
+                cultural_history: data.cultural_history,
+                category: { id: data.category_id },
+                region: { id: data.region_id },
+                verification_status: artisan_profile_entity_1.ArtisanStatus.PENDING,
+                truthfulness_declaration: data.truthfulness_declaration === true || data.truthfulness_declaration === 'true',
+                legal_acceptance_ip: clientIp,
+                legal_acceptance_timestamp: new Date(),
+                id_document_front_url: idDocumentFrontUrl,
+                id_document_back_url: idDocumentBackUrl,
+            });
+        }
+        else {
+            profile.id_number = data.id_number;
+            profile.cultural_history = data.cultural_history;
+            profile.category = { id: data.category_id };
+            profile.region = { id: data.region_id };
+            profile.verification_status = artisan_profile_entity_1.ArtisanStatus.PENDING;
+            profile.truthfulness_declaration = data.truthfulness_declaration === true || data.truthfulness_declaration === 'true';
+            profile.legal_acceptance_ip = clientIp;
+            profile.legal_acceptance_timestamp = new Date();
+            if (idDocumentFrontUrl)
+                profile.id_document_front_url = idDocumentFrontUrl;
+            if (idDocumentBackUrl)
+                profile.id_document_back_url = idDocumentBackUrl;
+        }
+        await this.profileRepo.save(profile);
+        if (galleryUrls && galleryUrls.length > 0) {
+            for (const item of galleryUrls) {
+                const galleryItem = this.galleryRepo.create({
+                    url: item.url,
+                    public_id: item.public_id,
+                    profile,
+                });
+                await this.galleryRepo.save(galleryItem);
+            }
+        }
+        return this.findByUserId(userId);
     }
 };
 exports.ArtisansService = ArtisansService;

@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Detalle del Pedido — Art Huila</title>
-  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/base.css?v=18">
   <link rel="stylesheet" href="/css/dashboard-comprador.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 
-<nav class="navbar">
+<nav class="navbar desktop-only">
   <div style="display:flex;align-items:center;gap:0.75rem;">
     <a href="/dashboard-comprador.html" class="nav-back" title="Volver al panel">←</a>
     <a href="index.html" class="navbar-brand">Art <span>Huila</span></a>
@@ -26,6 +26,21 @@
     <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
   </div>
 </nav>
+
+<!-- Mobile Premium Header -->
+<header class="mobile-only" style="background: white; border-bottom: 1.5px solid var(--color-border); padding: 1rem; position: sticky; top: 0; z-index: 1000;">
+  <div style="display: flex; align-items: center; justify-content: space-between;">
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <a href="/dashboard-comprador.html" style="color: var(--color-text); font-size: 1.2rem;"><i class="fa-solid fa-arrow-left"></i></a>
+      <h1 style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 800; color: #261f1b; margin: 0;" data-i18n="order.detailHeadingMobile">Detalle del Pedido</h1>
+    </div>
+    <div class="lang-switcher" style="margin-left: 0;">
+      <button id="mobile-lang-es" class="btn-lang-es active" onclick="window.changeLanguage('es')">ES</button>
+      <span style="font-size: 0.7rem; color: var(--color-border);">|</span>
+      <button id="mobile-lang-en" class="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+    </div>
+  </div>
+</header>
  
 <div class="container section">
   <div style="margin-bottom: 2rem; display: flex; align-items: center; gap: 1rem;">
@@ -85,10 +100,19 @@
             <span data-i18n="order.shippingCostLabel">Costo de Envío:</span>
             <span id="bill-shipping" style="font-weight: 500;">$0</span>
           </div>
+          <div class="billing-row" style="margin-top: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
+            <span data-i18n="order.paymentStatusLabel">Estado del pago:</span>
+            <span id="detail-payment-status" class="badge">Cargando...</span>
+          </div>
           <div class="billing-row total-row" style="font-size: 1.2rem; font-weight: 700; color: var(--color-primary); border-top: 1.5px solid var(--color-border); padding-top: 0.75rem; margin-top: 0.75rem; display: flex; justify-content: space-between;">
             <span data-i18n="order.totalPaidLabel">Total Pagado:</span>
             <span id="bill-total">$0</span>
           </div>
+        </div>
+        <div id="retry-payment-container" style="margin-top: 1.25rem; display: none; text-align: center;">
+          <button id="btn-retry-payment" class="btn btn-primary" style="width: 100%; justify-content: center; display: inline-flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-solid fa-rotate-right"></i> <span data-i18n="order.retryPaymentBtn">Reintentar Pago</span>
+          </button>
         </div>
       </div>
     </div>
@@ -133,6 +157,7 @@
 <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
 <script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
 <script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
+<script src="https://checkout.epayco.co/checkout.js"></script>
 <script src="/js/api.js"></script>
 <script src="/js/i18n.js"></script>
 <script src="/js/pedido-detalle.js"></script>

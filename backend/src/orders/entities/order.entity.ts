@@ -28,6 +28,9 @@ export class Order {
   @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.PENDING })
   status: OrderStatus;
 
+  @Column({ type: 'varchar', length: 50, default: 'pending' })
+  payment_status: string;
+
   @Column('numeric', { precision: 10, scale: 2, default: 0 })
   shipping_cost: number;
 
@@ -48,6 +51,9 @@ export class Order {
 
   @Column({ nullable: true })
   shipping_company: string;
+
+  @Column({ nullable: true })
+  tracking_url: string;
 
   @OneToMany(() => OrderItem, item => item.order, { cascade: true })
   items: OrderItem[];
