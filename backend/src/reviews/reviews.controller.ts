@@ -1,8 +1,17 @@
-import { Controller, Get, Post, Patch, Body, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Body,
+  Param,
+  UseGuards,
+} from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { JwtAuthGuard, RolesGuard } from '../auth/guards/jwt-auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { UserRole } from '../common/constants';
 
 @Controller('reviews')
 export class ReviewsController {
@@ -10,7 +19,10 @@ export class ReviewsController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@CurrentUser() user: any, @Body() body: { productId: string; rating: number; comment: string }) {
+  create(
+    @CurrentUser() user: any,
+    @Body() body: { productId: string; rating: number; comment: string },
+  ) {
     return this.reviewsService.create(user.id, body);
   }
 
@@ -19,15 +31,20 @@ export class ReviewsController {
     return this.reviewsService.findByProduct(productId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id/report')
   reportReview(@Param('id') id: string, @Body('reason') reason: string) {
     return this.reviewsService.report(id, reason);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('artesano')
+  @Roles(UserRole.ARTISAN)
   @Patch(':id/respond')
-  respond(@Param('id') id: string, @CurrentUser() user: any, @Body('response') response: string) {
+  respond(
+    @Param('id') id: string,
+    @CurrentUser() user: any,
+    @Body('response') response: string,
+  ) {
     return this.reviewsService.respond(id, user.id, response);
   }
 }

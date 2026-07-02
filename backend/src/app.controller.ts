@@ -6,4 +6,3 @@ export class AppController {
   @Redirect('/index.html', 302)
   getHello() {}
 }
-

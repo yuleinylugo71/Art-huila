@@ -45,7 +45,7 @@ import { LogisticsModule } from './logistics/logistics.module';
         type: 'postgres',
         url: configService.get<string>('DATABASE_URL'),
         autoLoadEntities: true,
-        synchronize: configService.get<string>('DB_SYNCHRONIZE') === 'true', // Controlado de forma segura por variable de entorno (evita borrado accidental)
+        synchronize: process.env.NODE_ENV !== 'production',
       }),
       inject: [ConfigService],
     }),

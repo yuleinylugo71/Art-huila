@@ -4,8 +4,8 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title data-i18n="admin.title">Panel Admin — Art Huila</title>
-  <link rel="stylesheet" href="/css/base.css?v=13">
-  <link rel="stylesheet" href="/css/dashboard-admin.css">
+  <link rel="stylesheet" href="/css/base.css?v=19">
+  <link rel="stylesheet" href="/css/dashboard-admin.css?v=19">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
@@ -92,6 +92,9 @@
           <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
           <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
         </div>
+        <button class="mobile-logout-btn mobile-only" onclick="Auth.logout()" data-i18n-title="auth.logout" title="Cerrar Sesión">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
       </div>
     </header>
 

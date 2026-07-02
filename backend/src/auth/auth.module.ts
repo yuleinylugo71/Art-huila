@@ -12,6 +12,8 @@ import { Category } from '../categories/entities/category.entity';
 import { Region } from '../regions/entities/region.entity';
 import { RefreshToken } from './entities/refresh-token.entity';
 
+import { CloudinaryModule } from '../cloudinary/cloudinary.module';
+
 @Module({
   imports: [
     UsersModule,
@@ -19,6 +21,7 @@ import { RefreshToken } from './entities/refresh-token.entity';
     PassportModule,
     JwtModule.register({}),
     TypeOrmModule.forFeature([ArtisanProfile, Category, Region, RefreshToken]),
+    CloudinaryModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],

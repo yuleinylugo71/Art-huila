@@ -180,7 +180,7 @@ document.addEventListener('languageChanged', () => {
             <span id="header-count" style="font-size:0.85rem;color:var(--color-muted);font-weight:600;"></span>
           </div>
 
-          <button class="btn btn-primary btn-lg btn-full mt-2" ${isOutOfStock ? 'disabled' : ''} onclick="addToCart('${p.id}', '${p.name.replace(/'/g, "\\'")}', ${p.price}, '${imgUrl}', '${artisanName}', '${p.artisan?.id}')">
+          <button class="btn btn-primary btn-lg btn-full mt-2" ${isOutOfStock ? 'disabled' : ''} onclick="addToCart('${p.id}', '${p.name.replace(/'/g, "\\'")}', ${p.price}, '${imgUrl}', '${artisanName}', '${p.artisan?.user?.id || p.artisan?.id || ''}')">
             ${isOutOfStock ? i18next.t('product.outOfStock') : i18next.t('product.addToCartBtn')}
           </button>
 
@@ -257,10 +257,10 @@ document.addEventListener('languageChanged', () => {
 
         <!-- Call to action buttons -->
         <div style="display: flex; flex-direction: column; gap: 0.65rem;">
-          <button class="btn-mobile-action" ${isOutOfStock ? 'disabled' : ''} onclick="event.stopPropagation(); addToCart('${p.id}', '${p.name.replace(/'/g, "\\'")}', ${p.price}, '${imgUrl}', '${artisanName}', '${p.artisan?.id}');" style="background: #c1440e; color: white; border: none; border-radius: 99px; padding: 0.75rem; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; cursor: pointer; transition: all 0.2s;">
+          <button class="btn-mobile-action" ${isOutOfStock ? 'disabled' : ''} onclick="event.stopPropagation(); addToCart('${p.id}', '${p.name.replace(/'/g, "\\'")}', ${p.price}, '${imgUrl}', '${artisanName}', '${p.artisan?.user?.id || p.artisan?.id || ''}');" style="background: #c1440e; color: white; border: none; border-radius: 99px; padding: 0.75rem; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; cursor: pointer; transition: all 0.2s;">
             <i class="fa-solid fa-cart-shopping"></i> Agregar al Carrito
           </button>
-          <button class="btn-mobile-action" ${isOutOfStock ? 'disabled' : ''} onclick="event.stopPropagation(); addToCart('${p.id}', '${p.name.replace(/'/g, "\\'")}', ${p.price}, '${imgUrl}', '${artisanName}', '${p.artisan?.id}'); window.location.href='/carrito.html';" style="background: white; color: #c1440e; border: 1.5px solid #c1440e; border-radius: 99px; padding: 0.75rem; font-weight: 700; font-size: 0.85rem; width: 100%; cursor: pointer; transition: all 0.2s; text-align: center;">
+          <button class="btn-mobile-action" ${isOutOfStock ? 'disabled' : ''} onclick="event.stopPropagation(); addToCart('${p.id}', '${p.name.replace(/'/g, "\\'")}', ${p.price}, '${imgUrl}', '${artisanName}', '${p.artisan?.user?.id || p.artisan?.id || ''}'); window.location.href='/carrito.html';" style="background: white; color: #c1440e; border: 1.5px solid #c1440e; border-radius: 99px; padding: 0.75rem; font-weight: 700; font-size: 0.85rem; width: 100%; cursor: pointer; transition: all 0.2s; text-align: center;">
             Comprar Ahora
           </button>
         </div>
@@ -479,7 +479,7 @@ document.addEventListener('languageChanged', () => {
 
 function addToCart(id, name, price, imgUrl, artisanName, artisanUserId) {
   const user = Auth.getUser();
-  if (user && user.role === 'artesano' && user.id === artisanUserId) {
+  if (user && user.role === 'artesano' && (user.id === artisanUserId || (currentProduct?.artisan?.user && user.id === currentProduct.artisan.user.id))) {
     showToast(i18next.t('product.errorCantBuyOwnProduct'), 'warning'); 
     return;
   }

@@ -9,13 +9,13 @@ export class CategoriesController {
   async findAll() {
     const categories = await this.categoriesService.findAllWithCount();
     const icons = {
-      'Tejeduría': '<i class="fa-solid fa-scissors"></i>',
-      'Cerámica': '<i class="fa-solid fa-jar"></i>',
+      Tejeduría: '<i class="fa-solid fa-scissors"></i>',
+      Cerámica: '<i class="fa-solid fa-jar"></i>',
       'Talla en madera': '<i class="fa-solid fa-tree"></i>',
-      'Orfebrería': '<i class="fa-solid fa-gem"></i>',
-      'Sombrerería': '<i class="fa-solid fa-hat-cowboy"></i>',
+      Orfebrería: '<i class="fa-solid fa-gem"></i>',
+      Sombrerería: '<i class="fa-solid fa-hat-cowboy"></i>',
     };
-    return categories.map(c => ({
+    return categories.map((c) => ({
       id: c.id,
       name: c.name,
       slug: c.name.toLowerCase().replace(/ /g, '-'),

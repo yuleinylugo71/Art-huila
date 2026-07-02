@@ -23,7 +23,18 @@ export class CatalogService {
     artisanId?: string;
     search?: string;
   }) {
-    const { regions, categories, materials, minPrice, maxPrice, sortBy = 'newest', page = 1, limit = 20, artisanId, search } = params;
+    const {
+      regions,
+      categories,
+      materials,
+      minPrice,
+      maxPrice,
+      sortBy = 'newest',
+      page = 1,
+      limit = 20,
+      artisanId,
+      search,
+    } = params;
 
     const qb = this.productRepo
       .createQueryBuilder('product')
@@ -34,7 +45,9 @@ export class CatalogService {
       .leftJoinAndSelect('product.images', 'images')
       .leftJoinAndSelect('product.reviews', 'reviews')
       .where('product.status = :status', { status: ProductStatus.PUBLISHED })
-      .andWhere('artisan.verification_status != :suspended', { suspended: ArtisanStatus.SUSPENDED });
+      .andWhere('artisan.verification_status != :suspended', {
+        suspended: ArtisanStatus.SUSPENDED,
+      });
 
     if (search) {
       qb.andWhere(
@@ -53,7 +66,9 @@ export class CatalogService {
       qb.andWhere('category.name IN (:...categories)', { categories });
     }
     if (materials && materials.length > 0) {
-      const materialConditions = materials.map((m, idx) => `product.materials ILIKE :material_${idx}`);
+      const materialConditions = materials.map(
+        (m, idx) => `product.materials ILIKE :material_${idx}`,
+      );
       const parameters = {};
       materials.forEach((m, idx) => {
         parameters[`material_${idx}`] = `%${m}%`;
@@ -72,14 +87,22 @@ export class CatalogService {
     else qb.orderBy('product.created_at', 'DESC');
 
     const total = await qb.getCount();
-    const rawData = await qb.skip((page - 1) * limit).take(limit).getMany();
+    const rawData = await qb
+      .skip((page - 1) * limit)
+      .take(limit)
+      .getMany();
     const data = rawData.map((product) => {
       (product.artisan as any).status = product.artisan.verification_status;
       const reviews = product.reviews || [];
       const reviewCount = reviews.length;
-      const avgRating = reviewCount > 0
-        ? parseFloat((reviews.reduce((acc, r) => acc + r.rating, 0) / reviewCount).toFixed(1))
-        : 0;
+      const avgRating =
+        reviewCount > 0
+          ? parseFloat(
+              (
+                reviews.reduce((acc, r) => acc + r.rating, 0) / reviewCount
+              ).toFixed(1),
+            )
+          : 0;
       (product as any).rating = avgRating;
       (product as any).review_count = reviewCount;
       return product;

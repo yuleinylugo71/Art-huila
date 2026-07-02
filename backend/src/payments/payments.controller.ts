@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Param, UseGuards, Get, Query, NotFoundException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Param,
+  UseGuards,
+  Get,
+  Query,
+  NotFoundException,
+} from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { ConfigService } from '@nestjs/config';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -24,7 +33,10 @@ export class PaymentsController {
 
   @Post('create-preference/:orderId')
   @UseGuards(JwtAuthGuard)
-  async createPreference(@Param('orderId') orderId: string, @CurrentUser() user: any) {
+  async createPreference(
+    @Param('orderId') orderId: string,
+    @CurrentUser() user: any,
+  ) {
     const order = await this.ordersService.findOne(orderId, user);
     if (!order) throw new NotFoundException('Order not found');
     return this.paymentsService.createPreference(order);

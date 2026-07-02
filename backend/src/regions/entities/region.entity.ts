@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
 import { Product } from '../../products/entities/product.entity';
 import { ArtisanProfile } from '../../artisans/entities/artisan-profile.entity';
 
@@ -13,10 +20,10 @@ export class Region {
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @OneToMany(() => ArtisanProfile, profile => profile.region)
+  @OneToMany(() => ArtisanProfile, (profile) => profile.region)
   artisans: ArtisanProfile[];
 
-  @OneToMany(() => Product, product => product.region)
+  @OneToMany(() => Product, (product) => product.region)
   products: Product[];
 
   @CreateDateColumn()

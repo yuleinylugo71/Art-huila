@@ -1,6 +1,7 @@
 import { Reflector } from '@nestjs/core';
 import { AdminController } from './admin.controller';
 import { RolesGuard } from '../auth/guards/jwt-auth.guard';
+import { UserRole } from '../common/constants';
 
 describe('AdminController HU-02', () => {
   it('solo admin puede llamar a /admin/artesanos/:id/verificar', () => {
@@ -11,7 +12,9 @@ describe('AdminController HU-02', () => {
     const context: any = {
       getHandler: () => AdminController.prototype.verificarArtesano,
       getClass: () => AdminController,
-      switchToHttp: () => ({ getRequest: () => ({ user: { role: 'artesano' } }) }),
+      switchToHttp: () => ({
+        getRequest: () => ({ user: { role: UserRole.ARTISAN } }),
+      }),
     };
 
     expect(() => guard.canActivate(context)).toThrow('No tienes permisos');
