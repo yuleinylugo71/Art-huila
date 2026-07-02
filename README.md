@@ -1,10 +1,10 @@
-# 🏺 Art Huila - Plataforma E-commerce de Artesanías del Huila
+# Art Huila - Plataforma E-commerce de Artesanías del Huila
 
 Bienvenido al repositorio oficial de **Art Huila**, una plataforma de comercio electrónico diseñada exclusivamente para promover, preservar y comercializar las artesanías tradicionales del departamento del Huila, Colombia. El proyecto conecta directamente a los artesanos locales con compradores nacionales e internacionales, impulsando el desarrollo cultural y económico de la región.
 
 ---
 
-## 🛠️ Arquitectura y Tecnologías
+##  Arquitectura y Tecnologías
 
 El proyecto está diseñado bajo una arquitectura desacoplada pero integrada de forma profesional:
 
@@ -20,7 +20,7 @@ El proyecto está diseñado bajo una arquitectura desacoplada pero integrada de 
 
 ---
 
-## 📁 Estructura del Proyecto
+## Estructura del Proyecto
 
 El monorepositorio está organizado de la siguiente manera:
 
@@ -41,7 +41,7 @@ El monorepositorio está organizado de la siguiente manera:
 
 ---
 
-## ⚡ Guía de Configuración Local
+##  Guía de Configuración Local
 
 ### 1. Requisitos Previos
 
@@ -88,15 +88,15 @@ El servidor estará escuchando en `http://localhost:3000`.
 
 ---
 
-## 📡 Despliegue en la Nube
+##  Despliegue en la Nube
 
 Para llevar este proyecto a producción (NestJS en Render, Frontend en Vercel, Base de datos en PostgreSQL remota), consulta la guía detallada:
 
-👉 **[Ver Guía de Despliegue Profesional](file:///c:/Users/Yuleiny/OneDrive/Documentos/ecomerce_Arthuila/GUIA_DESPLIEGUE.md)**
+ **[Ver Guía de Despliegue Profesional](file:///c:/Users/Yuleiny/OneDrive/Documentos/ecomerce_Arthuila/GUIA_DESPLIEGUE.md)**
 
 ---
 
-## 👥 Cuentas de Acceso de Prueba (Seed)
+##  Cuentas de Acceso de Prueba (Seed)
 
 Si ejecutas el script `npm run seed`, tendrás acceso inmediato a las siguientes cuentas de prueba:
 
