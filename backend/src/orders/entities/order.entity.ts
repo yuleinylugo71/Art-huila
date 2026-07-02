@@ -1,17 +1,17 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+} from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { OrderItem } from './order-item.entity';
 
-export enum OrderStatus {
-  PENDING = 'pending',
-  PAID = 'paid',
-  PREPARING = 'preparing',
-  SHIPPED = 'shipped',
-  DELIVERED = 'delivered',
-  CANCELLED = 'cancelled',
-  REFUNDED = 'refunded',
-  NOVELTY = 'novelty',
-}
+import { OrderStatus } from '../../common/constants';
 
 @Entity('orders')
 export class Order {
@@ -55,7 +55,7 @@ export class Order {
   @Column({ nullable: true })
   tracking_url: string;
 
-  @OneToMany(() => OrderItem, item => item.order, { cascade: true })
+  @OneToMany(() => OrderItem, (item) => item.order, { cascade: true })
   items: OrderItem[];
 
   @CreateDateColumn()

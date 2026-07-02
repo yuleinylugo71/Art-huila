@@ -1,18 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-
-export enum Role {
-  ADMIN = 'admin',
-  ARTESANO = 'artesano',
-  COMPRADOR = 'comprador',
-}
-
-export const UserRole = {
-  ADMIN: Role.ADMIN,
-  ARTISAN: Role.ARTESANO,
-  BUYER: Role.COMPRADOR,
-} as const;
-
-export type UserRole = Role;
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Exclude } from 'class-transformer';
+import { UserRole } from '../../common/constants';
 
 @Entity('users')
 export class User {
@@ -26,10 +20,11 @@ export class User {
   email: string;
 
   @Column()
+  @Exclude()
   password_hash: string;
 
-  @Column({ type: 'enum', enum: Role, default: Role.COMPRADOR })
-  role: Role;
+  @Column({ type: 'enum', enum: UserRole, default: UserRole.BUYER })
+  role: UserRole;
 
   @Column({ default: false })
   email_verified: boolean;
@@ -38,18 +33,22 @@ export class User {
   verifiedAt: Date | null;
 
   @Column({ nullable: true })
+  @Exclude()
   email_verification_token: string;
 
   @Column({ type: 'timestamp', nullable: true })
   email_token_expires_at: Date | null;
 
   @Column({ default: 0 })
+  @Exclude()
   failed_login_attempts: number;
 
   @Column({ type: 'timestamp', nullable: true })
+  @Exclude()
   locked_until: Date | null;
 
   @Column({ nullable: true })
+  @Exclude()
   reset_password_token: string;
 
   @Column({ type: 'timestamp', nullable: true })

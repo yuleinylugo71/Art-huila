@@ -1,15 +1,24 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MailService } from './mail.service';
+import { NodemailerMailService } from './mail.service';
+import { ConfigService } from '@nestjs/config';
 
 describe('MailService', () => {
-  let service: MailService;
+  let service: NodemailerMailService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [MailService],
+      providers: [
+        NodemailerMailService,
+        {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn().mockReturnValue('test@arthuila.com'),
+          },
+        },
+      ],
     }).compile();
 
-    service = module.get<MailService>(MailService);
+    service = module.get<NodemailerMailService>(NodemailerMailService);
   });
 
   it('should be defined', () => {

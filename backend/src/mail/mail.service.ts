@@ -2,8 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
 
+import { IMailService } from './mail.service.interface';
+
 @Injectable()
-export class MailService {
+export class NodemailerMailService implements IMailService {
   private transporter: nodemailer.Transporter;
   private fromEmail: string;
 
@@ -18,9 +20,14 @@ export class MailService {
     });
   }
 
-  async sendVerificationEmail(to: string, name: string, token: string, frontendUrl: string) {
+  async sendVerificationEmail(
+    to: string,
+    name: string,
+    token: string,
+    frontendUrl: string,
+  ) {
     const link = `${frontendUrl}/verificar-email.html?token=${token}`;
-    
+
     console.log(`[MailService] Sending verification email to ${to}`);
     console.log(`[MailService] Verification Link: ${link}`);
     console.log(`[MailService] Verification Code: ${token}`);
@@ -89,7 +96,10 @@ export class MailService {
         `,
       });
     } catch (err) {
-      console.error('[MailService] Error sending artisan rejection email:', err);
+      console.error(
+        '[MailService] Error sending artisan rejection email:',
+        err,
+      );
       throw err;
     }
   }
@@ -109,12 +119,20 @@ export class MailService {
         `,
       });
     } catch (err) {
-      console.error('[MailService] Error sending artisan suspension email:', err);
+      console.error(
+        '[MailService] Error sending artisan suspension email:',
+        err,
+      );
       throw err;
     }
   }
 
-  async sendOrderConfirmationEmail(to: string, name: string, orderId: string, total: number) {
+  async sendOrderConfirmationEmail(
+    to: string,
+    name: string,
+    orderId: string,
+    total: number,
+  ) {
     try {
       await this.transporter.sendMail({
         from: `"Art Huila" <${this.fromEmail}>`,
@@ -125,7 +143,7 @@ export class MailService {
             <h1 style="color:#7c3d12;">¡Gracias por tu compra, ${name}!</h1>
             <p style="color:#44403c; font-size:16px;">Hemos recibido tu pedido y los artesanos ya están trabajando en él.</p>
             <div style="background:#f8f4ef; padding:20px; border-radius:8px; margin:20px 0;">
-              <p><strong>Pedido ID:</strong> ${orderId.substring(0,8)}</p>
+              <p><strong>Pedido ID:</strong> ${orderId.substring(0, 8)}</p>
               <p><strong>Total:</strong> $${Number(total).toLocaleString('es-CO')}</p>
             </div>
             <p style="color:#44403c;">Puedes ver el estado de tu pedido en tu panel de comprador.</p>
@@ -133,12 +151,20 @@ export class MailService {
         `,
       });
     } catch (err) {
-      console.error('[MailService] Error sending order confirmation email:', err);
+      console.error(
+        '[MailService] Error sending order confirmation email:',
+        err,
+      );
       throw err;
     }
   }
 
-  async sendSaleNotificationEmail(to: string, artisanName: string, productName: string, quantity: number) {
+  async sendSaleNotificationEmail(
+    to: string,
+    artisanName: string,
+    productName: string,
+    quantity: number,
+  ) {
     try {
       await this.transporter.sendMail({
         from: `"Art Huila" <${this.fromEmail}>`,
@@ -154,12 +180,20 @@ export class MailService {
         `,
       });
     } catch (err) {
-      console.error('[MailService] Error sending sale notification email:', err);
+      console.error(
+        '[MailService] Error sending sale notification email:',
+        err,
+      );
       throw err;
     }
   }
 
-  async sendArtisanResponseEmail(to: string, buyerName: string, artisanName: string, productName: string) {
+  async sendArtisanResponseEmail(
+    to: string,
+    buyerName: string,
+    artisanName: string,
+    productName: string,
+  ) {
     try {
       await this.transporter.sendMail({
         from: `"Art Huila" <${this.fromEmail}>`,
@@ -180,9 +214,10 @@ export class MailService {
   }
 
   async sendPasswordResetEmail(to: string, token: string, userName: string) {
-    const frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'http://localhost:5173';
+    const frontendUrl =
+      this.configService.get<string>('FRONTEND_URL') || 'http://localhost:5173';
     const link = `${frontendUrl}/nueva-contrasena.html?token=${token}`;
-    
+
     console.log(`[MailService] Sending password reset email to ${to}`);
     console.log(`[MailService] Reset Link: ${link}`);
 

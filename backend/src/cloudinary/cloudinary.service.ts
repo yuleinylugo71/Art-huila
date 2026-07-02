@@ -3,6 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { v2 as cloudinary } from 'cloudinary';
 import { Readable } from 'stream';
 
+import { IStorageService } from './storage.service.interface';
+
 export type CloudinaryUploadResult = {
   url: string;
   secure_url: string;
@@ -10,13 +12,22 @@ export type CloudinaryUploadResult = {
 };
 
 @Injectable()
-export class CloudinaryService {
+export class CloudinaryService implements IStorageService {
   constructor(private readonly configService: ConfigService) {
     cloudinary.config({
       cloud_name: this.configService.get<string>('CLOUDINARY_CLOUD_NAME'),
       api_key: this.configService.get<string>('CLOUDINARY_API_KEY'),
       api_secret: this.configService.get<string>('CLOUDINARY_API_SECRET'),
     });
+  }
+
+  async uploadFile(file: Express.Multer.File, folder: string): Promise<string> {
+    const result = await this.uploadImage(file, folder);
+    return result.secure_url;
+  }
+
+  async deleteFile(publicId: string): Promise<void> {
+    await cloudinary.uploader.destroy(publicId);
   }
 
   async uploadImage(
@@ -27,8 +38,15 @@ export class CloudinaryService {
       const upload = cloudinary.uploader.upload_stream(
         { folder, resource_type: 'image' },
         (error, result) => {
-          if (error || !result) return reject(new InternalServerErrorException('Error uploading to Cloudinary'));
-          resolve({ url: result.url, secure_url: result.secure_url, public_id: result.public_id });
+          if (error || !result)
+            return reject(
+              new InternalServerErrorException('Error uploading to Cloudinary'),
+            );
+          resolve({
+            url: result.url,
+            secure_url: result.secure_url,
+            public_id: result.public_id,
+          });
         },
       );
       const readable = new Readable();

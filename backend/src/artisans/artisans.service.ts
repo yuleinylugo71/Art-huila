@@ -1,9 +1,18 @@
-import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ArtisanProfile, ArtisanStatus } from './entities/artisan-profile.entity';
+import {
+  ArtisanProfile,
+  ArtisanStatus,
+} from './entities/artisan-profile.entity';
 import { ArtisanGallery } from './entities/artisan-gallery.entity';
-import { User, Role } from '../users/entities/user.entity';
+import { User } from '../users/entities/user.entity';
+import { UserRole } from '../common/constants';
 
 @Injectable()
 export class ArtisansService {
@@ -53,7 +62,11 @@ export class ArtisansService {
     return this.galleryRepo.save(img);
   }
 
-  async updateStatus(id: string, status: ArtisanStatus, rejectionReason?: string) {
+  async updateStatus(
+    id: string,
+    status: ArtisanStatus,
+    rejectionReason?: string,
+  ) {
     const profile = await this.profileRepo.findOneBy({ id });
     if (!profile) throw new NotFoundException('Perfil no encontrado');
     profile.verification_status = status;
@@ -68,16 +81,23 @@ export class ArtisansService {
     });
     if (!profile) throw new NotFoundException('Perfil no encontrado');
 
-    if (data.cultural_history !== undefined) profile.cultural_history = data.cultural_history;
+    if (data.cultural_history !== undefined)
+      profile.cultural_history = data.cultural_history;
     if (data.avatar_url !== undefined) profile.avatar_url = data.avatar_url;
-    if (data.category_id !== undefined) profile.category = { id: data.category_id } as any;
-    if (data.region_id !== undefined) profile.region = { id: data.region_id } as any;
+    if (data.category_id !== undefined)
+      profile.category = { id: data.category_id } as any;
+    if (data.region_id !== undefined)
+      profile.region = { id: data.region_id } as any;
     if (data.id_number !== undefined) profile.id_number = data.id_number;
     if (data.truthfulness_declaration !== undefined) {
-      profile.truthfulness_declaration = data.truthfulness_declaration === true || data.truthfulness_declaration === 'true';
+      profile.truthfulness_declaration =
+        data.truthfulness_declaration === true ||
+        data.truthfulness_declaration === 'true';
     }
-    if (data.id_document_front_url !== undefined) profile.id_document_front_url = data.id_document_front_url;
-    if (data.id_document_back_url !== undefined) profile.id_document_back_url = data.id_document_back_url;
+    if (data.id_document_front_url !== undefined)
+      profile.id_document_front_url = data.id_document_front_url;
+    if (data.id_document_back_url !== undefined)
+      profile.id_document_back_url = data.id_document_back_url;
 
     if (data.full_name && profile.user) {
       profile.user.full_name = data.full_name;
@@ -116,19 +136,27 @@ export class ArtisansService {
         profile.verification_status === ArtisanStatus.VERIFIED ||
         profile.verification_status === ArtisanStatus.ACTIVE
       ) {
-        throw new ConflictException('Ya tienes una solicitud pendiente, activa o verificada.');
+        throw new ConflictException(
+          'Ya tienes una solicitud pendiente, activa o verificada.',
+        );
       }
     }
 
-    const existingArtisan = await this.profileRepo.findOne({ where: { id_number: data.id_number } });
+    const existingArtisan = await this.profileRepo.findOne({
+      where: { id_number: data.id_number },
+    });
     if (existingArtisan && (!profile || existingArtisan.id !== profile.id)) {
-      throw new ConflictException('El número de cédula (ID) ya se encuentra registrado');
+      throw new ConflictException(
+        'El número de cédula (ID) ya se encuentra registrado',
+      );
     }
 
-    const user = await this.profileRepo.manager.findOne(User, { where: { id: userId } });
+    const user = await this.profileRepo.manager.findOne(User, {
+      where: { id: userId },
+    });
     if (!user) throw new NotFoundException('Usuario no encontrado');
 
-    user.role = Role.ARTESANO;
+    user.role = UserRole.ARTISAN;
     await this.profileRepo.manager.save(user);
 
     if (!profile) {
@@ -136,10 +164,12 @@ export class ArtisansService {
         user,
         id_number: data.id_number,
         cultural_history: data.cultural_history,
-        category: { id: data.category_id } as any,
-        region: { id: data.region_id } as any,
+        category: { id: data.category_id },
+        region: { id: data.region_id },
         verification_status: ArtisanStatus.PENDING,
-        truthfulness_declaration: data.truthfulness_declaration === true || data.truthfulness_declaration === 'true',
+        truthfulness_declaration:
+          data.truthfulness_declaration === true ||
+          data.truthfulness_declaration === 'true',
         legal_acceptance_ip: clientIp,
         legal_acceptance_timestamp: new Date(),
         id_document_front_url: idDocumentFrontUrl,
@@ -151,10 +181,13 @@ export class ArtisansService {
       profile.category = { id: data.category_id } as any;
       profile.region = { id: data.region_id } as any;
       profile.verification_status = ArtisanStatus.PENDING;
-      profile.truthfulness_declaration = data.truthfulness_declaration === true || data.truthfulness_declaration === 'true';
+      profile.truthfulness_declaration =
+        data.truthfulness_declaration === true ||
+        data.truthfulness_declaration === 'true';
       profile.legal_acceptance_ip = clientIp;
       profile.legal_acceptance_timestamp = new Date();
-      if (idDocumentFrontUrl) profile.id_document_front_url = idDocumentFrontUrl;
+      if (idDocumentFrontUrl)
+        profile.id_document_front_url = idDocumentFrontUrl;
       if (idDocumentBackUrl) profile.id_document_back_url = idDocumentBackUrl;
     }
 

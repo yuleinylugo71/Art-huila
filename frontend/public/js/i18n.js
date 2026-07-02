@@ -93,6 +93,14 @@
         el.setAttribute('data-tooltip', i18next.t(tooltipKey));
       }
     });
+
+    // Traducir titles usando data-i18n-title
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      const titleKey = el.dataset.i18nTitle;
+      if (titleKey) {
+        el.setAttribute('title', i18next.t(titleKey));
+      }
+    });
   };
 
   window.translateCategory = function (name) {

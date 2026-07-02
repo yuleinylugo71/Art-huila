@@ -42,8 +42,20 @@ function handleDepartmentChange(deptName, selectCityValue = null) {
 
     // Preselect city if provided
     if (selectCityValue) {
-      // Find case-insensitive match or standard match
-      const matchedCity = cities.find(c => c.toLowerCase() === selectCityValue.toLowerCase());
+      // Find case-insensitive match, accent-insensitive
+      const normalizeString = (str) => 
+        (str || '').toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-z0-9]/g, "")
+          .trim();
+      
+      const normalizedCityVal = normalizeString(selectCityValue);
+      const matchedCity = cities.find(c => {
+        const normalizedC = normalizeString(c);
+        return normalizedC === normalizedCityVal || normalizedC.includes(normalizedCityVal) || normalizedCityVal.includes(normalizedC);
+      });
+
       if (matchedCity) {
         citySelect.value = matchedCity;
         window.currentDestinationCity = matchedCity;
@@ -58,53 +70,49 @@ function handleDepartmentChange(deptName, selectCityValue = null) {
 
 async function loadCoverageAndInit() {
   const deptSelect = document.getElementById('shipping-department');
-  try {
-    const data = await apiFetch('/orders/shipping-coverage');
-    coverageData = data || {};
-  } catch (err) {
-    console.error('Error loading shipping coverage from backend:', err);
-    // Local fallback
-    coverageData = {
-      'HUILA': [
-        'Neiva', 'Pitalito', 'Garzón', 'La Plata', 'Campoalegre', 'Palermo',
-        'Rivera', 'Algeciras', 'Yaguará', 'Agrado', 'Tarqui', 'Suaza', 'Acevedo',
-        'San Agustín', 'Isnos', 'Timaná', 'Nátaga', 'Tesalia'
-      ],
-      'TOLIMA': ['Ibagué', 'Espinal', 'Honda'],
-      'CAQUETA': ['Florencia'],
-      'PUTUMAYO': ['Mocoa', 'Puerto Asís'],
-      'CAUCA': ['Popayán', 'Santander de Quilichao'],
-      'CUNDINAMARCA': ['Bogotá', 'Soacha', 'Zipaquirá', 'Chía'],
-      'VALLE DEL CAUCA': ['Cali', 'Palmira', 'Buenaventura', 'Cartago', 'Buga', 'Tuluá'],
-      'RISARALDA': ['Pereira', 'Dosquebradas'],
-      'CALDAS': ['Manizales'],
-      'QUINDIO': ['Armenia'],
-      'META': ['Villavicencio'],
-      'BOYACA': ['Tunja'],
-      'ANTIOQUIA': ['Medellín', 'Bello', 'Itagüí', 'Envigado', 'Rionegro'],
-      'SANTANDER': ['Barrancabermeja', 'Bucaramanga', 'Girón', 'Floridablanca'],
-      'NORTE DE SANTANDER': ['Cúcuta'],
-      'ATLANTICO': ['Barranquilla', 'Soledad'],
-      'BOLIVAR': ['Cartagena'],
-      'MAGDALENA': ['Santa Marta'],
-      'CORDOBA': ['Montería'],
-      'SUCRE': ['Sincelejo'],
-      'CESAR': ['Valledupar'],
-      'LA GUAJIRA': ['Riohacha'],
-      'AMAZONAS': ['Leticia'],
-      'VAUPES': ['Mitú'],
-      'GUAINIA': ['Puerto Inírida'],
-      'GUAVIARE': ['San José del Guaviare'],
-      'CHOCO': ['Quibdó'],
-      'ARAUCA': ['Arauca'],
-      'CASANARE': ['Yopal'],
-      'SAN ANDRES Y PROVIDENCIA': ['San Andrés', 'Providencia'],
-      'VICHADA': ['Puerto Carreño']
-    };
-  }
 
-  // Populate department dropdown
-  if (deptSelect) {
+  // Local fallback data loaded synchronously so the dropdown is populated instantly
+  coverageData = {
+    'HUILA': [
+      'Neiva', 'Pitalito', 'Garzón', 'La Plata', 'Campoalegre', 'Palermo',
+      'Rivera', 'Algeciras', 'Yaguará', 'Agrado', 'Tarqui', 'Suaza', 'Acevedo',
+      'San Agustín', 'Isnos', 'Timaná', 'Nátaga', 'Tesalia'
+    ],
+    'TOLIMA': ['Ibagué', 'Espinal', 'Honda'],
+    'CAQUETA': ['Florencia'],
+    'PUTUMAYO': ['Mocoa', 'Puerto Asís'],
+    'CAUCA': ['Popayán', 'Santander de Quilichao'],
+    'CUNDINAMARCA': ['Bogotá', 'Soacha', 'Zipaquirá', 'Chía'],
+    'VALLE DEL CAUCA': ['Cali', 'Palmira', 'Buenaventura', 'Cartago', 'Buga', 'Tuluá'],
+    'RISARALDA': ['Pereira', 'Dosquebradas'],
+    'CALDAS': ['Manizales'],
+    'QUINDIO': ['Armenia'],
+    'META': ['Villavicencio'],
+    'BOYACA': ['Tunja'],
+    'ANTIOQUIA': ['Medellín', 'Bello', 'Itagüí', 'Envigado', 'Rionegro'],
+    'SANTANDER': ['Barrancabermeja', 'Bucaramanga', 'Girón', 'Floridablanca'],
+    'NORTE DE SANTANDER': ['Cúcuta'],
+    'ATLANTICO': ['Barranquilla', 'Soledad'],
+    'BOLIVAR': ['Cartagena'],
+    'MAGDALENA': ['Santa Marta'],
+    'CORDOBA': ['Montería'],
+    'SUCRE': ['Sincelejo'],
+    'CESAR': ['Valledupar'],
+    'LA GUAJIRA': ['Riohacha'],
+    'AMAZONAS': ['Leticia'],
+    'VAUPES': ['Mitú'],
+    'GUAINIA': ['Puerto Inírida'],
+    'GUAVIARE': ['San José del Guaviare'],
+    'CHOCO': ['Quibdó'],
+    'ARAUCA': ['Arauca'],
+    'CASANARE': ['Yopal'],
+    'SAN ANDRES Y PROVIDENCIA': ['San Andrés', 'Providencia'],
+    'VICHADA': ['Puerto Carreño']
+  };
+
+  const populateDepartments = () => {
+    if (!deptSelect) return;
+    const currentVal = deptSelect.value;
     deptSelect.innerHTML = '<option value="" disabled selected>Selecciona un departamento...</option>';
     const depts = Object.keys(coverageData).sort();
     depts.forEach(d => {
@@ -113,8 +121,16 @@ async function loadCoverageAndInit() {
       opt.textContent = d.charAt(0).toUpperCase() + d.slice(1).toLowerCase();
       deptSelect.appendChild(opt);
     });
+    if (currentVal && Object.keys(coverageData).includes(currentVal)) {
+      deptSelect.value = currentVal;
+    }
+  };
 
-    // Set change listener
+  // Populate immediately with local data
+  populateDepartments();
+
+  // Set change listener
+  if (deptSelect) {
     deptSelect.addEventListener('change', (e) => {
       handleDepartmentChange(e.target.value);
     });
@@ -130,27 +146,63 @@ async function loadCoverageAndInit() {
     });
   }
 
-  // Proceed with user profile load and prefilling
-  if (Auth.getToken()) {
-    const testPanel = document.getElementById('epayco-test-panel');
-    if (testPanel) testPanel.style.display = 'block';
+  // Load profile and prefill in parallel/background
+  const loadProfileAndPrefill = async () => {
+    if (Auth.getToken()) {
+      const testPanel = document.getElementById('epayco-test-panel');
+      if (testPanel) testPanel.style.display = 'block';
 
-    try {
-      const freshUser = await apiFetch('/users/me');
-      if (freshUser) {
-        localStorage.setItem('art_huila_user', JSON.stringify(freshUser));
-        prefillShippingDetails(freshUser);
+      try {
+        const freshUser = await apiFetch('/users/me');
+        if (freshUser) {
+          localStorage.setItem('art_huila_user', JSON.stringify(freshUser));
+          prefillShippingDetails(freshUser);
+        }
+      } catch (err) {
+        console.error('Failed to pre-fill from profile:', err);
+        const cachedUser = Auth.getUser();
+        if (cachedUser) prefillShippingDetails(cachedUser);
       }
-    } catch (err) {
-      console.error('Failed to pre-fill from profile:', err);
-      const cachedUser = Auth.getUser();
-      if (cachedUser) prefillShippingDetails(cachedUser);
+    } else {
+      if (Cart.get().length > 0 && window.currentDestinationCity) {
+        calculateShipping();
+      }
     }
-  } else {
-    // If not logged in, just check if there is an anonymous calculation needed
-    if (Cart.get().length > 0 && window.currentDestinationCity) {
-      calculateShipping();
+  };
+
+  loadProfileAndPrefill();
+
+  // Try to load dynamic coverage from backend asynchronously
+  try {
+    const data = await apiFetch('/orders/shipping-coverage');
+    if (data && Object.keys(data).length > 0) {
+      coverageData = data;
+      populateDepartments();
+      
+      // Re-trigger prefill if user is logged in to ensure correct department/city sync
+      const user = Auth.getUser();
+      if (user && user.department) {
+        const normalizeString = (str) => 
+          (str || '').toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z0-9]/g, "")
+            .trim();
+
+        const normalizedUserDept = normalizeString(user.department);
+        const matchedDept = Object.keys(coverageData).find(k => {
+          const normalizedKey = normalizeString(k);
+          return normalizedKey === normalizedUserDept || normalizedKey.includes(normalizedUserDept) || normalizedUserDept.includes(normalizedKey);
+        });
+
+        if (matchedDept && deptSelect) {
+          deptSelect.value = matchedDept;
+          handleDepartmentChange(matchedDept, user.city);
+        }
+      }
     }
+  } catch (err) {
+    console.error('Error loading shipping coverage from backend:', err);
   }
 }
 
@@ -753,10 +805,22 @@ function prefillShippingDetails(user) {
   // Pre-fill department and city dropdowns
   const deptSelect = document.getElementById('shipping-department');
   if (deptSelect && user.department) {
-    const upperDept = user.department.toUpperCase();
-    if (coverageData[upperDept]) {
-      deptSelect.value = upperDept;
-      handleDepartmentChange(upperDept, user.city);
+    const normalizeString = (str) => 
+      (str || '').toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]/g, "")
+        .trim();
+
+    const normalizedUserDept = normalizeString(user.department);
+    const matchedDept = Object.keys(coverageData).find(k => {
+      const normalizedKey = normalizeString(k);
+      return normalizedKey === normalizedUserDept || normalizedKey.includes(normalizedUserDept) || normalizedUserDept.includes(normalizedKey);
+    });
+
+    if (matchedDept) {
+      deptSelect.value = matchedDept;
+      handleDepartmentChange(matchedDept, user.city);
     }
   }
 

@@ -7,7 +7,11 @@ describe('ProductsService HU-02', () => {
     const productRepo = {
       findOneBy: jest.fn().mockResolvedValue(null),
       create: jest.fn((data) => data),
-      save: jest.fn().mockImplementation((data) => Promise.resolve({ id: 'product-1', ...data })),
+      save: jest
+        .fn()
+        .mockImplementation((data) =>
+          Promise.resolve({ id: 'product-1', ...data }),
+        ),
     };
     const service = new ProductsService(
       productRepo as any,
@@ -18,8 +22,6 @@ describe('ProductsService HU-02', () => {
           verification_status: ArtisanStatus.ACTIVE,
         }),
       } as any,
-      {} as any,
-      {} as any,
     );
 
     const product = await service.create('user-1', {

@@ -1,8 +1,24 @@
-import { Req, Body, Controller, Get, Post, Query, UseGuards, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import {
+  Req,
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  UseGuards,
+  UseInterceptors,
+  UploadedFiles,
+} from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { Request } from 'express';
 import { AuthService } from './auth.service';
-import { LoginDto, LogoutDto, RefreshDto, RegisterArtisanDto, RegisterDto } from './dto/auth.dto';
+import {
+  LoginDto,
+  LogoutDto,
+  RefreshDto,
+  RegisterArtisanDto,
+  RegisterDto,
+} from './dto/auth.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
 
@@ -30,7 +46,12 @@ export class AuthController {
   )
   registerArtisan(
     @Body() dto: RegisterArtisanDto,
-    @UploadedFiles() files: { id_document_front?: Express.Multer.File[], id_document_back?: Express.Multer.File[], gallery?: Express.Multer.File[] },
+    @UploadedFiles()
+    files: {
+      id_document_front?: Express.Multer.File[];
+      id_document_back?: Express.Multer.File[];
+      gallery?: Express.Multer.File[];
+    },
     @Req() req: any,
   ) {
     const xForwardedFor = req.headers['x-forwarded-for'];
@@ -45,9 +66,9 @@ export class AuthController {
 
     return this.authService.registerArtisan(
       dto,
-      files.id_document_front?.[0],
-      files.id_document_back?.[0],
-      files.gallery,
+      files?.id_document_front?.[0],
+      files?.id_document_back?.[0],
+      files?.gallery,
       clientIp,
     );
   }
