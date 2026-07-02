@@ -1,0 +1,47 @@
+/* verificar-email.css - Email verification page styles */
+
+.verify-container {
+  text-align: center;
+  max-width: 480px;
+  padding: 2.5rem;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.verify-icon {
+  font-size: 4rem;
+  margin-bottom: 1.5rem;
+}
+
+.verify-title {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--color-text);
+  margin-bottom: 0.75rem;
+}
+
+.verify-text {
+  color: var(--color-muted);
+  margin-bottom: 2rem;
+  line-height: 1.7;
+}
+
+.status-alert {
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.status-success {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.status-error {
+  background: #fee2e2;
+  color: #b91c1c;
+}

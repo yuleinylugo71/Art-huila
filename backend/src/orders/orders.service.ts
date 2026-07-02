@@ -1,12 +1,20 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  InternalServerErrorException,
+  Inject,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { Order, OrderStatus } from './entities/order.entity';
+import { Order } from './entities/order.entity';
+import { OrderStatus, UserRole } from '../common/constants';
 import { OrderItem } from './entities/order-item.entity';
 import { Product } from '../products/entities/product.entity';
 import { User } from '../users/entities/user.entity';
-import { MailService } from '../mail/mail.service';
+import { MAIL_SERVICE } from '../mail/mail.service.interface';
+import type { IMailService } from '../mail/mail.service.interface';
 import { MipaqueteService } from '../logistics/mipaquete/mipaquete.service';
 
 @Injectable()
@@ -18,7 +26,8 @@ export class OrdersService {
     private readonly orderItemsRepository: Repository<OrderItem>,
     @InjectRepository(Product)
     private readonly productsRepository: Repository<Product>,
-    private readonly mailService: MailService,
+    @Inject(MAIL_SERVICE)
+    private readonly mailService: IMailService,
     private readonly mipaqueteService: MipaqueteService,
     private dataSource: DataSource,
   ) {}
@@ -40,26 +49,39 @@ export class OrdersService {
       order.status = OrderStatus.PENDING;
 
       // Process items
-      let originCity = 'Neiva'; // Default
+      const originCity = 'Neiva'; // Default
 
       for (const itemDto of createOrderDto.items) {
         const product = await queryRunner.manager.findOne(Product, {
           where: { id: itemDto.productId },
-          relations: ['artisan', 'artisan.region']
+          relations: ['artisan', 'artisan.user', 'artisan.region'],
         });
 
         if (!product) {
           throw new NotFoundException(`Product ${itemDto.productId} not found`);
         }
 
-        if (product.stock < itemDto.quantity) {
-          throw new BadRequestException(`Not enough stock for product: ${product.name}`);
+        if (
+          product.artisan &&
+          product.artisan.user &&
+          product.artisan.user.id === user.id
+        ) {
+          throw new BadRequestException(
+            `No puedes comprar tu propio producto: ${product.name}`,
+          );
         }
 
-        // Set origin city from the first product's artisan region
-        if (orderItems.length === 0 && product.artisan && product.artisan.region) {
-          originCity = product.artisan.region.name;
+        if (product.stock < itemDto.quantity) {
+          throw new BadRequestException(
+            `Not enough stock for product: ${product.name}`,
+          );
         }
+
+        // Note: As per requirements, all products are shipped from the central hub in Neiva.
+        // We do not override originCity with the artisan's region.
+        // if (orderItems.length === 0 && product.artisan && product.artisan.region) {
+        //   originCity = product.artisan.region.name;
+        // }
 
         // Subtract stock
         product.stock -= itemDto.quantity;
@@ -81,7 +103,7 @@ export class OrdersService {
       const quote = await this.mipaqueteService.getShippingQuote(
         originCity,
         createOrderDto.shipping_address.city || 'Bogotá',
-        1 // Default weight
+        1, // Default weight
       );
       order.shipping_cost = quote.cost;
       order.estimated_delivery_days = quote.estimatedDays;
@@ -109,36 +131,56 @@ export class OrdersService {
 
   findAll() {
     return this.ordersRepository.find({
-      relations: ['user', 'items', 'items.product', 'items.product.artisan', 'items.product.images'],
+      relations: [
+        'user',
+        'items',
+        'items.product',
+        'items.product.artisan',
+        'items.product.images',
+      ],
       order: { created_at: 'DESC' },
     });
   }
 
-  async getShippingQuoteForCart(destinationCity: string, items: { productId: string; quantity: number }[]) {
-    let originCity = 'Neiva'; // Default
+  async getShippingQuoteForCart(
+    destinationCity: string,
+    items: { productId: string; quantity: number }[],
+  ) {
+    const originCity = 'Neiva'; // Default
 
-    if (items && items.length > 0) {
-      const firstItem = items[0];
-      const product = await this.productsRepository.findOne({
-        where: { id: firstItem.productId },
-        relations: ['artisan', 'artisan.region']
-      });
+    // Note: As per requirements, all products are shipped from the central hub in Neiva.
+    // We do not override originCity with the artisan's region.
+    // if (items && items.length > 0) {
+    //   const firstItem = items[0];
+    //   const product = await this.productsRepository.findOne({
+    //     where: { id: firstItem.productId },
+    //     relations: ['artisan', 'artisan.region']
+    //   });
+    //
+    //   if (product && product.artisan && product.artisan.region) {
+    //     originCity = product.artisan.region.name;
+    //   }
+    // }
 
-      if (product && product.artisan && product.artisan.region) {
-        originCity = product.artisan.region.name;
-      }
-    }
-
-    const quote = await this.mipaqueteService.getShippingQuote(originCity, destinationCity, 1);
+    const quote = await this.mipaqueteService.getShippingQuote(
+      originCity,
+      destinationCity,
+      1,
+    );
     return {
-      ...quote
+      ...quote,
     };
   }
 
   findByUser(userId: string) {
     return this.ordersRepository.find({
       where: { user: { id: userId } },
-      relations: ['items', 'items.product', 'items.product.artisan', 'items.product.images'],
+      relations: [
+        'items',
+        'items.product',
+        'items.product.artisan',
+        'items.product.images',
+      ],
       order: { created_at: 'DESC' },
     });
   }
@@ -146,7 +188,12 @@ export class OrdersService {
   findOne(id: string, user: User) {
     return this.ordersRepository.findOne({
       where: { id, user: { id: user.id } },
-      relations: ['items', 'items.product', 'items.product.artisan', 'items.product.images'],
+      relations: [
+        'items',
+        'items.product',
+        'items.product.artisan',
+        'items.product.images',
+      ],
     });
   }
 
@@ -155,27 +202,40 @@ export class OrdersService {
     if (!order) {
       throw new NotFoundException('Order not found');
     }
-    
+
     // Manual/Mock payment processing...
     return this.markAsPaid(id, `MOCK_PAY_${Date.now()}`);
   }
 
   async markAsPaid(orderId: string, paymentId: string) {
-    const order = await this.ordersRepository.findOne({ where: { id: orderId } });
+    return this.markPaymentApproved(orderId, paymentId);
+  }
+
+  async markPaymentApproved(orderId: string, paymentId: string) {
+    const order = await this.ordersRepository.findOne({
+      where: { id: orderId },
+    });
     if (!order) {
       throw new NotFoundException(`Order ${orderId} not found`);
     }
 
     order.status = OrderStatus.PAID;
+    order.payment_status = 'approved';
     order.payment_id = paymentId;
-    
+
     const savedOrder = await this.ordersRepository.save(order);
 
     // Send emails
     try {
       const fullOrder = await this.ordersRepository.findOne({
         where: { id: orderId },
-        relations: ['user', 'items', 'items.product', 'items.product.artisan', 'items.product.artisan.user']
+        relations: [
+          'user',
+          'items',
+          'items.product',
+          'items.product.artisan',
+          'items.product.artisan.user',
+        ],
       });
 
       if (fullOrder) {
@@ -184,7 +244,7 @@ export class OrdersService {
           fullOrder.user.email,
           fullOrder.user.full_name,
           fullOrder.id,
-          fullOrder.total_amount
+          fullOrder.total_amount,
         );
 
         // Notify each artisan
@@ -195,7 +255,7 @@ export class OrdersService {
               artisanUser.email,
               artisanUser.full_name,
               item.product.name,
-              item.quantity
+              item.quantity,
             );
           }
         }
@@ -207,10 +267,62 @@ export class OrdersService {
     return savedOrder;
   }
 
+  async markPaymentRejected(orderId: string, paymentId: string) {
+    const order = await this.ordersRepository.findOne({
+      where: { id: orderId },
+    });
+    if (!order) {
+      throw new NotFoundException(`Order ${orderId} not found`);
+    }
+
+    order.payment_status = 'rejected';
+    order.payment_id = paymentId;
+    return this.ordersRepository.save(order);
+  }
+
+  async markPaymentFailed(orderId: string, paymentId: string) {
+    const order = await this.ordersRepository.findOne({
+      where: { id: orderId },
+    });
+    if (!order) {
+      throw new NotFoundException(`Order ${orderId} not found`);
+    }
+
+    order.payment_status = 'failed';
+    order.payment_id = paymentId;
+    return this.ordersRepository.save(order);
+  }
+
+  async markPaymentPending(orderId: string, paymentId: string) {
+    const order = await this.ordersRepository.findOne({
+      where: { id: orderId },
+    });
+    if (!order) {
+      throw new NotFoundException(`Order ${orderId} not found`);
+    }
+
+    order.payment_status = 'pending';
+    order.payment_id = paymentId;
+    return this.ordersRepository.save(order);
+  }
+
+  async markPaymentCancelled(orderId: string, paymentId: string) {
+    const order = await this.ordersRepository.findOne({
+      where: { id: orderId },
+    });
+    if (!order) {
+      throw new NotFoundException(`Order ${orderId} not found`);
+    }
+
+    order.payment_status = 'cancelled';
+    order.payment_id = paymentId;
+    return this.ordersRepository.save(order);
+  }
+
   async updateStatus(id: string, status: OrderStatus, user?: any) {
-    const order = await this.ordersRepository.findOne({ 
+    const order = await this.ordersRepository.findOne({
       where: { id },
-      relations: ['items', 'items.product']
+      relations: ['items', 'items.product'],
     });
     if (!order) {
       throw new NotFoundException('Order not found');
@@ -218,25 +330,41 @@ export class OrdersService {
 
     if (user) {
       const role = user.role;
-      if (role === 'artesano') {
-        if (order.status === OrderStatus.PAID && status === OrderStatus.PREPARING) {
+      if (role === UserRole.ARTISAN) {
+        if (
+          order.status === OrderStatus.PAID &&
+          status === OrderStatus.PREPARING
+        ) {
           // OK
-        } else if (order.status === OrderStatus.PREPARING && status === OrderStatus.SHIPPED) {
+        } else if (
+          order.status === OrderStatus.PREPARING &&
+          status === OrderStatus.SHIPPED
+        ) {
           // OK
         } else {
-          throw new BadRequestException('El artesano solo puede cambiar el estado de Pagado a En preparación o de En preparación a Despachado.');
+          throw new BadRequestException(
+            'El artesano solo puede cambiar el estado de Pagado a En preparación o de En preparación a Despachado.',
+          );
         }
-      } else if (role === 'admin') {
-        if (status === OrderStatus.CANCELLED || status === OrderStatus.DELIVERED) {
+      } else if (role === UserRole.ADMIN) {
+        if (
+          status === OrderStatus.CANCELLED ||
+          status === OrderStatus.DELIVERED
+        ) {
           // OK
         } else {
-          throw new BadRequestException('El administrador solo puede marcar un pedido como Cancelado o Entregado.');
+          throw new BadRequestException(
+            'El administrador solo puede marcar un pedido como Cancelado o Entregado.',
+          );
         }
       }
     }
 
     // If order is being cancelled, return stock
-    if (status === OrderStatus.CANCELLED && order.status !== OrderStatus.CANCELLED) {
+    if (
+      status === OrderStatus.CANCELLED &&
+      order.status !== OrderStatus.CANCELLED
+    ) {
       for (const item of order.items) {
         const product = item.product;
         product.stock += item.quantity;
@@ -248,16 +376,38 @@ export class OrdersService {
     return this.ordersRepository.save(order);
   }
 
-  async updateTracking(id: string, trackingNumber: string, shippingCompany: string) {
-    const order = await this.ordersRepository.findOne({ where: { id } });
+  async updateTracking(
+    id: string,
+    trackingNumber: string,
+    shippingCompany: string,
+  ) {
+    const order = await this.ordersRepository.findOne({
+      where: { id },
+      relations: ['items', 'items.product', 'user'],
+    });
     if (!order) {
       throw new NotFoundException('Order not found');
     }
 
-    order.tracking_number = trackingNumber;
-    order.shipping_company = shippingCompany;
-    order.status = OrderStatus.SHIPPED; // Auto-update to SHIPPED when tracking is added? Usually yes.
-    
+    // Si se pide generación automática con MiPaquete
+    if (shippingCompany === 'MIPAQUETE' || !trackingNumber) {
+      try {
+        const guide = await this.mipaqueteService.generateGuide(order);
+        order.tracking_number = guide.guideNumber;
+        order.shipping_company = guide.carrier;
+        order.tracking_url = guide.trackingUrl;
+      } catch (error) {
+        throw new InternalServerErrorException(
+          `No se pudo generar la guía con MiPaquete: ${error.message}`,
+        );
+      }
+    } else {
+      // Guía manual ingresada por admin/artesano
+      order.tracking_number = trackingNumber;
+      order.shipping_company = shippingCompany;
+    }
+
+    order.status = OrderStatus.SHIPPED;
     return this.ordersRepository.save(order);
   }
 
@@ -267,5 +417,9 @@ export class OrdersService {
       relations: ['order', 'order.user', 'product', 'product.images'],
       order: { order: { created_at: 'DESC' } },
     });
+  }
+
+  async getShippingCoverage() {
+    return this.mipaqueteService.getCoverageLocations();
   }
 }

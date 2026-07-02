@@ -11,10 +11,10 @@ import { MailModule } from '../mail/mail.module';
   imports: [
     TypeOrmModule.forFeature([Review, Product]),
     OrdersModule,
-    MailModule
+    MailModule,
   ],
   controllers: [ReviewsController],
   providers: [ReviewsService],
-  exports: [ReviewsService]
+  exports: [ReviewsService],
 })
 export class ReviewsModule {}

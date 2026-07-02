@@ -1,11 +1,18 @@
-import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  ForbiddenException,
+  Inject,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Review } from './entities/review.entity';
 import { Product } from '../products/entities/product.entity';
 import { OrdersService } from '../orders/orders.service';
-import { OrderStatus } from '../orders/entities/order.entity';
-import { MailService } from '../mail/mail.service';
+import { OrderStatus } from '../common/constants';
+import { MAIL_SERVICE } from '../mail/mail.service.interface';
+import type { IMailService } from '../mail/mail.service.interface';
 
 @Injectable()
 export class ReviewsService {
@@ -15,26 +22,29 @@ export class ReviewsService {
     @InjectRepository(Product)
     private readonly productRepo: Repository<Product>,
     private readonly ordersService: OrdersService,
-    private readonly mailService: MailService,
+    @Inject(MAIL_SERVICE)
+    private readonly mailService: IMailService,
   ) {}
 
-  async create(userId: string, data: { productId: string; rating: number; comment: string }) {
+  async create(
+    userId: string,
+    data: { productId: string; rating: number; comment: string },
+  ) {
     const product = await this.productRepo.findOneBy({ id: data.productId });
     if (!product) throw new NotFoundException('Producto no encontrado');
 
     // Check if user bought the product and it was delivered
     const orders = await this.ordersService.findByUser(userId);
-    const deliveredOrders = orders.filter(o => o.status === OrderStatus.DELIVERED);
-    const hasBought = deliveredOrders.some(o => 
-      o.items.some(i => i.product.id === data.productId)
+    const deliveredOrders = orders.filter(
+      (o) => o.status === OrderStatus.DELIVERED,
+    );
+    const hasBought = deliveredOrders.some((o) =>
+      o.items.some((i) => i.product.id === data.productId),
     );
 
     if (!hasBought) {
-      const orderCount = orders.length;
-      const deliveredCount = deliveredOrders.length;
       throw new BadRequestException(
-        `No se pudo verificar la compra. Pedidos totales: ${orderCount}, Entregados: ${deliveredCount}. ` +
-        `Para calificar, el pedido debe estar en estado 'delivered'.`
+        'Solo puedes dejar una reseña si has comprado este producto y tu pedido ha sido entregado exitosamente.',
       );
     }
 
@@ -42,7 +52,7 @@ export class ReviewsService {
       rating: data.rating,
       comment: data.comment,
       product,
-      user: { id: userId } as any,
+      user: { id: userId },
     });
     return this.reviewRepo.save(review);
   }
@@ -87,7 +97,10 @@ export class ReviewsService {
   }
 
   async findOne(id: string) {
-    return this.reviewRepo.findOne({ where: { id }, relations: ['user', 'product'] });
+    return this.reviewRepo.findOne({
+      where: { id },
+      relations: ['user', 'product'],
+    });
   }
 
   async remove(id: string) {
@@ -103,7 +116,9 @@ export class ReviewsService {
     });
     if (!review) throw new NotFoundException('Reseña no encontrada');
     if (review.product.artisan.user.id !== userId) {
-      throw new ForbiddenException('Solo el artesano que vendió el producto puede responder');
+      throw new ForbiddenException(
+        'Solo el artesano que vendió el producto puede responder',
+      );
     }
     if (review.artisan_response) {
       throw new BadRequestException('Ya has respondido a esta reseña');
@@ -118,9 +133,11 @@ export class ReviewsService {
         review.user.email,
         review.user.full_name,
         review.product.artisan.user.full_name,
-        review.product.name
+        review.product.name,
       );
-    } catch (e) { console.error('Error sending review response email:', e); }
+    } catch (e) {
+      console.error('Error sending review response email:', e);
+    }
 
     return saved;
   }

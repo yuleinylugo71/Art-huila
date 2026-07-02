@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product, ProductStatus } from './entities/product.entity';
@@ -25,22 +29,23 @@ export class ProductsService {
     private readonly artisansService: ArtisansService,
   ) {}
 
-  async create(userId: string, data: any) {
+  async create(userId: string, data: any): Promise<Product> {
     const profile = await this.artisansService.findByUserId(userId);
-    if (!profile) throw new ForbiddenException('Solo artesanos pueden crear productos');
+    if (!profile)
+      throw new ForbiddenException('Solo artesanos pueden crear productos');
     if (profile.verification_status === ArtisanStatus.SUSPENDED) {
-      throw new ForbiddenException('Tu cuenta se encuentra suspendida y no puede publicar productos');
-    }
-    if (profile.verification_status === ArtisanStatus.PENDING) {
-      throw new ForbiddenException('Debes confirmar tu correo antes de publicar productos');
+      throw new ForbiddenException(
+        'Tu cuenta se encuentra suspendida y no puede publicar productos',
+      );
     }
 
-    let slug = slugify(data.name!);
+    let slug = slugify(data.name);
     const existing = await this.productRepo.findOneBy({ slug });
     if (existing) slug = `${slug}-${Date.now()}`;
 
     const metaTitle = data.meta_title || `${data.name} | Art Huila`;
-    const metaDesc = data.meta_description || `Artesanía ${data.name} del Huila, Colombia.`;
+    const metaDesc =
+      data.meta_description || `Artesanía ${data.name} del Huila, Colombia.`;
 
     const product = this.productRepo.create({
       ...data,
@@ -52,15 +57,27 @@ export class ProductsService {
       artisan: profile,
       status: ProductStatus.PUBLISHED,
     });
-    return this.productRepo.save(product);
+    return this.productRepo.save(product) as any;
   }
 
   async findBySlug(slug: string) {
     const product = await this.productRepo.findOne({
       where: { slug },
-      relations: ['artisan', 'artisan.user', 'artisan.region', 'category', 'region', 'images'],
+      relations: [
+        'artisan',
+        'artisan.user',
+        'artisan.region',
+        'category',
+        'region',
+        'images',
+        'reviews',
+      ],
     });
-    if (!product || product.artisan.verification_status === ArtisanStatus.SUSPENDED) throw new NotFoundException('Producto no encontrado');
+    if (
+      !product ||
+      product.artisan.verification_status === ArtisanStatus.SUSPENDED
+    )
+      throw new NotFoundException('Producto no encontrado');
     (product.artisan as any).status = product.artisan.verification_status;
     return product;
   }
@@ -68,15 +85,17 @@ export class ProductsService {
   async update(productId: string, userId: string, data: any) {
     const product = await this.productRepo.findOne({
       where: { id: productId },
-      relations: ['artisan', 'artisan.user']
+      relations: ['artisan', 'artisan.user'],
     });
     if (!product) throw new NotFoundException('Producto no encontrado');
-    if (product.artisan.user.id !== userId) throw new ForbiddenException('No puedes editar este producto');
+    if (product.artisan.user.id !== userId)
+      throw new ForbiddenException('No puedes editar este producto');
 
     if (data.name && data.name !== product.name) {
       let slug = slugify(data.name);
       const existing = await this.productRepo.findOneBy({ slug });
-      if (existing && existing.id !== product.id) slug = `${slug}-${Date.now()}`;
+      if (existing && existing.id !== product.id)
+        slug = `${slug}-${Date.now()}`;
       data.slug = slug;
     }
 
@@ -101,7 +120,10 @@ export class ProductsService {
 
     await this.productRepo.update(productId, updatePayload);
 
-    return this.productRepo.findOne({ where: { id: productId }, relations: ['images'] });
+    return this.productRepo.findOne({
+      where: { id: productId },
+      relations: ['images'],
+    });
   }
 
   async findByArtisan(userId: string) {
@@ -114,7 +136,11 @@ export class ProductsService {
     });
   }
 
-  async addImages(productId: string, userId: string, images: { url: string; publicId: string }[]) {
+  async addImages(
+    productId: string,
+    userId: string,
+    images: { url: string; publicId: string }[],
+  ) {
     const product = await this.productRepo.findOne({
       where: { id: productId },
       relations: ['artisan', 'artisan.user'],
@@ -123,7 +149,11 @@ export class ProductsService {
     if (product.artisan.user.id !== userId) throw new ForbiddenException();
     const saved: ProductImage[] = [];
     for (const img of images) {
-      const image = this.imageRepo.create({ url: img.url, public_id: img.publicId, product });
+      const image = this.imageRepo.create({
+        url: img.url,
+        public_id: img.publicId,
+        product,
+      });
       saved.push(await this.imageRepo.save(image));
     }
     return saved;
@@ -148,15 +178,22 @@ export class ProductsService {
   }
 
   async findFiltered(query?: string, featured?: boolean, limit?: number) {
-    const qb = this.productRepo.createQueryBuilder('product')
+    const qb = this.productRepo
+      .createQueryBuilder('product')
       .leftJoinAndSelect('product.artisan', 'artisan')
       .leftJoinAndSelect('artisan.user', 'user')
       .leftJoinAndSelect('product.images', 'images')
+      .leftJoinAndSelect('product.reviews', 'reviews')
       .where('product.status = :status', { status: ProductStatus.PUBLISHED })
-      .andWhere('artisan.verification_status != :suspended', { suspended: ArtisanStatus.SUSPENDED });
+      .andWhere('artisan.verification_status != :suspended', {
+        suspended: ArtisanStatus.SUSPENDED,
+      });
 
     if (query) {
-      qb.andWhere('(product.name ILIKE :q OR product.cultural_origin ILIKE :q)', { q: `%${query}%` });
+      qb.andWhere(
+        '(product.name ILIKE :q OR product.cultural_origin ILIKE :q)',
+        { q: `%${query}%` },
+      );
     }
 
     if (featured) {

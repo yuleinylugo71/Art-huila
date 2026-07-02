@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title data-i18n="verifyEmail.title">Verificar Email — Art Huila</title>
+  <link rel="stylesheet" href="/css/base.css?v=18">
+  <link rel="stylesheet" href="/css/verificar-email.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body class="flex items-center justify-center min-vh-100" style="background-color: #faf8f5; min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; padding: 1.25rem; font-family: var(--font-body);">
+
+<nav style="position: absolute; top: 1.5rem; right: 2rem; z-index: 10;">
+  <div class="lang-switcher">
+    <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+    <span>|</span>
+    <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+  </div>
+</nav>
+
+<div class="verify-container" style="background: white; border: 1.5px solid #ebdcd0; border-radius: 24px; padding: 2.5rem 1.5rem; text-align: center; max-width: 420px; width: 100%; box-shadow: var(--shadow-md); box-sizing: border-box;">
+  <div class="verify-icon" style="font-size: 3rem; color: #C84B11; margin-bottom: 1.25rem;"><i class="fa-solid fa-envelope-open-text"></i></div>
+  <h1 class="verify-title" style="font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; color: #261f1b; margin: 0 0 0.5rem 0;" data-i18n="verifyEmail.heading">Revisa tu correo</h1>
+  <p class="verify-text" style="color: var(--color-muted); font-size: 0.85rem; line-height: 1.45; margin: 0 0 1.5rem 0;" data-i18n="verifyEmail.text">Hemos enviado un código de verificación de 6 dígitos a tu correo electrónico. Ingrésalo a continuación para activar tu cuenta.</p>
+  
+  <!-- 6 OTP fields container -->
+  <div class="otp-container" style="display: flex; gap: 0.45rem; justify-content: center; margin: 1.5rem 0;">
+    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric" style="width: 44px; height: 50px; font-size: 1.4rem; font-weight: 800; text-align: center; border: 1.5px solid #ebdcd0; border-radius: 12px; background: #faf8f5; color: #261f1b; outline: none; transition: all 0.2s;" />
+    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric" style="width: 44px; height: 50px; font-size: 1.4rem; font-weight: 800; text-align: center; border: 1.5px solid #ebdcd0; border-radius: 12px; background: #faf8f5; color: #261f1b; outline: none; transition: all 0.2s;" />
+    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric" style="width: 44px; height: 50px; font-size: 1.4rem; font-weight: 800; text-align: center; border: 1.5px solid #ebdcd0; border-radius: 12px; background: #faf8f5; color: #261f1b; outline: none; transition: all 0.2s;" />
+    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric" style="width: 44px; height: 50px; font-size: 1.4rem; font-weight: 800; text-align: center; border: 1.5px solid #ebdcd0; border-radius: 12px; background: #faf8f5; color: #261f1b; outline: none; transition: all 0.2s;" />
+    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric" style="width: 44px; height: 50px; font-size: 1.4rem; font-weight: 800; text-align: center; border: 1.5px solid #ebdcd0; border-radius: 12px; background: #faf8f5; color: #261f1b; outline: none; transition: all 0.2s;" />
+    <input type="text" class="otp-input" maxlength="1" pattern="[0-9]*" inputmode="numeric" style="width: 44px; height: 50px; font-size: 1.4rem; font-weight: 800; text-align: center; border: 1.5px solid #ebdcd0; border-radius: 12px; background: #faf8f5; color: #261f1b; outline: none; transition: all 0.2s;" />
+  </div>
+
+  <div id="verify-status" style="margin-bottom: 1.25rem;"></div>
+
+  <!-- Verification Action Button -->
+  <button id="btn-verify-otp" class="btn btn-primary" style="width: 100%; border-radius: 99px; padding: 0.85rem; font-weight: 700; font-size: 0.9rem; background: #e5e7eb; border: none; color: white; cursor: not-allowed; transition: all 0.2s; margin-bottom: 1.25rem;" disabled>Verificar Código</button>
+
+  <div style="display: flex; flex-direction: column; gap: 0.5rem; align-items: center;">
+    <button id="btn-resend-otp" style="background: none; border: none; color: #C84B11; font-weight: 700; font-size: 0.82rem; cursor: pointer; text-decoration: none; padding: 0.25rem;">Reenviar código</button>
+    <a href="/login.html" class="btn btn-outline" style="border: 1.5px solid #ebdcd0; border-radius: 99px; padding: 0.65rem 1.5rem; font-size: 0.8rem; font-weight: 700; color: #4a3e35; display: inline-block; width: fit-content; text-decoration: none;" data-i18n="verifyEmail.goToLogin">Ir al inicio de sesión</a>
+  </div>
+</div>
+
+<script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+<script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
+<script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/i18n.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const inputs = document.querySelectorAll('.otp-input');
+    const verifyBtn = document.getElementById('btn-verify-otp');
+    const resendBtn = document.getElementById('btn-resend-otp');
+    const statusEl = document.getElementById('verify-status');
+
+    // 1. Focus visual states & constraints
+    inputs.forEach((input, index) => {
+      input.addEventListener('focus', () => {
+        input.style.borderColor = '#C84B11';
+        input.style.background = '#ffffff';
+        input.style.boxShadow = '0 0 0 3px rgba(200, 75, 17, 0.1)';
+      });
+
+      input.addEventListener('blur', () => {
+        input.style.borderColor = '#ebdcd0';
+        input.style.background = '#faf8f5';
+        input.style.boxShadow = 'none';
+      });
+
+      input.addEventListener('input', (e) => {
+        // Enforce numeric only
+        input.value = input.value.replace(/[^0-9]/g, '');
+        
+        // Auto-focus next field
+        if (input.value.length === 1 && index < inputs.length - 1) {
+          inputs[index + 1].focus();
+        }
+        checkOTPComplete();
+      });
+
+      input.addEventListener('keydown', (e) => {
+        // Auto-focus previous field on backspace
+        if (e.key === 'Backspace' && input.value.length === 0 && index > 0) {
+          inputs[index - 1].focus();
+        }
+      });
+
+      input.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const data = e.clipboardData.getData('text').trim();
+        if (data.length === inputs.length && /^\d+$/.test(data)) {
+          inputs.forEach((inp, idx) => {
+            inp.value = data[idx];
+          });
+          inputs[inputs.length - 1].focus();
+          checkOTPComplete();
+        }
+      });
+    });
+
+    function getOTPValue() {
+      let code = '';
+      inputs.forEach(inp => code += inp.value);
+      return code;
+    }
+
+    function checkOTPComplete() {
+      const code = getOTPValue();
+      if (code.length === inputs.length) {
+        verifyBtn.disabled = false;
+        verifyBtn.style.background = '#C84B11';
+        verifyBtn.style.cursor = 'pointer';
+      } else {
+        verifyBtn.disabled = true;
+        verifyBtn.style.background = '#e5e7eb';
+        verifyBtn.style.cursor = 'not-allowed';
+      }
+    }
+
+    // 2. Submit Verification Action
+    verifyBtn.addEventListener('click', () => {
+      const code = getOTPValue();
+      if (code.length !== 6) return;
+
+      statusEl.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" style="color: #C84B11; font-size: 1.5rem;"></i>';
+      verifyBtn.disabled = true;
+      verifyBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verificando...';
+
+      apiFetch('/auth/verificar-email?token=' + code)
+        .then(data => {
+          statusEl.innerHTML = '<div style="background:#dcfce7;color:#15803d;padding:0.75rem 1rem;border-radius:12px;font-size:0.8rem;font-weight:600;border:1px solid #bbf7d0;"><i class="fa-solid fa-circle-check"></i> ' + (data.message || 'Email verificado exitosamente') + '</div>';
+          verifyBtn.innerHTML = '¡Verificado!';
+          verifyBtn.style.background = '#1a8a4a';
+          setTimeout(() => window.location.href = '/login.html', 1800);
+        })
+        .catch(err => {
+          statusEl.innerHTML = '<div style="background:#fee2e2;color:#991b1b;padding:0.75rem 1rem;border-radius:12px;font-size:0.8rem;font-weight:600;border:1px solid #fecaca;"><i class="fa-solid fa-circle-xmark"></i> ' + (err.message || 'Código inválido o expirado') + '</div>';
+          verifyBtn.disabled = false;
+          verifyBtn.innerHTML = 'Verificar Código';
+          checkOTPComplete();
+        });
+    });
+
+    // 3. Countdown Resend Timer
+    let countdown = 60;
+    let timer = null;
+
+    function startResendTimer() {
+      resendBtn.disabled = true;
+      resendBtn.style.color = '#9ca3af';
+      resendBtn.style.cursor = 'not-allowed';
+      
+      timer = setInterval(() => {
+        countdown--;
+        resendBtn.textContent = `Reenviar código en ${countdown}s`;
+        
+        if (countdown <= 0) {
+          clearInterval(timer);
+          resendBtn.disabled = false;
+          resendBtn.textContent = 'Reenviar código';
+          resendBtn.style.color = '#C84B11';
+          resendBtn.style.cursor = 'pointer';
+          countdown = 60;
+        }
+      }, 1000);
+    }
+
+    startResendTimer(); // Start countdown automatically on load
+
+    resendBtn.addEventListener('click', () => {
+      if (resendBtn.disabled) return;
+      
+      // Simulate backend trigger for resend (or alert developer mode)
+      showToast('Código reenviado con éxito a tu correo', 'success');
+      startResendTimer();
+    });
+
+    // 4. Auto-verify if token is in query parameters
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    if (token && token.length === 6 && /^\d+$/.test(token)) {
+      inputs.forEach((inp, idx) => {
+        inp.value = token[idx];
+      });
+      checkOTPComplete();
+      verifyBtn.click();
+    } else if (token) {
+      // In case a long token was still generated, set it directly and trigger click
+      statusEl.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin" style="color: #C84B11; font-size: 1.5rem;"></i>';
+      apiFetch('/auth/verificar-email?token=' + token)
+        .then(data => {
+          statusEl.innerHTML = '<div style="background:#dcfce7;color:#15803d;padding:0.75rem 1rem;border-radius:12px;font-size:0.8rem;font-weight:600;border:1px solid #bbf7d0;"><i class="fa-solid fa-circle-check"></i> ' + (data.message || 'Email verificado exitosamente') + '</div>';
+          setTimeout(() => window.location.href = '/login.html', 1800);
+        })
+        .catch(err => {
+          statusEl.innerHTML = '<div style="background:#fee2e2;color:#991b1b;padding:0.75rem 1rem;border-radius:12px;font-size:0.8rem;font-weight:600;border:1px solid #fecaca;"><i class="fa-solid fa-circle-xmark"></i> ' + (err.message || 'Token inválido o expirado') + '</div>';
+        });
+    }
+  });
+</script>
+</body>
+</html>

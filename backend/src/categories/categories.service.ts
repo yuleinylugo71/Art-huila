@@ -11,7 +11,8 @@ export class CategoriesService {
   ) {}
 
   async findAllWithCount() {
-    return this.categoryRepo.createQueryBuilder('category')
+    return this.categoryRepo
+      .createQueryBuilder('category')
       .loadRelationCountAndMap('category.count', 'category.products')
       .orderBy('category.name', 'ASC')
       .getMany();

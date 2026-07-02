@@ -1,4 +1,8 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -43,7 +47,10 @@ export class UsersService {
   }
 
   async resetFailedLogins(userId: string): Promise<void> {
-    await this.userRepo.update(userId, { failed_login_attempts: 0, locked_until: null });
+    await this.userRepo.update(userId, {
+      failed_login_attempts: 0,
+      locked_until: null,
+    });
   }
 
   async hashPassword(password: string): Promise<string> {
@@ -53,7 +60,7 @@ export class UsersService {
   async update(id: string, data: Partial<User>): Promise<User> {
     const user = await this.findById(id);
     if (!user) throw new NotFoundException('Usuario no encontrado');
-    
+
     const updateData = data as any;
     if (updateData.password) {
       user.password_hash = await this.hashPassword(updateData.password);
@@ -62,5 +69,16 @@ export class UsersService {
 
     Object.assign(user, updateData);
     return this.userRepo.save(user);
+  }
+
+  async findByResetToken(token: string): Promise<User | null> {
+    return this.userRepo.findOneBy({ reset_password_token: token });
+  }
+
+  async findAll(role?: string): Promise<User[]> {
+    if (role) {
+      return this.userRepo.find({ where: { role: role as any } });
+    }
+    return this.userRepo.find();
   }
 }

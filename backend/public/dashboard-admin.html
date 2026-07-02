@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Panel Admin — Art Huila</title>
+  <link rel="stylesheet" href="/css/base.css?v=19">
+  <link rel="stylesheet" href="/css/dashboard-admin.css?v=19">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<div class="dashboard-layout">
+  <!-- ─── SIDEBAR ─── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo-container" id="btn-toggle-sidebar" style="cursor: pointer;">
+      <div class="sidebar-logo-link">
+        <i class="fa-solid fa-palette"></i>
+      </div>
+    </div>
+
+    <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <a href="index.html" class="sidebar-back"><i class="fa-solid fa-arrow-left"></i></a>
+        <a href="index.html" class="sidebar-brand">Art <span>Huila</span></a>
+      </div>
+      <button class="mobile-only" onclick="document.querySelector('.dashboard-layout').classList.remove('sidebar-expanded')" style="background: none; border: none; color: white; font-size: 1.25rem; cursor: pointer; padding: 0.25rem;">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="sidebar-admin-info" id="sidebar-admin-info">
+      <div class="admin-avatar" id="admin-avatar-letter">A</div>
+      <div>
+        <div class="admin-name" id="sidebar-admin-name">Admin</div>
+        <div class="admin-role">Administrador</div>
+      </div>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="#" onclick="showSection('overview')" id="nav-overview" class="active">
+        <i class="fa-solid fa-gauge-high"></i> <span data-i18n="admin.menuOverviewLabel">Resumen</span>
+      </a></li>
+      <li><a href="#" onclick="showSection('artesanos')" id="nav-artesanos">
+        <i class="fa-solid fa-users"></i> <span data-i18n="admin.menuArtisansLabel">Artesanos</span>
+        <span class="nav-badge" id="badge-artesanos" style="display:none;">0</span>
+      </a></li>
+      <li><a href="#" onclick="showSection('catalogo')" id="nav-catalogo">
+        <i class="fa-solid fa-box"></i> <span data-i18n="admin.menuCatalogLabel">Catálogo</span>
+      </a></li>
+      <li><a href="#" onclick="showSection('pedidos')" id="nav-pedidos">
+        <i class="fa-solid fa-cart-shopping"></i> <span data-i18n="admin.menuOrdersLabel">Pedidos</span>
+      </a></li>
+      <li><a href="#" onclick="showSection('resenas')" id="nav-resenas">
+        <i class="fa-solid fa-flag"></i> <span data-i18n="admin.menuModerationLabel">Reseñas</span>
+        <span class="nav-badge nav-badge-red" id="badge-resenas" style="display:none;">0</span>
+      </a></li>
+      <li><a href="#" onclick="showSection('estadisticas')" id="nav-estadisticas">
+        <i class="fa-solid fa-chart-line"></i> <span data-i18n="admin.menuStatsLabel">Reportes</span>
+      </a></li>
+      <li><a href="#" onclick="showSection('auditoria')" id="nav-auditoria">
+        <i class="fa-solid fa-clipboard-list"></i> <span data-i18n="admin.menuAuditLabel">Auditoría</span>
+      </a></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <a href="catalogo.html" class="sidebar-footer-link">
+        <i class="fa-solid fa-store"></i> <span data-i18n="admin.viewStoreBtn">Ver Tienda</span>
+      </a>
+      <a href="#" onclick="Auth.logout()" class="sidebar-footer-link sidebar-logout">
+        <i class="fa-solid fa-right-from-bracket"></i> <span data-i18n="auth.logout">Cerrar Sesión</span>
+      </a>
+    </div>
+  </aside>
+
+  <div class="sidebar-overlay mobile-only" onclick="document.querySelector('.dashboard-layout').classList.remove('sidebar-expanded')"></div>
+
+  <!-- ─── MAIN CONTENT ─── -->
+  <main class="main-content">
+    <header class="dash-header">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <button class="mobile-menu-toggle mobile-only" id="mobile-menu-btn" onclick="document.querySelector('.dashboard-layout').classList.toggle('sidebar-expanded')" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--color-text, #1a1208); padding: 0.25rem;">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <div>
+          <h1 id="section-title" style="margin: 0; font-size: 1.5rem;">Resumen</h1>
+          <p id="admin-welcome" class="dash-subtitle">Cargando...</p>
+        </div>
+      </div>
+      <div class="dash-header-right">
+        <div class="lang-switcher">
+          <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+          <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+        </div>
+        <button class="mobile-logout-btn mobile-only" onclick="Auth.logout()" data-i18n-title="auth.logout" title="Cerrar Sesión">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+      </div>
+    </header>
+
+    <div class="content-card">
+
+      <!-- ── OVERVIEW ── -->
+      <section id="section-overview">
+        <!-- ── STATS CARDS ── -->
+        <div class="stats-grid" id="stats-grid" style="margin-bottom: 2.5rem;">
+          <div class="stat-card stat-pending">
+            <div class="stat-icon"><i class="fa-solid fa-user-clock"></i></div>
+            <div class="stat-body">
+              <span class="stat-label">PENDIENTES VERIFICACIÓN</span>
+              <span class="stat-value" id="stat-pending">—</span>
+              <span class="stat-sub">artesanos esperando</span>
+            </div>
+          </div>
+          <div class="stat-card stat-revenue">
+            <div class="stat-icon"><i class="fa-solid fa-coins"></i></div>
+            <div class="stat-body">
+              <span class="stat-label">INGRESOS TOTALES</span>
+              <span class="stat-value" id="stat-total-sales">—</span>
+              <span class="stat-sub">todos los pedidos</span>
+            </div>
+          </div>
+          <div class="stat-card stat-orders">
+            <div class="stat-icon"><i class="fa-solid fa-box-open"></i></div>
+            <div class="stat-body">
+              <span class="stat-label">PEDIDOS HOY</span>
+              <span class="stat-value" id="stat-orders-today">—</span>
+              <span class="stat-sub">nuevos pedidos</span>
+            </div>
+          </div>
+          <div class="stat-card stat-alerts">
+            <div class="stat-icon"><i class="fa-solid fa-flag"></i></div>
+            <div class="stat-body">
+              <span class="stat-label">RESEÑAS REPORTADAS</span>
+              <span class="stat-value" id="stat-reported-reviews">—</span>
+              <span class="stat-sub" id="stat-reported-sub">revisión requerida</span>
+            </div>
+          </div>
+        </div>
+
+        <h2 class="section-heading">Panel de Control Rápido</h2>
+        <div class="overview-grid">
+          <div class="overview-module" onclick="showSection('artesanos')">
+            <div class="overview-module-icon" style="background:linear-gradient(135deg,#667eea,#764ba2);">
+              <i class="fa-solid fa-users"></i>
+            </div>
+            <div>
+              <div class="overview-module-title">Artesanos</div>
+              <div class="overview-module-desc">Verificar, suspender y gestionar perfiles</div>
+            </div>
+            <i class="fa-solid fa-chevron-right overview-arrow"></i>
+          </div>
+          <div class="overview-module" onclick="showSection('catalogo')">
+            <div class="overview-module-icon" style="background:linear-gradient(135deg,#f093fb,#f5576c);">
+              <i class="fa-solid fa-box"></i>
+            </div>
+            <div>
+              <div class="overview-module-title">Catálogo</div>
+              <div class="overview-module-desc">Ocultar o eliminar productos del catálogo</div>
+            </div>
+            <i class="fa-solid fa-chevron-right overview-arrow"></i>
+          </div>
+          <div class="overview-module" onclick="showSection('resenas')">
+            <div class="overview-module-icon" style="background:linear-gradient(135deg,#fd7043,#ff8a65);">
+              <i class="fa-solid fa-flag"></i>
+            </div>
+            <div>
+              <div class="overview-module-title">Moderación de Reseñas</div>
+              <div class="overview-module-desc">Eliminar o mantener reseñas reportadas</div>
+            </div>
+            <i class="fa-solid fa-chevron-right overview-arrow"></i>
+          </div>
+          <div class="overview-module" onclick="showSection('pedidos')">
+            <div class="overview-module-icon" style="background:linear-gradient(135deg,#4facfe,#00f2fe);">
+              <i class="fa-solid fa-cart-shopping"></i>
+            </div>
+            <div>
+              <div class="overview-module-title">Gestión de Pedidos</div>
+              <div class="overview-module-desc">Ver todos los estados, gestionar rastreos</div>
+            </div>
+            <i class="fa-solid fa-chevron-right overview-arrow"></i>
+          </div>
+          <div class="overview-module" onclick="showSection('estadisticas')">
+            <div class="overview-module-icon" style="background:linear-gradient(135deg,#43e97b,#38f9d7);">
+              <i class="fa-solid fa-chart-line"></i>
+            </div>
+            <div>
+              <div class="overview-module-title">Reportes y Métricas</div>
+              <div class="overview-module-desc">Ventas por fecha/región, exportar Excel/PDF</div>
+            </div>
+            <i class="fa-solid fa-chevron-right overview-arrow"></i>
+          </div>
+          <div class="overview-module" onclick="showSection('auditoria')">
+            <div class="overview-module-icon" style="background:linear-gradient(135deg,#a18cd1,#fbc2eb);">
+              <i class="fa-solid fa-clipboard-list"></i>
+            </div>
+            <div>
+              <div class="overview-module-title">Bitácora de Auditoría</div>
+              <div class="overview-module-desc">Todas las acciones administrativas</div>
+            </div>
+            <i class="fa-solid fa-chevron-right overview-arrow"></i>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── ARTESANOS ── -->
+      <section id="section-artesanos" class="hidden">
+        <div class="section-top">
+          <h2 class="section-heading">Validación de Artesanos</h2>
+          <div class="section-top-actions">
+            <select id="status-filter" class="form-select" onchange="loadArtisans()">
+              <option value="">Todos los estados</option>
+              <option value="pending">Pendientes ⏳</option>
+              <option value="verified">Verificados ✅</option>
+              <option value="suspended">Suspendidos 🔴</option>
+              <option value="rejected">Rechazados ❌</option>
+            </select>
+            <button class="btn btn-ghost btn-sm" onclick="loadArtisans()">
+              <i class="fa-solid fa-rotate"></i> Actualizar
+            </button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="table-ui">
+            <thead><tr>
+              <th>Nombre / Email</th>
+              <th>Región</th>
+              <th>Estado</th>
+              <th>Fecha Registro</th>
+              <th>Acciones</th>
+            </tr></thead>
+            <tbody id="artisans-table"></tbody>
+          </table>
+        </div>
+        <div class="mobile-card-list" id="artisans-cards-mobile"></div>
+        <div class="pagination-controls" id="artisans-pagination"></div>
+      </section>
+
+      <!-- ── CATÁLOGO ── -->
+      <section id="section-catalogo" class="hidden">
+        <div class="section-top">
+          <h2 class="section-heading">Control de Productos</h2>
+          <div class="section-top-actions">
+            <input type="text" placeholder="🔍 Buscar producto..." class="form-input" id="search-product" oninput="filterProducts()"/>
+            <div class="search-select-wrapper" style="position:relative; min-width:180px;">
+              <input type="text" id="filter-artisan-input" list="artisan-options" class="form-input" placeholder="Filtrar por artesano..." oninput="filterProducts()"/>
+              <datalist id="artisan-options"></datalist>
+            </div>
+            <select id="product-status-filter" class="form-select" onchange="filterProducts()">
+              <option value="">Todos</option>
+              <option value="visible">Visibles</option>
+              <option value="hidden">Ocultos</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="table-ui">
+            <thead><tr>
+              <th>Producto</th>
+              <th>Artesano</th>
+              <th>Categoría</th>
+              <th>Stock</th>
+              <th>Precio</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr></thead>
+            <tbody id="products-table"></tbody>
+          </table>
+        </div>
+        <div class="mobile-card-list" id="products-cards-mobile"></div>
+        <div class="pagination-controls" id="catalog-pagination"></div>
+      </section>
+
+      <!-- ── PEDIDOS ── -->
+      <section id="section-pedidos" class="hidden">
+        <div class="section-top">
+          <h2 class="section-heading">Gestión de Órdenes</h2>
+          <div class="section-top-actions">
+            <select id="order-status-filter" class="form-select" onchange="filterOrders()">
+              <option value="">Todos los estados</option>
+              <option value="pending">Pendiente</option>
+              <option value="paid">Pagado</option>
+              <option value="preparing">En preparación</option>
+              <option value="shipped">Despachado</option>
+              <option value="delivered">Entregado</option>
+              <option value="cancelled">Cancelado</option>
+            </select>
+            <input type="date" id="order-date-start" class="form-input" style="max-width:150px;" onchange="filterOrders()"/>
+            <input type="date" id="order-date-end" class="form-input" style="max-width:150px;" onchange="filterOrders()"/>
+            <button class="btn btn-ghost btn-sm" onclick="clearOrderFilters()">
+              <i class="fa-solid fa-xmark"></i> Limpiar
+            </button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="table-ui">
+            <thead><tr>
+              <th>ID</th>
+              <th>Cliente</th>
+              <th>Fecha</th>
+              <th>Total</th>
+              <th>Estado</th>
+              <th>Transportadora</th>
+              <th>Acciones</th>
+            </tr></thead>
+            <tbody id="orders-table"></tbody>
+          </table>
+        </div>
+        <div class="mobile-card-list" id="orders-cards-mobile"></div>
+        <div class="pagination-controls" id="orders-pagination"></div>
+      </section>
+
+      <!-- ── RESEÑAS ── -->
+      <section id="section-resenas" class="hidden">
+        <div class="section-top">
+          <h2 class="section-heading">Moderación de Reseñas Reportadas</h2>
+          <div class="section-top-actions">
+            <select id="review-sort" class="form-select" onchange="sortReviews()">
+              <option value="recent">Más recientes</option>
+              <option value="reported">Más reportadas</option>
+            </select>
+            <button class="btn btn-ghost btn-sm" onclick="loadReportedReviews()">
+              <i class="fa-solid fa-rotate"></i> Actualizar
+            </button>
+          </div>
+        </div>
+        <div id="reviews-list" class="reviews-list"></div>
+      </section>
+
+      <!-- ── ESTADÍSTICAS ── -->
+      <section id="section-estadisticas" class="hidden">
+        <div class="section-top">
+          <h2 class="section-heading">Reportes y Analítica</h2>
+          <div class="section-top-actions">
+            <input type="date" id="stats-date-start" class="form-input" style="max-width:150px;"/>
+            <input type="date" id="stats-date-end" class="form-input" style="max-width:150px;"/>
+            <button class="btn btn-secondary btn-sm" onclick="applyStatsFilter()">
+              <i class="fa-solid fa-filter"></i> Filtrar
+            </button>
+            <button class="btn btn-primary btn-sm" onclick="exportReport('excel')">
+              <i class="fa-solid fa-file-excel"></i> Exportar Excel
+            </button>
+          </div>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="kpi-grid" id="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">Total Pedidos</div>
+            <div class="kpi-value" id="kpi-total-orders">—</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Ingresos del Período</div>
+            <div class="kpi-value" id="kpi-revenue">—</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Tasa de Entrega</div>
+            <div class="kpi-value" id="kpi-delivery-rate">—</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Ticket Promedio</div>
+            <div class="kpi-value" id="kpi-avg-ticket">—</div>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h3>Ventas por Categoría</h3>
+            <canvas id="chart-categories" height="220"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Pedidos por Día</h3>
+            <canvas id="chart-orders" height="220"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Distribución por Estado</h3>
+            <canvas id="chart-status" height="220"></canvas>
+          </div>
+          <div class="chart-card">
+            <h3>Artesanos por Estado</h3>
+            <canvas id="chart-artisans" height="220"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── AUDITORÍA ── -->
+      <section id="section-auditoria" class="hidden">
+        <div class="section-top">
+          <h2 class="section-heading">Bitácora de Acciones</h2>
+          <button class="btn btn-ghost btn-sm" onclick="loadAudit()">
+            <i class="fa-solid fa-rotate"></i> Actualizar
+          </button>
+        </div>
+        <div class="table-wrap">
+          <table class="table-ui">
+            <thead><tr>
+              <th>Fecha y Hora</th>
+              <th>Admin</th>
+              <th>Acción</th>
+              <th>Referencia</th>
+              <th>Detalles</th>
+            </tr></thead>
+            <tbody id="audit-table"></tbody>
+          </table>
+        </div>
+        <div class="mobile-card-list" id="audit-cards-mobile"></div>
+        <div class="pagination-controls" id="audit-pagination"></div>
+      </section>
+
+    </div><!-- /content-card -->
+  </main>
+</div><!-- /dashboard-layout -->
+
+
+<!-- ─── MODAL: DETALLES ARTESANO ─── -->
+<div id="artisan-modal" class="modal-overlay hidden">
+  <div class="modal-box modal-lg">
+    <div class="modal-header">
+      <h3>Detalles del Artesano</h3>
+      <button class="modal-close" onclick="closeArtisanModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div id="artisan-modal-content" class="modal-body"></div>
+    <div id="artisan-modal-actions" class="modal-footer"></div>
+  </div>
+</div>
+
+<!-- ─── MODAL: MOTIVO (Rechazar / Suspender / Eliminar) ─── -->
+<div id="reason-modal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="reason-modal-title">Motivo de la acción</h3>
+      <button class="modal-close" onclick="closeReasonModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <p id="reason-modal-desc" style="color:var(--color-muted);font-size:0.9rem;margin-bottom:1rem;">
+        Explica detalladamente el motivo de este cambio. Se enviará notificación por email.
+      </p>
+      <textarea id="modal-reason-text" class="form-textarea" rows="4" placeholder="Escribe el motivo aquí..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeReasonModal()">Cancelar</button>
+      <button class="btn btn-danger" id="reason-modal-confirm-btn">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── MODAL: DETALLES PEDIDO ─── -->
+<div id="order-modal" class="modal-overlay hidden">
+  <div class="modal-box modal-lg">
+    <div class="modal-header">
+      <h3>Detalles del Pedido</h3>
+      <button class="modal-close" onclick="closeOrderModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div id="order-modal-content" class="modal-body"></div>
+    <div id="order-modal-actions" class="modal-footer"></div>
+  </div>
+</div>
+
+<!-- ─── MODAL: TRACKING ─── -->
+<div id="tracking-modal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>Actualizar Guía de Envío</h3>
+      <button class="modal-close" onclick="closeTrackingModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Número de Guía / Tracking</label>
+        <input type="text" id="tracking-number-input" class="form-input" placeholder="Ej: TCC-12345678"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Transportadora</label>
+        <select id="tracking-carrier-input" class="form-select" style="max-width:100%;">
+          <option value="">Seleccionar...</option>
+          <option>Servientrega</option>
+          <option>Coordinadora</option>
+          <option>TCC</option>
+          <option>Envia</option>
+          <option>Inter Rapidísimo</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeTrackingModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="confirmUpdateTracking()">
+        <i class="fa-solid fa-truck"></i> Guardar y Despachar
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+<script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
+<script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/i18n.js"></script>
+<script src="/js/dashboard-admin.js"></script>
+</body>
+</html>

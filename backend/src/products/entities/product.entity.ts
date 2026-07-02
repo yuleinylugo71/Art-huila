@@ -1,8 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+} from 'typeorm';
 import { ArtisanProfile } from '../../artisans/entities/artisan-profile.entity';
 import { Category } from '../../categories/entities/category.entity';
 import { Region } from '../../regions/entities/region.entity';
 import { ProductImage } from './product-image.entity';
+import { Review } from '../../reviews/entities/review.entity';
 
 export enum ProductStatus {
   DRAFT = 'draft',
@@ -31,11 +41,11 @@ export class Product {
   @JoinColumn()
   artisan: ArtisanProfile;
 
-  @ManyToOne(() => Category, category => category.products)
+  @ManyToOne(() => Category, (category) => category.products)
   @JoinColumn()
   category: Category;
 
-  @ManyToOne(() => Region, region => region.products)
+  @ManyToOne(() => Region, (region) => region.products)
   @JoinColumn()
   region: Region;
 
@@ -75,8 +85,11 @@ export class Product {
   @Column({ type: 'text', nullable: true })
   meta_description: string;
 
-  @OneToMany(() => ProductImage, image => image.product)
+  @OneToMany(() => ProductImage, (image) => image.product)
   images: ProductImage[];
+
+  @OneToMany(() => Review, (review) => review.product)
+  reviews: Review[];
 
   @CreateDateColumn()
   created_at: Date;

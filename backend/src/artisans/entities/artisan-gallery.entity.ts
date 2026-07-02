@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { ArtisanProfile } from './artisan-profile.entity';
 
 @Entity('artisan_gallery')
@@ -12,7 +19,9 @@ export class ArtisanGallery {
   @Column()
   public_id: string;
 
-  @ManyToOne(() => ArtisanProfile, profile => profile.gallery, { onDelete: 'CASCADE' })
+  @ManyToOne(() => ArtisanProfile, (profile) => profile.gallery, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   profile: ArtisanProfile;
 

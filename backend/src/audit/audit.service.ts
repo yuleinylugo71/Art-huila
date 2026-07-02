@@ -11,12 +11,25 @@ export class AuditService {
     private readonly auditRepo: Repository<AdminAuditLog>,
   ) {}
 
-  async log(admin: User, action: AuditAction, targetId: string, details?: string) {
-    const entry = this.auditRepo.create({ admin, action, target_id: targetId, details });
+  async log(
+    admin: User,
+    action: AuditAction,
+    targetId: string,
+    details?: string,
+  ) {
+    const entry = this.auditRepo.create({
+      admin,
+      action,
+      target_id: targetId,
+      details,
+    });
     return this.auditRepo.save(entry);
   }
 
   async findAll() {
-    return this.auditRepo.find({ relations: ['admin'], order: { created_at: 'DESC' } });
+    return this.auditRepo.find({
+      relations: ['admin'],
+      order: { created_at: 'DESC' },
+    });
   }
 }

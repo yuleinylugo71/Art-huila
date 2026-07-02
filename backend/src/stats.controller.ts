@@ -13,7 +13,7 @@ export class StatsController {
   async getStats() {
     const productsCount = await this.productsService.getCount();
     const artisans = await this.artisansService.findAll('verified');
-    
+
     return {
       artisans_count: artisans.length,
       products_count: productsCount,

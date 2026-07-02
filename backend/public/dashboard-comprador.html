@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="buyer.title">Mi Perfil — Art Huila</title>
+  <link rel="stylesheet" href="/css/base.css?v=18">
+  <link rel="stylesheet" href="/css/dashboard-comprador.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<nav class="navbar desktop-only">
+  <div style="display:flex;align-items:center;gap:0.75rem;">
+    <a href="index.html" class="nav-back" title="Volver al inicio">←</a>
+    <a href="index.html" class="navbar-brand">Art <span>Huila</span></a>
+  </div>
+  <ul class="navbar-nav">
+    <li><a href="catalogo.html" data-i18n="nav.viewCatalog">Catálogo</a></li>
+    <li><a href="carrito.html" style="font-weight:bold;color:var(--color-primary);"><i class="fa-solid fa-cart-shopping"></i> <span data-i18n="cart.navbarCart">Carrito</span></a></li>
+    <li><button class="btn btn-outline btn-sm" onclick="Auth.logout()" data-i18n="auth.logout">Cerrar sesión</button></li>
+  </ul>
+  <div class="lang-switcher">
+    <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+    <span>|</span>
+    <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+  </div>
+</nav>
+
+<!-- Mobile Premium Header -->
+<header class="mobile-only" style="background: white; border-bottom: 1.5px solid var(--color-border); padding: 1rem; position: sticky; top: 0; z-index: 1000;">
+  <div style="display: flex; align-items: center; justify-content: space-between;">
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <a href="index.html" style="color: var(--color-text); font-size: 1.2rem;"><i class="fa-solid fa-arrow-left"></i></a>
+      <h1 style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 800; color: #261f1b; margin: 0;" data-i18n="buyer.title">Mi Perfil</h1>
+    </div>
+    <div class="lang-switcher" style="margin-left: 0;">
+      <button id="mobile-lang-es" class="btn-lang-es active" onclick="window.changeLanguage('es')">ES</button>
+      <span style="font-size: 0.7rem; color: var(--color-border);">|</span>
+      <button id="mobile-lang-en" class="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+    </div>
+  </div>
+</header>
+
+<div class="container section">
+  <div class="buyer-layout">
+    <aside class="buyer-sidebar">
+      <div style="text-align:center;margin-bottom:1.5rem;">
+        <div style="font-size:3rem;"><i class="fa-solid fa-user"></i></div>
+        <h3 id="user-name" style="font-size:1.1rem;margin-top:0.5rem;">Cargando...</h3>
+        <p id="user-email" style="font-size:0.8rem;color:var(--color-muted);"></p>
+      </div>
+      <ul class="sidebar-menu">
+        <li><a href="#" class="active" id="menu-link-orders" onclick="showTab('orders')"><i class="fa-solid fa-box"></i> <span data-i18n="buyer.menuMyOrders">Mis Pedidos</span></a></li>
+        <li><a href="#" id="menu-link-profile" onclick="showTab('profile')"><i class="fa-solid fa-user"></i> <span data-i18n="buyer.menuMyProfile">Mis Datos</span></a></li>
+        <li><a href="#" id="menu-link-apply" onclick="showTab('apply')"><i class="fa-solid fa-address-card"></i> <span data-i18n="buyer.menuApplyArtisan">Solicitar ser Artesano</span></a></li>
+      </ul>
+    </aside>
+
+    <main>
+      <div id="tab-orders">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; border-bottom:1.5px solid var(--color-border); padding-bottom:0.75rem;">
+          <h2 style="font-family:'Crimson Pro',serif; margin:0; font-size:1.6rem;" data-i18n="buyer.orderHistoryHeading">Historial de Pedidos</h2>
+          <span style="font-size:0.75rem; color:#64748b; background:#f1f5f9; padding:0.25rem 0.75rem; border-radius:12px; font-weight:600;" data-i18n="buyer.trackingActiveBadge">Trazabilidad Completa Activa</span>
+        </div>
+        <div id="buyer-stats-container" style="margin-bottom: 1.5rem;"></div>
+        <div id="orders-container">
+          <div class="spinner"></div>
+        </div>
+        <div class="pagination-controls" id="buyer-orders-pagination" style="margin-top:1.5rem;"></div>
+      </div>
+
+      <div id="tab-profile" style="display:none;">
+        <h2 style="font-family:'Crimson Pro',serif;margin-bottom:1.5rem;" data-i18n="buyer.myProfileHeading">Mis Datos</h2>
+        <div class="buyer-profile-card">
+          <!-- VIEW MODE CONTAINER (DEFAULT) -->
+          <div id="profile-view-mode">
+            <div class="profile-info-row">
+              <span class="profile-info-label" data-i18n="buyer.fullNameLabel">Nombre Completo</span>
+              <span class="profile-info-value" id="info-full-name">—</span>
+            </div>
+            <div class="profile-info-row">
+              <span class="profile-info-label" data-i18n="buyer.emailLabel">Email</span>
+              <span class="profile-info-value" id="info-email">—</span>
+            </div>
+            <div class="profile-info-row">
+              <span class="profile-info-label" data-i18n="buyer.phoneLabel">Teléfono</span>
+              <span class="profile-info-value" id="info-phone">—</span>
+            </div>
+            <div class="profile-info-row">
+              <span class="profile-info-label" data-i18n="buyer.addressLabel">Dirección</span>
+              <span class="profile-info-value" id="info-address">—</span>
+            </div>
+            <div class="profile-info-row">
+              <span class="profile-info-label" data-i18n="buyer.cityLabel">Ciudad / Municipio</span>
+              <span class="profile-info-value" id="info-city">—</span>
+            </div>
+            <div class="profile-info-row">
+              <span class="profile-info-label" data-i18n="buyer.departmentLabel">Departamento</span>
+              <span class="profile-info-value" id="info-department">—</span>
+            </div>
+            <div class="profile-info-row">
+              <span class="profile-info-label" data-i18n="buyer.newPasswordLabel">Contraseña</span>
+              <span class="profile-info-value">••••••••••••</span>
+            </div>
+            <div style="margin-top:2rem;">
+              <button class="btn btn-primary" onclick="toggleProfileEdit(true)">
+                <i class="fa-solid fa-pen"></i> Editar Datos
+              </button>
+            </div>
+          </div>
+
+          <!-- EDIT MODE CONTAINER (FORM) -->
+          <form id="profile-form" class="hidden">
+            <div class="form-group">
+              <label class="form-label" data-i18n="buyer.fullNameLabel">Nombre Completo</label>
+              <input type="text" id="edit-full-name" class="form-control" required/>
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="buyer.emailLabel">Email</label>
+              <input type="email" id="edit-email" class="form-control" disabled/>
+              <small class="form-hint" data-i18n="buyer.emailDisabledHint">El email no puede cambiarse.</small>
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="buyer.phoneLabel">Teléfono</label>
+              <input type="text" id="edit-phone" class="form-control" data-i18n-placeholder="buyer.phonePlaceholder" placeholder="Ej: 3001234567"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="buyer.addressLabel">Dirección</label>
+              <input type="text" id="edit-address" class="form-control" data-i18n-placeholder="buyer.addressPlaceholder" placeholder="Ej: Calle 10 # 5-20"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="buyer.cityLabel">Ciudad / Municipio</label>
+              <input type="text" id="edit-city" class="form-control" data-i18n-placeholder="buyer.cityPlaceholder" placeholder="Ej: Neiva"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="buyer.departmentLabel">Departamento</label>
+              <input type="text" id="edit-department" class="form-control" data-i18n-placeholder="buyer.departmentPlaceholder" placeholder="Ej: Huila"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label" data-i18n="buyer.newPasswordLabel">Nueva Contraseña</label>
+              <input type="password" id="edit-password" class="form-control" data-i18n-placeholder="buyer.newPasswordPlaceholder" placeholder="Dejar en blanco para mantener la actual"/>
+            </div>
+            <div style="margin-top:1.5rem; display:flex; gap:0.5rem;">
+              <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> <span data-i18n="buyer.saveChangesBtn">Guardar Cambios</span></button>
+              <button type="button" class="btn btn-ghost" onclick="toggleProfileEdit(false)" style="border:1.5px solid var(--color-border); border-radius:9px; font-weight:600; padding:0.8rem 1.5rem; font-size:0.9rem; font-family:var(--font-body),sans-serif; cursor:pointer;">Cancelar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div id="tab-apply" style="display:none;">
+        <h2 style="font-family:'Crimson Pro',serif;margin-bottom:1.5rem;" data-i18n="buyer.menuApplyArtisan">Solicitar ser Artesano</h2>
+        
+        <!-- Status Card (will be shown if profile exists) -->
+        <div id="apply-status-container" style="display:none; margin-bottom:1.5rem;"></div>
+
+        <!-- Request Form -->
+        <div id="apply-form-container" class="buyer-profile-card" style="max-width: 600px;">
+          <p style="color: var(--color-muted); margin-bottom: 1.5rem; font-size: 0.9rem; line-height: 1.4;" data-i18n="buyer.applyInstructions">Completa el siguiente formulario para enviar tu solicitud de registro como artesano. Una vez aprobada, podrás gestionar tus productos.</p>
+          <form id="apply-form" enctype="multipart/form-data">
+            <div class="form-group">
+              <label class="form-label" for="apply-id-number" data-i18n="buyer.idNumberLabel">Número de Cédula (ID)</label>
+              <input type="text" id="apply-id-number" class="form-control" required placeholder="Ej: 10234567" />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="apply-category" data-i18n="buyer.categoryLabel">Categoría de Artesanía</label>
+              <select id="apply-category" class="form-control" required>
+                <option value="" disabled selected data-i18n="buyer.selectCategory">Seleccione una categoría</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="apply-region" data-i18n="buyer.regionLabel">Región / Municipio</label>
+              <select id="apply-region" class="form-control" required>
+                <option value="" disabled selected data-i18n="buyer.selectRegion">Seleccione su región</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="apply-cultural-history" data-i18n="buyer.culturalHistoryLabel">Historia Cultural y Oficio</label>
+              <textarea id="apply-cultural-history" class="form-control" rows="5" required placeholder="Cuéntanos sobre tu historia cultural, tradición familiar y la técnica que utilizas..." style="resize: vertical; min-height: 120px; font-family: inherit;"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="apply-doc-front" data-i18n="buyer.docFrontLabel">Cédula de Ciudadanía - Frente (Imagen)</label>
+              <input type="file" id="apply-doc-front" class="form-control" accept="image/*" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="apply-doc-back" data-i18n="buyer.docBackLabel">Cédula de Ciudadanía - Reverso (Imagen)</label>
+              <input type="file" id="apply-doc-back" class="form-control" accept="image/*" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="apply-gallery" data-i18n="buyer.galleryLabel">Fotos de tus Trabajos o Taller (Opcional, Máx. 10)</label>
+              <input type="file" id="apply-gallery" class="form-control" accept="image/*" multiple />
+            </div>
+
+            <div class="form-group" style="display:flex; align-items:flex-start; gap:0.5rem; margin-top:1.5rem; margin-bottom:1.5rem;">
+              <input type="checkbox" id="apply-truthfulness" required style="margin-top:0.25rem;" />
+              <label for="apply-truthfulness" style="font-size:0.85rem; color:var(--color-text); cursor:pointer;" data-i18n="buyer.truthfulnessLabel">
+                Declaro bajo gravedad de juramento que la información suministrada es verídica y que los documentos aportados corresponden a mi identidad y trabajo.
+              </label>
+            </div>
+
+            <div>
+              <button type="submit" class="btn btn-primary" id="btn-submit-apply"><i class="fa-solid fa-paper-plane"></i> <span data-i18n="buyer.submitApplicationBtn">Enviar Solicitud</span></button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<footer>
+  <div class="brand">Art <span>Huila</span></div>
+</footer>
+
+<script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+<script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
+<script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/i18n.js"></script>
+<script src="/js/dashboard-comprador.js"></script>
+</body>
+</html>

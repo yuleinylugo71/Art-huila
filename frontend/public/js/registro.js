@@ -1,10 +1,16 @@
 // registro.js
 let selectedType = null;
 
-document.addEventListener('i18nReady', () => {
+const runInitRegistro = () => {
   if (typeof applyTranslations === 'function') applyTranslations();
   initRegistro();
-});
+};
+
+if (window.i18nReadyProcessed) {
+  runInitRegistro();
+} else {
+  document.addEventListener('i18nReady', runInitRegistro);
+}
 
 document.addEventListener('languageChanged', () => {
   if (typeof applyTranslations === 'function') applyTranslations();
@@ -23,6 +29,17 @@ function selectType(type) {
     card.style.transform = 'scale(1.02)';
   }
 
+  const authLayout = document.querySelector('.auth-layout');
+  if (authLayout) {
+    // Smoothly toggle the register-width class based on the form type
+    if (type === 'artesano') {
+      authLayout.classList.add('auth-layout-register');
+    } else {
+      authLayout.classList.remove('auth-layout-register');
+    }
+  }
+
+  // Switch the forms (add/remove .hidden)
   const formComp = document.getElementById('form-comprador');
   const formArte = document.getElementById('form-artesano');
   if (formComp) formComp.classList.add('hidden');
@@ -75,7 +92,7 @@ function initRegistro() {
             role: 'comprador',
           }),
         });
-        window.location.href = '/verificar-email.html';
+        window.location.href = '/login.html?registered=true';
       } catch (err) {
         const el = document.getElementById('error-msg');
         el.textContent = err.message; el.classList.remove('hidden');
@@ -109,6 +126,7 @@ function initRegistro() {
         formData.append('email', document.getElementById('a-email').value);
         formData.append('password', document.getElementById('a-pass').value);
         formData.append('role', 'artesano');
+        formData.append('id_number', document.getElementById('a-id-number').value);
         formData.append('cultural_history', document.getElementById('a-historia').value);
         formData.append('category_id', document.getElementById('a-categoria').value);
         formData.append('region_id', document.getElementById('a-region').value);

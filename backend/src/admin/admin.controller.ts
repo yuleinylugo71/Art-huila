@@ -1,14 +1,36 @@
-import { Body, Controller, Delete, Get, Param, Patch, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Query,
+  Res,
+  UseGuards,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+} from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { JwtAuthGuard, RolesGuard } from '../auth/guards/jwt-auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { UserRole } from '../common/constants';
+import { Response } from 'express';
 
 @Controller('admin')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('admin')
+@Roles(UserRole.ADMIN)
+@UseInterceptors(ClassSerializerInterceptor)
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
+
+  @Get('users')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async getAllUsers(@Query('role') role?: string) {
+    return this.adminService.getAllUsers(role);
+  }
 
   @Get('artisans')
   getArtisans(@Query('status') status?: string) {
@@ -21,22 +43,38 @@ export class AdminController {
   }
 
   @Patch('artesanos/:id/verificar')
-  verificarArtesano(@Param('id') id: string, @Body('reason') reason: string, @CurrentUser() user: any) {
+  verificarArtesano(
+    @Param('id') id: string,
+    @Body('reason') reason: string,
+    @CurrentUser() user: any,
+  ) {
     return this.adminService.verifyArtisan(user.id, id, reason);
   }
 
   @Patch('artisans/:id/reject')
-  reject(@Param('id') id: string, @Body('reason') reason: string, @CurrentUser() user: any) {
+  reject(
+    @Param('id') id: string,
+    @Body('reason') reason: string,
+    @CurrentUser() user: any,
+  ) {
     return this.adminService.rejectArtisan(user.id, id, reason);
   }
 
   @Patch('artisans/:id/suspend')
-  suspend(@Param('id') id: string, @Body('reason') reason: string, @CurrentUser() user: any) {
+  suspend(
+    @Param('id') id: string,
+    @Body('reason') reason: string,
+    @CurrentUser() user: any,
+  ) {
     return this.adminService.suspendArtisan(user.id, id, reason);
   }
 
   @Patch('artesanos/:id/suspender')
-  suspenderArtesano(@Param('id') id: string, @Body('reason') reason: string, @CurrentUser() user: any) {
+  suspenderArtesano(
+    @Param('id') id: string,
+    @Body('reason') reason: string,
+    @CurrentUser() user: any,
+  ) {
     return this.adminService.suspendArtisan(user.id, id, reason);
   }
 
@@ -51,7 +89,11 @@ export class AdminController {
   }
 
   @Delete('reviews/:id')
-  deleteReview(@Param('id') id: string, @Body('reason') reason: string, @CurrentUser() user: any) {
+  deleteReview(
+    @Param('id') id: string,
+    @Body('reason') reason: string,
+    @CurrentUser() user: any,
+  ) {
     return this.adminService.deleteReview(user.id, id, reason);
   }
 
@@ -83,5 +125,10 @@ export class AdminController {
   @Patch('reviews/:id/keep')
   keepReview(@Param('id') id: string, @CurrentUser() user: any) {
     return this.adminService.keepReview(user.id, id);
+  }
+
+  @Get('stats/summary')
+  getStatsSummary() {
+    return this.adminService.getStatsSummary();
   }
 }

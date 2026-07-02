@@ -4,51 +4,99 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title data-i18n="register.title">Registro — Art Huila</title>
-  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/base.css?v=13">
   <link rel="stylesheet" href="/css/auth.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 <div class="auth-layout">
+
+  <!-- ── LEFT: BRAND PANEL (Wavy spacer mockup style) ── -->
   <div class="auth-left">
-    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
-      <a href="index.html" style="color:rgba(255,255,255,0.7);text-decoration:none;font-size:1.3rem;display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);">←</a>
-      <span style="color:rgba(255,255,255,0.6);font-size:0.85rem;" data-i18n="nav.backToHome">Volver al inicio</span>
+    
+    <!-- Navigation back link -->
+    <div class="back-link-row">
+      <a href="index.html" class="back-btn">←</a>
+      <span class="back-text" data-i18n="nav.backToHome">Volver al inicio</span>
     </div>
+    
+    <!-- Language Switcher -->
     <div class="lang-switcher">
-      <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+      <button id="btn-lang-es" class="active" onclick="window.changeLanguage('es')">ES</button>
       <span>|</span>
       <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
     </div>
-    <div class="auth-left-title" data-i18n="register.leftTitle">Únete a la comunidad artesanal</div>
-    <p style="opacity:0.85;line-height:1.7;" data-i18n="register.leftSubtitle">Crea tu cuenta y forma parte del marketplace más auténtico del Huila.</p>
+    
+    <!-- Slogan & Info -->
+    <h2 class="auth-left-title" data-i18n="register.leftTitle">Únete a la comunidad artesanal</h2>
+    <p class="auth-left-subtitle" data-i18n="register.leftSubtitle">Crea tu cuenta y forma parte del marketplace más auténtico del Huila.</p>
+    
+    <!-- Context Point List -->
+    <div class="auth-points-list">
+      <div class="auth-point">
+        <i class="fa-solid fa-store"></i>
+        <span data-i18n="register.leftPoint1">Catálogo artesanal digitalizado</span>
+      </div>
+      <div class="auth-point">
+        <i class="fa-solid fa-truck-fast"></i>
+        <span data-i18n="register.leftPoint2">Soporte en logística y envíos</span>
+      </div>
+      <div class="auth-point">
+        <i class="fa-solid fa-wallet"></i>
+        <span data-i18n="register.leftPoint3">Pasarela de pago segura</span>
+      </div>
+    </div>
+    
+    <!-- Organic wavy/bubbly cloud divider styled completely by CSS (layered Spacer mockup style) -->
+    <svg class="wave-divider" viewBox="0 0 100 460" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path class="wave-layer-bg-cream" d="M100,0 L45,0 C43,20 38,35 40,60 C42,85 53,95 50,130 C47,165 38,175 41,210 C44,245 52,250 49,290 C46,330 38,335 40,370 C42,405 51,395 48,425 C45,455 45,460 45,460 L100,460 Z" />
+      <path class="wave-layer-1" d="M0,0 L45,0 C43,20 38,35 40,60 C42,85 53,95 50,130 C47,165 38,175 41,210 C44,245 52,250 49,290 C46,330 38,335 40,370 C42,405 51,395 48,425 C45,455 45,460 45,460 L0,460 Z" />
+      <path class="wave-layer-2" d="M0,0 L45,0 C43,20 38,35 40,60 C42,85 53,95 50,130 C47,165 38,175 41,210 C44,245 52,250 49,290 C46,330 38,335 40,370 C42,405 51,395 48,425 C45,455 45,460 45,460 L0,460 Z" />
+      <path class="wave-layer-3" d="M0,0 L45,0 C43,20 38,35 40,60 C42,85 53,95 50,130 C47,165 38,175 41,210 C44,245 52,250 49,290 C46,330 38,335 40,370 C42,405 51,395 48,425 C45,455 45,460 45,460 L0,460 Z" />
+    </svg>
   </div>
+
+  <!-- ── RIGHT: FORM PANEL ── -->
   <div class="auth-right">
+    
+    <!-- Mobile Screen Header (Mockup Style) -->
+    <div class="mobile-only mobile-auth-header" style="justify-content: space-between;">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <a href="index.html" class="mobile-back-arrow">
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <h1 class="mobile-page-title" data-i18n="register.heading">Crear Cuenta</h1>
+      </div>
+      <div class="lang-switcher">
+        <button id="mobile-lang-es" class="btn-lang-es active" onclick="window.changeLanguage('es')">ES</button>
+        <span>|</span>
+        <button id="mobile-lang-en" class="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+      </div>
+    </div>
+
     <div class="auth-box">
-      <a href="/index.html" class="navbar-brand" style="margin-bottom:2rem;display:inline-block;">Art <span>Huila</span></a>
-      <h2 data-i18n="register.heading">Crear cuenta</h2>
-      <p class="text-muted mb-3" data-i18n="register.howToRegister">¿Cómo deseas registrarte?</p>
+      <a href="index.html" class="navbar-brand desktop-only">Art <span>Huila</span></a>
+      <h2 class="desktop-only" data-i18n="register.heading">Crear cuenta</h2>
+      <p class="text-muted" data-i18n="register.howToRegister">¿Cómo deseas registrarte?</p>
 
-      <!-- Type selector -->
-      <div id="type-selector" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;">
-        <div class="card type-card" id="type-comprador" onclick="selectType('comprador')" style="cursor:pointer;padding:1.5rem;text-align:center;border:2px solid var(--color-border);transition:all 0.2s;">
-          <div style="font-size:2.5rem;"><i class="fa-solid fa-bag-shopping"></i></div>
-          <div style="font-weight:600;margin-top:0.5rem;" data-i18n="register.buyerRole">Comprador</div>
-          <div style="font-size:0.8rem;color:var(--color-muted);" data-i18n="register.buyerRoleDesc">Explora y compra artesanías</div>
+      <!-- Type selector (Comprador vs Artesano) -->
+      <div id="type-selector" class="type-selector">
+        <div class="card type-card" id="type-comprador" onclick="selectType('comprador')">
+          <div class="type-icon-wrapper"><i class="fa-solid fa-cart-shopping"></i></div>
+          <span class="type-title" data-i18n="register.buyerRole">Comprador</span>
+          <div class="type-desc" data-i18n="register.buyerRoleDesc">Explora y compra artesanías</div>
         </div>
-        <div class="card type-card" id="type-artesano" onclick="selectType('artesano')" style="cursor:pointer;padding:1.5rem;text-align:center;border:2px solid var(--color-border);transition:all 0.2s;">
-  <!-- AQUÍ CAMBIAS EL ICONO -->
-  <div style="font-size:2.5rem;"><i class="fa-solid fa-tools"></i></div>
-  
-  <div style="font-weight:600;margin-top:0.5rem;" data-i18n="register.artisanRole">Artesano</div>
-  <div style="font-size:0.8rem;color:var(--color-muted);" data-i18n="register.artisanRoleDesc">Vende tus creaciones</div>
-</div>
-
+        <div class="card type-card" id="type-artesano" onclick="selectType('artesano')">
+          <div class="type-icon-wrapper"><i class="fa-solid fa-palette"></i></div>
+          <span class="type-title" data-i18n="register.artisanRole">Artesano</span>
+          <div class="type-desc" data-i18n="register.artisanRoleDesc">Vende tus creaciones</div>
+        </div>
       </div>
 
-      <div id="error-msg" class="hidden" style="background:#fee2e2;color:#991b1b;padding:0.75rem 1rem;border-radius:var(--radius);margin-bottom:1rem;font-size:0.9rem;"></div>
+      <!-- Error box dynamically populated -->
+      <div id="error-msg" class="hidden"></div>
 
-      <!-- Comprador Form -->
+      <!-- ── COMPRADOR FORM ── -->
       <form id="form-comprador" class="hidden">
         <div class="form-group">
           <label class="form-label" data-i18n="auth.fullNameLabel">Nombre completo</label>
@@ -60,13 +108,16 @@
         </div>
         <div class="form-group">
           <label class="form-label" data-i18n="auth.passwordLabel">Contraseña</label>
-          <input type="password" id="c-pass" class="form-control" data-i18n-placeholder="auth.passwordPlaceholder" placeholder="Mínimo 8 caracteres" required/>
+          <div class="password-input-wrapper">
+            <input type="password" id="c-pass" class="form-control" data-i18n-placeholder="auth.passwordPlaceholder" placeholder="Mínimo 8 caracteres" required/>
+            <i class="fa-solid fa-eye-slash toggle-password" onclick="togglePasswordVisibility('c-pass', this)"></i>
+          </div>
           <div class="form-hint" data-i18n="auth.passwordRequirementsHint">Mínimo 8 caracteres, 1 mayúscula y 1 número</div>
         </div>
         <button type="submit" class="btn btn-primary btn-full" id="btn-comprador" data-i18n="register.createBuyerAccountBtn">Crear cuenta de comprador</button>
       </form>
 
-      <!-- Artisan Form -->
+      <!-- ── ARTESANO FORM ── -->
       <form id="form-artesano" class="hidden">
         <div class="form-group">
           <label class="form-label" data-i18n="auth.fullNameLabel">Nombre completo</label>
@@ -78,12 +129,42 @@
         </div>
         <div class="form-group">
           <label class="form-label" data-i18n="auth.passwordLabel">Contraseña</label>
-          <input type="password" id="a-pass" class="form-control" data-i18n-placeholder="auth.passwordPlaceholder" placeholder="Mínimo 8 caracteres" required/>
+          <div class="password-input-wrapper">
+            <input type="password" id="a-pass" class="form-control" data-i18n-placeholder="auth.passwordPlaceholder" placeholder="Mínimo 8 caracteres" required/>
+            <i class="fa-solid fa-eye-slash toggle-password" onclick="togglePasswordVisibility('a-pass', this)"></i>
+          </div>
           <div class="form-hint" data-i18n="auth.passwordRequirementsHint">Mínimo 8 caracteres, 1 mayúscula y 1 número</div>
         </div>
+
+        <!-- Artisan Section Header -->
+        <div class="artisan-section-divider">
+          <h3 class="artisan-section-title">
+            <i class="fa-solid fa-palette"></i> <span data-i18n="register.artisanDataHeader">Datos de Artesano</span>
+          </h3>
+        </div>
+
         <div class="form-group">
-          <label class="form-label" data-i18n="register.culturalHistoryLabel">Historia cultural de tu oficio</label>
-          <textarea id="a-historia" class="form-control" data-i18n-placeholder="register.culturalHistoryPlaceholder" placeholder="Cuéntanos sobre tu tradición artesanal, cómo aprendiste, qué te inspira..." required></textarea>
+          <label class="form-label" data-i18n="register.idNumberLabel">Número de Cédula (ID) *</label>
+          <input type="text" id="a-id-number" class="form-control" data-i18n-placeholder="register.idNumberPlaceholder" placeholder="Escribe tu número de cédula" required autocomplete="off"/>
+        </div>
+
+        <div class="form-group upload-group">
+          <label class="form-label" data-i18n="register.galleryLabel">Foto de Perfil / Galería del Taller</label>
+          <label class="custom-file-upload" for="a-galeria">
+            <i class="fa-solid fa-camera"></i>
+            <div class="upload-text-container">
+              <div class="upload-title">Foto de Perfil / Galería</div>
+              <div class="upload-subtitle">Se carga en Cloudinary</div>
+            </div>
+            <span class="btn-upload">Subir foto</span>
+          </label>
+          <input type="file" id="a-galeria" multiple accept="image/*" required style="display:none;" onchange="updateUploadLabel(this, 'Se carga en Cloudinary')"/>
+          <div class="form-hint" data-i18n="register.galleryHint">Muestra tus mejores obras</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" data-i18n="register.culturalHistoryLabel">Biografía / Historia cultural de tu oficio</label>
+          <textarea id="a-historia" class="form-control" data-i18n-placeholder="register.culturalHistoryPlaceholder" placeholder="Cuéntanos tu historia como artesano, tu técnica y tu inspiración..." required></textarea>
         </div>
         <div class="form-group">
           <label class="form-label" data-i18n="register.categoryLabel">Oficio (ej: tejido, cerámica, talla en madera...)</label>
@@ -97,35 +178,54 @@
             <option value="" data-i18n="common.loading">Cargando municipios...</option>
           </select>
         </div>
-        <div class="form-group">
-          <label class="form-label" data-i18n="register.galleryLabel">Galería fotográfica (máx 5 imágenes)</label>
-          <input type="file" id="a-galeria" class="form-control" multiple accept="image/*" required/>
-          <div class="form-hint" data-i18n="register.galleryHint">Muestra tus mejores obras</div>
-        </div>
-        <div class="form-group">
+
+        <div class="form-group upload-group">
           <label class="form-label" data-i18n="register.docFrontLabel">Cédula (Cara frontal)</label>
-          <input type="file" id="a-document-front" class="form-control" accept="image/*,application/pdf" required/>
+          <label class="custom-file-upload" for="a-document-front">
+            <i class="fa-solid fa-camera"></i>
+            <div class="upload-text-container">
+              <div class="upload-title">Cédula Cara Frontal</div>
+              <div class="upload-subtitle">Se carga de forma segura</div>
+            </div>
+            <span class="btn-upload">Subir foto</span>
+          </label>
+          <input type="file" id="a-document-front" accept="image/*,application/pdf" required style="display:none;" onchange="updateUploadLabel(this, 'Se carga de forma segura')"/>
           <div class="form-hint" data-i18n="register.docFrontHint">Sube una foto legible del frente de tu documento</div>
         </div>
-        <div class="form-group">
+
+        <div class="form-group upload-group">
           <label class="form-label" data-i18n="register.docBackLabel">Cédula (Cara posterior)</label>
-          <input type="file" id="a-document-back" class="form-control" accept="image/*,application/pdf" required/>
+          <label class="custom-file-upload" for="a-document-back">
+            <i class="fa-solid fa-camera"></i>
+            <div class="upload-text-container">
+              <div class="upload-title">Cédula Cara Posterior</div>
+              <div class="upload-subtitle">Se carga de forma segura</div>
+            </div>
+            <span class="btn-upload">Subir foto</span>
+          </label>
+          <input type="file" id="a-document-back" accept="image/*,application/pdf" required style="display:none;" onchange="updateUploadLabel(this, 'Se carga de forma segura')"/>
           <div class="form-hint" data-i18n="register.docBackHint">Sube una foto legible del reverso de tu documento</div>
         </div>
-        <label class="checkbox-label form-group" id="declaracion-wrap" style="align-items: flex-start; gap: 0.75rem; display: flex;">
-          <input type="checkbox" id="a-declaracion" style="margin-top: 0.25rem;" required/>
-          <span style="font-size: 0.85rem; line-height: 1.4;" data-i18n="register.declarationLabel">Declaro que la información suministrada es verídica y asumo toda responsabilidad legal sobre los datos proporcionados</span>
+        
+        <label class="checkbox-label" id="declaracion-wrap">
+          <input type="checkbox" id="a-declaracion" required/>
+          <span data-i18n="register.declarationLabel">Declaro que la información suministrada es verídica y asumo toda responsabilidad legal sobre los datos proporcionados</span>
         </label>
+        
         <button type="submit" class="btn btn-primary btn-full" id="btn-artesano" data-i18n="register.registerAsArtisanBtn">Registrarme como artesano</button>
       </form>
 
       <hr class="divider"/>
+      
       <p style="text-align:center;font-size:0.9rem;color:var(--color-muted);">
-        <span data-i18n="auth.hasAccount">¿Ya tienes cuenta?</span> <a href="/login.html" style="color:var(--color-primary);font-weight:600;" data-i18n="auth.loginHere">Inicia sesión</a>
+        <span data-i18n="auth.hasAccount">¿Ya tienes cuenta?</span> 
+        <a href="/login.html" style="color:var(--color-primary);font-weight:600;" data-i18n="auth.loginHere">Inicia sesión</a>
       </p>
     </div>
   </div>
+
 </div>
+
 <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
 <script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
 <script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="payment.failedTitle">Pago Rechazado — Art Huila</title>
+  <link rel="stylesheet" href="/css/base.css?v=18">
+  <link rel="stylesheet" href="/css/pago-fallido.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<nav style="position: absolute; top: 1.5rem; right: 2rem; z-index: 10;">
+  <div class="lang-switcher">
+    <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+    <span>|</span>
+    <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+  </div>
+</nav>
+
+<div class="failed-container">
+
+  <!-- Icono animado -->
+  <div class="failed-icon-wrapper">
+    <div class="failed-icon-ring"></div>
+    <div class="failed-icon">
+      <i class="fa-solid fa-xmark"></i>
+    </div>
+  </div>
+
+  <h1 class="failed-title" data-i18n="payment.failedHeading">Transacción Rechazada</h1>
+  <p class="failed-subtitle" data-i18n="payment.failedDesc">
+    Tu pago no pudo ser procesado. Esto puede deberse a fondos insuficientes,
+    datos incorrectos o un rechazo de tu banco. Puedes reintentar el pago.
+  </p>
+
+  <!-- Tarjeta de detalles -->
+  <div class="failed-card" id="order-info">
+    <div class="info-row">
+      <span class="label"><i class="fa-solid fa-hashtag"></i> <span data-i18n="payment.failedReference">Referencia</span></span>
+      <span id="txn-ref" class="value">N/A</span>
+    </div>
+    <div class="info-row">
+      <span class="label"><i class="fa-solid fa-circle-xmark" style="color:#ef4444;"></i> <span data-i18n="payment.statusLabel">Estado</span></span>
+      <span class="value" style="color:#ef4444; font-weight:700;" data-i18n="payment.rejectedStatus">Rechazado</span>
+    </div>
+    <div class="info-row" id="row-amount">
+      <span class="label"><i class="fa-solid fa-dollar-sign" style="color:var(--color-primary);"></i> Monto</span>
+      <span id="txn-amount" class="value" style="font-weight:700; color:var(--color-primary);">N/A</span>
+    </div>
+    <div class="info-row" id="row-reason">
+      <span class="label"><i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b;"></i> <span data-i18n="payment.failedReason">Motivo</span></span>
+      <span id="txn-reason" class="value" style="color:var(--color-muted);">N/A</span>
+    </div>
+  </div>
+
+  <!-- Sugerencias -->
+  <div class="tips-card">
+    <div class="tips-title"><i class="fa-solid fa-lightbulb"></i> <span data-i18n="payment.failedTipTitle">¿Qué puedes hacer?</span></div>
+    <ul class="tips-list">
+      <li><i class="fa-solid fa-check-circle" style="color:#16a34a;"></i> <span data-i18n="payment.failedTip1">Verifica que los datos de tu tarjeta sean correctos</span></li>
+      <li><i class="fa-solid fa-check-circle" style="color:#16a34a;"></i> <span data-i18n="payment.failedTip2">Asegúrate de tener saldo suficiente</span></li>
+      <li><i class="fa-solid fa-check-circle" style="color:#16a34a;"></i> <span data-i18n="payment.failedTip3">Intenta con otro método de pago (PSE, Nequi)</span></li>
+      <li><i class="fa-solid fa-check-circle" style="color:#16a34a;"></i> <span data-i18n="payment.failedTip4">Contacta a tu banco si el problema persiste</span></li>
+    </ul>
+  </div>
+
+  <!-- Acciones -->
+  <div class="nav-actions">
+    <a href="carrito.html" class="btn btn-primary btn-lg">
+      <i class="fa-solid fa-cart-shopping"></i> <span>Volver al carrito</span>
+    </a>
+    <a href="dashboard-comprador.html" class="btn btn-outline btn-lg">
+      <i class="fa-solid fa-house"></i> <span data-i18n="payment.failedHomeBtn">Ir al Dashboard</span>
+    </a>
+    <a href="catalogo.html" class="btn btn-ghost btn-lg" data-i18n="payment.continueShoppingBtn">
+      &#8592; Seguir Comprando
+    </a>
+  </div>
+
+  <!-- Soporte -->
+  <p class="support-text">
+    <i class="fa-solid fa-headset"></i>
+    <span data-i18n="payment.failedSupport">¿Necesitas ayuda? Escríbenos a</span>
+    <a href="mailto:soporte@arthuila.co" style="color:var(--color-primary);">soporte@arthuila.co</a>
+  </p>
+
+</div>
+
+<script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+<script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/i18n.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+
+    // Referencia de la transacción (x_ref_payco)
+    const ref = params.get('x_ref_payco') || params.get('ref_payco') || params.get('ref') || params.get('id') || 'N/A';
+    document.getElementById('txn-ref').textContent = ref;
+
+    // Monto (x_amount)
+    const amount = params.get('x_amount');
+    if (amount) {
+      const num = parseFloat(amount);
+      if (!isNaN(num)) {
+        document.getElementById('txn-amount').textContent =
+          new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(num);
+      } else {
+        document.getElementById('txn-amount').textContent = amount;
+      }
+    } else {
+      document.getElementById('txn-amount').textContent = 'N/A';
+    }
+
+    // Motivo del rechazo (x_response)
+    const reason = params.get('x_response') || params.get('x_response_reason_text') || params.get('reason') || 'N/A';
+    document.getElementById('txn-reason').textContent = reason;
+
+    // NO limpiamos el carrito para que el usuario pueda reintentar
+  });
+</script>
+</body>
+</html>

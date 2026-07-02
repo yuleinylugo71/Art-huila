@@ -1,4 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToOne, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToOne,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { Region } from '../../regions/entities/region.entity';
 import { Category } from '../../categories/entities/category.entity';
@@ -60,7 +70,7 @@ export class ArtisanProfile {
   @Column({ type: 'varchar', nullable: true })
   id_document_back_url: string | null;
 
-  @OneToMany(() => ArtisanGallery, gallery => gallery.profile)
+  @OneToMany(() => ArtisanGallery, (gallery) => gallery.profile)
   gallery: ArtisanGallery[];
 
   @CreateDateColumn()

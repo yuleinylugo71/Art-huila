@@ -1,7 +1,7 @@
 import { UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { AuthService } from './auth.service';
-import { UserRole, Role } from '../users/entities/user.entity';
+import { UserRole } from '../common/constants';
 import { ArtisanStatus } from '../artisans/entities/artisan-profile.entity';
 
 jest.mock('bcrypt', () => ({
@@ -37,7 +37,11 @@ describe('AuthService', () => {
       findById: jest.fn(),
       incrementFailedLogins: jest.fn(),
       resetFailedLogins: jest.fn(),
-      create: jest.fn().mockImplementation((data) => Promise.resolve({ id: 'new-user', ...data })),
+      create: jest
+        .fn()
+        .mockImplementation((data) =>
+          Promise.resolve({ id: 'new-user', ...data }),
+        ),
       save: jest.fn().mockImplementation((data) => Promise.resolve(data)),
       userRepo: {
         findOne: jest.fn().mockResolvedValue(null),
@@ -65,8 +69,10 @@ describe('AuthService', () => {
       configService,
       mailService,
       artisanRepo,
-      { findOneBy: jest.fn().mockResolvedValue({ id: 'cat-1' }) },
-      { findOneBy: jest.fn().mockResolvedValue({ id: 'reg-1' }) },
+      { findOneBy: jest.fn().mockResolvedValue({ id: 'cat-1' }) } as any,
+      { findOneBy: jest.fn().mockResolvedValue({ id: 'reg-1' }) } as any,
+      { delete: jest.fn(), save: jest.fn() } as any,
+      { uploadImage: jest.fn(), deleteImage: jest.fn() } as any,
     );
   });
 
@@ -75,7 +81,10 @@ describe('AuthService', () => {
       usersService.findByEmail.mockResolvedValue(buyerUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
 
-      const result = await service.login({ email: buyerUser.email, password: 'Password123' });
+      const result = await service.login({
+        email: buyerUser.email,
+        password: 'Password123',
+      });
 
       expect(result.access_token).toBe('token');
       expect(result.refresh_token).toBe('token');
@@ -86,23 +95,32 @@ describe('AuthService', () => {
       usersService.findByEmail.mockResolvedValue(buyerUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
-      await expect(service.login({ email: buyerUser.email, password: 'wrong' }))
-        .rejects.toBeInstanceOf(UnauthorizedException);
+      await expect(
+        service.login({ email: buyerUser.email, password: 'wrong' }),
+      ).rejects.toBeInstanceOf(UnauthorizedException);
     });
 
     it('usuario no existente lanza UnauthorizedException', async () => {
       usersService.findByEmail.mockResolvedValue(null);
 
-      await expect(service.login({ email: 'nonexistent@example.com', password: 'password' }))
-        .rejects.toBeInstanceOf(UnauthorizedException);
+      await expect(
+        service.login({
+          email: 'nonexistent@example.com',
+          password: 'password',
+        }),
+      ).rejects.toBeInstanceOf(UnauthorizedException);
     });
 
     it('cuenta bloqueada lanza UnauthorizedException', async () => {
-      const lockedUser = { ...buyerUser, locked_until: new Date(Date.now() + 60000) };
+      const lockedUser = {
+        ...buyerUser,
+        locked_until: new Date(Date.now() + 60000),
+      };
       usersService.findByEmail.mockResolvedValue(lockedUser);
 
-      await expect(service.login({ email: lockedUser.email, password: 'password' }))
-        .rejects.toBeInstanceOf(UnauthorizedException);
+      await expect(
+        service.login({ email: lockedUser.email, password: 'password' }),
+      ).rejects.toBeInstanceOf(UnauthorizedException);
     });
   });
 
@@ -123,8 +141,9 @@ describe('AuthService', () => {
         throw new Error('Invalid token');
       });
 
-      await expect(service.refresh('invalid_token'))
-        .rejects.toBeInstanceOf(UnauthorizedException);
+      await expect(service.refresh('invalid_token')).rejects.toBeInstanceOf(
+        UnauthorizedException,
+      );
     });
   });
 });
@@ -152,7 +171,11 @@ describe('AuthService HU-02', () => {
       findByEmail: jest.fn().mockResolvedValue(user),
       incrementFailedLogins: jest.fn(),
       resetFailedLogins: jest.fn(),
-      create: jest.fn().mockImplementation((data) => Promise.resolve({ id: 'new-user', ...data })),
+      create: jest
+        .fn()
+        .mockImplementation((data) =>
+          Promise.resolve({ id: 'new-user', ...data }),
+        ),
       save: jest.fn().mockImplementation((data) => Promise.resolve(data)),
       userRepo: {
         findOne: jest.fn().mockResolvedValue(user),
@@ -166,12 +189,14 @@ describe('AuthService HU-02', () => {
 
     service = new AuthService(
       usersService,
-      { sign: jest.fn().mockReturnValue('token'), verify: jest.fn() },
-      { get: jest.fn().mockReturnValue('secret') },
-      { sendVerificationEmail: jest.fn() },
+      { sign: jest.fn().mockReturnValue('token'), verify: jest.fn() } as any,
+      { get: jest.fn().mockReturnValue('secret') } as any,
+      { sendVerificationEmail: jest.fn() } as any,
       artisanRepo,
-      { findOneBy: jest.fn().mockResolvedValue({ id: 'cat-1' }) },
-      { findOneBy: jest.fn().mockResolvedValue({ id: 'reg-1' }) },
+      { findOneBy: jest.fn().mockResolvedValue({ id: 'cat-1' }) } as any,
+      { findOneBy: jest.fn().mockResolvedValue({ id: 'reg-1' }) } as any,
+      { delete: jest.fn(), save: jest.fn() } as any,
+      { uploadImage: jest.fn(), deleteImage: jest.fn() } as any,
     );
   });
 
@@ -190,30 +215,43 @@ describe('AuthService HU-02', () => {
       truthfulness_declaration: 'true',
     });
 
-    expect(artisanRepo.create).toHaveBeenCalledWith(expect.objectContaining({
-      verification_status: ArtisanStatus.PENDING,
-    }));
+    expect(artisanRepo.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        verification_status: ArtisanStatus.PENDING,
+      }),
+    );
   });
 
   it('confirmacion de email cambia estado a ACTIVE', async () => {
-    const profile = { id: 'artisan-1', verification_status: ArtisanStatus.PENDING };
+    const profile = {
+      id: 'artisan-1',
+      verification_status: ArtisanStatus.PENDING,
+    };
     artisanRepo.findOne.mockResolvedValue(profile);
 
     await service.verifyEmail('email-token');
 
-    expect(usersService.save).toHaveBeenCalledWith(expect.objectContaining({
-      email_verified: true,
-      verifiedAt: expect.any(Date),
-    }));
-    expect(artisanRepo.save).toHaveBeenCalledWith(expect.objectContaining({
-      verification_status: ArtisanStatus.ACTIVE,
-    }));
+    expect(usersService.save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        email_verified: true,
+        verifiedAt: expect.any(Date),
+      }),
+    );
+    expect(artisanRepo.save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        verification_status: ArtisanStatus.ACTIVE,
+      }),
+    );
   });
 
   it('artesano SUSPENDED no puede iniciar sesion', async () => {
     (bcrypt.compare as jest.Mock).mockResolvedValue(true);
-    artisanRepo.findOne.mockResolvedValue({ verification_status: ArtisanStatus.SUSPENDED });
+    artisanRepo.findOne.mockResolvedValue({
+      verification_status: ArtisanStatus.SUSPENDED,
+    });
 
-    await expect(service.login({ email: user.email, password: 'Password1' })).rejects.toBeInstanceOf(UnauthorizedException);
+    await expect(
+      service.login({ email: user.email, password: 'Password1' }),
+    ).rejects.toBeInstanceOf(UnauthorizedException);
   });
 });

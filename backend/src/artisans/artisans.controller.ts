@@ -1,22 +1,39 @@
-import { Controller, Get, Param, Post, UseGuards, UploadedFiles, UseInterceptors, Body, Query } from '@nestjs/common';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+  UploadedFiles,
+  UseInterceptors,
+  Body,
+  Query,
+  Req,
+  Inject,
+} from '@nestjs/common';
+import {
+  FilesInterceptor,
+  FileFieldsInterceptor,
+} from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { ArtisansService } from './artisans.service';
-import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { STORAGE_SERVICE } from '../cloudinary/storage.service.interface';
+import type { IStorageService } from '../cloudinary/storage.service.interface';
 
 @Controller('artisans')
 export class ArtisansController {
   constructor(
     private readonly artisansService: ArtisansService,
-    private readonly cloudinaryService: CloudinaryService,
+    @Inject(STORAGE_SERVICE)
+    private readonly storageService: IStorageService,
   ) {}
-  
+
   @Get()
   async findAll(@Query('featured') featured?: string) {
     if (featured === 'true') {
       const artisans = await this.artisansService.findFeatured();
-      return artisans.map(a => ({
+      return artisans.map((a) => ({
         name: a.user.full_name,
         city: a.region?.name || 'Huila',
         bio: a.cultural_history.substring(0, 120) + '...',
@@ -50,8 +67,15 @@ export class ArtisansController {
     if (!profile) return { message: 'Profile not found' };
     const uploaded: string[] = [];
     for (const file of files) {
-      const result = await this.cloudinaryService.uploadImage(file, 'arthuila/gallery');
-      await this.artisansService.addGalleryImage(profile.id, result.secure_url, result.public_id);
+      const result = await this.storageService.uploadImage(
+        file,
+        'arthuila/gallery',
+      );
+      await this.artisansService.addGalleryImage(
+        profile.id,
+        result.secure_url,
+        result.public_id,
+      );
       uploaded.push(result.secure_url);
     }
     return { uploaded };
@@ -71,8 +95,117 @@ export class ArtisansController {
     @UploadedFiles() files: Express.Multer.File[],
   ) {
     if (!files || files.length === 0) return { message: 'No image provided' };
-    const result = await this.cloudinaryService.uploadImage(files[0], 'arthuila/avatars');
-    await this.artisansService.updateProfile(user.id, { avatar_url: result.secure_url });
+    const result = await this.storageService.uploadImage(
+      files[0],
+      'arthuila/avatars',
+    );
+    await this.artisansService.updateProfile(user.id, {
+      avatar_url: result.secure_url,
+    });
     return { avatar_url: result.secure_url };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('me/document-front')
+  @UseInterceptors(FilesInterceptor('document', 1))
+  async uploadDocumentFront(
+    @CurrentUser() user: any,
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
+    if (!files || files.length === 0) return { message: 'No file provided' };
+    const result = await this.storageService.uploadImage(
+      files[0],
+      'arthuila/documents',
+    );
+    await this.artisansService.updateProfile(user.id, {
+      id_document_front_url: result.secure_url,
+    });
+    return { id_document_front_url: result.secure_url };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('me/document-back')
+  @UseInterceptors(FilesInterceptor('document', 1))
+  async uploadDocumentBack(
+    @CurrentUser() user: any,
+    @UploadedFiles() files: Express.Multer.File[],
+  ) {
+    if (!files || files.length === 0) return { message: 'No file provided' };
+    const result = await this.storageService.uploadImage(
+      files[0],
+      'arthuila/documents',
+    );
+    await this.artisansService.updateProfile(user.id, {
+      id_document_back_url: result.secure_url,
+    });
+    return { id_document_back_url: result.secure_url };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('apply')
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'id_document_front', maxCount: 1 },
+      { name: 'id_document_back', maxCount: 1 },
+      { name: 'gallery', maxCount: 10 },
+    ]),
+  )
+  async apply(
+    @CurrentUser() user: any,
+    @UploadedFiles()
+    files: {
+      id_document_front?: Express.Multer.File[];
+      id_document_back?: Express.Multer.File[];
+      gallery?: Express.Multer.File[];
+    },
+    @Body() body: any,
+    @Req() req: any,
+  ) {
+    let idDocumentFrontUrl: string | null = null;
+    if (files?.id_document_front?.[0]) {
+      const result = await this.storageService.uploadImage(
+        files.id_document_front[0],
+        'arthuila/documents',
+      );
+      idDocumentFrontUrl = result.secure_url;
+    }
+
+    let idDocumentBackUrl: string | null = null;
+    if (files?.id_document_back?.[0]) {
+      const result = await this.storageService.uploadImage(
+        files.id_document_back[0],
+        'arthuila/documents',
+      );
+      idDocumentBackUrl = result.secure_url;
+    }
+
+    const galleryUrls: { url: string; public_id: string }[] = [];
+    if (files?.gallery && files.gallery.length > 0) {
+      for (const file of files.gallery) {
+        const result = await this.storageService.uploadImage(
+          file,
+          'arthuila/gallery',
+        );
+        galleryUrls.push({
+          url: result.secure_url,
+          public_id: result.public_id,
+        });
+      }
+    }
+
+    const clientIp =
+      req.ip ||
+      req.headers['x-forwarded-for']?.toString() ||
+      req.socket.remoteAddress ||
+      '';
+
+    return this.artisansService.apply(
+      user.id,
+      body,
+      idDocumentFrontUrl,
+      idDocumentBackUrl,
+      galleryUrls,
+      clientIp,
+    );
   }
 }

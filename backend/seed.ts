@@ -2,7 +2,8 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import * as path from 'path';
-import { User, UserRole } from './src/users/entities/user.entity';
+import { User } from './src/users/entities/user.entity';
+import { UserRole } from './src/common/constants';
 import { Category } from './src/categories/entities/category.entity';
 import { Region } from './src/regions/entities/region.entity';
 import { ArtisanProfile, VerificationStatus } from './src/artisans/entities/artisan-profile.entity';
@@ -24,6 +25,12 @@ const seedDatabase = async () => {
 
   await dataSource.initialize();
   console.log('✅ Database connected for seeding...');
+
+  // Limpiar imágenes y productos antiguos usando queries nativos con nombres de tabla dinámicos
+  const imageTableName = dataSource.getRepository(ProductImage).metadata.tableName;
+  const productTableName = dataSource.getRepository(Product).metadata.tableName;
+  await dataSource.query(`DELETE FROM "${imageTableName}"`);
+  await dataSource.query(`DELETE FROM "${productTableName}"`);
 
   // --- Seed Categories ---
   const categoryRepo = dataSource.getRepository(Category);

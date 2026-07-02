@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="login.title">Iniciar sesión — Art Huila</title>
+  <link rel="stylesheet" href="/css/base.css?v=18">
+  <link rel="stylesheet" href="/css/auth.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<div class="auth-layout">
+  
+  <!-- ── LEFT: BRAND PANEL (Wavy spacer mockup style) ── -->
+  <div class="auth-left">
+    
+    <!-- Navigation back link -->
+    <div class="back-link-row">
+      <a href="index.html" class="back-btn">←</a>
+      <span class="back-text" data-i18n="nav.backToHome">Volver al inicio</span>
+    </div>
+    
+    <!-- Language Switcher -->
+    <div class="lang-switcher">
+      <button id="btn-lang-es" class="active" onclick="window.changeLanguage('es')">ES</button>
+      <span>|</span>
+      <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+    </div>
+    
+    <!-- Slogan & Info -->
+    <h2 class="auth-left-title" data-i18n="login.leftTitle">Conectamos artesanos con el mundo</h2>
+    <p class="auth-left-subtitle" data-i18n="login.leftSubtitle">El marketplace de artesanías más auténtico del Huila. Inicia sesión para acceder a tu área personalizada.</p>
+    
+    <!-- Context Point List -->
+    <div class="auth-points-list">
+      <div class="auth-point">
+        <i class="fa-solid fa-leaf"></i>
+        <span data-i18n="login.leftPoint1">Artesanías 100% auténticas del Huila</span>
+      </div>
+      <div class="auth-point">
+        <i class="fa-solid fa-medal"></i>
+        <span data-i18n="login.leftPoint2">Artesanos verificados por el equipo</span>
+      </div>
+      <div class="auth-point">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span data-i18n="login.leftPoint3">Acceso seguro con JWT</span>
+      </div>
+    </div>
+    
+    <!-- Organic wavy/bubbly cloud divider styled completely by CSS (layered Spacer mockup style) -->
+    <svg class="wave-divider" viewBox="0 0 100 460" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path class="wave-layer-bg-cream" d="M100,0 L45,0 C43,20 38,35 40,60 C42,85 53,95 50,130 C47,165 38,175 41,210 C44,245 52,250 49,290 C46,330 38,335 40,370 C42,405 51,395 48,425 C45,455 45,460 45,460 L100,460 Z" />
+      <path class="wave-layer-1" d="M0,0 L45,0 C43,20 38,35 40,60 C42,85 53,95 50,130 C47,165 38,175 41,210 C44,245 52,250 49,290 C46,330 38,335 40,370 C42,405 51,395 48,425 C45,455 45,460 45,460 L0,460 Z" />
+      <path class="wave-layer-2" d="M0,0 L45,0 C43,20 38,35 40,60 C42,85 53,95 50,130 C47,165 38,175 41,210 C44,245 52,250 49,290 C46,330 38,335 40,370 C42,405 51,395 48,425 C45,455 45,460 45,460 L0,460 Z" />
+      <path class="wave-layer-3" d="M0,0 L45,0 C43,20 38,35 40,60 C42,85 53,95 50,130 C47,165 38,175 41,210 C44,245 52,250 49,290 C46,330 38,335 40,370 C42,405 51,395 48,425 C45,455 45,460 45,460 L0,460 Z" />
+    </svg>
+  </div>
+
+  <!-- ── RIGHT: FORM PANEL ── -->
+  <div class="auth-right">
+    
+    <!-- Mobile Screen Header (Mockup Style) -->
+    <div class="mobile-only mobile-auth-header-login">
+      <a href="index.html" class="mobile-back-arrow">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+      <div class="lang-switcher" style="position: absolute; right: 0.5rem; top: 1.2rem; margin: 0; padding: 0;">
+        <button id="mobile-lang-es" class="btn-lang-es active" onclick="window.changeLanguage('es')">ES</button>
+        <span style="font-size: 0.7rem; color: var(--color-border);">|</span>
+        <button id="mobile-lang-en" class="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+      </div>
+      <div class="mobile-logo-wrapper">
+        <div class="mobile-logo-box">
+          <i class="fa-solid fa-jar"></i>
+        </div>
+        <h1 class="mobile-brand-title">Art Huila</h1>
+        <p class="mobile-brand-subtitle">Artesanías con Alma del Huila</p>
+      </div>
+    </div>
+
+    <div class="auth-box">
+      <a href="index.html" class="navbar-brand desktop-only">Art <span>Huila</span></a>
+      <h2 data-i18n="login.welcome">Bienvenido/a de nuevo</h2>
+      <p class="text-muted" data-i18n="login.welcomeSub">Ingresa tus credenciales para continuar</p>
+
+      <!-- Error box dynamically populated -->
+      <div id="login-error" class="hidden"></div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label" for="email" data-i18n="auth.emailLabel">Correo electrónico</label>
+          <input type="email" id="email" class="form-control" data-i18n-placeholder="auth.emailPlaceholder" placeholder="tu@correo.com" required autocomplete="email"/>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="password" data-i18n="auth.passwordLabel">Contraseña</label>
+          <div class="password-input-wrapper">
+            <input type="password" id="password" class="form-control" data-i18n-placeholder="auth.passwordPlaceholder" placeholder="••••••••" required autocomplete="current-password"/>
+            <i class="fa-solid fa-eye-slash toggle-password" onclick="togglePasswordVisibility('password', this)"></i>
+          </div>
+          <div class="forgot-password-wrapper">
+            <a href="recuperar-contrasena.html" class="forgot-password-link" data-i18n="login.forgotPassword">¿Olvidaste tu contraseña?</a>
+          </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary btn-full" id="submit-btn" data-i18n="login.btnText">
+          Iniciar sesión
+        </button>
+      </form>
+
+      <hr class="divider"/>
+      
+      <p style="text-align:center;font-size:0.9rem;color:var(--color-muted);">
+        <span data-i18n="auth.noAccount">¿No tienes cuenta?</span> 
+        <a href="registro.html" style="color:var(--color-primary);font-weight:600;" data-i18n="auth.registerHere">Regístrate aquí</a>
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+<script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
+<script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/i18n.js"></script>
+<script src="/js/login.js"></script>
+</body>
+</html>

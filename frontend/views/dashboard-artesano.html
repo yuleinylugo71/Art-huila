@@ -4,59 +4,237 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="artisan.profileTitle">Mi Panel — Art Huila</title>
-  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/base.css?v=13">
   <link rel="stylesheet" href="/css/dashboard-artesano.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
-<div class="dashboard-layout">
-  <aside class="sidebar">
-    <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.5rem;">
-      <a href="index.html" class="nav-arrow" title="Ir al inicio">←</a>
-      <a href="index.html" class="sidebar-brand">Art <span>Huila</span><br/><small style="font-size:0.7rem;opacity:0.5;font-family:Outfit,sans-serif;">Panel Artesano</small></a>
+
+<!-- Mobile Header (Exact Mockup Style) -->
+<header class="mobile-header mobile-only">
+  <div class="mobile-header-top-row">
+    <div class="mobile-header-text">
+      <span class="mobile-panel-label" data-i18n="artisan.panelLabel">Panel Artesano</span>
+      <h1 class="mobile-artisan-name" id="mobile-welcome-msg">Deicy Quimbayo</h1>
     </div>
-    <div class="lang-switcher" style="margin-bottom:1rem;padding-left:0.5rem;">
-      <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
-      <span>|</span>
-      <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+    <div class="mobile-header-actions">
+      <!-- Lang toggles integrated as tiny dots or pill next to bell, or just in header -->
+      <div class="mobile-lang-header-pill">
+        <button id="mobile-lang-es" onclick="changeLanguage('es')" class="btn-lang-es active">ES</button>
+        <span>|</span>
+        <button id="mobile-lang-en" onclick="changeLanguage('en')" class="btn-lang-en">EN</button>
+      </div>
+      <button class="mobile-header-circle-btn" onclick="toggleRightPanel('notifications')">
+        <i class="fa-regular fa-bell"></i>
+        <span class="bell-dot" id="mobile-notif-count-dot"></span>
+      </button>
+      <button class="mobile-header-circle-btn" onclick="Auth.logout()">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </button>
+    </div>
+  </div>
+  
+  <!-- Pill Tabs switcher -->
+  <div class="mobile-pill-tabs">
+    <button onclick="showSection('resumen')" class="pill-tab active" id="pill-tab-resumen" data-i18n="artisan.menuResumen">Resumen</button>
+    <button onclick="showSection('mis-productos')" class="pill-tab" id="pill-tab-productos" data-i18n="artisan.menuMyProductsLabel">Productos</button>
+    <button onclick="showSection('mis-ventas')" class="pill-tab" id="pill-tab-ventas" data-i18n="artisan.menuMySalesLabel">Ventas</button>
+    <button onclick="showSection('mis-compras')" class="pill-tab" id="pill-tab-compras" data-i18n="artisan.menuMyPurchasesLabel">Compras</button>
+    <button onclick="showSection('nuevo-producto')" class="pill-tab" id="pill-tab-nuevo" data-i18n="artisan.menuPublishProductLabel">+ Nuevo</button>
+  </div>
+</header>
+
+<!-- Mobile Drawer Overlay Menu -->
+<div class="mobile-drawer-overlay mobile-only" id="mobile-drawer" onclick="toggleMobileMenu()">
+  <div class="mobile-drawer-content" onclick="event.stopPropagation()">
+    <div class="drawer-header">
+      <div class="mobile-logo">Art<span>Huila</span></div>
+      <button class="drawer-close-btn" onclick="toggleMobileMenu()">×</button>
+    </div>
+    <ul class="drawer-nav">
+      <li><a href="#" onclick="showSection('resumen'); toggleMobileMenu();"><i class="fa-solid fa-table-columns"></i> <span data-i18n="artisan.menuResumen">Resumen</span></a></li>
+      <li><a href="#" onclick="showSection('mis-compras'); toggleMobileMenu();"><i class="fa-solid fa-bag-shopping"></i> <span data-i18n="artisan.menuMyPurchasesLabel">Mis compras</span></a></li>
+      <li><a href="#" onclick="showSection('nuevo-producto'); toggleMobileMenu();"><i class="fa-solid fa-plus"></i> <span data-i18n="artisan.menuPublishProductLabel">Publicar producto</span></a></li>
+      <li><a href="catalogo.html"><i class="fa-solid fa-store"></i> <span data-i18n="artisan.menuViewCatalogLabel">Ver catálogo</span></a></li>
+      <li><a href="#" onclick="Auth.logout()"><i class="fa-solid fa-right-from-bracket"></i> <span data-i18n="auth.logout">Cerrar sesión</span></a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="dashboard-layout">
+  <!-- ── COLUMN 1: LEFT SIDEBAR (Icon & Brand Panel) ── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo-container" id="btn-toggle-sidebar" style="cursor: pointer;">
+      <div class="sidebar-logo-link">
+        <i class="fa-solid fa-palette"></i>
+      </div>
     </div>
     <ul class="sidebar-nav">
-      <li><a href="#" onclick="showSection('mis-productos')" class="active"><i class="fa-solid fa-box"></i> Mis productos</a></li>
-      <li><a href="#" onclick="showSection('mis-ventas')"><i class="fa-solid fa-sack-dollar"></i> Mis ventas</a></li>
-      <li><a href="#" onclick="showSection('nuevo-producto')"><i class="fa-solid fa-plus"></i> Publicar producto</a></li>
-      <li><a href="#" onclick="showSection('mi-perfil')"><i class="fa-solid fa-user"></i> Mi perfil</a></li>
-      <li><a href="catalogo.html"><i class="fa-solid fa-vase"></i> Ver catálogo</a></li>
-      <li><a href="#" onclick="Auth.logout()"><i class="fa-solid fa-right-from-bracket"></i> <span data-i18n="auth.logout">Cerrar sesión</span></a></li>
+      <li><a href="#" onclick="showSection('resumen')" class="active" data-i18n-tooltip="artisan.menuResumen"><i class="fa-solid fa-table-columns"></i> <span data-i18n="artisan.menuResumen">Resumen</span></a></li>
+      <li><a href="#" onclick="showSection('mis-productos')" data-i18n-tooltip="artisan.menuMyProductsLabel"><i class="fa-solid fa-box"></i> <span data-i18n="artisan.menuMyProductsLabel">Mis productos</span></a></li>
+      <li><a href="#" onclick="showSection('mis-ventas')" data-i18n-tooltip="artisan.menuMySalesLabel"><i class="fa-solid fa-sack-dollar"></i> <span data-i18n="artisan.menuMySalesLabel">Mis ventas</span></a></li>
+      <li><a href="#" onclick="showSection('mis-compras')" data-i18n-tooltip="artisan.menuMyPurchasesLabel"><i class="fa-solid fa-bag-shopping"></i> <span data-i18n="artisan.menuMyPurchasesLabel">Mis compras</span></a></li>
+      <li><a href="#" onclick="showSection('nuevo-producto')" data-i18n-tooltip="artisan.menuPublishProductLabel"><i class="fa-solid fa-plus"></i> <span data-i18n="artisan.menuPublishProductLabel">Publicar producto</span></a></li>
+      <li><a href="#" onclick="showSection('mi-perfil')" data-i18n-tooltip="artisan.menuMyProfileLabel"><i class="fa-solid fa-user"></i> <span data-i18n="artisan.menuMyProfileLabel">Mi perfil</span></a></li>
+      <li><a href="catalogo.html" data-i18n-tooltip="artisan.menuViewCatalogLabel"><i class="fa-solid fa-store"></i> <span data-i18n="artisan.menuViewCatalogLabel">Ver catálogo</span></a></li>
+      <li><a href="#" onclick="Auth.logout()" data-i18n-tooltip="auth.logout"><i class="fa-solid fa-right-from-bracket"></i> <span data-i18n="auth.logout">Cerrar sesión</span></a></li>
     </ul>
   </aside>
 
-  <main class="dashboard-main">
-    <div class="dashboard-header">
-      <h1 id="welcome-msg">Mi Panel</h1>
-      <p class="text-muted" id="status-msg"></p>
-    </div>
+  <!-- ── COLUMN 2: CENTRAL WORKSPACE WRAPPER ── -->
+  <div class="dashboard-content-wrapper">
+    <!-- ── TOP HEADER BAR ── -->
+    <header class="dashboard-header-bar">
+      <div class="header-left">
+        <a href="index.html" class="header-brand" style="text-decoration: none;">
+          Art<span>Huila</span>
+        </a>
+        <span class="header-divider"></span>
+        <div class="header-lang">
+          <button id="btn-lang-es" onclick="changeLanguage('es')" class="lang-btn">ES</button>
+          <button id="btn-lang-en" onclick="changeLanguage('en')" class="lang-btn">EN</button>
+        </div>
+      </div>
+      <div class="header-right">
+        <button class="header-action-btn" id="btn-toggle-notifications" onclick="toggleRightPanel('notifications')">
+          <i class="fa-regular fa-bell"></i>
+          <span class="badge-count" id="header-notif-count">0</span>
+        </button>
+      </div>
+    </header>
 
-    <!-- Alert if not verified -->
-    <div id="not-verified-alert" class="hidden" style="background:#fef9c3;border:1px solid #fde047;border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.5rem;color:#854d0e;">
-      <i class="fa-solid fa-hourglass-half"></i> Tu perfil está <strong>pendiente de aprobación</strong> por el equipo de Art Huila. Recibirás un correo cuando sea aprobado.
-    </div>
+    <!-- ── COLUMN 2: CENTRAL WORKSPACE ── -->
+    <main class="dashboard-main">
+    
+    <!-- Section: Resumen (Default welcome page) -->
+    <section id="section-resumen">
+      <!-- Premium Welcome Banner with Tasks Checklist -->
+      <div class="welcome-banner">
+        <div class="welcome-banner-content">
+          <h1 id="welcome-msg">¡Hola, Artesano!</h1>
+          <p class="welcome-subtitle" data-i18n="artisan.welcomeSubtitle">Bienvenido de vuelta a tu espacio de creación. Aquí tienes un resumen de tus actividades del día.</p>
+          
+          <!-- Perfil Cultural Completeness Card -->
+          <div class="completeness-card" id="profile-completeness-card">
+            <h3><i class="fa-solid fa-address-card"></i> <span data-i18n="artisan.profileCultural">Perfil Cultural</span></h3>
+            
+            <!-- Progress Section -->
+            <div class="progress-section">
+              <div class="progress-bar-wrapper">
+                <div class="progress-bar-container">
+                  <div class="progress-bar-fill" id="profile-completeness-bar" style="width: 0%;"></div>
+                </div>
+                <span class="progress-percentage" id="profile-completeness-percentage">0%</span>
+              </div>
+            </div>
+            
+            <!-- Checklist Rows -->
+            <ul class="completeness-list">
+              <li id="row-history">
+                <div class="row-left">
+                  <i class="fa-solid fa-scroll text-terracota"></i>
+                  <span class="row-label" data-i18n="artisan.rowHistoryLabel">Historia cultural del oficio</span>
+                </div>
+                <div class="row-right">
+                  <span class="status-badge badge-pending" id="badge-history" data-i18n="artisan.statusPendiente">Pendiente</span>
+                  <button class="btn-complete" id="link-history" onclick="showSection('mi-perfil'); enableProfileEdit();" data-i18n="artisan.btnComplete">Completar →</button>
+                </div>
+              </li>
+              <li id="row-technique">
+                <div class="row-left">
+                  <i class="fa-solid fa-paintbrush text-amber"></i>
+                  <span class="row-label" data-i18n="artisan.rowTechniqueLabel">Técnica artesanal</span>
+                </div>
+                <div class="row-right">
+                  <span class="status-badge badge-pending" id="badge-technique" data-i18n="artisan.statusPendiente">Pendiente</span>
+                  <button class="btn-complete" id="link-technique" onclick="showSection('mi-perfil'); enableProfileEdit();" data-i18n="artisan.btnComplete">Completar →</button>
+                </div>
+              </li>
+              <li id="row-avatar">
+                <div class="row-left">
+                  <i class="fa-solid fa-image-portrait text-gold"></i>
+                  <span class="row-label" data-i18n="artisan.rowAvatarLabel">Fotografía de perfil</span>
+                </div>
+                <div class="row-right">
+                  <span class="status-badge badge-pending" id="badge-avatar" data-i18n="artisan.statusPendiente">Pendiente</span>
+                  <button class="btn-complete" id="link-avatar" onclick="showSection('mi-perfil'); enableProfileEdit();" data-i18n="artisan.btnComplete">Completar →</button>
+                </div>
+              </li>
+              <li id="row-gallery">
+                <div class="row-left">
+                  <i class="fa-solid fa-images text-olive"></i>
+                  <span class="row-label" id="label-gallery">Galería del taller (0 de 10)</span>
+                </div>
+                <div class="row-right">
+                  <span class="status-badge badge-pending" id="badge-gallery" data-i18n="artisan.statusPendiente">Pendiente</span>
+                  <button class="btn-complete" id="link-gallery" onclick="showSection('mi-perfil'); enableProfileEdit();" data-i18n="artisan.btnComplete">Completar →</button>
+                </div>
+              </li>
+              <li id="row-id">
+                <div class="row-left">
+                  <i class="fa-solid fa-id-card text-brown"></i>
+                  <span class="row-label" data-i18n="artisan.rowIdLabel">Cédula de ciudadanía</span>
+                </div>
+                <div class="row-right">
+                  <span class="status-badge badge-pending" id="badge-id" data-i18n="artisan.statusPendiente">Pendiente</span>
+                  <button class="btn-complete" id="link-id" onclick="showSection('mi-perfil'); enableProfileEdit();" data-i18n="artisan.btnComplete">Completar →</button>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="welcome-banner-graphic">
+          <img src="/img/artisan-bear.png" alt="Oso Artesano" class="welcome-bear-img"/>
+        </div>
+      </div>
 
-    <!-- Mis Ventas -->
+      <!-- Metrics Row Grid -->
+      <div class="metrics-grid" id="metrics-grid-bottom">
+        <div class="metric-card" onclick="showSection('mis-ventas')" style="cursor: pointer;">
+          <div class="metric-icon color-olive"><i class="fa-solid fa-truck-ramp-box"></i></div>
+          <div class="metric-info">
+            <span class="metric-label" data-i18n="artisan.microOrders">Pedidos Pendientes</span>
+            <h3 class="metric-value" id="metric-orders">0</h3>
+          </div>
+        </div>
+        <div class="metric-card" onclick="showSection('mis-ventas')" style="cursor: pointer;">
+          <div class="metric-icon color-gold"><i class="fa-solid fa-chart-line"></i></div>
+          <div class="metric-info">
+            <span class="metric-label" data-i18n="artisan.microSales">Ventas del Mes</span>
+            <h3 class="metric-value" id="metric-sales">0</h3>
+          </div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon color-blue"><i class="fa-solid fa-receipt"></i></div>
+          <div class="metric-info">
+            <span class="metric-label" data-i18n="artisan.microLastOrder">Último Pedido</span>
+            <h3 class="metric-value" id="metric-last-order">Ninguno aún</h3>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alert if not verified -->
+      <div id="not-verified-alert" class="hidden" data-i18n="artisan.pendingApprovalAlert">
+        <i class="fa-solid fa-hourglass-half"></i> Tu perfil está <strong>pendiente de aprobación</strong> por el equipo de Art Huila. Recibirás un correo cuando sea aprobado.
+      </div>
+    </section>
+
+    <!-- Section: Mis Ventas -->
     <section id="section-mis-ventas" class="hidden">
       <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
-        <a href="#" onclick="showSection('mis-productos')" class="nav-arrow" style="background:var(--color-bg2);color:var(--color-text);border:1px solid var(--color-border);">←</a>
-        <h2 style="font-family:'Crimson Pro',serif;font-size:1.5rem;margin:0;">Mis ventas</h2>
+        <h2 style="font-size:1.5rem;margin:0;" data-i18n="artisan.mySalesHeading">Mis ventas</h2>
       </div>
-      <div class="card">
-        <table class="table" style="width:100%;">
+      <!-- Desktop Table -->
+      <div class="card desktop-only">
+        <table class="table">
           <thead>
             <tr>
-              <th>Fecha</th>
-              <th>Producto</th>
-              <th>Cliente</th>
-              <th>Cant.</th>
-              <th>Total</th>
-              <th>Estado</th>
+              <th data-i18n="admin.thDate">Fecha</th>
+              <th data-i18n="admin.thProduct">Producto</th>
+              <th data-i18n="admin.thCustomer">Cliente</th>
+              <th data-i18n="buyer.quantityLabelShort" style="text-align:center;">Cant.</th>
+              <th data-i18n="admin.thTotal">Total</th>
+              <th data-i18n="admin.thStatus">Estado</th>
             </tr>
           </thead>
           <tbody id="sales-list">
@@ -64,155 +242,350 @@
           </tbody>
         </table>
       </div>
+      <!-- Mobile Cards -->
+      <div id="sales-cards-mobile" class="mobile-only" style="display:flex;flex-direction:column;gap:1rem;">
+        <div class="spinner"></div>
+      </div>
     </section>
 
-    <!-- Mis Productos -->
-    <section id="section-mis-productos">
+    <!-- Section: Mis Compras (Pedidos realizados como comprador) -->
+    <section id="section-mis-compras" class="hidden">
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
+        <h2 style="font-size:1.5rem;margin:0;" data-i18n="artisan.menuMyPurchasesLabel">Mis compras</h2>
+      </div>
+      <div id="buyer-stats-container" style="margin-bottom: 1.5rem;"></div>
+      <div id="orders-container" style="display:flex; flex-direction:column; gap:1.25rem;">
+        <div class="spinner"></div>
+      </div>
+      <div class="pagination-controls" id="buyer-orders-pagination" style="margin-top:1.5rem;"></div>
+    </section>
+
+    <!-- Section: Mis Productos -->
+    <section id="section-mis-productos" class="hidden">
       <div class="flex justify-between items-center mb-2">
-        <h2 style="font-family:'Crimson Pro',serif;font-size:1.5rem;">Mis productos</h2>
-        <button class="btn btn-primary btn-sm" onclick="showSection('nuevo-producto')">+ Publicar nuevo</button>
+        <h2 style="font-size:1.5rem; margin:0;" data-i18n="artisan.myProductsHeading">Mis productos</h2>
+        <button class="btn btn-primary btn-sm" onclick="showSection('nuevo-producto')" data-i18n="artisan.publishNewBtn">+ Publicar nuevo</button>
       </div>
       <div id="my-products-grid" class="grid grid-3"><div class="spinner"></div></div>
     </section>
 
-    <!-- Nuevo Producto -->
+    <!-- Section: Nuevo Producto / Editar -->
     <section id="section-nuevo-producto" class="hidden">
       <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
-        <a href="#" onclick="showSection('mis-productos')" class="nav-arrow" style="background:var(--color-bg2);color:var(--color-text);border:1px solid var(--color-border);">←</a>
-        <h2 style="font-family:'Crimson Pro',serif;font-size:1.5rem;margin:0;">Publicar nuevo producto</h2>
+        <h2 style="font-size:1.5rem;margin:0;" data-i18n="artisan.publishProductHeading">Publicar nuevo producto</h2>
       </div>
-      <div id="preview-box" class="hidden card card-body mb-3" style="background:#fff5ee;"></div>
-      <form id="product-form">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
-          <div class="form-group" style="grid-column:1/-1;">
-            <label class="form-label">Nombre del producto *</label>
-            <input type="text" id="p-name" class="form-control" maxlength="120" placeholder="Ej: Mochila Wayuu Tejida" required/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Precio (COP) *</label>
-            <input type="number" id="p-price" class="form-control" min="1" placeholder="150000" required/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Stock *</label>
-            <input type="number" id="p-stock" class="form-control" min="0" placeholder="10" required/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Categoría *</label>
-            <select id="p-category" class="form-control" required><option value="">Cargando...</option></select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Municipio *</label>
-            <select id="p-region" class="form-control" required><option value="">Cargando...</option></select>
-          </div>
-          <div class="form-group" style="grid-column:1/-1;">
-            <label class="form-label">Descripción breve (gancho)</label>
-            <input type="text" id="p-short-desc" class="form-control" maxlength="150" placeholder="Ej: Pieza única tejida a mano que cuenta la historia de la tierra..."/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Materiales usados</label>
-            <input type="text" id="p-materials" class="form-control" placeholder="Ej: Lana de oveja, tintes naturales"/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Medidas / Tamaño</label>
-            <input type="text" id="p-dimensions" class="form-control" placeholder="Ej: 30cm x 20cm"/>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Peso aproximado</label>
-            <input type="text" id="p-weight" class="form-control" placeholder="Ej: 500g"/>
-          </div>
-          <div class="form-group">
-            <label class="checkbox-label" style="display:flex;align-items:center;gap:0.5rem;margin-top:2rem;">
-              <input type="checkbox" id="p-handmade" checked/>
-              ¿Es hecho a mano?
-            </label>
-          </div>
-          <div class="form-group" style="grid-column:1/-1;">
-            <label class="form-label">Cuidado y mantenimiento</label>
-            <textarea id="p-care" class="form-control" placeholder="Ej: Lavar a mano con agua fría y secar a la sombra..."></textarea>
-          </div>
-          <div class="form-group" style="grid-column:1/-1;">
-            <label class="form-label">Origen cultural *</label>
-            <textarea id="p-origin" class="form-control" placeholder="Describe el origen de esta artesanía..." required></textarea>
-          </div>
-          <div class="form-group" style="grid-column:1/-1;">
-            <label class="form-label">Técnica artesanal *</label>
-            <textarea id="p-technique" class="form-control" placeholder="Describe la técnica utilizada..." required></textarea>
-          </div>
-          <div class="form-group" style="grid-column:1/-1;">
-            <label class="form-label">Significado cultural *</label>
-            <textarea id="p-significance" class="form-control" placeholder="¿Qué significa esta pieza culturalmente?" required></textarea>
-          </div>
-          <div class="form-group" style="grid-column:1/-1;">
-            <label class="form-label">Imágenes del producto (máx. 10)</label>
-            <div class="image-uploader" id="img-uploader" onclick="document.getElementById('img-input').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondrop="handleDrop(event)">
-              <input type="file" id="img-input" accept="image/*" multiple onchange="handleFiles(this.files)"/>
-              <div style="font-size:2rem;margin-bottom:0.5rem;"><i class="fa-solid fa-camera-retro"></i></div>
-              <div style="font-weight:500;">Haz clic o arrastra imágenes aquí</div>
-              <div style="font-size:0.8rem;color:var(--color-muted);">PNG, JPG, WEBP — máximo 10 imágenes</div>
+      <div id="preview-box" class="hidden card card-body mb-3"></div>
+      <form id="product-form" class="product-form-container">
+        <div class="product-form-grid">
+          <!-- Columna Izquierda: Detalles del Producto -->
+          <div class="product-details-col">
+            <div class="card card-body mb-3">
+              <h3 class="section-title"><i class="fa-solid fa-circle-info"></i> <span data-i18n="artisan.basicInfoHeading">Información Básica</span></h3>
+              <div class="form-group">
+                <label class="form-label" data-i18n="artisan.productNameLabel">Nombre del producto *</label>
+                <input type="text" id="p-name" class="form-control" maxlength="120" data-i18n-placeholder="artisan.productNamePlaceholder" placeholder="Ej: Mochila Wayuu Tejida" required/>
+              </div>
+              <div class="form-row-grid">
+                <div class="form-group">
+                  <label class="form-label" data-i18n="artisan.productPriceLabel">Precio (COP) *</label>
+                  <input type="number" id="p-price" class="form-control" min="1" placeholder="150000" required/>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" data-i18n="artisan.productStockLabel">Stock *</label>
+                  <input type="number" id="p-stock" class="form-control" min="0" placeholder="10" required/>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="checkbox-label" style="display:flex;align-items:center;gap:0.5rem;margin-top:0.5rem;">
+                  <input type="checkbox" id="p-handmade" checked/>
+                  <span data-i18n="artisan.productIsHandmadeLabel">¿Es hecho a mano?</span>
+                </label>
+              </div>
+              <div class="form-row-grid mt-1">
+                <div class="form-group">
+                  <label class="form-label" data-i18n="artisan.productCategoryLabel">Categoría *</label>
+                  <select id="p-category" class="form-control" required><option value="" data-i18n="common.loading">Cargando...</option></select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" data-i18n="artisan.productRegionLabel">Municipio *</label>
+                  <select id="p-region" class="form-control" required><option value="" data-i18n="common.loading">Cargando...</option></select>
+                </div>
+              </div>
+              <div class="form-row-grid mt-1">
+                <div class="form-group">
+                  <label class="form-label" data-i18n="artisan.productWeightLabel">Peso aproximado</label>
+                  <input type="text" id="p-weight" class="form-control" placeholder="Ej: 500g"/>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" data-i18n="artisan.productDimensionsLabel">Medidas / Tamaño</label>
+                  <input type="text" id="p-dimensions" class="form-control" placeholder="Ej: 30cm x 20cm"/>
+                </div>
+              </div>
+              <div class="form-group" style="margin-top:1rem;">
+                <label class="form-label" data-i18n="artisan.productMaterialsLabel">Materiales usados</label>
+                <input type="text" id="p-materials" class="form-control" placeholder="Ej: Lana de oveja, tintes naturales"/>
+              </div>
             </div>
-            <div class="image-previews" id="img-previews"></div>
+            <div class="card card-body mb-3">
+              <h3 class="section-title"><i class="fa-solid fa-images"></i> <span data-i18n="artisan.productImagesLabel">Imágenes del producto (máx. 10)</span></h3>
+              <div class="form-group">
+                <div class="image-uploader" id="img-uploader" onclick="document.getElementById('img-input').click()" ondragover="event.preventDefault();this.classList.add('dragover')" ondrop="handleDrop(event)">
+                  <input type="file" id="img-input" accept="image/*" multiple onchange="handleFiles(this.files)" onclick="event.stopPropagation()"/>
+                  <div style="font-size:1.5rem;margin-bottom:0.25rem;"><i class="fa-solid fa-camera-retro"></i></div>
+                  <div style="font-weight:500;font-size:0.9rem;" data-i18n="artisan.productImagesUploadText">Haz clic o arrastra imágenes aquí</div>
+                  <div style="font-size:0.75rem;color:var(--color-muted);" data-i18n="artisan.productImagesUploadSub">PNG, JPG, WEBP — máximo 10 imágenes</div>
+                </div>
+                <div class="image-previews" id="img-previews"></div>
+              </div>
+            </div>
+          </div>
+          <!-- Columna Derecha: Historia y Narrativa del Producto (Origen y Técnica) -->
+          <div class="product-story-col">
+            <div class="card card-body mb-3">
+              <h3 class="section-title"><i class="fa-solid fa-scroll"></i> <span data-i18n="artisan.historyTraditionHeading">Origen y Técnica Cultural</span></h3>
+              <div class="form-group">
+                <label class="form-label" data-i18n="artisan.productShortDescLabel">Descripción breve (gancho)</label>
+                <input type="text" id="p-short-desc" class="form-control" maxlength="150" placeholder="Ej: Pieza única tejida a mano que cuenta la historia de la tierra..."/>
+              </div>
+              <div class="form-group">
+                <label class="form-label" data-i18n="artisan.productOriginLabel">Origen cultural *</label>
+                <textarea id="p-origin" class="form-control" rows="3" placeholder="Describe el origen de esta artesanía..." required></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label" data-i18n="artisan.productTechniqueLabel">Técnica artesanal *</label>
+                <textarea id="p-technique" class="form-control" rows="3" placeholder="Describe la técnica utilizada..." required></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label" data-i18n="artisan.productSignificanceLabel">Significado cultural *</label>
+                <textarea id="p-significance" class="form-control" rows="3" placeholder="¿Qué significa esta pieza culturalmente?" required></textarea>
+              </div>
+              <div class="form-group">
+                <label class="form-label" data-i18n="artisan.productCareLabel">Cuidado y mantenimiento</label>
+                <textarea id="p-care" class="form-control" rows="2" placeholder="Ej: Lavar a mano con agua fría y secar a la sombra..."></textarea>
+              </div>
+            </div>
           </div>
         </div>
-        <div style="display:flex;gap:1rem;margin-top:1rem;">
-          <button type="button" class="btn btn-outline" onclick="previewProduct()"><i class="fa-solid fa-eye"></i> Vista previa</button>
-          <button type="submit" class="btn btn-primary" id="btn-publish"><i class="fa-solid fa-check"></i> Publicar producto</button>
+        <div class="form-actions-row">
+          <button type="button" class="btn btn-outline" onclick="previewProduct()"><i class="fa-solid fa-eye"></i> <span data-i18n="artisan.previewBtn">Vista previa</span></button>
+          <button type="submit" class="btn btn-primary" id="btn-publish"><i class="fa-solid fa-check"></i> <span data-i18n="artisan.publishBtn">Publicar producto</span></button>
         </div>
       </form>
     </section>
 
-    <!-- Mi Perfil -->
+    <!-- Section: Mi Perfil (Rebuilt with Parity with Registration Data) -->
     <section id="section-mi-perfil" class="hidden">
-      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
-        <a href="#" onclick="showSection('mis-productos')" class="nav-arrow" style="background:var(--color-bg2);color:var(--color-text);border:1px solid var(--color-border);">←</a>
-        <div style="flex:1;display:flex;justify-content:space-between;align-items:center;">
-          <h2 style="font-family:'Crimson Pro',serif;font-size:1.5rem;margin:0;">Mi perfil</h2>
-          <button class="btn btn-outline btn-sm" id="btn-edit-profile" onclick="enableProfileEdit()"><i class="fa-solid fa-pen"></i> Editar perfil</button>
+      <!-- Title row -->
+      <div class="profile-title-row" style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
+        <h2 class="profile-heading-serif" style="font-size:1.6rem;margin:0;font-family:var(--font-display), serif;font-weight:800;color:var(--color-text);" data-i18n="artisan.profileHeading">Mi perfil artesanal</h2>
+        <button class="btn btn-primary btn-edit-premium" id="btn-edit-profile" onclick="enableProfileEdit()" style="margin-left:auto;">
+          <i class="fa-solid fa-pen"></i> <span data-i18n="artisan.editProfileBtn">Editar perfil</span>
+        </button>
+      </div>
+      
+      <!-- Premium Pinterest Cover Profile Header -->
+      <div class="profile-header-card">
+        <div class="profile-cover-banner"></div>
+        <div class="profile-avatar-wrapper">
+          <div id="avatar-preview-header" class="artisan-header-avatar">
+            <i class="fa-solid fa-user"></i>
+          </div>
+          <div class="profile-meta-info">
+            <h2 id="profile-display-name" class="profile-display-name">Artesano de Huila</h2>
+            <p class="profile-display-subtitle">
+              <span id="profile-display-category" class="profile-badge-tag"><i class="fa-solid fa-palette"></i> Artesanías</span>
+              <span id="profile-display-region" class="profile-badge-tag"><i class="fa-solid fa-location-dot"></i> Huila</span>
+            </p>
+          </div>
         </div>
       </div>
-      <form id="profile-form" class="card card-body" style="max-width:600px;margin:0 auto;">
-        <div class="form-group" style="text-align:center;margin-bottom:0.5rem;">
-          <div id="avatar-preview" class="artisan-avatar" style="width:100px;height:100px;font-size:3rem;margin:0 auto 0.5rem;display:flex;align-items:center;justify-content:center;background:var(--color-bg2);border-radius:50%;border:1px solid var(--color-border);overflow:hidden;"><i class="fa-solid fa-user"></i></div>
-          <div id="avatar-edit-controls" class="hidden">
-            <input type="file" id="avatar-input" accept="image/*" class="form-control" style="max-width:300px;margin:0 auto;"/>
-            <button type="button" class="btn btn-outline btn-sm mt-1" onclick="uploadAvatar()">Subir nueva foto</button>
+      
+      <form id="profile-form" class="profile-grid">
+        <!-- Columna Izquierda: Información Personal y del Oficio -->
+        <div class="profile-main-col">
+          <div class="card card-body mb-3">
+            <h3 class="section-title"><i class="fa-solid fa-circle-info"></i> <span data-i18n="artisan.basicInfoHeading">Información Básica</span></h3>
+            
+            <div class="form-group">
+              <label class="form-label" data-i18n="buyer.fullNameLabel">Nombre Completo *</label>
+              <input type="text" id="profile-full-name" class="form-control" placeholder="Tu nombre completo" disabled required />
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" data-i18n="auth.emailLabel">Correo Electrónico *</label>
+              <input type="email" id="profile-email" class="form-control" placeholder="tu@correo.com" disabled />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" data-i18n="artisan.idNumberLabel">Número de Cédula (ID) *</label>
+              <input type="text" id="profile-id-number" class="form-control" placeholder="Ej: 1075312456" disabled required />
+            </div>
+
+            <div class="form-row-grid">
+              <div class="form-group">
+                <label class="form-label" data-i18n="artisan.categoryLabel">Oficio Artesanal *</label>
+                <select id="profile-category" class="form-control" disabled required>
+                  <option value="" data-i18n="common.loading">Cargando...</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label" data-i18n="artisan.productRegionLabel">Municipio *</label>
+                <select id="profile-region" class="form-control" disabled required>
+                  <option value="" data-i18n="common.loading">Cargando...</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="card card-body mb-3">
+            <h3 class="section-title"><i class="fa-solid fa-scroll"></i> <span data-i18n="artisan.historyTraditionHeading">Historia Tradicional y Cultural</span></h3>
+            <div class="form-group">
+              <label class="form-label" data-i18n="artisan.historyLabel">Tu Historia de Vida y Oficio *</label>
+              <div id="profile-history-text" class="history-block" data-i18n="artisan.loadingHistory">Cargando historia...</div>
+              <textarea id="profile-history" class="form-control hidden" rows="6" placeholder="Cuéntanos sobre tu tradición artesanal, cómo aprendiste, qué te inspira..." required></textarea>
+            </div>
           </div>
         </div>
 
-        <div style="text-align:center;margin-bottom:2rem;">
-          <h3 id="profile-name" style="font-family:'Crimson Pro',serif;font-size:1.5rem;margin:0;">Cargando...</h3>
-          <p id="profile-meta" style="color:var(--color-muted);font-size:0.9rem;margin-top:0.25rem;">Cargando...</p>
+        <!-- Columna Derecha: Documentos de Identidad, Declaración y Avatar -->
+        <div class="profile-side-col">
+          <div class="card card-body mb-3 text-center">
+            <h3 class="section-title"><i class="fa-solid fa-image-portrait"></i> <span data-i18n="artisan.profilePictureHeading">Imagen de Perfil</span></h3>
+            <div class="form-group" style="text-align:center;">
+              <div id="avatar-preview" class="artisan-avatar"><i class="fa-solid fa-user"></i></div>
+              <div id="avatar-edit-controls" class="hidden mt-2">
+                <input type="file" id="avatar-input" accept="image/*" class="form-control" style="font-size:0.8rem;" />
+                <button type="button" class="btn btn-outline btn-sm mt-1" onclick="uploadAvatar()" data-i18n="artisan.uploadAvatarBtn">Subir nueva foto</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card card-body mb-3">
+            <h3 class="section-title"><i class="fa-solid fa-id-card"></i> <span data-i18n="artisan.supportDocsHeading">Documentos de Soporte</span></h3>
+            
+            <!-- Documento Frontal -->
+            <div class="form-group">
+              <label class="form-label" data-i18n="artisan.docFrontLabel">Cédula Cara Frontal *</label>
+              <div class="doc-preview-box" id="doc-front-preview">
+                <span class="text-muted" style="font-size:0.85rem;" data-i18n="admin.notUploaded">No se ha subido ningún documento</span>
+              </div>
+              <div id="doc-front-edit-controls" class="hidden mt-1">
+                <input type="file" id="doc-front-input" accept="image/*,application/pdf" class="form-control" style="font-size:0.8rem;" />
+                <button type="button" class="btn btn-outline btn-sm mt-1" onclick="uploadDocumentFront()" data-i18n="artisan.uploadDocFrontBtn">Subir cara frontal</button>
+              </div>
+            </div>
+
+            <!-- Documento Posterior -->
+            <div class="form-group">
+              <label class="form-label" data-i18n="artisan.docBackLabel">Cédula Cara Posterior *</label>
+              <div class="doc-preview-box" id="doc-back-preview">
+                <span class="text-muted" style="font-size:0.85rem;" data-i18n="admin.notUploaded">No se ha subido ningún documento</span>
+              </div>
+              <div id="doc-back-edit-controls" class="hidden mt-1">
+                <input type="file" id="doc-back-input" accept="image/*,application/pdf" class="form-control" style="font-size:0.8rem;" />
+                <button type="button" class="btn btn-outline btn-sm mt-1" onclick="uploadDocumentBack()" data-i18n="artisan.uploadDocBackBtn">Subir cara posterior</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card card-body mb-3">
+            <h3 class="section-title"><i class="fa-solid fa-gavel"></i> <span data-i18n="artisan.legalCertHeading">Certificación Legal</span></h3>
+            <div class="legal-badge-panel">
+              <div class="legal-item">
+                <span class="legal-label" data-i18n="artisan.truthDeclarationLabel">Aceptación de Veracidad:</span>
+                <span class="legal-val text-success" id="legal-declaration-status">Aceptado ✔</span>
+              </div>
+              <div class="legal-item">
+                <span class="legal-label" data-i18n="artisan.ipAddressLabel">Dirección IP:</span>
+                <span class="legal-val" id="legal-ip">—</span>
+              </div>
+              <div class="legal-item">
+                <span class="legal-label" data-i18n="artisan.dateTimeLabel">Fecha y Hora:</span>
+                <span class="legal-val" id="legal-timestamp">—</span>
+              </div>
+            </div>
+
+            <label class="checkbox-label mt-2" id="profile-declaracion-wrap" style="display:none; font-size:0.82rem; line-height:1.3; gap:0.5rem; align-items:flex-start;">
+              <input type="checkbox" id="profile-declaracion" required />
+              <span data-i18n="artisan.legalDeclarationText">Declaro bajo gravedad de juramento que toda la información aquí suministrada es verídica y que los documentos anexos corresponden a mi persona.</span>
+            </label>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label class="form-label" style="font-weight:600;font-size:1.1rem;margin-bottom:0.75rem;">Historia y Tradición</label>
-          <div id="profile-history-text" style="line-height:1.6;color:var(--color-text);background:var(--color-bg2);padding:1rem;border-radius:var(--radius);white-space:pre-wrap;">Cargando historia...</div>
-          <textarea id="profile-history" class="form-control hidden" rows="5" placeholder="Cuéntanos sobre tu taller, tu historia y tu arte..."></textarea>
-        </div>
-        
-        <div class="form-group hidden" id="profile-save-controls" style="display:flex;justify-content:center;gap:1rem;margin-top:2rem;">
-          <button type="button" class="btn btn-primary" onclick="saveProfile()"><i class="fa-solid fa-check"></i> Guardar perfil</button>
-          <button type="button" class="btn btn-ghost" onclick="disableProfileEdit()">Cancelar</button>
+        <!-- Botones de Guardar (Abajo centrado) -->
+        <div class="form-group hidden form-actions-row" id="profile-save-controls" style="grid-column:1/-1;">
+          <button type="button" class="btn btn-primary" onclick="saveProfile()"><i class="fa-solid fa-check"></i> <span data-i18n="artisan.saveProfileBtn">Guardar perfil</span></button>
+          <button type="button" class="btn btn-ghost" onclick="disableProfileEdit()" data-i18n="common.cancel">Cancelar</button>
         </div>
       </form>
 
-      <div class="card card-body mt-3" style="max-width:600px;margin:1rem auto 0;">
-        <h3 style="font-family:'Crimson Pro',serif;font-size:1.3rem;margin-bottom:1rem;">Galería del Taller</h3>
+      <!-- Galería del Taller en una fila completa abajo -->
+      <div class="card card-body mt-3">
+        <h3 class="section-title"><i class="fa-solid fa-images"></i> <span data-i18n="artisan.tallerGalleryHeading">Galería fotográfica del taller</span></h3>
         <div id="gallery-edit-controls" class="hidden">
-          <p class="text-muted" style="font-size:0.9rem;margin-bottom:1rem;">Sube fotos de tu espacio de trabajo.</p>
-          <input type="file" id="gallery-input" accept="image/*" multiple class="form-control mb-1"/>
-          <button type="button" class="btn btn-outline" onclick="uploadGallery()">Subir fotos</button>
+          <p class="text-muted" style="font-size:0.9rem;margin-bottom:1rem;" data-i18n="artisan.tallerGalleryUploadTip">Muestra a los compradores tu espacio de trabajo y cómo elaboras tus artesanías (máx. 5 fotos).</p>
+          <div style="display:flex; gap:1rem; align-items:center;">
+            <input type="file" id="gallery-input" accept="image/*" multiple class="form-control" style="max-width:300px;"/>
+            <button type="button" class="btn btn-outline" onclick="uploadGallery()" data-i18n="artisan.uploadGalleryBtn">Subir fotos</button>
+          </div>
         </div>
-        <div id="gallery-previews" style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:1rem;"></div>
+        <div id="gallery-previews" style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:1.5rem;"></div>
       </div>
     </section>
   </main>
-</div>
+  </div> <!-- /.dashboard-content-wrapper -->
+
+  <!-- ── COLUMN 3: RIGHT PANEL (Notificaciones) ── -->
+  <aside class="right-panel" id="right-panel">
+    <div class="panel-header" style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; font-family: var(--font-display), serif; font-size: 1.1rem; font-weight: 800; color: var(--color-text);">
+      <i class="fa-solid fa-bell" style="color: var(--color-primary);"></i>
+      <span data-i18n="artisan.notificationsTitle">Notificaciones</span>
+      <span class="badge-pill" id="tab-notif-count" style="font-size: 0.65rem; background: var(--color-primary); color: white; padding: 0.1rem 0.4rem; border-radius: 99px; font-weight: 800; min-width: 16px; text-align: center; margin-left: auto;">0</span>
+    </div>
+
+    <!-- TAB CONTENT: NOTIFICATIONS -->
+    <div class="tab-content active" id="tab-content-notifications" style="display: flex; flex-direction: column; gap: 1rem;">
+      <div class="notifications-list" id="notifications-list">
+        <!-- Populated dynamically via JS -->
+        <div class="notifications-empty">
+          <i class="fa-regular fa-bell-slash fa-2x" style="opacity:0.3;margin-bottom:0.5rem;display:block;"></i>
+          No tienes notificaciones
+        </div>
+      </div>
+    </div>
+  </aside>
+  <!-- Overlay for Right Panel in Mobile -->
+  <div class="right-panel-overlay mobile-only" id="right-panel-overlay" onclick="toggleRightPanel('notifications')"></div>
+</div> <!-- /.dashboard-layout -->
+
+<!-- Mobile Bottom Navigation Bar (Mockup Style) -->
+<nav class="mobile-bottom-nav mobile-only">
+  <a href="index.html" class="nav-item" id="m-nav-inicio">
+    <i class="fa-solid fa-house"></i>
+    <span class="nav-label">Inicio</span>
+  </a>
+  <a href="catalogo.html" class="nav-item" id="m-nav-catalogo">
+    <i class="fa-solid fa-table-cells"></i>
+    <span class="nav-label">Catálogo</span>
+  </a>
+  <a href="carrito.html" class="nav-item" id="m-nav-carrito">
+    <div class="cart-badge-container">
+      <i class="fa-solid fa-cart-shopping"></i>
+      <span class="cart-badge">2</span>
+    </div>
+    <span class="nav-label">Carrito</span>
+  </a>
+  <a href="#" onclick="showSection('resumen')" class="nav-item active" id="m-nav-perfil">
+    <i class="fa-solid fa-user"></i>
+    <span class="nav-label">Perfil</span>
+  </a>
+</nav>
 
 <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
 <script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
 <script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
-<script src="/js/api.js"></script>
-<script src="/js/i18n.js"></script>
-<script src="/js/dashboard-artesano.js"></script>
+<script src="/js/api.js?v=2"></script>
+<script src="/js/i18n.js?v=2"></script>
+<script src="/js/dashboard-artesano.js?v=2"></script>
 </body>
 </html>

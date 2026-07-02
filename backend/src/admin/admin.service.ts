@@ -1,9 +1,10 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, Inject } from '@nestjs/common';
 import { Between } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ArtisansService } from '../artisans/artisans.service';
-import { MailService } from '../mail/mail.service';
+import { MAIL_SERVICE } from '../mail/mail.service.interface';
+import type { IMailService } from '../mail/mail.service.interface';
 import { AuditService } from '../audit/audit.service';
 import { ArtisanStatus } from '../artisans/entities/artisan-profile.entity';
 import { AuditAction } from '../audit/entities/admin-audit-log.entity';
@@ -11,13 +12,17 @@ import { UsersService } from '../users/users.service';
 import { OrdersService } from '../orders/orders.service';
 import { ReviewsService } from '../reviews/reviews.service';
 import { ProductsService } from '../products/products.service';
-import { ArtisanAuditAction, ArtisanAuditLog } from '../artisans/entities/artisan-audit-log.entity';
+import {
+  ArtisanAuditAction,
+  ArtisanAuditLog,
+} from '../artisans/entities/artisan-audit-log.entity';
 
 @Injectable()
 export class AdminService {
   constructor(
     private readonly artisansService: ArtisansService,
-    private readonly mailService: MailService,
+    @Inject(MAIL_SERVICE)
+    private readonly mailService: IMailService,
     private readonly auditService: AuditService,
     private readonly usersService: UsersService,
     private readonly ordersService: OrdersService,
@@ -27,63 +32,145 @@ export class AdminService {
     private readonly artisanAuditRepo: Repository<ArtisanAuditLog>,
   ) {}
 
-  private async logArtisanStatusChange(adminId: string, artisanId: string, action: ArtisanAuditAction, reason: string) {
-    if (!reason?.trim()) throw new BadRequestException('La razon es obligatoria');
-    return this.artisanAuditRepo.save(this.artisanAuditRepo.create({ adminId, artisanId, action, reason }));
+  private async logArtisanStatusChange(
+    adminId: string,
+    artisanId: string,
+    action: ArtisanAuditAction,
+    reason: string,
+  ) {
+    if (!reason?.trim())
+      throw new BadRequestException('La razon es obligatoria');
+    return this.artisanAuditRepo.save(
+      this.artisanAuditRepo.create({ adminId, artisanId, action, reason }),
+    );
   }
 
   async getArtisans(status?: string) {
     const artisans = await this.artisansService.findAll(status);
-    return Promise.all(artisans.map(a => this.artisansService.findById(a.id)));
+    return Promise.all(
+      artisans.map((a) => this.artisansService.findById(a.id)),
+    );
   }
 
   async approveArtisan(adminId: string, artisanProfileId: string) {
     const profile = await this.artisansService.findById(artisanProfileId);
     if (!profile) throw new BadRequestException('Perfil no encontrado');
-    
+
     if (profile.verification_status === ArtisanStatus.VERIFIED) {
-      throw new BadRequestException('El artesano ya fue aprobado anteriormente');
+      throw new BadRequestException(
+        'El artesano ya fue aprobado anteriormente',
+      );
     }
 
-    await this.artisansService.updateStatus(artisanProfileId, ArtisanStatus.VERIFIED);
+    await this.artisansService.updateStatus(
+      artisanProfileId,
+      ArtisanStatus.VERIFIED,
+    );
     const admin = await this.usersService.findById(adminId);
-    await this.auditService.log(admin!, AuditAction.APPROVE_ARTISAN, artisanProfileId, 'Artesano aprobado');
-    await this.mailService.sendArtisanApprovalEmail(profile.user.email, profile.user.full_name);
+    await this.auditService.log(
+      admin!,
+      AuditAction.APPROVE_ARTISAN,
+      artisanProfileId,
+      'Artesano aprobado',
+    );
+    await this.mailService.sendArtisanApprovalEmail(
+      profile.user.email,
+      profile.user.full_name,
+    );
     return { message: 'Artesano aprobado y notificado' };
   }
 
-  async verifyArtisan(adminId: string, artisanProfileId: string, reason: string) {
+  async verifyArtisan(
+    adminId: string,
+    artisanProfileId: string,
+    reason: string,
+  ) {
     const profile = await this.artisansService.findById(artisanProfileId);
     if (!profile) throw new BadRequestException('Perfil no encontrado');
     if (profile.verification_status === ArtisanStatus.VERIFIED) {
       throw new BadRequestException('El artesano ya se encuentra verificado');
     }
-    await this.artisansService.updateStatus(artisanProfileId, ArtisanStatus.VERIFIED);
-    await this.logArtisanStatusChange(adminId, artisanProfileId, ArtisanAuditAction.VERIFIED, reason);
-    await this.mailService.sendArtisanApprovalEmail(profile.user.email, profile.user.full_name);
+    await this.artisansService.updateStatus(
+      artisanProfileId,
+      ArtisanStatus.VERIFIED,
+    );
+    await this.logArtisanStatusChange(
+      adminId,
+      artisanProfileId,
+      ArtisanAuditAction.VERIFIED,
+      reason,
+    );
+    await this.mailService.sendArtisanApprovalEmail(
+      profile.user.email,
+      profile.user.full_name,
+    );
     return { message: 'Artesano verificado y notificado' };
   }
 
-  async rejectArtisan(adminId: string, artisanProfileId: string, reason: string) {
-    if (!reason) throw new BadRequestException('La razón de rechazo es obligatoria');
+  async rejectArtisan(
+    adminId: string,
+    artisanProfileId: string,
+    reason: string,
+  ) {
+    if (!reason)
+      throw new BadRequestException('La razón de rechazo es obligatoria');
     const profile = await this.artisansService.findById(artisanProfileId);
     if (!profile) throw new BadRequestException('Perfil no encontrado');
-    await this.artisansService.updateStatus(artisanProfileId, ArtisanStatus.SUSPENDED, reason);
+    await this.artisansService.updateStatus(
+      artisanProfileId,
+      ArtisanStatus.SUSPENDED,
+      reason,
+    );
     const admin = await this.usersService.findById(adminId);
-    await this.auditService.log(admin!, AuditAction.REJECT_ARTISAN, artisanProfileId, reason);
-    await this.logArtisanStatusChange(adminId, artisanProfileId, ArtisanAuditAction.SUSPENDED, reason);
-    await this.mailService.sendArtisanRejectionEmail(profile.user.email, profile.user.full_name, reason);
+    await this.auditService.log(
+      admin!,
+      AuditAction.REJECT_ARTISAN,
+      artisanProfileId,
+      reason,
+    );
+    await this.logArtisanStatusChange(
+      adminId,
+      artisanProfileId,
+      ArtisanAuditAction.SUSPENDED,
+      reason,
+    );
+    await this.mailService.sendArtisanRejectionEmail(
+      profile.user.email,
+      profile.user.full_name,
+      reason,
+    );
     return { message: 'Artesano rechazado y notificado' };
   }
 
-  async suspendArtisan(adminId: string, artisanProfileId: string, reason: string) {
+  async suspendArtisan(
+    adminId: string,
+    artisanProfileId: string,
+    reason: string,
+  ) {
     const profile = await this.artisansService.findById(artisanProfileId);
     if (!profile) throw new BadRequestException('Perfil no encontrado');
-    await this.artisansService.updateStatus(artisanProfileId, ArtisanStatus.SUSPENDED, reason);
+    await this.artisansService.updateStatus(
+      artisanProfileId,
+      ArtisanStatus.SUSPENDED,
+      reason,
+    );
     const admin = await this.usersService.findById(adminId);
-    await this.auditService.log(admin!, AuditAction.SUSPEND_ARTISAN, artisanProfileId, 'Artesano suspendido');
-    await this.logArtisanStatusChange(adminId, artisanProfileId, ArtisanAuditAction.SUSPENDED, reason);
-    await this.mailService.sendArtisanSuspensionEmail(profile.user.email, profile.user.full_name);
+    await this.auditService.log(
+      admin!,
+      AuditAction.SUSPEND_ARTISAN,
+      artisanProfileId,
+      'Artesano suspendido',
+    );
+    await this.logArtisanStatusChange(
+      adminId,
+      artisanProfileId,
+      ArtisanAuditAction.SUSPENDED,
+      reason,
+    );
+    await this.mailService.sendArtisanSuspensionEmail(
+      profile.user.email,
+      profile.user.full_name,
+    );
     return { message: 'Artesano suspendido y notificado' };
   }
 
@@ -108,11 +195,16 @@ export class AdminService {
   async deleteReview(adminId: string, reviewId: string, reason: string) {
     const review = await this.reviewsService.findOne(reviewId);
     if (!review) throw new BadRequestException('Reseña no encontrada');
-    
+
     await this.reviewsService.remove(reviewId);
     const admin = await this.usersService.findById(adminId);
-    await this.auditService.log(admin!, AuditAction.DELETE_REVIEW, reviewId, `Razón: ${reason}`);
-    
+    await this.auditService.log(
+      admin!,
+      AuditAction.DELETE_REVIEW,
+      reviewId,
+      `Razón: ${reason}`,
+    );
+
     return { message: 'Reseña eliminada correctamente' };
   }
 
@@ -132,18 +224,77 @@ export class AdminService {
   async hideProduct(adminId: string, productId: string) {
     await this.productsService.hide(productId);
     const admin = await this.usersService.findById(adminId);
-    await this.auditService.log(admin!, AuditAction.HIDE_PRODUCT, productId, 'Producto ocultado por admin');
+    await this.auditService.log(
+      admin!,
+      AuditAction.HIDE_PRODUCT,
+      productId,
+      'Producto ocultado por admin',
+    );
     return { message: 'Producto ocultado' };
   }
 
   async deleteProduct(adminId: string, productId: string) {
     await this.productsService.remove(productId);
     const admin = await this.usersService.findById(adminId);
-    await this.auditService.log(admin!, AuditAction.DELETE_PRODUCT, productId, 'Producto eliminado por admin');
+    await this.auditService.log(
+      admin!,
+      AuditAction.DELETE_PRODUCT,
+      productId,
+      'Producto eliminado por admin',
+    );
     return { message: 'Producto eliminado' };
   }
 
   async getAuditLogs() {
     return this.auditService.findAll();
+  }
+
+  async getStatsSummary() {
+    const [artisans, orders, reported] = await Promise.all([
+      this.artisansService.findAll(),
+      this.ordersService.findAll(),
+      this.reviewsService.findReported(),
+    ]);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const totalRevenue = orders
+      .filter((o) => o.status !== 'cancelled')
+      .reduce((sum, o) => sum + Number(o.total_amount), 0);
+
+    const ordersToday = orders.filter(
+      (o) => new Date(o.created_at) >= today,
+    ).length;
+
+    const statusCount: Record<string, number> = {};
+    orders.forEach((o) => {
+      statusCount[o.status] = (statusCount[o.status] || 0) + 1;
+    });
+
+    return {
+      artisans: {
+        total: artisans.length,
+        pending: artisans.filter((a) => a.verification_status === 'pending')
+          .length,
+        verified: artisans.filter((a) => a.verification_status === 'verified')
+          .length,
+        suspended: artisans.filter((a) => a.verification_status === 'suspended')
+          .length,
+      },
+      orders: {
+        total: orders.length,
+        today: ordersToday,
+        byStatus: statusCount,
+        totalRevenue,
+      },
+      reviews: {
+        reported: reported.length,
+      },
+    };
+  }
+
+  async getAllUsers(role?: string) {
+    return this.usersService.findAll(role);
   }
 }

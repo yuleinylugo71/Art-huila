@@ -36,6 +36,7 @@ import { LogisticsModule } from './logistics/logistics.module';
         CLOUDINARY_API_SECRET: Joi.string().required(),
         MAIL_USER: Joi.string().required(),
         MAIL_PASS: Joi.string().required(),
+        DB_SYNCHRONIZE: Joi.string().optional(),
       }),
     }),
     TypeOrmModule.forRootAsync({
@@ -44,7 +45,7 @@ import { LogisticsModule } from './logistics/logistics.module';
         type: 'postgres',
         url: configService.get<string>('DATABASE_URL'),
         autoLoadEntities: true,
-        synchronize: true, // In dev mode only
+        synchronize: process.env.NODE_ENV !== 'production',
       }),
       inject: [ConfigService],
     }),

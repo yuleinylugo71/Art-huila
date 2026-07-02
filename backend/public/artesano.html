@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="page-title"><i class="fa-solid fa-hammer"></i> Perfil del Artesano — Art Huila</title>
+  <link rel="stylesheet" href="/css/base.css?v=18">
+  <link rel="stylesheet" href="/css/artesano.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+<nav class="navbar desktop-only">
+  <div style="display:flex;align-items:center;gap:0.75rem;">
+    <a href="catalogo.html" class="nav-back" title="Volver al catálogo">←</a>
+    <a href="index.html" class="navbar-brand">Art <span>Huila</span></a>
+  </div>
+  <ul class="navbar-nav">
+    <li><a href="catalogo.html" data-i18n="nav.viewCatalog">Catálogo</a></li>
+    <li id="nav-auth"></li>
+    <li><a href="carrito.html" style="font-weight:bold;color:var(--color-primary);"><i class="fa-solid fa-cart-shopping"></i> <span id="cart-count">0</span></a></li>
+  </ul>
+  <div class="lang-switcher">
+    <button id="btn-lang-es" onclick="window.changeLanguage('es')">ES</button>
+    <span>|</span>
+    <button id="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+  </div>
+</nav>
+
+<!-- Mobile Premium Header -->
+<header class="mobile-only" style="background: white; border-bottom: 1.5px solid var(--color-border); padding: 1rem; position: sticky; top: 0; z-index: 1000;">
+  <div style="display: flex; align-items: center; justify-content: space-between;">
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <a href="javascript:window.history.back()" style="color: var(--color-text); font-size: 1.2rem;"><i class="fa-solid fa-arrow-left"></i></a>
+      <h1 style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 800; color: #261f1b; margin: 0;" data-i18n="artisan.profileHeadingMobile">Perfil del Artesano</h1>
+    </div>
+    <div class="lang-switcher" style="margin-left: 0;">
+      <button id="mobile-lang-es" class="btn-lang-es active" onclick="window.changeLanguage('es')">ES</button>
+      <span style="font-size: 0.7rem; color: var(--color-border);">|</span>
+      <button id="mobile-lang-en" class="btn-lang-en" onclick="window.changeLanguage('en')">EN</button>
+    </div>
+  </div>
+</header>
+
+<div class="container section" style="padding: 0; max-width: 680px; margin: 0 auto; background-color: #faf8f5; min-height: 80vh;">
+  <div id="artisan-container">
+    <div class="spinner" style="padding: 4rem 0; text-align: center;"><i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2rem; color: #c1440e;"></i></div>
+  </div>
+
+  <div style="padding: 0 1.25rem;">
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 1.5rem; margin-bottom: 0.85rem;">
+      <h3 style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; color: #261f1b; margin: 0;" data-i18n="artisan.productsHeading">Mis Creaciones</h3>
+      <span id="artisan-products-count" style="font-size: 0.75rem; font-weight: 700; color: var(--color-muted); font-family: var(--font-body);">0 piezas</span>
+    </div>
+
+    <div id="artisan-products" class="grid" style="display: grid; grid-template-columns: repeat(2, 1fr) !important; gap: 0.85rem !important;">
+      <!-- Cargado dinámicamente por JS en 2 columnas -->
+    </div>
+    <div id="pagination" class="pagination" style="margin-top: 2rem; margin-bottom: 4rem;"></div>
+  </div>
+</div>
+
+<footer style="margin-top: 0; padding: 2rem 1.25rem;">
+  <div class="brand">Art <span>Huila</span></div>
+  <p style="font-size:0.85rem;margin-top:0.5rem;opacity:0.6;">&copy; 2026 Art Huila</p>
+</footer>
+
+<script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>
+<script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
+<script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/i18n.js"></script>
+<script src="/js/artesano.js?v=17"></script>
+</body>
+</html>

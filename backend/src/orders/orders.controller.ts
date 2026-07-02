@@ -1,9 +1,19 @@
-import { Controller, Get, Post, Patch, Body, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Body,
+  Param,
+  UseGuards,
+} from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { JwtAuthGuard, RolesGuard } from '../auth/guards/jwt-auth.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { Public } from '../auth/decorators/public.decorator';
+import { UserRole } from '../common/constants';
 
 @Controller('orders')
 @UseGuards(JwtAuthGuard)
@@ -16,9 +26,21 @@ export class OrdersController {
     return this.ordersService.create(createOrderDto, user);
   }
 
+  @Public()
   @Post('shipping-quote')
-  async getShippingQuote(@Body() body: { destinationCity: string; items: any[] }) {
-    return this.ordersService.getShippingQuoteForCart(body.destinationCity, body.items);
+  async getShippingQuote(
+    @Body() body: { destinationCity: string; items: any[] },
+  ) {
+    return this.ordersService.getShippingQuoteForCart(
+      body.destinationCity,
+      body.items,
+    );
+  }
+
+  @Public()
+  @Get('shipping-coverage')
+  async getShippingCoverage() {
+    return this.ordersService.getShippingCoverage();
   }
 
   @Get('artisan/sales')
@@ -42,7 +64,7 @@ export class OrdersController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('artesano', 'admin')
+  @Roles(UserRole.ARTISAN, UserRole.ADMIN)
   @Post(':id/status')
   updateStatus(
     @Param('id') id: string,
@@ -53,11 +75,17 @@ export class OrdersController {
   }
 
   @Patch(':id/tracking')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.ARTISAN)
   updateTracking(
     @Param('id') id: string,
     @Body('tracking_number') trackingNumber: string,
     @Body('shipping_company') shippingCompany: string,
   ) {
-    return this.ordersService.updateTracking(id, trackingNumber, shippingCompany);
+    return this.ordersService.updateTracking(
+      id,
+      trackingNumber,
+      shippingCompany,
+    );
   }
 }
