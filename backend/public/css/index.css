@@ -19,7 +19,7 @@
   background-repeat: no-repeat;
   color: var(--blanco);
   overflow: hidden;
-  min-height: 100vh;
+  min-height: auto;
   display: flex;
   flex-direction: column;
 }
@@ -104,7 +104,7 @@
   grid-template-columns: 1.15fr 0.85fr;
   gap: 4rem;
   align-items: center;
-  padding: 2.5rem 2rem;
+  padding: 8rem 2rem 5rem 2rem;
   margin-top: 0;
   flex-grow: 1;
 }
@@ -413,7 +413,7 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1.5rem;
-  margin: 3.5rem auto;
+  margin: 2rem auto 1rem auto;
   padding: 0.5rem 0;
 }
 
@@ -462,10 +462,21 @@
 }
 
 /* --- SHOP BY CATEGORY CIRCULAR --- */
+.categories-section {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  padding: 3rem 8% 2.5rem 8% !important;
+  box-sizing: border-box;
+  background-color: var(--color-surface);
+  border-top: 1.5px solid rgba(232, 224, 216, 0.4);
+  border-bottom: 1.5px solid rgba(232, 224, 216, 0.4);
+}
+
 .categories-grid-circular {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 1.5rem;
+  gap: 2.5rem;
   margin-top: 1.5rem;
 }
 
@@ -735,7 +746,7 @@
 /* --- CTA BANNER --- */
 .cta-banner {
   background: linear-gradient(135deg, #d35400 0%, #c1440e 50%, #8e2c02 100%);
-  padding: 6.5rem 2rem;
+  padding: 4.5rem 2rem;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -805,6 +816,23 @@
   color: var(--color-primary-dark);
   box-shadow: 0 15px 35px rgba(193, 68, 14, 0.4);
   transform: translateY(-3px);
+}
+
+@media (max-width: 1024px) {
+  .categories-section {
+    padding: 2.5rem 5% !important;
+  }
+  .categories-grid-circular {
+    gap: 1.5rem;
+  }
+  .featured-products-grid-new {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 1.2rem;
+  }
+  .features-bar {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
 }
 
 @media (max-width: 768px) {
