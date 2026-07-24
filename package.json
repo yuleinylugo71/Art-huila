@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "npm run start --prefix backend",
+    "dev": "npm run start:dev --prefix backend",
+    "install-all": "npm install --prefix backend",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe, ClassSerializerInterceptor } from '@nestjs/common';
 import * as express from 'express';
 import { join } from 'path';
+import { existsSync } from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,9 +12,15 @@ async function bootstrap() {
   app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
   // Servir archivos estáticos del frontend desde la carpeta public (Monolito Unificado)
-  const publicPath = join(process.cwd(), 'public');
+  let publicPath = join(process.cwd(), 'public');
+  if (!existsSync(publicPath)) {
+    publicPath = join(__dirname, '..', 'public');
+  }
+  if (!existsSync(publicPath)) {
+    publicPath = join(__dirname, '..', '..', 'public');
+  }
   console.log(`📁 Servir archivos estáticos desde: ${publicPath}`);
-  app.use(express.static(publicPath));
+  app.use(express.static(publicPath, { extensions: ['html'] }));
 
   const frontendUrl = process.env.FRONTEND_URL;
   const origins = [

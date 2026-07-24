@@ -234,7 +234,7 @@ export class AuthService {
 
       const frontendUrl =
         this.configService.get<string>('FRONTEND_URL') ||
-        'http://localhost:5173';
+        'http://localhost:3000';
       await this.mailService.sendVerificationEmail(
         user.email,
         user.full_name,

@@ -14,16 +14,16 @@ export class SitemapController {
   async getSitemap() {
     const products = await this.productsService.findAll();
     const frontendUrl =
-      this.configService.get<string>('FRONTEND_URL') || 'http://localhost:8080';
+      this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
 
     const urls = [
       { loc: `${frontendUrl}/index.html`, priority: '1.0' },
-      { loc: `${frontendUrl}/views/catalogo.html`, priority: '0.8' },
+      { loc: `${frontendUrl}/catalogo.html`, priority: '0.8' },
     ];
 
     products.forEach((p) => {
       urls.push({
-        loc: `${frontendUrl}/views/producto.html?slug=${p.slug}`,
+        loc: `${frontendUrl}/producto.html?slug=${p.slug}`,
         priority: '0.6',
       });
     });

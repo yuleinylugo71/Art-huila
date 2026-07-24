@@ -215,7 +215,7 @@ export class NodemailerMailService implements IMailService {
 
   async sendPasswordResetEmail(to: string, token: string, userName: string) {
     const frontendUrl =
-      this.configService.get<string>('FRONTEND_URL') || 'http://localhost:5173';
+      this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
     const link = `${frontendUrl}/nueva-contrasena.html?token=${token}`;
 
     console.log(`[MailService] Sending password reset email to ${to}`);
