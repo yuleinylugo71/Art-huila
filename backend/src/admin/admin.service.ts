@@ -182,10 +182,20 @@ export class AdminService {
   }
 
   async getAllOrders(start?: string, end?: string) {
-    if (start && end) {
+    if (start || end) {
+      const startDate = start ? new Date(`${start}T00:00:00`) : new Date(0);
+      const endDate = end ? new Date(`${end}T23:59:59.999`) : new Date();
+
       return this.ordersService['ordersRepository'].find({
-        where: { created_at: Between(new Date(start), new Date(end)) },
-        relations: ['user', 'items', 'items.product', 'items.product.artisan'],
+        where: { created_at: Between(startDate, endDate) },
+        relations: [
+          'user',
+          'items',
+          'items.product',
+          'items.product.artisan',
+          'items.product.category',
+          'items.product.images',
+        ],
         order: { created_at: 'DESC' },
       });
     }

@@ -134,6 +134,7 @@ export class OrdersService {
         'items',
         'items.product',
         'items.product.artisan',
+        'items.product.category',
         'items.product.images',
       ],
       order: { created_at: 'DESC' },

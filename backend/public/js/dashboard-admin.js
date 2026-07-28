@@ -127,11 +127,6 @@ async function loadGlobalStats() {
     document.getElementById('stat-reported-reviews').textContent = s.reviews.reported;
 
     // Actualizar badges del sidebar
-    if (s.artisans.pending > 0) {
-      const b = document.getElementById('badge-artesanos');
-      b.textContent = s.artisans.pending;
-      b.style.display = 'inline-flex';
-    }
     if (s.reviews.reported > 0) {
       const b = document.getElementById('badge-resenas');
       b.textContent = s.reviews.reported;
@@ -850,14 +845,25 @@ async function deleteReview(id) {
 // ─── ESTADÍSTICAS ─────────────────────────────────────────────────────────
 async function loadStats(start, end) {
   try {
-    const qs = start && end ? `?start=${start}&end=${end}` : '';
-    const orders = await apiFetch('/admin/orders' + qs);
+    const params = new URLSearchParams();
+    if (start) params.set('start', start);
+    if (end) params.set('end', end);
+    const qs = params.toString() ? `?${params.toString()}` : '';
+    const [orders, productsForStats] = await Promise.all([
+      apiFetch('/admin/orders' + qs),
+      allProducts.length ? Promise.resolve(allProducts) : apiFetch('/admin/products').catch(() => []),
+    ]);
+    if (!allProducts.length && productsForStats.length) {
+      allProducts = productsForStats;
+    }
 
     // KPIs
-    const revenue = orders.filter(o => o.status !== 'cancelled').reduce((s, o) => s + Number(o.total_amount), 0);
+    const excludedStatuses = ['cancelled', 'refunded'];
+    const revenueOrders = orders.filter(o => !excludedStatuses.includes(o.status));
+    const revenue = revenueOrders.reduce((s, o) => s + Number(o.total_amount || 0), 0);
     const delivered = orders.filter(o => o.status === 'delivered').length;
-    const deliveryRate = orders.length ? ((delivered / orders.length) * 100).toFixed(1) : '0.0';
-    const avgTicket = orders.length ? revenue / orders.length : 0;
+    const deliveryRate = revenueOrders.length ? ((delivered / revenueOrders.length) * 100).toFixed(1) : '0.0';
+    const avgTicket = revenueOrders.length ? revenue / revenueOrders.length : 0;
 
     document.getElementById('kpi-total-orders').textContent = orders.length;
     document.getElementById('kpi-revenue').textContent = formatPrice(revenue);
@@ -866,23 +872,28 @@ async function loadStats(start, end) {
 
     // Chart: Categorías
     const cats = {};
-    orders.forEach(o => o.items?.forEach(i => {
-      const c = i.product?.category?.name || 'Otro';
+    const productCategoryById = new Map(
+      productsForStats.map(p => [p.id, p.category?.name || p.category_name || 'Sin categoría'])
+    );
+    revenueOrders.forEach(o => o.items?.forEach(i => {
+      const productId = i.product?.id || i.product_id;
+      const c = i.product?.category?.name || productCategoryById.get(productId) || 'Sin categoría';
       cats[c] = (cats[c] || 0) + Number(i.subtotal || 0);
     }));
-    buildChart('chart-categories', 'doughnut', Object.keys(cats), [{
-      data: Object.values(cats),
+    const sortedCategories = Object.entries(cats).sort((a, b) => b[1] - a[1]);
+    buildChart('chart-categories', 'doughnut', sortedCategories.map(([name]) => name), [{
+      data: sortedCategories.map(([, total]) => total),
       backgroundColor: ['#8b5a2b','#d97706','#059669','#2563eb','#7c3aed','#db2777','#ef4444'],
     }], { plugins: { legend: { position: 'bottom' } } });
 
     // Chart: Pedidos por día
     const days = {};
     orders.forEach(o => {
-      const d = new Date(o.created_at).toLocaleDateString('es-CO');
+      const d = new Date(o.created_at).toISOString().slice(0, 10);
       days[d] = (days[d] || 0) + 1;
     });
-    const dayKeys = Object.keys(days).slice(-14);
-    buildChart('chart-orders', 'line', dayKeys, [{
+    const dayKeys = Object.keys(days).sort().slice(-14);
+    buildChart('chart-orders', 'line', dayKeys.map(k => new Date(`${k}T00:00:00`).toLocaleDateString('es-CO')), [{
       label: 'Pedidos',
       data: dayKeys.map(k => days[k]),
       borderColor: '#d97706',
@@ -892,12 +903,14 @@ async function loadStats(start, end) {
     }]);
 
     // Chart: Por estado
-    const statusMap = { pending:'Pendiente',paid:'Pagado',preparing:'Preparando',shipped:'Despachado',delivered:'Entregado',cancelled:'Cancelado' };
+    const statusMap = { pending:'Pendiente',paid:'Pagado',preparing:'Preparando',shipped:'Despachado',delivered:'Entregado',cancelled:'Cancelado',refunded:'Reembolsado',novelty:'Novedad' };
+    const statusOrder = ['pending', 'paid', 'preparing', 'shipped', 'delivered', 'cancelled', 'refunded', 'novelty'];
     const statusCount = {};
     orders.forEach(o => { statusCount[o.status] = (statusCount[o.status] || 0) + 1; });
-    buildChart('chart-status', 'bar', Object.keys(statusCount).map(k => statusMap[k]||k), [{
-      data: Object.values(statusCount),
-      backgroundColor: ['#f59e0b','#22c55e','#f97316','#3b82f6','#10b981','#ef4444'],
+    const presentStatuses = statusOrder.filter(k => statusCount[k]);
+    buildChart('chart-status', 'bar', presentStatuses.map(k => statusMap[k]||k), [{
+      data: presentStatuses.map(k => statusCount[k]),
+      backgroundColor: ['#f59e0b','#22c55e','#f97316','#3b82f6','#10b981','#ef4444','#64748b','#a855f7'],
       borderRadius: 8,
     }], { plugins: { legend: { display: false } } });
 
@@ -919,7 +932,11 @@ function buildChart(id, type, labels, datasets, options = {}) {
   if (charts[id]) charts[id].destroy();
   const ctx = document.getElementById(id);
   if (!ctx) return;
-  charts[id] = new Chart(ctx, { type, data: { labels, datasets }, options: { responsive: true, ...options } });
+  charts[id] = new Chart(ctx, {
+    type,
+    data: { labels, datasets },
+    options: { responsive: true, maintainAspectRatio: false, ...options },
+  });
 }
 
 window.applyStatsFilter = function() {
