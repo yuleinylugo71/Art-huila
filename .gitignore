@@ -10,3 +10,9 @@ dist/
 backend/dist/
 frontend/dist/
 .gemini/
+
+# Temporales de documentos y extracciones locales
+docx_temp/
+~$*.docx
+*_texto_extraido.txt
+catalog_extracted.txt

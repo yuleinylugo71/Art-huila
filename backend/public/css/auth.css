@@ -17,7 +17,8 @@ body {
   display: flex;
   width: 100%;
   max-width: 840px; /* Slightly wider for gorgeous form columns */
-  height: 620px; /* Fixed elegant height to keep layout stable and scroll internally */
+  height: 640px; /* Fixed elegant height to keep layout stable and scroll internally */
+  max-height: calc(100vh - 3rem);
   border-radius: 16px;
   overflow: hidden;
   box-shadow:
@@ -29,15 +30,16 @@ body {
   transition: max-width 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* Make registration card wider dynamically if needed */
+/* Registration card dimensions kept strictly identical to keep container size fixed */
 .auth-layout-register {
-  max-width: 960px;
-  height: auto;
-  min-height: 620px;
+  max-width: 840px;
+  height: 640px;
+  max-height: calc(100vh - 3rem);
 }
 .auth-layout-register .auth-right {
-  height: auto;
-  overflow-y: visible;
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 /* ─────────────────────────────────────────
@@ -45,13 +47,15 @@ body {
    ───────────────────────────────────────── */
 .auth-left {
   width: 42%;
+  height: 100%;
   background: var(--color-primary);
   position: relative;
   display: flex;
   flex-direction: column;
   padding: 3rem 4.5rem 2.5rem 2.25rem; /* Increased right padding to prevent overlapping with wave divider */
-  z-index: 1;
+  z-index: 2;
   color: #ffffff;
+  box-sizing: border-box;
 }
 
 /* Multi-layered organic wave dividers styled after the Spacer mockup */
@@ -225,6 +229,8 @@ body {
   z-index: 0;
   overflow-y: auto;
   height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
 }
 
 /* Custom premium scrollbar for the scrollable form panel */

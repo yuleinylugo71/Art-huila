@@ -21,6 +21,7 @@ import { PaymentsModule } from './payments/payments.module';
 import { SitemapController } from './sitemap/sitemap.controller';
 import { StatsController } from './stats.controller';
 import { LogisticsModule } from './logistics/logistics.module';
+import { SeoController } from './seo.controller';
 
 @Module({
   imports: [
@@ -65,7 +66,7 @@ import { LogisticsModule } from './logistics/logistics.module';
     PaymentsModule,
     LogisticsModule,
   ],
-  controllers: [AppController, SitemapController, StatsController],
+  controllers: [AppController, SitemapController, StatsController, SeoController],
   providers: [AppService],
 })
 export class AppModule {}

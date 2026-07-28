@@ -19,7 +19,7 @@ async function bootstrap() {
   if (!existsSync(publicPath)) {
     publicPath = join(__dirname, '..', '..', 'public');
   }
-  console.log(`📁 Servir archivos estáticos desde: ${publicPath}`);
+  console.log(`Servir archivos estáticos desde: ${publicPath}`);
   app.use(express.static(publicPath, { extensions: ['html'] }));
 
   const frontendUrl = process.env.FRONTEND_URL;
@@ -46,11 +46,13 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
-  app.setGlobalPrefix('api/v1', { exclude: ['sitemap.xml', '/'] });
+  app.setGlobalPrefix('api/v1', {
+    exclude: ['sitemap.xml', '/', 'producto/:slug', 'artesano/:slug'],
+  });
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
-  console.log(`🚀 Art Huila API running at http://localhost:${port}`);
-  console.log(`📦 API prefix: /api/v1`);
+  console.log(`Art Huila API running at http://localhost:${port}`);
+  console.log(`API prefix: /api/v1`);
 }
 bootstrap();

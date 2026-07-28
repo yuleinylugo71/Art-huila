@@ -399,11 +399,11 @@ function renderShippingOptions(options, city, selectedCost) {
   const cityDisplay = city === 'Neiva' ? 'Neiva (local)' : city;
 
   const carrierIcons = {
-    'Servientrega': '🟡',
-    'Coordinadora': '🔵',
-    'TCC': '🟠',
-    'Envia': '🟢',
-    'Envía': '🟢',
+    'Servientrega': '<i class="fa-solid fa-truck-fast"></i>',
+    'Coordinadora': '<i class="fa-solid fa-truck"></i>',
+    'TCC': '<i class="fa-solid fa-box"></i>',
+    'Envia': '<i class="fa-solid fa-route"></i>',
+    'Envía': '<i class="fa-solid fa-route"></i>',
   };
 
   let html = `
@@ -415,7 +415,7 @@ function renderShippingOptions(options, city, selectedCost) {
 
   options.forEach((opt, idx) => {
     const isSelected = opt.price === selectedCost;
-    const icon = carrierIcons[opt.carrier] || '📦';
+    const icon = carrierIcons[opt.carrier] || '<i class="fa-solid fa-box"></i>';
     html += `
       <label class="carrier-option${isSelected ? ' selected' : ''}" onclick="selectCarrier(${idx})" style="
         display:flex; justify-content:space-between; align-items:center;
@@ -570,6 +570,17 @@ async function proceedToCheckout() {
   const originalText = btn.innerHTML;
   btn.disabled = true;
   btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando orden...';
+
+  const user = Auth.getUser();
+  if (user && (user.role === 'artesano' || user.role === 'artisan')) {
+    const ownItem = cart.find(item => item.artisanUserId && item.artisanUserId === user.id);
+    if (ownItem) {
+      showToast(i18next.t('product.errorCantBuyOwnProduct', { defaultValue: 'No puedes comprar tus propios productos: ' }) + ownItem.name, 'warning');
+      btn.disabled = false;
+      btn.innerHTML = originalText;
+      return;
+    }
+  }
 
   const payload = {
     items: cart.map(i => ({ productId: i.id, quantity: i.quantity })),

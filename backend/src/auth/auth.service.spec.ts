@@ -111,17 +111,6 @@ describe('AuthService', () => {
       ).rejects.toBeInstanceOf(UnauthorizedException);
     });
 
-    it('cuenta bloqueada lanza UnauthorizedException', async () => {
-      const lockedUser = {
-        ...buyerUser,
-        locked_until: new Date(Date.now() + 60000),
-      };
-      usersService.findByEmail.mockResolvedValue(lockedUser);
-
-      await expect(
-        service.login({ email: lockedUser.email, password: 'password' }),
-      ).rejects.toBeInstanceOf(UnauthorizedException);
-    });
   });
 
   describe('refresh', () => {

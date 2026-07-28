@@ -140,24 +140,24 @@
   content: "";
   position: absolute;
   top: 27px;
-  left: 0;
-  right: 0;
+  left: 10%;
+  right: 10%;
   height: 4px;
   background: #f1ebd9; /* warm grey connector background */
   border-radius: 99px;
-  z-index: -2;
+  z-index: 0;
 }
 
 .tracker-line-progress {
   position: absolute;
   top: 27px;
-  left: 0;
+  left: 10%;
   height: 4px;
   background: linear-gradient(90deg, #10b981 0%, #059669 100%);
   border-radius: 99px;
-  z-index: -1;
-  transition: width 0.4s ease;
-  width: 0%;
+  z-index: 1;
+  transition: width 0.4s ease, height 0.4s ease;
+  width: calc(var(--progress-ratio, 0) * 80%);
 }
 
 .step {
@@ -167,6 +167,7 @@
   text-align: center;
   position: relative;
   flex: 1;
+  z-index: 2;
 }
 
 .step-icon {
@@ -442,13 +443,16 @@
     bottom: 22px;
     width: 4px;
     height: auto;
+    right: auto;
   }
   
   .tracker-line-progress {
     left: 46px;
     top: 22px;
     width: 4px;
+    height: calc(var(--progress-ratio, 0) * (100% - 44px));
     background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+    right: auto;
   }
   
   .step {

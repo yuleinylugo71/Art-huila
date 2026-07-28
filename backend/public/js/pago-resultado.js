@@ -183,8 +183,8 @@ function renderOutcome(data) {
         </div>
 
         <div class="nav-actions" style="margin-top: 0.5rem; width: 100%; max-width: 440px; display: flex; gap: 0.75rem;">
-          <a href="dashboard-comprador.html" class="btn btn-primary btn-lg" style="flex: 1; border-radius: 99px; text-align: center; justify-content: center; display: flex; align-items: center; gap: 0.5rem; padding: 0.85rem; font-size: 0.85rem; font-weight: 700; background: #c1440e; border: none; color: white;"><i class="fa-solid fa-box"></i> <span data-i18n="payment.viewOrdersBtn">${i18next.t('payment.viewOrdersBtn', { defaultValue: 'Ver mis pedidos' })}</span></a>
-          <a href="catalogo.html" class="btn btn-outline btn-lg" style="flex: 1; border-radius: 99px; text-align: center; justify-content: center; display: flex; align-items: center; gap: 0.5rem; padding: 0.85rem; font-size: 0.85rem; font-weight: 700; background: white; border: 1.5px solid #ebdcd0; color: #4a3e35;" data-i18n="payment.continueShoppingBtn">← ${i18next.t('payment.continueShoppingBtn', { defaultValue: 'Seguir comprando' })}</a>
+          <a href="/dashboard-comprador.html" class="btn btn-primary btn-lg" style="flex: 1; border-radius: 99px; text-align: center; justify-content: center; display: flex; align-items: center; gap: 0.5rem; padding: 0.85rem; font-size: 0.85rem; font-weight: 700; background: #c1440e; border: none; color: white;"><i class="fa-solid fa-box"></i> <span data-i18n="payment.viewOrdersBtn">${i18next.t('payment.viewOrdersBtn', { defaultValue: 'Ver mis pedidos' })}</span></a>
+          <a href="/catalogo.html" class="btn btn-outline btn-lg" style="flex: 1; border-radius: 99px; text-align: center; justify-content: center; display: flex; align-items: center; gap: 0.5rem; padding: 0.85rem; font-size: 0.85rem; font-weight: 700; background: white; border: 1.5px solid #ebdcd0; color: #4a3e35;" data-i18n="payment.continueShoppingBtn">← ${i18next.t('payment.continueShoppingBtn', { defaultValue: 'Seguir comprando' })}</a>
         </div>
       </div>
     `;
@@ -246,13 +246,13 @@ function renderOutcome(data) {
 
         <!-- Actions -->
         <div class="nav-actions">
-          <a href="carrito.html" class="btn btn-primary btn-lg">
+          <a href="/carrito.html" class="btn btn-primary btn-lg">
             <i class="fa-solid fa-cart-shopping"></i> <span data-i18n="cart.backToCart">${i18next.t('cart.backToCart', { defaultValue: 'Volver al carrito' })}</span>
           </a>
-          <a href="dashboard-comprador.html" class="btn btn-outline btn-lg">
+          <a href="/dashboard-comprador.html" class="btn btn-outline btn-lg">
             <i class="fa-solid fa-house"></i> <span data-i18n="payment.failedHomeBtn">${i18next.t('payment.failedHomeBtn', { defaultValue: 'Ir al Dashboard' })}</span>
           </a>
-          <a href="catalogo.html" class="btn btn-ghost btn-lg" data-i18n="payment.continueShoppingBtn">
+          <a href="/catalogo.html" class="btn btn-ghost btn-lg" data-i18n="payment.continueShoppingBtn">
             &#8592; ${i18next.t('payment.continueShoppingBtn', { defaultValue: 'Seguir Comprando' })}
           </a>
         </div>

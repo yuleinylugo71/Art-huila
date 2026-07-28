@@ -1,30 +1,81 @@
 import { Controller, Get, Header } from '@nestjs/common';
 import { ProductsService } from '../products/products.service';
 import { ConfigService } from '@nestjs/config';
+import { ArtisansService } from '../artisans/artisans.service';
+
+function escapeXml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
 
 @Controller('sitemap.xml')
 export class SitemapController {
   constructor(
     private readonly productsService: ProductsService,
+    private readonly artisansService: ArtisansService,
     private readonly configService: ConfigService,
   ) {}
 
   @Get()
   @Header('Content-Type', 'application/xml')
   async getSitemap() {
-    const products = await this.productsService.findAll();
+    const [products, artisans] = await Promise.all([
+      this.productsService.findForSitemap(),
+      this.artisansService.findForSitemap(),
+    ]);
     const frontendUrl =
       this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
+    const baseUrl = frontendUrl.replace(/\/$/, '');
 
     const urls = [
-      { loc: `${frontendUrl}/index.html`, priority: '1.0' },
-      { loc: `${frontendUrl}/catalogo.html`, priority: '0.8' },
+      {
+        loc: `${baseUrl}/index.html`,
+        priority: '1.0',
+        changefreq: 'weekly',
+        lastmod: new Date().toISOString(),
+      },
+      {
+        loc: `${baseUrl}/catalogo.html`,
+        priority: '0.8',
+        changefreq: 'daily',
+        lastmod: new Date().toISOString(),
+      },
+      {
+        loc: `${baseUrl}/artesanos.html`,
+        priority: '0.7',
+        changefreq: 'weekly',
+        lastmod: new Date().toISOString(),
+      },
     ];
 
     products.forEach((p) => {
       urls.push({
-        loc: `${frontendUrl}/producto.html?slug=${p.slug}`,
+        loc: `${baseUrl}/producto/${p.slug}`,
         priority: '0.6',
+        changefreq: 'weekly',
+        lastmod: p.updated_at?.toISOString?.() || new Date().toISOString(),
+      });
+    });
+
+    artisans.forEach((a) => {
+      urls.push({
+        loc: `${baseUrl}/artesano/${slugify(a.user?.full_name || 'artesano')}-${a.id}`,
+        priority: '0.6',
+        changefreq: 'weekly',
+        lastmod: a.updated_at?.toISOString?.() || new Date().toISOString(),
       });
     });
 
@@ -34,9 +85,10 @@ export class SitemapController {
     .map(
       (url) => `
   <url>
-    <loc>${url.loc}</loc>
+    <loc>${escapeXml(url.loc)}</loc>
+    <lastmod>${url.lastmod}</lastmod>
     <priority>${url.priority}</priority>
-    <changefreq>daily</changefreq>
+    <changefreq>${url.changefreq}</changefreq>
   </url>`,
     )
     .join('')}

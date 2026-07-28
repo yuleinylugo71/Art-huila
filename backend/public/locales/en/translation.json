@@ -185,7 +185,14 @@
     "paymentStatusFailed": "Failed",
     "paymentStatusPending": "Pending",
     "paymentStatusCancelled": "Cancelled",
-    "retryPaymentBtn": "Retry Payment"
+    "retryPaymentBtn": "Retry Payment",
+    "updateTrackingModalTitle": "Register Shipping Tracking",
+    "updateTrackingHint": "Enter the shipment information so the customer can track the package.",
+    "carrierLabelSelect": "Carrier Company *",
+    "selectCarrierPlaceholder": "Select carrier...",
+    "trackingNumberLabelInput": "Tracking / Guide Number *",
+    "mipaqueteNote": "* If you select MiPaquete, the tracking number will be generated automatically.",
+    "saveAndShipBtn": "Save & Ship"
   },
   "buyer": {
     "title": "My Profile — Art Huila",
@@ -571,7 +578,7 @@
     "promoBuy": "Shop now",
     "title": "Art Huila — Handicrafts with History",
     "brandSubtitle": "ANCESTRAL MASTERY",
-    "heroTag": "Freshness & Huilense Tradition 🌿",
+    "heroTag": "Freshness & Huilense Tradition",
     "menuArtisans": "Artisans",
     "menuHistory": "History",
     "menuContact": "Contact",

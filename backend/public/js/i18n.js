@@ -117,12 +117,22 @@
 
   window.translateProduct = function (p) {
     if (!p) return '';
+    if (typeof p !== 'string' && i18next.language === 'en' && p.name_en) {
+      return p.name_en;
+    }
     const name = typeof p === 'string' ? p : p.name;
     let slug = typeof p === 'string' ? null : p.slug;
     if (!slug) {
       slug = name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     }
     return i18next.t('products.' + slug, { defaultValue: name });
+  };
+
+  window.translateProductField = function (p, field, fallback = '') {
+    if (!p) return fallback;
+    const lang = i18next.language || 'es';
+    if (lang === 'en' && p[`${field}_en`]) return p[`${field}_en`];
+    return p[field] || fallback;
   };
 
   // 5. ACTUALIZAR CLASE ACTIVE EN EL SELECTOR DE IDIOMA

@@ -117,6 +117,14 @@ export class ArtisansService {
     });
   }
 
+  async findForSitemap() {
+    return this.profileRepo.find({
+      where: { verification_status: ArtisanStatus.VERIFIED },
+      relations: ['user', 'category', 'region', 'gallery'],
+      order: { updated_at: 'DESC' },
+    });
+  }
+
   async apply(
     userId: string,
     data: any,

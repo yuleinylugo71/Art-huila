@@ -214,7 +214,12 @@ function updateTracker(status) {
                 labelEl.style.color = '#dc2626';
             }
         }
-        if (lineProgress) lineProgress.style.width = '0%';
+        if (lineProgress) {
+            lineProgress.style.setProperty('--progress-ratio', '0');
+            lineProgress.style.setProperty('--progress-percent', '0%');
+            lineProgress.style.width = '';
+            lineProgress.style.height = '';
+        }
         return;
     }
 
@@ -235,12 +240,17 @@ function updateTracker(status) {
     // Update Connecting Line Progress
     if (lineProgress) {
         if (currentIdx === -1) {
-            lineProgress.style.width = '0%';
-            lineProgress.style.height = '0%';
+            lineProgress.style.setProperty('--progress-ratio', '0');
+            lineProgress.style.setProperty('--progress-percent', '0%');
+            lineProgress.style.width = '';
+            lineProgress.style.height = '';
         } else {
-            const percentage = (currentIdx / (steps.length - 1)) * 100;
-            lineProgress.style.width = `${percentage}%`;
-            lineProgress.style.height = `${percentage}%`;
+            const ratio = currentIdx / (steps.length - 1);
+            const percentage = ratio * 100;
+            lineProgress.style.setProperty('--progress-ratio', `${ratio}`);
+            lineProgress.style.setProperty('--progress-percent', `${percentage}%`);
+            lineProgress.style.width = '';
+            lineProgress.style.height = '';
         }
     }
 }

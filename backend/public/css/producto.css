@@ -1,71 +1,390 @@
-/* producto.css - Product Detail specific styles */
+﻿/* ==========================================================
+   producto.css — Detalle de Producto (Compacto Premium)
+   Art Huila · 2026
+   ========================================================== */
 
-.product-detail-grid {
+/* ----------------------------------------------------------
+   1. CONTENEDOR
+   ---------------------------------------------------------- */
+#product-container {
+  padding: 0;
+  min-height: 60vh;
+}
+
+.pd-wrapper {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 2rem 2rem 3.5rem;
+}
+
+.pd-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr);
+  gap: 3.5rem;
   align-items: start;
 }
 
-/* Image Carousel */
-.carousel {
-  position: relative;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-md);
-  aspect-ratio: 1/1;
-  background: var(--color-surface);
-}
-
-.carousel-track {
+/* ----------------------------------------------------------
+   2. GALERIA
+   ---------------------------------------------------------- */
+.pd-gallery {
   display: flex;
-  transition: transform 0.5s var(--ease-out);
-  height: 100%;
+  flex-direction: row-reverse;
+  gap: 0.75rem;
+  align-items: flex-start;
 }
 
-.carousel-track img {
-  min-width: 100%;
+.pd-main-img-wrap {
+  flex: 1;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #faf8f5;
+  border: 1px solid rgba(232, 224, 216, 0.6);
+  box-shadow: 0 2px 16px rgba(74, 62, 53, 0.06);
+  aspect-ratio: 1 / 1;
+  cursor: zoom-in;
+  transition: box-shadow 0.3s ease;
+}
+
+.pd-main-img-wrap:hover {
+  box-shadow: 0 6px 28px rgba(74, 62, 53, 0.11);
+}
+
+.pd-main-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.pd-thumbs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 0.2rem;
+}
+
+.pd-thumb {
+  width: 62px;
+  height: 62px;
+  border-radius: 9px;
+  overflow: hidden;
+  border: 2px solid rgba(232, 224, 216, 0.8);
+  cursor: pointer;
+  background: #faf8f5;
+  box-shadow: 0 1px 5px rgba(74, 62, 53, 0.05);
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  flex-shrink: 0;
+}
+
+.pd-thumb:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 3px 10px rgba(193, 68, 14, 0.15);
+  transform: translateX(2px);
+}
+
+.pd-thumb.active {
+  border-color: var(--color-primary);
+  box-shadow: 0 3px 10px rgba(193, 68, 14, 0.18);
+}
+
+.pd-thumb img {
+  width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
-.carousel-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.9);
-  border: none;
-  width: 44px;
-  height: 44px;
+/* ----------------------------------------------------------
+   3. BREADCRUMB
+   ---------------------------------------------------------- */
+.pd-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-muted);
+  margin-bottom: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.pd-breadcrumb a {
+  color: var(--color-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.pd-breadcrumb a:hover {
+  color: var(--color-primary);
+}
+
+.pd-breadcrumb-sep {
+  color: var(--color-muted);
+  font-size: 0.75rem;
+}
+
+.pd-breadcrumb-current {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+/* ----------------------------------------------------------
+   4. ARTESANO COMO ETIQUETA SUPERIOR
+   ---------------------------------------------------------- */
+.pd-artisan-tag {
+  margin-bottom: 0.65rem;
+}
+
+.pd-artisan-tag-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.pd-artisan-tag-link:hover {
+  opacity: 0.75;
+}
+
+.pd-artisan-tag-avatar {
+  display: block;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  cursor: pointer;
+  overflow: hidden;
+  border: 1.5px solid rgba(193, 68, 14, 0.22);
+  flex-shrink: 0;
+}
+
+.pd-artisan-tag-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.pd-artisan-tag-name {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  font-family: var(--font-body);
+}
+
+/* ----------------------------------------------------------
+   5. INFO DEL PRODUCTO
+   ---------------------------------------------------------- */
+.pd-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-top: 0.25rem;
+}
+
+.pd-name {
+  font-family: var(--font-display), serif;
+  font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+  font-weight: 900;
+  color: #261f1b;
+  line-height: 1.2;
+  margin: 0 0 0.75rem 0;
+  letter-spacing: -0.02em;
+}
+
+.pd-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+.pd-price {
+  font-family: var(--font-body);
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+.pd-rating {
+  display: none;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+
+.pd-stock {
+  font-size: 0.78rem;
+  color: var(--color-muted);
+  font-weight: 600;
+  margin-bottom: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.pd-stock strong {
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.pd-stock-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #16a34a;
+  margin-right: 0.15rem;
+  flex-shrink: 0;
+}
+
+.pd-stock-dot.low {
+  background: #ea580c;
+}
+
+/* ----------------------------------------------------------
+   6. BOTON CARRITO
+   ---------------------------------------------------------- */
+.pd-btn-cart {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
-  color: var(--color-text);
-  box-shadow: var(--shadow-sm);
-  transition: all 0.2s;
-  z-index: 10;
-}
-
-.carousel-btn:hover {
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.75rem 1.75rem;
   background: var(--color-primary);
-  color: white;
+  color: #ffffff;
+  border: none;
+  border-radius: 50px;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(193, 68, 14, 0.28);
+  transition: background 0.25s, transform 0.25s, box-shadow 0.25s;
+  margin-bottom: 1.25rem;
 }
 
-.carousel-btn.prev { left: 1rem; }
-.carousel-btn.next { right: 1rem; }
+.pd-btn-cart:hover:not(:disabled) {
+  background: #a33a0a;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(193, 68, 14, 0.36);
+}
 
-/* Product Info */
+.pd-btn-cart:disabled {
+  background: #c9bfb9;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* ----------------------------------------------------------
+   7. DESCRIPCION
+   ---------------------------------------------------------- */
+.pd-divider {
+  border: none;
+  border-top: 1px solid rgba(232, 224, 216, 0.8);
+  margin: 0 0 1.1rem 0;
+}
+
+.pd-description {
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: #5a4e45;
+  font-style: italic;
+  margin-bottom: 1.25rem;
+}
+
+/* ----------------------------------------------------------
+   8. DETALLES ARTESANALES
+   ---------------------------------------------------------- */
+.pd-craft-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.pd-handmade-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(22, 163, 74, 0.08);
+  color: #16a34a;
+  border: 1px solid rgba(22, 163, 74, 0.18);
+  padding: 0.35rem 0.85rem;
+  border-radius: 50px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-family: var(--font-body);
+  letter-spacing: 0.03em;
+  align-self: flex-start;
+  margin-bottom: 0.2rem;
+}
+
+.pd-craft-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.pd-craft-label {
+  font-size: 0.6rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-muted);
+  font-family: var(--font-body);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.pd-craft-value {
+  font-size: 0.82rem;
+  color: #4a3e35;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+/* ----------------------------------------------------------
+   RESENAS
+   ---------------------------------------------------------- */
+.divider {
+  border: none;
+  border-top: 1px solid rgba(232, 224, 216, 0.8);
+  margin: 1.5rem 0;
+}
+
+#reviews-section {
+  margin-top: 2rem;
+  max-width: 1180px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 2rem;
+}
+
+.review-item {
+  padding: 1.25rem 0;
+  border-bottom: 1px solid rgba(232, 224, 216, 0.7);
+}
+
+.review-item:last-child {
+  border-bottom: none;
+}
+
+/* ----------------------------------------------------------
+   ARTISAN CARD (base.css override para pd-wrapper)
+   ---------------------------------------------------------- */
 .artisan-mini {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
-  padding: 1.5rem;
-  background: var(--color-surface);
-  border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-md);
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: #faf8f5;
+  border: 1.5px solid rgba(232, 224, 216, 0.7);
+  border-radius: 14px;
   transition: all 0.2s;
   text-decoration: none;
   color: inherit;
@@ -73,21 +392,23 @@
 
 .artisan-mini:hover {
   border-color: var(--color-primary);
-  box-shadow: var(--shadow-sm);
-  transform: translateY(-2px);
+  box-shadow: 0 3px 12px rgba(193, 68, 14, 0.1);
+  transform: translateY(-1px);
 }
 
 .artisan-avatar {
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   background: var(--color-accent-warm);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
-  border: 2px solid var(--color-surface);
-  box-shadow: var(--shadow-xs);
+  font-size: 1.3rem;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgba(74, 62, 53, 0.1);
+  flex-shrink: 0;
+  overflow: hidden;
 }
 
 .artisan-avatar img {
@@ -97,45 +418,19 @@
   border-radius: 50%;
 }
 
-.divider {
-  border: none;
-  border-top: 1.5px solid var(--color-border);
-  margin: 2rem 0;
-}
-
-/* Reviews Section */
-#reviews-section {
-  margin-top: 5rem;
-}
-
-.review-item {
-  padding: 2rem 0;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.review-item:last-child {
-  border-bottom: none;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .product-detail-grid {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-}
-
-/* Premium Mobile Tabbed details and overlays */
+/* ----------------------------------------------------------
+   MOBILE TABS
+   ---------------------------------------------------------- */
 .detail-tab-btn {
   background: none;
   border: none;
   color: var(--color-muted);
   font-family: var(--font-body);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 700;
-  padding: 0.75rem 1rem;
+  padding: 0.65rem 0.85rem;
   cursor: pointer;
-  border-bottom: 2.5px solid transparent;
+  border-bottom: 2px solid transparent;
   flex: 1;
   text-align: center;
   transition: all 0.2s;
@@ -144,4 +439,27 @@
 .detail-tab-btn.active {
   color: #c1440e;
   border-bottom-color: #c1440e;
+}
+
+/* ----------------------------------------------------------
+   RESPONSIVE
+   ---------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .pd-grid { gap: 2.5rem; }
+  .pd-name { font-size: clamp(1.5rem, 2.5vw, 2rem); }
+}
+
+@media (max-width: 768px) {
+  .pd-wrapper { padding: 1.25rem 1rem 3rem; }
+  .pd-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+  .pd-gallery { flex-direction: column; }
+  .pd-thumbs { flex-direction: row; padding-top: 0; }
+  .pd-thumb { width: 54px; height: 54px; }
+  .pd-name { font-size: 1.55rem; }
+  .pd-price { font-size: 1.35rem; }
+  #reviews-section { padding: 0 1rem; }
+}
+
+@media (max-width: 480px) {
+  .pd-thumb { width: 48px; height: 48px; }
 }

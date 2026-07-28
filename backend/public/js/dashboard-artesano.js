@@ -14,14 +14,14 @@ if (window.i18nReadyProcessed) {
 document.addEventListener('languageChanged', () => {
   updateWelcomeMessage();
   updateTasksAndMetrics();
-  
+
   const activeSection = getActiveSectionName();
   if (activeSection === 'resumen') updateTasksAndMetrics();
   if (activeSection === 'mi-perfil') loadProfile();
   if (activeSection === 'mis-productos') loadMyProducts();
   if (activeSection === 'mis-ventas') loadMySales();
   if (activeSection === 'mis-compras') loadMyPurchases();
-  
+
   // Re-run selects to translate placeholders
   initSelects();
 });
@@ -56,7 +56,7 @@ function showSection(name) {
     const el = document.getElementById(`section-${s}`);
     if (el) el.classList.add('hidden');
   });
-  
+
   const activeEl = document.getElementById(`section-${name}`);
   if (activeEl) {
     activeEl.classList.remove('hidden');
@@ -107,10 +107,10 @@ function showSection(name) {
 async function loadMySales() {
   const list = document.getElementById('sales-list');
   const mobileContainer = document.getElementById('sales-cards-mobile');
-  
+
   list.innerHTML = `<tr><td colspan="6" style="text-align:center;"><div class="spinner"></div></td></tr>`;
   if (mobileContainer) mobileContainer.innerHTML = `<div style="text-align:center;padding:2rem;"><div class="spinner"></div></div>`;
-  
+
   try {
     const sales = await apiFetch('/orders/artisan/sales');
     if (sales.length === 0) {
@@ -136,6 +136,8 @@ async function loadMySales() {
       return new Date(b.order.created_at).getTime() - new Date(a.order.created_at).getTime();
     });
 
+    window._mySalesData = sortedGroups;
+
     list.innerHTML = sortedGroups.map(g => {
       const o = g.order;
       const totalQty = g.items.reduce((sum, item) => sum + item.quantity, 0);
@@ -154,15 +156,15 @@ async function loadMySales() {
       if (o.status === 'paid') {
         statusHtml = `
           <select onchange="updateArtisanOrderStatus('${o.id}', this.value)" class="form-control-sm" style="color:#16a34a; border-color:#22c55e; font-weight:700; padding:2px 5px; border-radius:4px; outline:none;">
-            <option value="paid" selected style="color:#16a34a; font-weight:700;">🟢 ${i18next.t('order.statusPaid')}</option>
-            <option value="preparing" style="color:#d97706; font-weight:700;">🟡 ${i18next.t('order.statusPreparing')}</option>
+            <option value="paid" selected style="color:#16a34a; font-weight:700;">${i18next.t('order.statusPaid')}</option>
+            <option value="preparing" style="color:#d97706; font-weight:700;">${i18next.t('order.statusPreparing')}</option>
           </select>
         `;
       } else if (o.status === 'preparing') {
         statusHtml = `
           <select onchange="updateArtisanOrderStatus('${o.id}', this.value)" class="form-control-sm" style="color:#d97706; border-color:#f59e0b; font-weight:700; padding:2px 5px; border-radius:4px; outline:none;">
-            <option value="preparing" selected style="color:#d97706; font-weight:700;">🟡 ${i18next.t('order.statusPreparing')}</option>
-            <option value="shipped" style="color:#7c3aed; font-weight:700;">🚀 ${i18next.t('order.statusShipped')}</option>
+            <option value="preparing" selected style="color:#d97706; font-weight:700;">${i18next.t('order.statusPreparing')}</option>
+            <option value="shipped" style="color:#7c3aed; font-weight:700;">${i18next.t('order.statusShipped')}</option>
           </select>
         `;
       } else if (o.status === 'shipped') {
@@ -199,20 +201,20 @@ async function loadMySales() {
         const totalAmount = g.items.reduce((sum, item) => sum + item.subtotal, 0);
         const productsText = g.items.map(item => `${item.product?.name || i18next.t('artisan.productDeleted')} (x${item.quantity})`).join(', ');
         const dateStr = new Date(o.created_at).toLocaleDateString(i18next.language === 'es' ? 'es-CO' : 'en-US');
-        
+
         let statusHtml = '';
         if (o.status === 'paid') {
           statusHtml = `
             <select onchange="updateArtisanOrderStatus('${o.id}', this.value)" class="form-control-sm" style="color:#16a34a; border-color:#22c55e; font-weight:700; padding:4px 8px; border-radius:6px; outline:none; font-size:0.8rem; width:100%;">
-              <option value="paid" selected style="color:#16a34a;">🟢 ${i18next.t('order.statusPaid')}</option>
-              <option value="preparing" style="color:#d97706;">🟡 ${i18next.t('order.statusPreparing')}</option>
+              <option value="paid" selected style="color:#16a34a;">${i18next.t('order.statusPaid')}</option>
+              <option value="preparing" style="color:#d97706;">${i18next.t('order.statusPreparing')}</option>
             </select>
           `;
         } else if (o.status === 'preparing') {
           statusHtml = `
             <select onchange="updateArtisanOrderStatus('${o.id}', this.value)" class="form-control-sm" style="color:#d97706; border-color:#f59e0b; font-weight:700; padding:4px 8px; border-radius:6px; outline:none; font-size:0.8rem; width:100%;">
-              <option value="preparing" selected style="color:#d97706;">🟡 ${i18next.t('order.statusPreparing')}</option>
-              <option value="shipped" style="color:#7c3aed;">🚀 ${i18next.t('order.statusShipped')}</option>
+              <option value="preparing" selected style="color:#d97706;">${i18next.t('order.statusPreparing')}</option>
+              <option value="shipped" style="color:#7c3aed;">${i18next.t('order.statusShipped')}</option>
             </select>
           `;
         } else if (o.status === 'shipped') {
@@ -225,7 +227,7 @@ async function loadMySales() {
           statusHtml = `<span style="color:#dc2626; background:#fef2f2; padding:0.25rem 0.5rem; border-radius:6px; border:1px solid #fecaca; font-weight:700; font-size:0.8rem; display:inline-block; text-align:center; width:100%; box-sizing:border-box;"><i class="fa-solid fa-xmark"></i> ${i18next.t('order.statusCancelled', { defaultValue: 'Cancelado' })}</span>`;
         }
 
-        const productImagesHtml = g.items.map(item => 
+        const productImagesHtml = g.items.map(item =>
           `<img src="${item.product?.images?.[0]?.url || '/img/placeholder.jpg'}" style="width:40px;height:40px;object-fit:cover;border-radius:8px;border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,0.1);" alt=""/>`
         ).join('');
 
@@ -263,11 +265,16 @@ async function loadMySales() {
 
 window.updateArtisanOrderStatus = async function(orderId, newStatus) {
   try {
-    await apiFetch(`/orders/${orderId}/status`, {
+    const updatedOrder = await apiFetch(`/orders/${orderId}/status`, {
       method: 'POST',
       body: JSON.stringify({ status: newStatus })
     });
-    showToast(i18next.t('artisan.toastOrderStatusUpdated'), 'success');
+
+    if (newStatus === 'shipped' && updatedOrder?.tracking_number) {
+      showToast(`<i class="fa-solid fa-rocket"></i> Pedido despachado. Guía generada: ${updatedOrder.tracking_number}`, 'success');
+    } else {
+      showToast(i18next.t('artisan.toastOrderStatusUpdated'), 'success');
+    }
     loadMySales();
   } catch (e) {
     showToast(i18next.t('artisan.errorUpdatingStatus') + e.message, 'error');
@@ -278,7 +285,7 @@ window.updateArtisanOrderStatus = async function(orderId, newStatus) {
 async function initSelects() {
   try {
     const [cats, regs] = await Promise.all([apiFetch('/categories'), apiFetch('/regions')]);
-    
+
     // Product form selects
     const catSel = document.getElementById('p-category');
     const regSel = document.getElementById('p-region');
@@ -290,8 +297,8 @@ async function initSelects() {
     const profRegSel = document.getElementById('profile-region');
     if (profCatSel) profCatSel.innerHTML = `<option value="">${i18next.t('artisan.selectCategoryOption')}</option>` + cats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
     if (profRegSel) profRegSel.innerHTML = `<option value="">${i18next.t('artisan.selectRegionOption')}</option>` + regs.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
-  } catch (e) { 
-    console.error(e); 
+  } catch (e) {
+    console.error(e);
   }
 }
 
@@ -307,8 +314,8 @@ async function initProfile() {
     if (typeof window.updateMobileAvatar === 'function') {
       window.updateMobileAvatar(artisanProfile?.avatar_url);
     }
-  } catch (e) { 
-    console.error(e); 
+  } catch (e) {
+    console.error(e);
   }
 }
 
@@ -330,15 +337,15 @@ async function loadMyProducts() {
     grid.innerHTML = products.map(p => `
       <div class="card product-card">
         <div class="product-img-wrapper">
-          ${p.images && p.images[0] ? `<img class="product-img" src="${p.images[0].url}" alt="${p.name}" loading="lazy"/>` : '<div class="product-img-placeholder"><i class="fa-solid fa-palette fa-2x"></i></div>'}
+          ${p.images && p.images[0] ? `<img class="product-img" src="${p.images[0].url}" alt="${window.translateProduct(p)}" loading="lazy"/>` : '<div class="product-img-placeholder"><i class="fa-solid fa-palette fa-2x"></i></div>'}
           ${p.stock === 0 ? `<span class="product-badge badge-out-of-stock">${i18next.t('catalog.outOfStock', { defaultValue: 'Agotado' })}</span>` : ''}
         </div>
         <div class="product-card-body">
-          <h4 class="product-name">${p.name}</h4>
+          <h4 class="product-name">${window.translateProduct(p)}</h4>
           <div class="product-price">${formatPrice(p.price)}</div>
           <div class="product-meta">
             <span class="stock-label">
-              ${p.stock === 0 
+              ${p.stock === 0
                 ? `<span style="color:#dc2626;font-weight:700;"><i class="fa-solid fa-circle-xmark"></i> Sin stock</span>`
                 : p.stock <= 3
                   ? `<span style="color:#d97706;font-weight:700;"><i class="fa-solid fa-triangle-exclamation"></i> ¡Últimas ${p.stock}!</span>`
@@ -348,7 +355,7 @@ async function loadMyProducts() {
             <span class="badge badge-verified" style="background:#f0fdf4; color:#16a34a; border:1px solid #bbf7d0;"><i class="fa-solid fa-circle-check"></i> ${i18next.t('artisan.publishedStatus', { defaultValue: 'Publicado' })}</span>
           </div>
           <div class="product-card-actions">
-            <a href="producto.html?slug=${p.slug}" class="btn btn-ghost btn-sm" style="flex:1;"><i class="fa-regular fa-eye"></i> ${i18next.t('common.view')}</a>
+            <a href="/producto/${p.slug}" class="btn btn-ghost btn-sm" style="flex:1;"><i class="fa-regular fa-eye"></i> ${i18next.t('common.view')}</a>
             <button onclick="editProduct('${p.slug}')" class="btn btn-outline btn-sm" style="flex:1;"><i class="fa-solid fa-pen-to-square"></i> ${i18next.t('common.edit')}</button>
           </div>
         </div>
@@ -363,14 +370,14 @@ async function loadProfile() {
   try {
     const p = await apiFetch('/artisans/me');
     artisanProfile = p;
-    
+
     // Fill display header details
     const dispName = document.getElementById('profile-display-name');
     if (dispName) dispName.textContent = p.user?.full_name || Auth.getUser().full_name;
-    
+
     const dispCat = document.getElementById('profile-display-category');
     if (dispCat) dispCat.innerHTML = `<i class="fa-solid fa-palette"></i> ${p.category?.name || 'Artesano'}`;
-    
+
     const dispReg = document.getElementById('profile-display-region');
     if (dispReg) dispReg.innerHTML = `<i class="fa-solid fa-location-dot"></i> ${p.region?.name || 'Huila'}`;
 
@@ -387,14 +394,14 @@ async function loadProfile() {
     document.getElementById('profile-full-name').value = p.user?.full_name || Auth.getUser().full_name;
     document.getElementById('profile-email').value = p.user?.email || Auth.getUser().email;
     document.getElementById('profile-id-number').value = p.id_number || '';
-    
+
     document.getElementById('profile-category').value = p.category?.id || '';
     document.getElementById('profile-region').value = p.region?.id || '';
-    
+
     // History
     document.getElementById('profile-history-text').textContent = p.cultural_history || i18next.t('artisan.noHistoryYet');
     document.getElementById('profile-history').value = p.cultural_history || '';
-    
+
     // Avatar image
     if (p.avatar_url) {
       document.getElementById('avatar-preview').innerHTML = `<img src="${p.avatar_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;"/>`;
@@ -432,10 +439,10 @@ async function loadProfile() {
     const decStatus = document.getElementById('legal-declaration-status');
     const decCheck = document.getElementById('profile-declaracion');
     if (p.truthfulness_declaration) {
-      decStatus.innerHTML = `<span class="text-success" style="font-weight:700;color:#16a34a;">✔ ${i18next.t('artisan.statusCompleto')}</span>`;
+      decStatus.innerHTML = `<span class="text-success" style="font-weight:700;color:#16a34a;"><i class="fa-solid fa-circle-check"></i> ${i18next.t('artisan.statusCompleto')}</span>`;
       decCheck.checked = true;
     } else {
-      decStatus.innerHTML = `<span class="text-danger" style="font-weight:700;color:#dc2626;">✘ ${i18next.t('artisan.statusPendiente')}</span>`;
+      decStatus.innerHTML = `<span class="text-danger" style="font-weight:700;color:#dc2626;"><i class="fa-solid fa-circle-xmark"></i> ${i18next.t('artisan.statusPendiente')}</span>`;
       decCheck.checked = false;
     }
     document.getElementById('legal-ip').textContent = p.legal_acceptance_ip || i18next.t('artisan.ipNotRegistered');
@@ -450,8 +457,8 @@ async function loadProfile() {
 
     // Refresh general tasks / metrics
     updateTasksAndMetrics();
-  } catch (e) { 
-    showToast(e.message, 'error'); 
+  } catch (e) {
+    showToast(e.message, 'error');
   }
 }
 
@@ -518,7 +525,7 @@ async function updateTasksAndMetrics() {
     const notifList = document.getElementById('notifications-list');
     const headerNotifCount = document.getElementById('header-notif-count');
     const tabNotifCount = document.getElementById('tab-notif-count');
-    
+
     let notifications = [];
 
     const hasFrontDoc = !!artisanProfile?.id_document_front_url;
@@ -655,7 +662,7 @@ function updateProfileCompleteness(sales, products) {
     updateCompletenessRow('row-history', 'badge-history', 'link-history', hasHistory);
     updateCompletenessRow('row-technique', 'badge-technique', 'link-technique', hasCategory);
     updateCompletenessRow('row-avatar', 'badge-avatar', 'link-avatar', hasAvatar);
-    
+
     const labelGallery = document.getElementById('label-gallery');
     if (labelGallery) {
       labelGallery.textContent = i18next.t('artisan.rowGalleryLabel', { current: galleryCount, total: 10 });
@@ -692,13 +699,13 @@ window.enableProfileEdit = function() {
 
   document.getElementById('profile-history-text').classList.add('hidden');
   document.getElementById('profile-history').classList.remove('hidden');
-  
+
   document.getElementById('avatar-edit-controls').classList.remove('hidden');
   document.getElementById('gallery-edit-controls').classList.remove('hidden');
   document.getElementById('doc-front-edit-controls').classList.remove('hidden');
   document.getElementById('doc-back-edit-controls').classList.remove('hidden');
   document.getElementById('profile-declaracion-wrap').style.display = 'flex';
-  
+
   document.getElementById('profile-save-controls').classList.remove('hidden');
   document.getElementById('profile-save-controls').style.display = 'flex';
   document.getElementById('btn-edit-profile').classList.add('hidden');
@@ -712,13 +719,13 @@ window.disableProfileEdit = function() {
 
   document.getElementById('profile-history-text').classList.remove('hidden');
   document.getElementById('profile-history').classList.add('hidden');
-  
+
   document.getElementById('avatar-edit-controls').classList.add('hidden');
   document.getElementById('gallery-edit-controls').classList.add('hidden');
   document.getElementById('doc-front-edit-controls').classList.add('hidden');
   document.getElementById('doc-back-edit-controls').classList.add('hidden');
   document.getElementById('profile-declaracion-wrap').style.display = 'none';
-  
+
   document.getElementById('profile-save-controls').classList.add('hidden');
   document.getElementById('profile-save-controls').style.display = '';
   document.getElementById('btn-edit-profile').classList.remove('hidden');
@@ -752,12 +759,12 @@ window.saveProfile = async function() {
         truthfulness_declaration: true
       })
     });
-    
+
     showToast(i18next.t('artisan.toastProfileUpdated'), 'success');
     loadProfile();
     disableProfileEdit();
-  } catch (e) { 
-    showToast(e.message, 'error'); 
+  } catch (e) {
+    showToast(e.message, 'error');
   }
   btn.disabled = false; btn.innerHTML = `<i class="fa-solid fa-check"></i> <span data-i18n="artisan.saveProfileBtn">${i18next.t('artisan.saveProfileBtn')}</span>`;
 };
@@ -779,8 +786,8 @@ window.uploadAvatar = async function() {
     document.getElementById('avatar-preview').innerHTML = `<img src="${data.avatar_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;"/>`;
     showToast(i18next.t('artisan.toastAvatarUpdated'), 'success');
     loadProfile();
-  } catch(e) { 
-    showToast(e.message, 'error'); 
+  } catch(e) {
+    showToast(e.message, 'error');
   }
 };
 
@@ -800,8 +807,8 @@ window.uploadDocumentFront = async function() {
     if (!res.ok) throw new Error(data.message || 'Error');
     showToast(i18next.t('artisan.toastProfileUpdated'), 'success');
     loadProfile();
-  } catch(e) { 
-    showToast(e.message, 'error'); 
+  } catch(e) {
+    showToast(e.message, 'error');
   }
 };
 
@@ -821,8 +828,8 @@ window.uploadDocumentBack = async function() {
     if (!res.ok) throw new Error(data.message || 'Error');
     showToast(i18next.t('artisan.toastProfileUpdated'), 'success');
     loadProfile();
-  } catch(e) { 
-    showToast(e.message, 'error'); 
+  } catch(e) {
+    showToast(e.message, 'error');
   }
 };
 
@@ -842,8 +849,8 @@ window.uploadGallery = async function() {
     if (!res.ok) throw new Error(data.message || i18next.t('artisan.errorUploadingGallery'));
     showToast(i18next.t('artisan.toastGalleryUpdated'), 'success');
     loadProfile();
-  } catch(e) { 
-    showToast(e.message, 'error'); 
+  } catch(e) {
+    showToast(e.message, 'error');
   }
 };
 
@@ -869,6 +876,11 @@ function handleDrop(e) {
 }
 
 function renderPreviews() {
+  // When editing, merge existing + new files via renderExistingImages
+  if (editingProductId) {
+    renderExistingImages();
+    return;
+  }
   const container = document.getElementById('img-previews');
   container.innerHTML = selectedFiles.map((f, i) => `
     <div class="image-preview-item">
@@ -896,7 +908,7 @@ function previewProduct() {
   const weight = document.getElementById('p-weight').value || '';
   const care = document.getElementById('p-care').value || '';
   const isHandmade = document.getElementById('p-handmade').checked;
-  
+
   box.classList.remove('hidden');
   box.innerHTML = `
     <h3 style="font-family:'Crimson Pro',serif;font-size:1.3rem;margin-bottom:0.5rem;">${i18next.t('artisan.previewTitle', { name })}</h3>
@@ -925,14 +937,14 @@ document.getElementById('product-form').addEventListener('submit', async functio
   if (artisanProfile?.verification_status !== 'verified') {
     showToast(i18next.t('artisan.errorOnlyVerifiedCanPublish'), 'error'); return;
   }
-  
+
   if (!editingProductId && selectedFiles.length === 0) {
     showToast(i18next.t('artisan.errorAtLeastOneImageRequired'), 'error'); return;
   }
 
   const btn = document.getElementById('btn-publish');
   btn.disabled = true; btn.textContent = editingProductId ? i18next.t('common.saving') : i18next.t('artisan.publishing');
-  
+
   try {
     const payload = {
       name: document.getElementById('p-name').value,
@@ -990,11 +1002,11 @@ window.editProduct = async function(slug) {
   try {
     const p = await apiFetch(`/products/${slug}`);
     editingProductId = p.id;
-    
+
     document.getElementById('p-name').value = p.name;
     document.getElementById('p-price').value = p.price;
     document.getElementById('p-stock').value = p.stock;
-    
+
     // Attempt to select category and region
     setTimeout(() => {
       document.getElementById('p-category').value = p.category?.id || '';
@@ -1012,24 +1024,67 @@ window.editProduct = async function(slug) {
     document.getElementById('p-handmade').checked = p.is_handmade !== false;
 
     selectedFiles = [];
-    document.getElementById('img-previews').innerHTML = p.images?.map(img => `
-      <div class="image-preview-item">
-        <img src="${img.url}" alt="saved-image"/>
-      </div>
-    `).join('') || '';
+    existingImages = p.images ? [...p.images] : [];
+    renderExistingImages();
 
     document.getElementById('btn-publish').innerHTML = `<i class="fa-solid fa-check"></i> ${i18next.t('artisan.saveProfileBtn')}`;
     document.querySelector('#section-nuevo-producto h2').innerHTML = `${i18next.t('artisan.editProductHeading')} <button type="button" class="btn btn-ghost btn-sm" onclick="cancelEdit()" style="float:right;">${i18next.t('artisan.cancelEditBtn')}</button>`;
-    
+
     showSection('nuevo-producto');
   } catch(e) {
     showToast(i18next.t('artisan.errorLoadingProductEdit'), 'error');
   }
 };
 
+let existingImages = [];
+
+function renderExistingImages() {
+  const container = document.getElementById('img-previews');
+  const existingHtml = existingImages.map((img, i) => `
+    <div class="image-preview-item" id="existing-img-${img.id}" style="position:relative;">
+      <img src="${img.url}" alt="imagen-existente" style="width:100%;height:100%;object-fit:cover;border-radius:8px;"/>
+      <button
+        type="button"
+        class="remove-img"
+        onclick="deleteExistingImage('${img.id}', ${i})"
+        title="Eliminar imagen"
+        style="position:absolute;top:4px;right:4px;background:rgba(220,38,38,0.92);color:#fff;border:none;border-radius:50%;width:26px;height:26px;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.25);transition:transform 0.15s;"
+        onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'"
+      >
+        <i class="fa-solid fa-trash" style="font-size:0.7rem;pointer-events:none;"></i>
+      </button>
+    </div>
+  `).join('');
+
+  const newHtml = selectedFiles.map((f, i) => `
+    <div class="image-preview-item">
+      <img src="${URL.createObjectURL(f)}" alt="preview"/>
+      <button class="remove-img" onclick="removeImg(${i})">×</button>
+    </div>
+  `).join('');
+
+  container.innerHTML = existingHtml + newHtml;
+}
+
+window.deleteExistingImage = async function(imageId, index) {
+  if (!editingProductId) return;
+  const confirmed = confirm(i18next.t('artisan.confirmDeleteImage', { defaultValue: '¿Eliminar esta imagen del producto?' }));
+  if (!confirmed) return;
+
+  try {
+    await apiFetch(`/products/${editingProductId}/images/${imageId}`, { method: 'DELETE' });
+    existingImages = existingImages.filter(img => img.id !== imageId);
+    renderExistingImages();
+    showToast(i18next.t('artisan.imageDeletedOk', { defaultValue: 'Imagen eliminada correctamente.' }), 'success');
+  } catch(err) {
+    showToast(i18next.t('artisan.imageDeletedError', { defaultValue: 'Error al eliminar la imagen.' }), 'error');
+  }
+};
+
 window.cancelEdit = function() {
   editingProductId = null;
   selectedFiles = [];
+  existingImages = [];
   document.getElementById('product-form').reset();
   document.getElementById('img-previews').innerHTML = '';
   document.getElementById('preview-box').classList.add('hidden');
@@ -1037,6 +1092,7 @@ window.cancelEdit = function() {
   document.querySelector('#section-nuevo-producto h2').textContent = i18next.t('artisan.publishProductHeading');
   document.getElementById('btn-publish').disabled = false;
 };
+
 
 // Dual Panel drawer toggle behaviors with Mobile Overlay Support
 window.toggleRightPanel = function() {
@@ -1080,7 +1136,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (layout) {
     layout.classList.add('right-panel-collapsed');
   }
-  
+
   // Toggle sidebar expanded state
   const btnToggleSidebar = document.getElementById('btn-toggle-sidebar');
   if (btnToggleSidebar) {

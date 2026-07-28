@@ -81,7 +81,6 @@ window.changeAuditPage = function(page) {
 
 // Pending modal callbacks
 let _pendingModalAction = null;
-let _pendingTrackingOrderId = null;
 
 // ─── NAVEGACIÓN ───────────────────────────────────────────────────────────
 const SECTIONS = ['overview', 'artesanos', 'catalogo', 'pedidos', 'resenas', 'estadisticas', 'auditoria'];
@@ -210,7 +209,6 @@ function renderArtisansPage() {
               <div class="td-name" onclick="viewArtisan('${a.id}')">${a.user?.full_name || '—'}</div>
               <div class="td-sub">${a.user?.email || ''}</div>
             </div>
-            ${badgeStatus(a.verification_status)}
           </div>
           <div class="mc-row">
             <span class="mc-label">Región</span>
@@ -436,7 +434,7 @@ function renderCatalogPage() {
           </div>
           <div class="mc-row">
             <span class="mc-label">Categoría</span>
-            <span class="badge badge-category">${p.category?.name || '—'}</span>
+            <span class="mc-value">${p.category?.name || '—'}</span>
           </div>
           <div class="mc-row">
             <span class="mc-label">Stock</span>
@@ -560,9 +558,6 @@ function renderOrdersPage() {
       <td>
         <div class="btn-group">
           <button class="btn btn-outline btn-xs" onclick="viewOrder('${o.id}')"><i class="fa-solid fa-eye"></i></button>
-          ${o.status !== 'delivered' && o.status !== 'cancelled'
-            ? `<button class="btn btn-primary btn-xs" onclick="openTrackingModal('${o.id}')"><i class="fa-solid fa-truck"></i></button>`
-            : ''}
           ${o.status !== 'cancelled' && o.status !== 'delivered'
             ? `<button class="btn btn-danger btn-xs" onclick="cancelOrder('${o.id}')"><i class="fa-solid fa-ban"></i></button>`
             : ''}
@@ -603,7 +598,6 @@ function renderOrdersPage() {
           ${o.tracking_number ? `<div class="mc-row"><span class="mc-label">Guía</span><code style="font-size:0.75rem;">${o.shipping_company || ''} · ${o.tracking_number}</code></div>` : ''}
           <div class="mc-actions">
             <button class="btn btn-outline btn-sm" onclick="viewOrder('${o.id}')"><i class="fa-solid fa-eye"></i> Ver</button>
-            ${o.status !== 'delivered' && o.status !== 'cancelled' ? `<button class="btn btn-primary btn-sm" onclick="openTrackingModal('${o.id}')"><i class="fa-solid fa-truck"></i> Guía</button>` : ''}
             ${o.status !== 'cancelled' && o.status !== 'delivered' ? `<button class="btn btn-danger btn-sm" onclick="cancelOrder('${o.id}')"><i class="fa-solid fa-ban"></i></button>` : ''}
             ${o.status === 'shipped' ? `<button class="btn btn-success btn-sm" onclick="markDelivered('${o.id}')"><i class="fa-solid fa-check"></i> Entregado</button>` : ''}
           </div>
@@ -690,9 +684,6 @@ window.viewOrder = function(id) {
   `;
 
   document.getElementById('order-modal-actions').innerHTML = `
-    ${o.status !== 'cancelled' && o.status !== 'delivered'
-      ? `<button class="btn btn-primary" onclick="closeOrderModal(); openTrackingModal('${o.id}')"><i class="fa-solid fa-truck"></i> Actualizar Guía</button>`
-      : ''}
     ${o.status === 'shipped'
       ? `<button class="btn btn-success" onclick="closeOrderModal(); markDelivered('${o.id}')"><i class="fa-solid fa-check"></i> Marcar Entregado</button>`
       : ''}
@@ -732,7 +723,9 @@ async function markDelivered(id) {
 }
 
 // ─── TRACKING MODAL ───────────────────────────────────────────────────────
-window.openTrackingModal = function(orderId) {
+window.openTrackingModal = function() {
+  showToast('La guía de envío solo se visualiza en el panel admin.', 'info');
+  return;
   _pendingTrackingOrderId = orderId;
   const order = allOrders.find(o => o.id === orderId);
   document.getElementById('tracking-number-input').value  = order?.tracking_number || '';
@@ -1021,10 +1014,10 @@ function renderAuditPage() {
 // ─── HELPERS ──────────────────────────────────────────────────────────────
 function badgeStatus(status) {
   const map = {
-    pending:   { cls: 'badge-pending',   label: '⏳ Pendiente' },
-    verified:  { cls: 'badge-verified',  label: '✅ Verificado' },
-    rejected:  { cls: 'badge-rejected',  label: '❌ Rechazado' },
-    suspended: { cls: 'badge-suspended', label: '🔴 Suspendido' },
+    pending:   { cls: 'badge-pending',   label: '<i class="fa-solid fa-hourglass-half"></i> Pendiente' },
+    verified:  { cls: 'badge-verified',  label: '<i class="fa-solid fa-circle-check"></i> Verificado' },
+    rejected:  { cls: 'badge-rejected',  label: '<i class="fa-solid fa-circle-xmark"></i> Rechazado' },
+    suspended: { cls: 'badge-suspended', label: '<i class="fa-solid fa-ban"></i> Suspendido' },
   };
   const d = map[status] || { cls: '', label: status };
   return `<span class="badge ${d.cls}">${d.label}</span>`;
@@ -1032,12 +1025,12 @@ function badgeStatus(status) {
 
 function badgeOrderStatus(status) {
   const map = {
-    pending:   { cls: 'order-pending',   label: '⏳ Pendiente' },
-    paid:      { cls: 'order-paid',      label: '💳 Pagado' },
-    preparing: { cls: 'order-preparing', label: '📦 Preparando' },
-    shipped:   { cls: 'order-shipped',   label: '🚚 Despachado' },
-    delivered: { cls: 'order-delivered', label: '✅ Entregado' },
-    cancelled: { cls: 'order-cancelled', label: '❌ Cancelado' },
+    pending:   { cls: 'order-pending',   label: '<i class="fa-solid fa-hourglass-half"></i> Pendiente' },
+    paid:      { cls: 'order-paid',      label: '<i class="fa-solid fa-credit-card"></i> Pagado' },
+    preparing: { cls: 'order-preparing', label: '<i class="fa-solid fa-box"></i> Preparando' },
+    shipped:   { cls: 'order-shipped',   label: '<i class="fa-solid fa-truck-fast"></i> Despachado' },
+    delivered: { cls: 'order-delivered', label: '<i class="fa-solid fa-circle-check"></i> Entregado' },
+    cancelled: { cls: 'order-cancelled', label: '<i class="fa-solid fa-circle-xmark"></i> Cancelado' },
   };
   const d = map[status] || { cls: '', label: status };
   return `<span class="badge ${d.cls}">${d.label}</span>`;

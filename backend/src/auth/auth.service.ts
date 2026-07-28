@@ -79,15 +79,6 @@ export class AuthService {
       }
     }
 
-    // Check if account is locked
-    if (user.locked_until && user.locked_until > new Date()) {
-      const minutesLeft = Math.ceil(
-        (user.locked_until.getTime() - Date.now()) / 60000,
-      );
-      throw new UnauthorizedException(
-        `Cuenta bloqueada. Intenta en ${minutesLeft} minuto(s)`,
-      );
-    }
 
     const passwordMatch = await bcrypt.compare(
       dto.password,

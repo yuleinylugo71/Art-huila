@@ -19,16 +19,16 @@ document.addEventListener('languageChanged', runInitCatalog);
 
 function getUrlParams() {
   const p = new URLSearchParams(window.location.search);
-  
+
   // Soporta tanto 'categories' (plural) como 'category' (singular, enviado desde index.html)
   const rawCategoryParam = p.get('categories') || p.get('category') || '';
-  
+
   // Si las categorías ya están en caché, resuelve slugs a nombres de categoría oficiales en la DB
   let resolvedCategories = '';
   if (rawCategoryParam && cachedCategories.length > 0) {
     resolvedCategories = rawCategoryParam.split(',').map(raw => {
-      const matched = cachedCategories.find(c => 
-        c.name.toLowerCase() === raw.toLowerCase() || 
+      const matched = cachedCategories.find(c =>
+        c.name.toLowerCase() === raw.toLowerCase() ||
         c.slug.toLowerCase() === raw.toLowerCase()
       );
       return matched ? matched.name : raw;
@@ -83,10 +83,10 @@ async function loadFilters() {
   const { minPrice, maxPrice, sortBy, search } = params;
   if (minPrice) document.getElementById('min-price').value = minPrice;
   if (maxPrice) document.getElementById('max-price').value = maxPrice;
-  
+
   const sortSelect = document.getElementById('sort-select');
   if (sortSelect) sortSelect.value = sortBy;
-  
+
   const mobileSort = document.getElementById('mobile-sort-select');
   if (mobileSort) mobileSort.value = sortBy;
 
@@ -99,7 +99,7 @@ async function loadFilters() {
     mobileSearch.value = search;
   }
 
-  // 🏷️ Sync Category Chips Scroller
+  // Sync Category Chips Scroller
   syncCategoryChips();
 }
 
@@ -142,7 +142,7 @@ function syncCategoryChips() {
     }).join('');
     chipsScroller.innerHTML = chipsHtml;
   }
-  
+
   // Render mobile horizontal scrolling category chips (no emojis, active in terracota)
   const circularContainer = document.getElementById('mobile-categories-carousel');
   if (circularContainer && cachedCategories.length > 0) {
@@ -174,7 +174,7 @@ window.selectCategoryChip = (catName) => {
       el.checked = (el.value === catName);
     }
   });
-  
+
   syncCategoryChips();
   applyFilters();
 };
@@ -222,22 +222,23 @@ async function loadProducts(page = 1) {
       const artisanName = p.artisan?.user?.full_name || p.artisan?.name || i18next.t('catalog.anonymousArtisan');
 
       // Match Figma mockups: select items have "OFERTA" badge
-      const hasOffer = p.name.toLowerCase().includes('sombrero') || p.name.toLowerCase().includes('mochila');
+      const displayName = window.translateProduct(p);
+      const hasOffer = `${p.name || ''} ${p.name_en || ''}`.toLowerCase().includes('sombrero') || `${p.name || ''} ${p.name_en || ''}`.toLowerCase().includes('mochila');
       const offerBadge = hasOffer ? `<div class="product-offer-tag">OFERTA</div>` : '';
 
       return `
-        <div class="product-card" onclick="window.location.href='/producto.html?slug=${p.slug}'">
+        <div class="product-card" onclick="window.location.href='/producto/${p.slug}'">
           <div class="product-card-image" style="position:relative;">
             ${p.images && p.images[0]
-              ? `<img src="${p.images[0].url}" alt="${window.translateProduct(p)}" onerror="this.onerror=null; this.src='/img/placeholder.jpg';" loading="lazy"/>`
+              ? `<img src="${p.images[0].url}" alt="${displayName}" onerror="this.onerror=null; this.src='/img/placeholder.jpg';" loading="lazy"/>`
               : `<div class="product-img-placeholder" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:3rem;color:var(--color-muted);"><i class="fa-solid fa-vase"></i></div>`}
-            
+
             <!-- Offer Tag floating over image -->
             ${offerBadge}
 
             <!-- Price pill floating over image (Hidden on Mobile) -->
             <div class="product-price-pill">${formatPrice(p.price)}</div>
-            
+
             <!-- Heart Wishlist button floating over image -->
             <button class="btn-wishlist ${isWish ? 'active' : ''}" data-id="${p.id}" onclick="event.stopPropagation(); if (typeof Wishlist !== 'undefined') Wishlist.toggle('${p.id}')" title="Favoritos">
               <i class="${isWish ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
@@ -249,13 +250,13 @@ async function loadProducts(page = 1) {
               ${artisanName} ${renderTrustBadge(p.artisan?.status || p.artisan?.verification_status)}
             </div>
 
-            <div class="product-card-name" style="font-weight:700;">${window.translateProduct(p)}</div>
-            
+            <div class="product-card-name" style="font-weight:700;">${displayName}</div>
+
             <div class="product-artisan desktop-only-flex" style="margin-top:0.15rem;display:none;">
               <i class="fa-solid fa-store" style="font-size:0.75rem;"></i>
               <span style="font-size:0.75rem;"><strong>${artisanName}</strong></span>
             </div>
-            
+
             <!-- Stock & Stars Row -->
             <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.25rem;">
               <div class="product-card-stock">${isOutOfStock ? 'Sin stock' : `${p.stock || 5} disponibles`}</div>
@@ -270,8 +271,8 @@ async function loadProducts(page = 1) {
             <!-- Cart & Mobile Price Row -->
             <div class="product-card-footer-row" style="display:flex;justify-content:flex-end;align-items:center;margin-top:auto;padding-top:0.4rem;">
               <span class="product-price-badge-mobile">${formatPrice(p.price)}</span>
-              <button class="btn-card-cart ${isOutOfStock ? 'disabled' : ''} ${isOwner ? 'owner' : ''}" 
-                      onclick="event.stopPropagation(); ${isOutOfStock ? '' : `addToCart('${p.id}')`}" 
+              <button class="btn-card-cart ${isOutOfStock ? 'disabled' : ''} ${isOwner ? 'owner' : ''}"
+                      onclick="event.stopPropagation(); ${isOutOfStock ? '' : `addToCart('${p.id}')`}"
                       title="${isOutOfStock ? 'Sin stock' : (isOwner ? 'Es tu producto' : 'Agregar al carrito')}"
                       ${isOutOfStock || isOwner ? 'disabled' : ''}>
                 <i class="${isOutOfStock ? 'fa-solid fa-circle-xmark' : 'fa-solid fa-plus'}"></i>
@@ -316,23 +317,23 @@ function goToPage(page) {
 let filterTimeout;
 function applyFilters(debounceMs = 0) {
   clearTimeout(filterTimeout);
-  
+
   const execute = () => {
     const regions = document.getElementById('region-select').value;
     const categories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(el => el.value).join(',');
     const minPrice = document.getElementById('min-price').value;
     const maxPrice = document.getElementById('max-price').value;
-    
+
     // Sync sorting dropdown values
     const desktopSort = document.getElementById('sort-select');
     const mobileSort = document.getElementById('mobile-sort-select');
     const sortBy = desktopSort?.value || mobileSort?.value || 'newest';
-    
+
     // Sync search input values
     const desktopSearch = document.getElementById('search-input');
     const mobileSearch = document.getElementById('mobile-search-input');
     const search = (desktopSearch?.value || mobileSearch?.value || '').trim();
-    
+
     // Make sure we keep both inputs in sync visually if one changes
     if (desktopSearch && mobileSearch) {
       if (document.activeElement === desktopSearch) {
@@ -341,11 +342,11 @@ function applyFilters(debounceMs = 0) {
         desktopSearch.value = mobileSearch.value;
       }
     }
-    
+
     syncFiltersToUrl({ regions, categories, minPrice, maxPrice, sortBy, search });
     loadProducts(1);
-    
-    // 🏷️ Sync chips immediately
+
+    // Sync chips immediately
     if (typeof syncCategoryChips === 'function') syncCategoryChips();
   };
 
@@ -361,21 +362,21 @@ function clearFilters() {
   document.querySelectorAll('input[name="category"]').forEach(el => el.checked = false);
   document.getElementById('min-price').value = '';
   document.getElementById('max-price').value = '';
-  
+
   const desktopSort = document.getElementById('sort-select');
   if (desktopSort) desktopSort.value = 'newest';
   const mobileSort = document.getElementById('mobile-sort-select');
   if (mobileSort) mobileSort.value = 'newest';
-  
+
   const searchInput = document.getElementById('search-input');
   if (searchInput) searchInput.value = '';
   const mobileSearch = document.getElementById('mobile-search-input');
   if (mobileSearch) mobileSearch.value = '';
-  
+
   history.replaceState(null, '', window.location.pathname);
   loadProducts(1);
-  
-  // 🏷️ Sync chips immediately
+
+  // Sync chips immediately
   if (typeof syncCategoryChips === 'function') syncCategoryChips();
 }
 
@@ -416,7 +417,7 @@ async function initCatalog() {
     if (user) {
       navAuth.innerHTML = `<a href="${user.role === 'admin' ? '/dashboard-admin.html' : '/dashboard-artesano.html'}" class="btn btn-outline btn-sm" data-i18n="nav.myPanel">${i18next.t('nav.myPanel')}</a>`;
     } else {
-      navAuth.innerHTML = `<a href="login.html" class="btn btn-primary btn-sm" data-i18n="auth.login">${i18next.t('auth.login')}</a>`;
+      navAuth.innerHTML = `<a href="/login.html" class="btn btn-primary btn-sm" data-i18n="auth.login">${i18next.t('auth.login')}</a>`;
     }
   }
   await loadFilters();
@@ -428,20 +429,21 @@ function addToCart(productId) {
   const p = cachedProducts.find(x => x.id === productId);
   if (!p) return;
   const user = Auth.getUser();
-  if (user && user.role === 'artesano' && p.artisan?.user && user.id === p.artisan.user.id) {
-    showToast('No puedes comprar tus propios productos', 'warning'); 
+  const artisanUserId = p.artisan?.user?.id || p.artisan?.userId || p.artisan_user_id;
+  if (user && (user.role === 'artesano' || user.role === 'artisan') && artisanUserId && user.id === artisanUserId) {
+    showToast(i18next.t('product.errorCantBuyOwnProduct', { defaultValue: 'No puedes comprar tus propios productos' }), 'warning');
     return;
   }
   const imgUrl = p.images && p.images[0] ? p.images[0].url : '';
-  const artisanName = p.artisan?.user?.full_name || '';
-  Cart.add({ id: p.id, name: p.name, price: p.price, image: imgUrl, artisanName }, 1);
+  const artisanName = p.artisan?.user?.full_name || p.artisan?.name || '';
+  Cart.add({ id: p.id, name: p.name, name_en: p.name_en, price: p.price, image: imgUrl, artisanName, artisanUserId }, 1);
 }
 
 // Dynamic Filter Sidebar drawer controls
 window.toggleFilterSidebar = (isOpen) => {
   const sidebar = document.querySelector('.filter-sidebar');
   if (!sidebar) return;
-  
+
   let backdrop = document.getElementById('filter-sidebar-backdrop');
   if (!backdrop) {
     backdrop = document.createElement('div');
@@ -450,7 +452,7 @@ window.toggleFilterSidebar = (isOpen) => {
     backdrop.onclick = () => window.toggleFilterSidebar(false);
     document.body.appendChild(backdrop);
   }
-  
+
   if (isOpen) {
     sidebar.classList.add('open');
     backdrop.style.display = 'block';

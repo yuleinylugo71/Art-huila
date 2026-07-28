@@ -1,12 +1,97 @@
 // producto.js — Ficha de producto (HU-05)
 let currentProduct = null;
 
+function absoluteUrl(url) {
+  if (!url) return `${window.location.origin}/img/placeholder.jpg`;
+  if (/^https?:\/\//i.test(url)) return url;
+  return `${window.location.origin}${url.startsWith('/') ? url : `/${url}`}`;
+}
+
+function ensureMeta(selector, attrs) {
+  let el = document.head.querySelector(selector);
+  if (!el) {
+    el = document.createElement(attrs.rel ? 'link' : 'meta');
+    Object.entries(attrs).forEach(([key, value]) => el.setAttribute(key, value));
+    document.head.appendChild(el);
+  }
+  return el;
+}
+
+function setMeta(selector, attrs, valueAttr, value) {
+  const el = ensureMeta(selector, attrs);
+  el.setAttribute(valueAttr, value);
+}
+
+function getProductSlugFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const querySlug = params.get('slug');
+  if (querySlug) return querySlug;
+  if (window.__SEO_PRODUCT_SLUG__) return window.__SEO_PRODUCT_SLUG__;
+  const match = window.location.pathname.match(/\/producto\/([^/?#]+)/);
+  return match ? decodeURIComponent(match[1]) : '';
+}
+
+function slugifyText(text) {
+  return String(text || 'artesano')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+
+function updateProductSeo(p, imageUrl) {
+  const lang = i18next.language || 'es';
+  const title = (lang === 'en' ? p.meta_title_en : p.meta_title) || `${window.translateProduct(p)} | Art Huila`;
+  const metaDescription = lang === 'en' ? p.meta_description_en : p.meta_description;
+  const description = (metaDescription || window.translateProductField(p, 'short_description') || `${window.translateProduct(p)}: artesanía del Huila hecha a mano.`).replace(/\s+/g, ' ').trim();
+  const canonical = `${window.location.origin}/producto/${encodeURIComponent(p.slug)}`;
+  const image = absoluteUrl(imageUrl);
+
+  document.title = title;
+  document.getElementById('page-title').textContent = title;
+  setMeta('meta[name="description"]', { name: 'description' }, 'content', description);
+  setMeta('link[rel="canonical"]', { rel: 'canonical' }, 'href', canonical);
+  setMeta('meta[property="og:title"]', { property: 'og:title' }, 'content', title);
+  setMeta('meta[property="og:description"]', { property: 'og:description' }, 'content', description);
+  setMeta('meta[property="og:url"]', { property: 'og:url' }, 'content', canonical);
+  setMeta('meta[property="og:image"]', { property: 'og:image' }, 'content', image);
+  setMeta('meta[name="twitter:title"]', { name: 'twitter:title' }, 'content', title);
+  setMeta('meta[name="twitter:description"]', { name: 'twitter:description' }, 'content', description);
+  setMeta('meta[name="twitter:image"]', { name: 'twitter:image' }, 'content', image);
+
+  let jsonLd = document.getElementById('product-jsonld');
+  if (!jsonLd) {
+    jsonLd = document.createElement('script');
+    jsonLd.type = 'application/ld+json';
+    jsonLd.id = 'product-jsonld';
+    document.head.appendChild(jsonLd);
+  }
+  jsonLd.textContent = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: window.translateProduct(p),
+    description,
+    image,
+    url: canonical,
+    category: p.category?.name,
+    brand: { '@type': 'Brand', name: 'Art Huila' },
+    offers: {
+      '@type': 'Offer',
+      price: p.price,
+      priceCurrency: 'COP',
+      availability: p.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      url: canonical,
+    },
+  });
+}
+
 const initProductDetails = async () => {
-  const slug = new URLSearchParams(window.location.search).get('slug');
+  const slug = getProductSlugFromUrl();
   const container = document.getElementById('product-container');
-  if (!slug) { 
-    container.innerHTML = `<div class="empty-state"><div class="emoji"><i class="fa-solid fa-xmark"></i></div><h3>${i18next.t('product.notFound')}</h3></div>`; 
-    return; 
+  if (!slug) {
+    container.innerHTML = `<div class="empty-state"><div class="emoji"><i class="fa-solid fa-xmark"></i></div><h3>${i18next.t('product.notFound')}</h3></div>`;
+    return;
   }
 
   try {
@@ -14,7 +99,7 @@ const initProductDetails = async () => {
     currentProduct = p;
     renderProductDetails(p);
   } catch (e) {
-    container.innerHTML = `<div class="empty-state"><div class="emoji"><i class="fa-solid fa-xmark"></i></div><h3>${i18next.t('product.notFound')}</h3><p>${e.message}</p><a href="catalogo.html" class="btn btn-primary mt-2">${i18next.t('nav.backToCatalog')}</a></div>`;
+    container.innerHTML = `<div class="empty-state"><div class="emoji"><i class="fa-solid fa-xmark"></i></div><h3>${i18next.t('product.notFound')}</h3><p>${e.message}</p><a href="/catalogo.html" class="btn btn-primary mt-2">${i18next.t('nav.backToCatalog')}</a></div>`;
   }
 };
 
@@ -35,15 +120,29 @@ document.addEventListener('languageChanged', () => {
 
   const imgs = p.images || [];
   const imgUrl = imgs[0]?.url || p.image_url || '/img/placeholder.jpg';
-  
+  updateProductSeo(p, imgUrl);
+
   // Mapear viejos precios o detalles
   const oldPrice = p.price * 1.15;
   const isOutOfStock = p.stock !== undefined && p.stock < 1;
   const isWish = typeof Wishlist !== 'undefined' && Wishlist.has(p.id);
   const categoryName = p.category?.name ? window.translateCategory(p.category.name).toUpperCase() : 'ARTESANÍAS';
+  const productName = window.translateProduct(p);
+  const productDescription = window.translateProductField(p, 'short_description', 'Hermosa artesanía fabricada de manera tradicional.');
+  const productOrigin = window.translateProductField(p, 'cultural_origin', 'Suaza, Huila');
+  const productTechnique = window.translateProductField(p, 'technique', 'Elaborado con técnica artesanal tradicional.');
+  const productSignificance = window.translateProductField(p, 'significance', 'Pieza con valor cultural de la región.');
+  const productMaterials = window.translateProductField(p, 'materials', '');
+  const productDimensions = window.translateProductField(p, 'dimensions', '');
+  const productWeight = window.translateProductField(p, 'weight', '');
+  const productCare = window.translateProductField(p, 'care_instructions', '');
   const artisanName = p.artisan?.user?.full_name || p.artisan?.name || 'Deicy Quimbayo';
   const artisanRegion = p.artisan?.region?.name || 'Neiva, Huila';
   const artisanAvatar = p.artisan?.avatar_url || '/img/placeholder-avatar.jpg';
+  const artisanProfileUrl = p.artisan?.id ? `/artesano/${slugifyText(artisanName)}-${p.artisan.id}` : '/artesanos.html';
+  const artisanUserId = p.artisan?.user?.id || p.artisan?.userId || p.artisan_user_id || '';
+  const user = Auth.getUser();
+  const isOwnProduct = !!(user && (user.role === 'artesano' || user.role === 'artisan') && artisanUserId && user.id === artisanUserId);
   const artisanSales = 234; // dummy real data
 
   // Share handler
@@ -51,8 +150,8 @@ document.addEventListener('languageChanged', () => {
     if (navigator.share) {
       navigator.share({
         title: window.translateProduct(p),
-        text: p.short_description || window.translateProduct(p),
-        url: window.location.href
+        text: productDescription || window.translateProduct(p),
+        url: `${window.location.origin}/producto/${encodeURIComponent(p.slug)}`
       }).catch(console.error);
     } else {
       navigator.clipboard.writeText(window.location.href);
@@ -112,17 +211,26 @@ document.addEventListener('languageChanged', () => {
     lb.onclick = closeLightbox;
   };
 
-  // Change Main Image
+  // Change Main Image (mobile)
   window.changeMainImage = (url) => {
     const mainImg = document.getElementById('mobile-main-product-img');
     const desktopMainImg = document.getElementById('desktop-main-product-img');
     if (mainImg) mainImg.src = url;
     if (desktopMainImg) desktopMainImg.src = url;
-    
+
     document.querySelectorAll('.product-thumb-img').forEach(img => {
       img.style.borderColor = img.src === url ? '#c1440e' : 'white';
     });
   };
+
+  // Change Main Image — Desktop premium gallery with active thumb state
+  window.changeMainImagePd = (url, thumbEl) => {
+    const desktopMainImg = document.getElementById('desktop-main-product-img');
+    if (desktopMainImg) desktopMainImg.src = url;
+    document.querySelectorAll('.pd-thumb').forEach(t => t.classList.remove('active'));
+    if (thumbEl) thumbEl.classList.add('active');
+  };
+
 
   // Quantity selector logic
   window.mobileQuantity = 1;
@@ -138,7 +246,7 @@ document.addEventListener('languageChanged', () => {
   window.changeTab = (tabName) => {
     document.querySelectorAll('.detail-tab-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.detail-tab-content').forEach(c => c.style.display = 'none');
-    
+
     const btn = document.getElementById(`tab-btn-${tabName}`);
     const content = document.getElementById(`tab-content-${tabName}`);
     if (btn) btn.classList.add('active');
@@ -155,54 +263,142 @@ document.addEventListener('languageChanged', () => {
 
   // HTML content incorporating BOTH Desktop Layout (Grid) and Mobile Layout (Screenshot style)
   container.innerHTML = `
-    <!-- DESKTOP LAYOUT (Clean Grid) -->
-    <div class="desktop-only" style="padding: 2rem 0;">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;">
-        <div style="position:relative;">
-          <div class="carousel" style="aspect-ratio: 1.15/1; border-radius: 20px; overflow: hidden; background: #faf8f5;">
-            <img id="desktop-main-product-img" src="${imgUrl}" alt="${window.translateProduct(p)}" onerror="this.onerror=null; this.src='/img/placeholder.jpg';" onclick="window.openLightbox(this.src)" style="width: 100%; height: 100%; object-fit: cover; cursor: zoom-in;" />
-          </div>
-          <div style="display:flex; gap:0.5rem; margin-top:1rem;">
-            ${imgs.map(img => `<img src="${img.url}" onerror="this.onerror=null; this.src='/img/placeholder.jpg';" onclick="window.changeMainImage('${img.url}')" style="width: 60px; height: 60px; border-radius: 8px; border: 2px solid white; cursor: pointer; object-fit: cover; box-shadow: var(--shadow-xs);" />`).join('')}
-          </div>
-        </div>
-        <div>
-          <div class="flex items-center gap-1 mb-1">
-            <span class="badge badge-primary">${categoryName}</span>
-            <span class="badge" style="background:var(--color-bg2);color:var(--color-muted);"><i class="fa-solid fa-location-dot"></i> ${p.region?.name || ''}</span>
-          </div>
-          <h1 style="font-family:var(--font-display);font-size:2.2rem;line-height:1.2;margin-bottom:0.75rem;font-weight:800;color:#261f1b;">${window.translateProduct(p)}</h1>
-          <div style="font-size:2rem;font-weight:800;color:var(--color-primary);margin-bottom:0.75rem;">${formatPrice(p.price)}</div>
-          <div style="font-size:0.9rem;color:var(--color-muted);margin-bottom:1.5rem;">${i18next.t('product.availableStockLabel')}: <strong style="color:var(--color-text);">${p.stock}${i18next.t('product.unitsSuffix')}</strong></div>
+    <!-- DESKTOP LAYOUT (Premium Editorial) -->
+    <div class="desktop-only">
+      <div class="pd-wrapper">
+        <div class="pd-grid">
 
-          <div id="desktop-rating-row" style="display:none;align-items:center;gap:0.5rem;margin-bottom:1.5rem;">
-            <span id="header-stars" style="color:#f59e0b;"></span>
-            <span id="header-count" style="font-size:0.85rem;color:var(--color-muted);font-weight:600;"></span>
+          <!-- COL 1: Galería -->
+          <div class="pd-gallery">
+            <!-- Miniaturas verticales (izquierda) -->
+            <div class="pd-thumbs">
+              ${imgs.length > 0
+                ? imgs.slice(0, 5).map((img, idx) => `
+                    <div class="pd-thumb ${idx === 0 ? 'active' : ''}"
+                         onclick="window.changeMainImagePd('${img.url}', this)">
+                      <img src="${img.url}"
+                           onerror="this.onerror=null;this.src='/img/placeholder.jpg';"
+                           alt="" />
+                    </div>`).join('')
+                : `<div class="pd-thumb active">
+                     <img src="${imgUrl}"
+                          onerror="this.onerror=null;this.src='/img/placeholder.jpg';" />
+                   </div>`
+              }
+            </div>
+
+            <!-- Imagen principal -->
+            <div class="pd-main-img-wrap" onclick="window.openLightbox(document.getElementById('desktop-main-product-img').src)">
+              <img id="desktop-main-product-img"
+                   src="${imgUrl}"
+                   alt="${window.translateProduct(p)}"
+                   onerror="this.onerror=null;this.src='/img/placeholder.jpg';" />
+            </div>
           </div>
 
-          <button class="btn btn-primary btn-lg btn-full mt-2" ${isOutOfStock ? 'disabled' : ''} onclick="addToCart('${p.id}', '${p.name.replace(/'/g, "\\'")}', ${p.price}, '${imgUrl}', '${artisanName}', '${p.artisan?.user?.id || p.artisan?.id || ''}')">
-            ${isOutOfStock ? i18next.t('product.outOfStock') : i18next.t('product.addToCartBtn')}
-          </button>
+          <!-- COL 2: Información -->
+          <div class="pd-info">
 
-          <hr class="divider"/>
+            <!-- Breadcrumb -->
+            <nav class="pd-breadcrumb" aria-label="breadcrumb">
+              <a href="/">Inicio</a>
+              <span class="pd-breadcrumb-sep">›</span>
+              <a href="/catalogo.html">${categoryName}</a>
+              <span class="pd-breadcrumb-sep">›</span>
+              <span class="pd-breadcrumb-current">${window.translateProduct(p)}</span>
+            </nav>
 
-          <p style="font-size:1.05rem;line-height:1.5;margin-bottom:1.5rem;color:var(--color-text);font-style:italic;">"${p.short_description || 'Hermosa artesanía fabricada de manera tradicional.'}"</p>
-          
-          <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.5rem;font-size:0.85rem;color:var(--color-muted);">
-            <span style="background:rgba(26, 138, 74, 0.1);color:#1a8a4a;padding:0.2rem 0.6rem;border-radius:999px;font-weight:600;"><i class="fa-solid fa-hand"></i> Hecho a mano</span>
-            ${p.materials ? `<span style="background:var(--color-bg2);padding:0.2rem 0.6rem;border-radius:999px;"><strong>Materiales:</strong> ${p.materials}</span>` : ''}
-            ${p.dimensions ? `<span style="background:var(--color-bg2);padding:0.2rem 0.6rem;border-radius:999px;"><strong>Medidas:</strong> ${p.dimensions}</span>` : ''}
-          </div>
-        </div>
-      </div>
-    </div>
+            <!-- Artesano como etiqueta superior -->
+            <div class="pd-artisan-tag">
+                <a href="${artisanProfileUrl}" class="pd-artisan-tag-link">
+                <span class="pd-artisan-tag-avatar">
+                  <img src="${artisanAvatar}"
+                       onerror="this.onerror=null;this.src='/img/placeholder.jpg';"
+                       alt="${artisanName}" />
+                </span>
+                <span class="pd-artisan-tag-name">${artisanName}</span>
+                ${renderTrustBadge(p.artisan?.verification_status)}
+              </a>
+            </div>
+
+            <!-- Nombre -->
+            <h1 class="pd-name">${window.translateProduct(p)}</h1>
+
+            <!-- Precio -->
+            <div class="pd-price-row">
+              <span class="pd-price">${formatPrice(p.price)}</span>
+            </div>
+
+            <!-- Rating (oculto hasta que carguen reseñas) -->
+            <div id="desktop-rating-row" class="pd-rating">
+              <span id="header-stars" style="color:#f59e0b; font-size:0.9rem;"></span>
+              <span id="header-count" style="font-size:0.82rem;color:var(--color-muted);font-weight:600;"></span>
+            </div>
+
+            <!-- Stock -->
+            <div class="pd-stock">
+              <span class="pd-stock-dot ${p.stock <= 5 ? 'low' : ''}"></span>
+              Stock disponible:&nbsp;<strong>${p.stock} unidades</strong>
+            </div>
+
+            <!-- Botón carrito -->
+            ${isOwnProduct ? `
+              <button class="pd-btn-cart" disabled style="opacity: 0.75; cursor: not-allowed; background: #8c827a; color: white; border-color: #8c827a; font-weight: 700;">
+                <i class="fa-solid fa-user-shield"></i> Tu producto publicado
+              </button>
+            ` : `
+              <button class="pd-btn-cart"
+                      ${isOutOfStock ? 'disabled' : ''}
+                      onclick="addToCart('${p.id}', '${productName.replace(/'/g, "\\'")}', ${p.price}, '${imgUrl}', '${artisanName}', '${artisanUserId}')">
+                ${isOutOfStock ? i18next.t('product.outOfStock') : i18next.t('product.addToCartBtn')}
+              </button>
+            `}
+
+            <!-- Divisor -->
+            <hr class="pd-divider" />
+
+            <!-- Descripción -->
+            <p class="pd-description">${productDescription}</p>
+
+            <!-- Detalles artesanales -->
+            <div class="pd-craft-details">
+              <span class="pd-handmade-badge">
+                <i class="fa-solid fa-hand"></i> Hecho a mano
+              </span>
+              ${productMaterials ? `
+                <div class="pd-craft-row">
+                  <span class="pd-craft-label"><i class="fa-solid fa-layer-group"></i> Materiales</span>
+                  <span class="pd-craft-value">${productMaterials}</span>
+                </div>` : ''}
+              ${productDimensions ? `
+                <div class="pd-craft-row">
+                  <span class="pd-craft-label"><i class="fa-solid fa-ruler-combined"></i> Medidas</span>
+                  <span class="pd-craft-value">${productDimensions}</span>
+                </div>` : ''}
+              ${productWeight ? `
+                <div class="pd-craft-row">
+                  <span class="pd-craft-label"><i class="fa-solid fa-weight-hanging"></i> Peso</span>
+                  <span class="pd-craft-value">${productWeight}</span>
+                </div>` : ''}
+              ${productCare ? `
+                <div class="pd-craft-row">
+                  <span class="pd-craft-label"><i class="fa-solid fa-hand-holding-heart"></i> Cuidado</span>
+                  <span class="pd-craft-value">${productCare}</span>
+                </div>` : ''}
+            </div>
+
+          </div><!-- /pd-info -->
+        </div><!-- /pd-grid -->
+      </div><!-- /pd-wrapper -->
+    </div><!-- /desktop-only -->
+
 
     <!-- MOBILE LAYOUT (Premium Screenshot Mockup) -->
     <div class="mobile-only" style="background-color: #faf8f5; min-height: 80vh; padding: 0.5rem 1.25rem 5.5rem 1.25rem;">
       <!-- Product Image Card with floating elements -->
       <div class="mobile-image-card" style="position: relative; border-radius: 24px; overflow: hidden; background: white; box-shadow: var(--shadow-md); aspect-ratio: 1.15/1; width: 100%; margin-bottom: 1.25rem;">
         <img id="mobile-main-product-img" src="${imgUrl}" alt="${window.translateProduct(p)}" onerror="this.onerror=null; this.src='/img/placeholder.jpg';" onclick="window.openLightbox(this.src)" style="width: 100%; height: 100%; object-fit: cover; cursor: zoom-in;" />
-        
+
         <!-- Floating wishlist heart button top-right -->
         <button class="btn-wishlist ${isWish ? 'active' : ''}" data-id="${p.id}" onclick="event.stopPropagation(); if (typeof Wishlist !== 'undefined') { Wishlist.toggle('${p.id}'); }" style="position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; border-radius: 50%; background: white; border: 1px solid #e8e0d8; display: flex; align-items: center; justify-content: center; color: #4a3e35; font-size: 0.95rem; box-shadow: var(--shadow-sm); cursor: pointer;" title="Favoritos">
           <i class="${isWish ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
@@ -216,7 +412,7 @@ document.addEventListener('languageChanged', () => {
       <div style="background: white; border-radius: 24px; border: 1.2px solid #e8e0d8; padding: 1.25rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-xs);">
         <!-- Category & Name -->
         <div style="font-size: 0.7rem; font-weight: 700; color: var(--color-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">${categoryName}</div>
-        
+
         <!-- Name & Price badge row -->
         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.75rem;">
           <h1 style="font-family: var(--font-display); font-size: 1.35rem; font-weight: 800; color: #261f1b; margin: 0; line-height: 1.2; flex: 1;">${window.translateProduct(p)}</h1>
@@ -235,7 +431,7 @@ document.addEventListener('languageChanged', () => {
 
         <!-- Location and Stock -->
         <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; font-size: 0.76rem; font-weight: 600;">
-          <span style="color: var(--color-muted); display: flex; align-items: center; gap: 0.2rem;"><i class="fa-solid fa-location-dot" style="color: #c1440e;"></i> ${p.cultural_origin || 'Suaza, Huila'}</span>
+          <span style="color: var(--color-muted); display: flex; align-items: center; gap: 0.2rem;"><i class="fa-solid fa-location-dot" style="color: #c1440e;"></i> ${productOrigin}</span>
           <span style="color: #c1440e; display: flex; align-items: center; gap: 0.35rem;">
             <span style="width: 6px; height: 6px; border-radius: 50%; background: #c1440e; display: inline-block;"></span>
             ¡Solo ${p.stock || 5} disponibles!
@@ -257,12 +453,18 @@ document.addEventListener('languageChanged', () => {
 
         <!-- Call to action buttons -->
         <div style="display: flex; flex-direction: column; gap: 0.65rem;">
-          <button class="btn-mobile-action" ${isOutOfStock ? 'disabled' : ''} onclick="event.stopPropagation(); addToCart('${p.id}', '${p.name.replace(/'/g, "\\'")}', ${p.price}, '${imgUrl}', '${artisanName}', '${p.artisan?.user?.id || p.artisan?.id || ''}');" style="background: #c1440e; color: white; border: none; border-radius: 99px; padding: 0.75rem; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; cursor: pointer; transition: all 0.2s;">
-            <i class="fa-solid fa-cart-shopping"></i> Agregar al Carrito
-          </button>
-          <button class="btn-mobile-action" ${isOutOfStock ? 'disabled' : ''} onclick="event.stopPropagation(); addToCart('${p.id}', '${p.name.replace(/'/g, "\\'")}', ${p.price}, '${imgUrl}', '${artisanName}', '${p.artisan?.user?.id || p.artisan?.id || ''}'); window.location.href='/carrito.html';" style="background: white; color: #c1440e; border: 1.5px solid #c1440e; border-radius: 99px; padding: 0.75rem; font-weight: 700; font-size: 0.85rem; width: 100%; cursor: pointer; transition: all 0.2s; text-align: center;">
-            Comprar Ahora
-          </button>
+          ${isOwnProduct ? `
+            <button class="btn-mobile-action" disabled style="background: #8c827a; color: white; border: none; border-radius: 99px; padding: 0.75rem; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; opacity: 0.75; cursor: not-allowed;">
+              <i class="fa-solid fa-user-shield"></i> Tu producto publicado
+            </button>
+          ` : `
+            <button class="btn-mobile-action" ${isOutOfStock ? 'disabled' : ''} onclick="event.stopPropagation(); addToCart('${p.id}', '${productName.replace(/'/g, "\\'")}', ${p.price}, '${imgUrl}', '${artisanName}', '${artisanUserId}');" style="background: #c1440e; color: white; border: none; border-radius: 99px; padding: 0.75rem; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; cursor: pointer; transition: all 0.2s;">
+              <i class="fa-solid fa-cart-shopping"></i> Agregar al Carrito
+            </button>
+            <button class="btn-mobile-action" ${isOutOfStock ? 'disabled' : ''} onclick="event.stopPropagation(); addToCart('${p.id}', '${productName.replace(/'/g, "\\'")}', ${p.price}, '${imgUrl}', '${artisanName}', '${artisanUserId}'); window.location.href='/carrito.html';" style="background: white; color: #c1440e; border: 1.5px solid #c1440e; border-radius: 99px; padding: 0.75rem; font-weight: 700; font-size: 0.85rem; width: 100%; cursor: pointer; transition: all 0.2s; text-align: center;">
+              Comprar Ahora
+            </button>
+          `}
         </div>
       </div>
 
@@ -278,29 +480,29 @@ document.addEventListener('languageChanged', () => {
         <!-- Tabs Content -->
         <div id="tab-content-description" class="detail-tab-content" style="display: block;">
           <p style="font-size: 0.78rem; color: #4a3e35; line-height: 1.45; margin: 0; font-weight: 500;">
-            ${p.short_description || 'Hermosa obra artesanal huilense tejida enteramente a mano con fibras naturales. Cada pieza conserva un valor ancestral transmitido por generaciones familiares.'}
+            ${productDescription}
           </p>
-          
+
           <!-- Cultural significance rounded card inside description tab -->
           <div style="background: #faf8f5; border-radius: 16px; border: 1.2px solid #e8e0d8; padding: 0.85rem; margin-top: 1rem;">
             <div style="font-size: 0.78rem; font-weight: 700; color: #c1440e; display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.35rem;">
               <i class="fa-solid fa-landmark"></i> Significado Cultural
             </div>
             <div style="font-size: 0.74rem; color: #4a3e35; line-height: 1.4; font-weight: 500;">
-              ${p.significance || 'Símbolo indiscutible de la identidad de las comunidades tejedoras huilenses. Elaborado en base a tradiciones familiares y ceremonias milenarias de la región.'}
+              ${productSignificance}
             </div>
           </div>
         </div>
 
         <div id="tab-content-technique" class="detail-tab-content" style="display: none;">
           <p style="font-size: 0.78rem; color: #4a3e35; line-height: 1.45; margin: 0; font-weight: 500;">
-            ${p.technique || 'Elaborado con la milenaria técnica de trenzado manual tupido. El secado, blanqueado de las fibras y el apresto se realizan bajo rigurosos métodos tradicionales de la comunidad local.'}
+            ${productTechnique}
           </p>
         </div>
 
         <div id="tab-content-materials" class="detail-tab-content" style="display: none;">
           <p style="font-size: 0.78rem; color: #4a3e35; line-height: 1.45; margin: 0; font-weight: 500;">
-            ${p.materials || 'Fibras naturales seleccionadas a mano, procedentes directamente de cultivos sostenibles locales del departamento del Huila.'}
+            ${productMaterials || 'Fibras naturales seleccionadas a mano, procedentes directamente de cultivos sostenibles locales del departamento del Huila.'}
           </p>
         </div>
       </div>
@@ -308,7 +510,7 @@ document.addEventListener('languageChanged', () => {
       <!-- Created by (Artisan profile link card) -->
       <div style="background: white; border-radius: 24px; border: 1.2px solid #e8e0d8; padding: 1.25rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-xs);">
         <div style="font-size: 0.85rem; font-weight: 800; color: #261f1b; margin-bottom: 0.85rem;">Creado por</div>
-        
+
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;">
           <div style="display: flex; align-items: center; gap: 0.75rem;">
             <div style="position: relative; flex-shrink: 0;">
@@ -331,8 +533,8 @@ document.addEventListener('languageChanged', () => {
               </div>
             </div>
           </div>
-          
-          <button onclick="window.location.href='/artesano.html?id=${p.artisan?.id}'" style="background: #faf8f5; border: 1px solid #e8e0d8; color: #4a3e35; font-weight: 700; font-size: 0.74rem; padding: 0.45rem 1rem; border-radius: 99px; cursor: pointer; transition: all 0.2s;">Ver perfil</button>
+
+          <button onclick="window.location.href='${artisanProfileUrl}'" style="background: #faf8f5; border: 1px solid #e8e0d8; color: #4a3e35; font-weight: 700; font-size: 0.74rem; padding: 0.45rem 1rem; border-radius: 99px; cursor: pointer; transition: all 0.2s;">Ver perfil</button>
         </div>
       </div>
     </div>
@@ -348,12 +550,12 @@ document.addEventListener('languageChanged', () => {
     try {
       const reviews = await apiFetch('/reviews/product/' + p.id);
       const avgRating = reviews.length > 0 ? (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length) : 0;
-      
+
       // Update header (Desktop)
       const desktopRow = document.getElementById('desktop-rating-row');
       const starsEl = document.getElementById('header-stars');
       const countEl = document.getElementById('header-count');
-      
+
       // Update header (Mobile)
       const mobileRow = document.getElementById('mobile-rating-row');
       const mobileStarsEl = document.getElementById('mobile-header-stars');
@@ -380,7 +582,7 @@ document.addEventListener('languageChanged', () => {
           <h2 style="font-family: var(--font-display); font-size:1.6rem; font-weight:800; color:#261f1b; margin:0;">${i18next.t('product.customerReviewsHeading')}</h2>
           <div style="text-align:right;">
             <div style="font-size:1.3rem; color:#f59e0b; display: flex; gap: 0.15rem; justify-content: flex-end;">
-              ${reviews.length > 0 
+              ${reviews.length > 0
                 ? '<i class="fa-solid fa-star"></i>'.repeat(Math.round(avgRating)) + '<i class="fa-regular fa-star"></i>'.repeat(5 - Math.round(avgRating))
                 : '<i class="fa-regular fa-star"></i>'.repeat(5)
               }
@@ -398,11 +600,11 @@ document.addEventListener('languageChanged', () => {
               <div class="form-group" style="margin-bottom: 0.75rem;">
                 <label class="form-label" style="font-size: 0.75rem; font-weight: 700; color: #4a3e35; margin-bottom: 0.25rem; display: block;">${i18next.t('product.ratingLabel')}</label>
                 <select id="rev-rating" class="form-control" style="max-width:150px; border-radius: 8px; border: 1px solid #ebdcd0; padding: 0.35rem 0.5rem; background: white; font-size: 0.8rem; font-weight: 700;">
-                  <option value="5">★★★★★ (5)</option>
-                  <option value="4">★★★★☆ (4)</option>
-                  <option value="3">★★★☆☆ (3)</option>
-                  <option value="2">★★☆☆☆ (2)</option>
-                  <option value="1">★☆☆☆☆ (1)</option>
+                  <option value="5">5 estrellas</option>
+                  <option value="4">4 estrellas</option>
+                  <option value="3">3 estrellas</option>
+                  <option value="2">2 estrellas</option>
+                  <option value="1">1 estrella</option>
                 </select>
               </div>
               <div class="form-group" style="margin-bottom: 1rem;">
@@ -479,12 +681,21 @@ document.addEventListener('languageChanged', () => {
 
 function addToCart(id, name, price, imgUrl, artisanName, artisanUserId) {
   const user = Auth.getUser();
-  if (user && user.role === 'artesano' && (user.id === artisanUserId || (currentProduct?.artisan?.user && user.id === currentProduct.artisan.user.id))) {
-    showToast(i18next.t('product.errorCantBuyOwnProduct'), 'warning'); 
+  const ownerId = artisanUserId || currentProduct?.artisan?.user?.id || currentProduct?.artisan?.userId || currentProduct?.artisan_user_id;
+  if (user && (user.role === 'artesano' || user.role === 'artisan') && ownerId && user.id === ownerId) {
+    showToast(i18next.t('product.errorCantBuyOwnProduct', { defaultValue: 'No puedes comprar tus propios productos' }), 'warning');
     return;
   }
-  
-  Cart.add({ id, name, price, image: imgUrl, artisanName }, 1);
+
+  Cart.add({
+    id,
+    name: currentProduct?.name || name,
+    name_en: currentProduct?.name_en,
+    price,
+    image: imgUrl,
+    artisanName,
+    artisanUserId: ownerId,
+  }, 1);
 }
 
 function renderTrustBadge(status) {

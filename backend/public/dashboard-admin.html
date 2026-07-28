@@ -457,38 +457,6 @@
 </div>
 
 <!-- ─── MODAL: TRACKING ─── -->
-<div id="tracking-modal" class="modal-overlay hidden">
-  <div class="modal-box">
-    <div class="modal-header">
-      <h3>Actualizar Guía de Envío</h3>
-      <button class="modal-close" onclick="closeTrackingModal()"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <label class="form-label">Número de Guía / Tracking</label>
-        <input type="text" id="tracking-number-input" class="form-input" placeholder="Ej: TCC-12345678"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Transportadora</label>
-        <select id="tracking-carrier-input" class="form-select" style="max-width:100%;">
-          <option value="">Seleccionar...</option>
-          <option>Servientrega</option>
-          <option>Coordinadora</option>
-          <option>TCC</option>
-          <option>Envia</option>
-          <option>Inter Rapidísimo</option>
-        </select>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeTrackingModal()">Cancelar</button>
-      <button class="btn btn-primary" onclick="confirmUpdateTracking()">
-        <i class="fa-solid fa-truck"></i> Guardar y Despachar
-      </button>
-    </div>
-  </div>
-</div>
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script src="https://unpkg.com/i18next/dist/umd/i18next.min.js"></script>

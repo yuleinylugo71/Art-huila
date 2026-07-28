@@ -1,5 +1,14 @@
 let allArtisans = [];
 
+function slugifyText(text) {
+  return String(text || 'artesano')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+
 const initArtisansList = async () => {
   const container = document.getElementById('artisans-list-container');
   try {
@@ -29,11 +38,12 @@ const renderArtisans = (list) => {
         const isVerified = artisan.verification_status === 'verified';
         const imgUrl = artisan.avatar_url || '/img/placeholder-avatar.jpg';
         const name = artisan.user?.full_name || 'Maestro Artesano';
+        const profileUrl = `/artesano/${slugifyText(name)}-${artisan.id}`;
         const regionName = artisan.region?.name || 'Huila';
         const bio = artisan.cultural_history ? artisan.cultural_history.substring(0, 100) + '...' : 'Artesano de maestría ancestral del Huila.';
         
         return `
-          <div class="artisan-card" onclick="window.location.href='/artesano.html?id=${artisan.id}'" style="cursor:pointer;">
+          <div class="artisan-card" onclick="window.location.href='${profileUrl}'" style="cursor:pointer;">
             <div style="padding: 1.5rem; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.75rem;">
               <div style="width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--color-primary); overflow: hidden; position: relative;">
                 <img src="${imgUrl}" alt="${name}" style="width: 100%; height: 100%; object-fit: cover;" />

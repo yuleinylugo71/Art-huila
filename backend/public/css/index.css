@@ -19,7 +19,7 @@
   background-repeat: no-repeat;
   color: var(--blanco);
   overflow: hidden;
-  min-height: auto;
+  min-height: 580px;
   display: flex;
   flex-direction: column;
 }
@@ -101,10 +101,10 @@
 /* HERO GRID LAYOUT */
 .hero-new {
   display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
-  gap: 4rem;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 2.5rem;
   align-items: center;
-  padding: 8rem 2rem 5rem 2rem;
+  padding: 7rem 2rem 3.5rem 2rem;
   margin-top: 0;
   flex-grow: 1;
 }
@@ -198,7 +198,7 @@
   background: rgba(255, 255, 255, 0.08);
 }
 
-/* HERO CAROUSEL / SLIDER (3D Positioned) */
+/* HERO CAROUSEL / SLIDER (3D Positioned - Ampliado Horizontalmente) */
 .hero-image-col {
   display: flex;
   justify-content: center;
@@ -210,7 +210,7 @@
 .hero-slider-wrapper {
   position: relative;
   width: 100%;
-  max-width: 440px;
+  max-width: 660px;
   height: 380px;
   display: flex;
   flex-direction: column;
@@ -229,8 +229,8 @@
 
 .slider-item {
   position: absolute;
-  width: 220px;
-  height: 220px;
+  width: 250px;
+  height: 250px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -251,37 +251,37 @@
   pointer-events: none;
 }
 
-/* Carousel 3D Classes calculated by JS */
+/* Carousel 3D Classes - Separación horizontal ampliada */
 .slider-item.active {
   opacity: 1;
   pointer-events: auto;
-  transform: translateX(0) scale(1.05);
+  transform: translateX(0) scale(1.1);
   z-index: 5;
 }
 
 .slider-item.left-1 {
-  opacity: 0.5;
+  opacity: 0.6;
   pointer-events: auto;
-  transform: translateX(-80px) scale(0.8);
+  transform: translateX(-135px) scale(0.85);
   z-index: 3;
 }
 
 .slider-item.right-1 {
-  opacity: 0.5;
+  opacity: 0.6;
   pointer-events: auto;
-  transform: translateX(80px) scale(0.8);
+  transform: translateX(135px) scale(0.85);
   z-index: 3;
 }
 
 .slider-item.left-2 {
-  opacity: 0.15;
-  transform: translateX(-160px) scale(0.65);
+  opacity: 0.25;
+  transform: translateX(-245px) scale(0.7);
   z-index: 1;
 }
 
 .slider-item.right-2 {
-  opacity: 0.15;
-  transform: translateX(160px) scale(0.65);
+  opacity: 0.25;
+  transform: translateX(245px) scale(0.7);
   z-index: 1;
 }
 
@@ -408,65 +408,13 @@
   font-weight: 600;
 }
 
-/* --- FEATURES BAR --- */
-.features-bar {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.5rem;
-  margin: 2rem auto 1rem auto;
-  padding: 0.5rem 0;
-}
-
-.feature-item-new {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  background: #ffffff;
-  border: 1px solid #f0e9e1;
-  border-radius: 20px;
-  padding: 1.2rem;
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-  box-shadow: var(--shadow-xs);
-}
-
-.feature-item-new:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-sm);
-  border-color: var(--color-primary);
-}
-
-.feature-icon-new {
-  font-size: 1.5rem;
-  color: var(--color-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: var(--color-accent-warm);
-  flex-shrink: 0;
-}
-
-.feature-text-new h4 {
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: var(--color-text);
-  line-height: 1.2;
-}
-
-.feature-text-new p {
-  font-size: 0.72rem;
-  color: var(--color-muted);
-  margin-top: 0.15rem;
-}
 
 /* --- SHOP BY CATEGORY CIRCULAR --- */
 .categories-section {
   width: 100% !important;
   max-width: 100% !important;
   margin: 0 !important;
-  padding: 3rem 8% 2.5rem 8% !important;
+  padding: 2.2rem 0 !important;
   box-sizing: border-box;
   background-color: var(--color-surface);
   border-top: 1.5px solid rgba(232, 224, 216, 0.4);
@@ -476,8 +424,9 @@
 .categories-grid-circular {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 2.5rem;
+  gap: 2rem;
   margin-top: 1.5rem;
+  justify-items: center;
 }
 
 .category-card-circular {
@@ -533,6 +482,10 @@
 }
 
 /* --- PRODUCTS GRID & SIDEBAR SECTION --- */
+#featured-section {
+  padding: 2.2rem 0 4rem 0 !important;
+}
+
 .products-main-layout {
   display: block;
 }
@@ -746,7 +699,7 @@
 /* --- CTA BANNER --- */
 .cta-banner {
   background: linear-gradient(135deg, #d35400 0%, #c1440e 50%, #8e2c02 100%);
-  padding: 4.5rem 2rem;
+  padding: 4.5rem 0 !important;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -820,7 +773,7 @@
 
 @media (max-width: 1024px) {
   .categories-section {
-    padding: 2.5rem 5% !important;
+    padding: 2.2rem 5% !important;
   }
   .categories-grid-circular {
     gap: 1.5rem;
@@ -828,10 +781,6 @@
   .featured-products-grid-new {
     grid-template-columns: repeat(3, 1fr) !important;
     gap: 1.2rem;
-  }
-  .features-bar {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
   }
 }
 
@@ -908,6 +857,12 @@
     right: -10px !important;
     padding: 0.5rem 0.75rem !important;
   }
+}
+
+footer {
+  margin: 0 !important;
+  margin-top: 0 !important;
+  padding: 2.5rem 2rem !important;
 }
 
 

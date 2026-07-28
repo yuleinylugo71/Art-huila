@@ -4,6 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title id="page-title"><i class="fa-solid fa-hammer"></i> Perfil del Artesano — Art Huila</title>
+  <meta name="description" content="Conoce artesanos del Huila, su historia cultural y sus productos hechos a mano en Art Huila.">
+  <link rel="canonical" href="/artesano.html">
+  <meta property="og:type" content="profile">
+  <meta property="og:site_name" content="Art Huila">
+  <meta property="og:title" content="Perfil del Artesano — Art Huila">
+  <meta property="og:description" content="Conoce artesanos del Huila, su historia cultural y sus productos hechos a mano en Art Huila.">
+  <meta property="og:image" content="/img/default-avatar.jpg">
+  <meta property="og:url" content="/artesano.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Perfil del Artesano — Art Huila">
+  <meta name="twitter:description" content="Conoce artesanos del Huila, su historia cultural y sus productos hechos a mano en Art Huila.">
+  <meta name="twitter:image" content="/img/default-avatar.jpg">
   <link rel="stylesheet" href="/css/base.css?v=18">
   <link rel="stylesheet" href="/css/artesano.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -42,21 +54,21 @@
   </div>
 </header>
 
-<div class="container section" style="padding: 0; max-width: 680px; margin: 0 auto; background-color: #faf8f5; min-height: 80vh;">
+<div class="artisan-page-container">
   <div id="artisan-container">
     <div class="spinner" style="padding: 4rem 0; text-align: center;"><i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2rem; color: #c1440e;"></i></div>
   </div>
 
-  <div style="padding: 0 1.25rem;">
-    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 1.5rem; margin-bottom: 0.85rem;">
-      <h3 style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; color: #261f1b; margin: 0;" data-i18n="artisan.productsHeading">Mis Creaciones</h3>
-      <span id="artisan-products-count" style="font-size: 0.75rem; font-weight: 700; color: var(--color-muted); font-family: var(--font-body);">0 piezas</span>
+  <div class="artisan-products-wrapper">
+    <div class="artisan-products-header">
+      <h3 class="artisan-products-title" data-i18n="artisan.productsHeading">Productos de este artesano</h3>
+      <span id="artisan-products-count" class="artisan-products-count">0 piezas</span>
     </div>
 
-    <div id="artisan-products" class="grid" style="display: grid; grid-template-columns: repeat(2, 1fr) !important; gap: 0.85rem !important;">
-      <!-- Cargado dinámicamente por JS en 2 columnas -->
+    <div id="artisan-products" class="artisan-products-grid">
+      <!-- Cargado dinámicamente por JS (4 columnas en Desktop, 3 en Tablet, 2 en Móvil) -->
     </div>
-    <div id="pagination" class="pagination" style="margin-top: 2rem; margin-bottom: 4rem;"></div>
+    <div id="pagination" class="pagination"></div>
   </div>
 </div>
 
