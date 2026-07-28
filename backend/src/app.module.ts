@@ -42,12 +42,20 @@ import { SeoController } from './seo.controller';
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        url: configService.get<string>('DATABASE_URL'),
-        autoLoadEntities: true,
-        synchronize: process.env.NODE_ENV !== 'production',
-      }),
+      useFactory: (configService: ConfigService) => {
+        const explicitSynchronize =
+          configService.get<string>('DB_SYNCHRONIZE');
+
+        return {
+          type: 'postgres',
+          url: configService.get<string>('DATABASE_URL'),
+          autoLoadEntities: true,
+          synchronize:
+            explicitSynchronize === undefined
+              ? process.env.NODE_ENV !== 'production'
+              : explicitSynchronize === 'true',
+        };
+      },
       inject: [ConfigService],
     }),
     UsersModule,
