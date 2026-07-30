@@ -10,6 +10,9 @@ import { ArtisanProfile, VerificationStatus } from './src/artisans/entities/arti
 import { ArtisanGallery } from './src/artisans/entities/artisan-gallery.entity';
 import { Product, ProductStatus } from './src/products/entities/product.entity';
 import { ProductImage } from './src/products/entities/product-image.entity';
+import { Review } from './src/reviews/entities/review.entity';
+import { Order } from './src/orders/entities/order.entity';
+import { OrderItem } from './src/orders/entities/order-item.entity';
 import { AdminAuditLog } from './src/audit/entities/admin-audit-log.entity';
 import * as dotenv from 'dotenv';
 
@@ -19,7 +22,19 @@ const seedDatabase = async () => {
   const dataSource = new DataSource({
     type: 'postgres',
     url: process.env.DATABASE_URL || 'postgresql://postgres:0408@localhost:5432/arthuila',
-    entities: [User, Category, Region, ArtisanProfile, ArtisanGallery, Product, ProductImage, AdminAuditLog],
+    entities: [
+      User,
+      Category,
+      Region,
+      ArtisanProfile,
+      ArtisanGallery,
+      Product,
+      ProductImage,
+      Review,
+      Order,
+      OrderItem,
+      AdminAuditLog,
+    ],
     synchronize: true,
   });
 
