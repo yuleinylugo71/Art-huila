@@ -321,4 +321,59 @@ async function initHome() {
     // Initial load
     updateSlider();
   }
+
+  // --- MOBILE HERO PRODUCT SLIDER ---
+  let currentMobileSlideIndex = window.currentMobileSlideIndex || 0;
+  const mobileSliderContainer = document.getElementById('mobile-hero-slider');
+  if (mobileSliderContainer) {
+    const mobileItems = mobileSliderContainer.querySelectorAll('.mobile-hero-product');
+    const mobileDotsContainer = document.getElementById('mobile-hero-dots-container');
+
+    const updateMobileSlider = () => {
+      const dots = mobileDotsContainer ? mobileDotsContainer.querySelectorAll('button') : [];
+      mobileItems.forEach((item, i) => {
+        item.classList.toggle('active', i === currentMobileSlideIndex);
+      });
+
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === currentMobileSlideIndex);
+      });
+
+      const activeItem = mobileItems[currentMobileSlideIndex];
+      if (activeItem) {
+        const isEn = (i18next.language || 'es').startsWith('en');
+        const nameAttr = isEn ? 'data-name-en' : 'data-name-es';
+        const name = activeItem.getAttribute(nameAttr) || activeItem.getAttribute('data-name-es');
+        const price = activeItem.getAttribute('data-price');
+        const nameEl = document.getElementById('mobile-slider-item-name');
+        const priceEl = document.getElementById('mobile-slider-item-price');
+
+        if (nameEl) nameEl.textContent = name;
+        if (priceEl && price) priceEl.textContent = formatPrice(Number(price));
+      }
+    };
+
+    const nextMobileSlide = () => {
+      currentMobileSlideIndex = (currentMobileSlideIndex + 1) % mobileItems.length;
+      window.currentMobileSlideIndex = currentMobileSlideIndex;
+      updateMobileSlider();
+    };
+
+    if (mobileDotsContainer) {
+      mobileDotsContainer.querySelectorAll('button').forEach((dot, idx) => {
+        dot.onclick = (e) => {
+          e.preventDefault();
+          currentMobileSlideIndex = idx;
+          window.currentMobileSlideIndex = currentMobileSlideIndex;
+          updateMobileSlider();
+        };
+      });
+    }
+
+    if (window.mobileHeroSliderInterval) {
+      clearInterval(window.mobileHeroSliderInterval);
+    }
+    window.mobileHeroSliderInterval = setInterval(nextMobileSlide, 3500);
+    updateMobileSlider();
+  }
 }

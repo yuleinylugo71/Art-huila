@@ -938,29 +938,43 @@ footer {
     margin: 0 0 0.8rem;
     color: #2b2019;
     font-family: var(--font-display);
-    font-size: 2.35rem;
+    font-size: 2.15rem;
     line-height: 1.03;
     font-weight: 900;
   }
 
   .mobile-hero-card-content p {
-    max-width: 10.5rem;
+    max-width: 7.2rem;
     margin: 0;
     color: #725f53;
     font-size: 0.92rem;
     line-height: 1.45;
   }
 
-  .mobile-hero-product {
+  .mobile-hero-slider {
     position: absolute;
     z-index: 3;
     right: -0.35rem;
     top: 4.9rem;
     width: min(61vw, 15.4rem);
     height: 18rem;
+  }
+
+  .mobile-hero-product {
+    position: absolute;
+    inset: 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    opacity: 0;
+    transform: translateX(18px) scale(0.94);
+    transition: opacity 0.45s ease, transform 0.45s ease;
+    pointer-events: none;
+  }
+
+  .mobile-hero-product.active {
+    opacity: 1;
+    transform: translateX(0) scale(1);
   }
 
   .mobile-hero-product img {
@@ -999,24 +1013,64 @@ footer {
     color: var(--color-primary);
   }
 
+  .mobile-hero-info-card {
+    position: absolute;
+    z-index: 5;
+    left: 1.25rem;
+    right: 1.25rem;
+    bottom: 4.75rem;
+    min-height: 45px;
+    padding: 0.45rem 0.65rem 0.45rem 0.85rem;
+    border: 1px solid rgba(238, 217, 199, 0.92);
+    border-radius: 16px;
+    background: rgba(255, 252, 248, 0.9);
+    box-shadow: 0 12px 26px rgba(82, 45, 23, 0.12);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.65rem;
+  }
+
+  .mobile-hero-info-card span:first-child {
+    min-width: 0;
+    color: #352820;
+    font-size: 0.78rem;
+    font-weight: 800;
+    line-height: 1.15;
+  }
+
+  .mobile-hero-info-card span:last-child {
+    flex: 0 0 auto;
+    padding: 0.32rem 0.52rem;
+    border-radius: 999px;
+    background: var(--color-primary);
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 900;
+  }
+
   .mobile-hero-dots {
     position: absolute;
     z-index: 5;
     left: 50%;
-    bottom: 5.2rem;
+    bottom: 8.15rem;
     transform: translateX(-50%);
     display: flex;
     gap: 0.42rem;
   }
 
-  .mobile-hero-dots span {
+  .mobile-hero-dots button {
     width: 0.42rem;
     height: 0.42rem;
+    padding: 0;
+    border: 0;
     border-radius: 50%;
     background: rgba(193, 68, 14, 0.25);
+    cursor: pointer;
   }
 
-  .mobile-hero-dots .active {
+  .mobile-hero-dots button.active {
     background: var(--color-primary);
   }
 
