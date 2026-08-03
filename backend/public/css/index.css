@@ -865,4 +865,116 @@ footer {
   padding: 2.5rem 2rem !important;
 }
 
+.mobile-artisan-cta,
+.mobile-home-footer {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-discovery-page {
+    min-height: 100vh;
+    padding-bottom: 0 !important;
+  }
+
+  .mobile-artisan-cta {
+    display: block;
+    position: relative;
+    overflow: hidden;
+    margin: 2rem -1.25rem 0;
+    padding: 2.5rem 1.25rem;
+    text-align: center;
+    background: linear-gradient(135deg, #d35400 0%, #c1440e 55%, #8e2c02 100%);
+    color: #ffffff;
+  }
+
+  .mobile-artisan-cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.16), transparent 58%),
+      url("data:image/svg+xml,%3Csvg width='72' height='72' viewBox='0 0 72 72' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='36' cy='36' r='32'/%3E%3C/g%3E%3C/svg%3E") repeat;
+    pointer-events: none;
+  }
+
+  .mobile-artisan-cta > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .mobile-artisan-kicker {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+    padding: 0.35rem 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    color: #ffe4b0;
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .mobile-artisan-cta h2 {
+    max-width: 18rem;
+    margin: 0 auto 0.75rem;
+    color: #ffffff;
+    font-family: var(--font-display);
+    font-size: 2rem;
+    line-height: 1.12;
+    font-weight: 900;
+  }
+
+  .mobile-artisan-cta p {
+    max-width: 21rem;
+    margin: 0 auto 1.35rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+
+  .mobile-artisan-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.8rem 1.25rem;
+    border-radius: 999px;
+    background: #ffffff;
+    color: var(--color-primary);
+    font-size: 0.82rem;
+    font-weight: 800;
+    text-decoration: none;
+    text-transform: uppercase;
+    box-shadow: 0 12px 24px rgba(74, 22, 0, 0.22);
+  }
+
+  .mobile-home-footer {
+    display: block;
+    margin: 0 -1.25rem;
+    padding: 2rem 1.25rem 2.5rem;
+    text-align: center;
+    background: #1f1712;
+    color: #ffffff;
+  }
+
+  .mobile-home-footer .brand {
+    font-family: var(--font-display);
+    font-size: 1.45rem;
+    font-weight: 900;
+  }
+
+  .mobile-home-footer .brand span {
+    color: var(--color-primary-light);
+  }
+
+  .mobile-home-footer p {
+    margin: 0.45rem 0 0;
+    color: rgba(255, 255, 255, 0.64);
+    font-size: 0.8rem;
+  }
+}
+
 
