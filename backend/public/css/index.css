@@ -880,7 +880,7 @@ footer {
   .mobile-hero-card {
     display: block;
     position: relative;
-    min-height: 500px;
+    min-height: 425px;
     margin: 0 -1.25rem 1.35rem;
     overflow: hidden;
     background:
@@ -907,7 +907,7 @@ footer {
 
   .mobile-hero-shape-terracotta {
     right: -3.6rem;
-    bottom: 5.4rem;
+    bottom: 4.5rem;
     width: 18.5rem;
     height: 16.5rem;
     border-radius: 54% 46% 0 0 / 68% 58% 0 0;
@@ -1003,7 +1003,7 @@ footer {
     position: absolute;
     z-index: 5;
     left: 50%;
-    bottom: 10.7rem;
+    bottom: 5.2rem;
     transform: translateX(-50%);
     display: flex;
     gap: 0.42rem;
@@ -1020,44 +1020,12 @@ footer {
     background: var(--color-primary);
   }
 
-  .mobile-hero-tags {
-    position: absolute;
-    z-index: 5;
-    left: 1rem;
-    right: 1rem;
-    bottom: 5.5rem;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.55rem;
-  }
-
-  .mobile-hero-tags button {
-    min-height: 40px;
-    padding: 0 0.4rem;
-    border: 1px solid #ead9c8;
-    border-radius: 999px;
-    background: rgba(255, 252, 248, 0.92);
-    color: #5f524a;
-    font-size: 0.74rem;
-    font-weight: 700;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.28rem;
-    box-shadow: 0 8px 18px rgba(82, 45, 23, 0.08);
-  }
-
-  .mobile-hero-tags i {
-    color: var(--color-primary);
-    font-size: 0.82rem;
-  }
-
   .mobile-hero-explore {
     position: absolute;
     z-index: 5;
     left: 1.25rem;
     right: 1.25rem;
-    bottom: 1.2rem;
+    bottom: 1rem;
     min-height: 46px;
     border-radius: 999px;
     background: linear-gradient(135deg, #d64b0a, #b83b05);
