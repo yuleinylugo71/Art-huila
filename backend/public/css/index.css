@@ -865,6 +865,7 @@ footer {
   padding: 2.5rem 2rem !important;
 }
 
+.mobile-hero-card,
 .mobile-artisan-cta,
 .mobile-home-footer {
   display: none;
@@ -874,6 +875,84 @@ footer {
   .mobile-discovery-page {
     min-height: 100vh;
     padding-bottom: 0 !important;
+  }
+
+  .mobile-hero-card {
+    display: block;
+    position: relative;
+    min-height: 220px;
+    margin: 0 -1.25rem 1.25rem;
+    overflow: hidden;
+    background: #241711;
+    color: #ffffff;
+  }
+
+  .mobile-hero-card img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    filter: saturate(1.04);
+  }
+
+  .mobile-hero-card-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, rgba(19, 10, 4, 0.82) 0%, rgba(19, 10, 4, 0.42) 58%, rgba(19, 10, 4, 0.18) 100%),
+      linear-gradient(180deg, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.36) 100%);
+  }
+
+  .mobile-hero-card-content {
+    position: relative;
+    z-index: 1;
+    min-height: 220px;
+    max-width: 18.5rem;
+    padding: 1.5rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+  }
+
+  .mobile-hero-card-content span {
+    margin-bottom: 0.45rem;
+    color: #ffd166;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .mobile-hero-card-content h1 {
+    margin: 0 0 0.9rem;
+    color: #ffffff;
+    font-family: var(--font-display);
+    font-size: 2.1rem;
+    line-height: 1.05;
+    font-weight: 900;
+  }
+
+  .mobile-hero-card-content strong {
+    color: #ffd166;
+    font-weight: 900;
+  }
+
+  .mobile-hero-card-content a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 0.65rem 1rem;
+    border-radius: 999px;
+    background: var(--color-primary);
+    color: #ffffff;
+    font-size: 0.82rem;
+    font-weight: 800;
+    text-decoration: none;
+    box-shadow: 0 10px 22px rgba(49, 17, 3, 0.28);
   }
 
   .mobile-artisan-cta {
