@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Art Huila — Artesanías con Historia</title>
   <link rel="stylesheet" href="/css/base.css?v=18">
-  <link rel="stylesheet" href="/css/index.css?v=13">
+  <link rel="stylesheet" href="/css/index.css?v=14">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     /* Force CTA Banner & Footer to touch with zero gap/space */
@@ -239,16 +239,40 @@
     </header>
 
     <section class="mobile-hero-card">
-      <img src="/img/fondo2.png" alt="Artesanías tradicionales del Huila" />
-      <div class="mobile-hero-card-overlay"></div>
+      <div class="mobile-hero-shape mobile-hero-shape-soft"></div>
+      <div class="mobile-hero-shape mobile-hero-shape-terracotta"></div>
       <div class="mobile-hero-card-content">
         <span data-i18n="home.heroTag">Maestría Ancestral</span>
         <h1>
-          <span data-i18n="home.heroTitlePart1">Artesanías Con</span>
-          <strong data-i18n="home.heroTitleAlma">Alma</strong>
+          Artesanía<br>
+          que inspira
         </h1>
-        <a href="catalogo.html" data-i18n="home.btnBuy">Comprar ahora →</a>
+        <p>Hecho en Huila, para el mundo.</p>
       </div>
+      <div class="mobile-hero-product">
+        <img src="/img/mochila_bag.png" alt="Mochila artesanal del Huila" />
+      </div>
+      <div class="mobile-hero-origin">
+        <i class="fa-regular fa-hand"></i>
+        <span>Hecho a mano</span>
+      </div>
+      <div class="mobile-hero-dots" aria-hidden="true">
+        <span class="active"></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="mobile-hero-tags">
+        <button onclick="window.location.href='/catalogo.html?category=ceramica'">
+          <i class="fa-solid fa-mug-hot"></i> Cerámica
+        </button>
+        <button onclick="window.location.href='/catalogo.html?category=tejeduria'">
+          <i class="fa-solid fa-border-all"></i> Tejido
+        </button>
+        <button onclick="window.location.href='/catalogo.html?category=sombrereria'">
+          <i class="fa-solid fa-hat-cowboy"></i> Sombreros
+        </button>
+      </div>
+      <a href="catalogo.html" class="mobile-hero-explore">Explorar</a>
     </section>
 
     <!-- Mobile Search Block -->
