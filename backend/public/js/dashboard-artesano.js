@@ -36,8 +36,69 @@ function getActiveSectionName() {
 }
 
 function initPage() {
+  enhanceArtisanDashboardUX();
   initSelects();
   initProfile();
+}
+
+function enhanceArtisanDashboardUX() {
+  const welcomeSubtitle = document.querySelector('#section-resumen .welcome-subtitle');
+  if (welcomeSubtitle && !document.querySelector('.artisan-quick-actions')) {
+    welcomeSubtitle.insertAdjacentHTML('afterend', `
+      <div class="artisan-quick-actions">
+        <button class="btn btn-primary" onclick="showSection('nuevo-producto')"><i class="fa-solid fa-plus"></i> Publicar producto</button>
+        <button class="btn btn-outline" onclick="showSection('mis-ventas')"><i class="fa-solid fa-sack-dollar"></i> Ver ventas</button>
+        <button class="btn btn-ghost" onclick="showSection('mi-perfil'); enableProfileEdit();"><i class="fa-solid fa-user-pen"></i> Completar perfil</button>
+      </div>
+    `);
+  }
+
+  const metricsGrid = document.getElementById('metrics-grid-bottom');
+  if (metricsGrid && !document.getElementById('metric-products')) {
+    metricsGrid.insertAdjacentHTML('beforeend', `
+      <div class="metric-card" onclick="showSection('mis-productos')" style="cursor: pointer;">
+        <div class="metric-icon color-olive"><i class="fa-solid fa-box-open"></i></div>
+        <div class="metric-info">
+          <span class="metric-label">Productos publicados</span>
+          <h3 class="metric-value" id="metric-products">0</h3>
+        </div>
+      </div>
+    `);
+  }
+
+  if (metricsGrid && !document.querySelector('.artisan-admin-actions')) {
+    metricsGrid.insertAdjacentHTML('afterend', `
+      <div class="artisan-admin-actions">
+        <button class="admin-action-card" onclick="showSection('mis-productos')">
+          <span class="admin-action-icon"><i class="fa-solid fa-boxes-stacked"></i></span>
+          <strong>Gestionar productos</strong>
+          <small>Editar inventario, precios, imagenes y publicaciones.</small>
+        </button>
+        <button class="admin-action-card" onclick="showSection('mis-ventas')">
+          <span class="admin-action-icon"><i class="fa-solid fa-clipboard-list"></i></span>
+          <strong>Atender pedidos</strong>
+          <small>Revisar ventas pagadas y actualizar preparacion/envio.</small>
+        </button>
+        <button class="admin-action-card" onclick="showSection('nuevo-producto')">
+          <span class="admin-action-icon"><i class="fa-solid fa-circle-plus"></i></span>
+          <strong>Publicar nuevo</strong>
+          <small>Crear una ficha completa con historia, tecnica y fotos.</small>
+        </button>
+        <button class="admin-action-card" onclick="showSection('mi-perfil')">
+          <span class="admin-action-icon"><i class="fa-solid fa-id-badge"></i></span>
+          <strong>Perfil artesanal</strong>
+          <small>Actualizar historia, taller, foto y soportes de verificacion.</small>
+        </button>
+      </div>
+    `);
+  }
+
+  const idInput = document.getElementById('profile-id-number');
+  const idGroup = idInput?.closest('.form-group');
+  if (idGroup) idGroup.style.display = 'none';
+
+  const idRowLabel = document.querySelector('#row-id .row-label');
+  if (idRowLabel) idRowLabel.textContent = 'Soportes de identidad';
 }
 
 function updateWelcomeMessage() {
@@ -384,7 +445,7 @@ async function loadProfile() {
     const headerAvatar = document.getElementById('avatar-preview-header');
     if (headerAvatar) {
       if (p.avatar_url) {
-        headerAvatar.innerHTML = `<img src="${p.avatar_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;"/>`;
+        headerAvatar.innerHTML = `<img src="${p.avatar_url}" style="width:100%;height:100%;border-radius:inherit;object-fit:cover;"/>`;
       } else {
         headerAvatar.innerHTML = '<i class="fa-solid fa-user"></i>';
       }
@@ -445,6 +506,11 @@ async function loadProfile() {
       decStatus.innerHTML = `<span class="text-danger" style="font-weight:700;color:#dc2626;"><i class="fa-solid fa-circle-xmark"></i> ${i18next.t('artisan.statusPendiente')}</span>`;
       decCheck.checked = false;
     }
+    const headerVerification = document.getElementById('profile-header-verification');
+    if (headerVerification) {
+      headerVerification.textContent = p.truthfulness_declaration ? i18next.t('artisan.statusCompleto') : i18next.t('artisan.statusPendiente');
+      headerVerification.className = p.truthfulness_declaration ? 'is-complete' : 'is-pending';
+    }
     document.getElementById('legal-ip').textContent = p.legal_acceptance_ip || i18next.t('artisan.ipNotRegistered');
     document.getElementById('legal-timestamp').textContent = p.legal_acceptance_timestamp ? new Date(p.legal_acceptance_timestamp).toLocaleString(i18next.language === 'es' ? 'es-CO' : 'en-US') : i18next.t('artisan.ipNotRegistered');
 
@@ -480,6 +546,9 @@ async function updateTasksAndMetrics() {
     const totalStock = products.reduce((acc, curr) => acc + (curr.stock || 0), 0);
     const metricStockEl = document.getElementById('metric-stock');
     if (metricStockEl) metricStockEl.textContent = totalStock;
+
+    const metricProductsEl = document.getElementById('metric-products');
+    if (metricProductsEl) metricProductsEl.textContent = products.length;
 
     const now = new Date();
     const currentMonthSales = sales.filter(s => {
@@ -693,7 +762,6 @@ function updateCompletenessRow(rowId, badgeId, linkId, isComplete) {
 
 window.enableProfileEdit = function() {
   document.getElementById('profile-full-name').removeAttribute('disabled');
-  document.getElementById('profile-id-number').removeAttribute('disabled');
   document.getElementById('profile-category').removeAttribute('disabled');
   document.getElementById('profile-region').removeAttribute('disabled');
 
@@ -713,7 +781,6 @@ window.enableProfileEdit = function() {
 
 window.disableProfileEdit = function() {
   document.getElementById('profile-full-name').setAttribute('disabled', 'true');
-  document.getElementById('profile-id-number').setAttribute('disabled', 'true');
   document.getElementById('profile-category').setAttribute('disabled', 'true');
   document.getElementById('profile-region').setAttribute('disabled', 'true');
 
@@ -736,7 +803,6 @@ window.saveProfile = async function() {
   btn.disabled = true; btn.textContent = i18next.t('common.saving');
   try {
     const full_name = document.getElementById('profile-full-name').value;
-    const id_number = document.getElementById('profile-id-number').value;
     const category_id = document.getElementById('profile-category').value;
     const region_id = document.getElementById('profile-region').value;
     const cultural_history = document.getElementById('profile-history').value;
@@ -752,7 +818,6 @@ window.saveProfile = async function() {
       method: 'POST',
       body: JSON.stringify({
         full_name,
-        id_number,
         category_id,
         region_id,
         cultural_history,
@@ -1311,9 +1376,25 @@ function translateStatus(status) {
 }
 
 function getPaymentStatusBadge(status) {
-  return status === 'paid' ? 'badge-paid' : 'badge-pending';
+  const map = {
+    approved: 'badge-delivered',
+    paid: 'badge-paid',
+    pending: 'badge-pending',
+    rejected: 'badge-cancelled',
+    failed: 'badge-cancelled',
+    cancelled: 'badge-cancelled'
+  };
+  return map[status] || 'badge-pending';
 }
 
 function translatePaymentStatus(status) {
-  return status === 'paid' ? i18next.t('order.paymentPaid') : i18next.t('order.paymentPending');
+  const map = {
+    approved: 'Pago aprobado',
+    paid: 'Pago aprobado',
+    pending: 'Pago pendiente',
+    rejected: 'Pago rechazado',
+    failed: 'Pago fallido',
+    cancelled: 'Pago cancelado'
+  };
+  return map[status] || 'Pago pendiente';
 }

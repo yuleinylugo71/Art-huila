@@ -114,100 +114,122 @@
           </div>
           <div class="form-hint" data-i18n="auth.passwordRequirementsHint">Mínimo 8 caracteres, 1 mayúscula y 1 número</div>
         </div>
+        <label class="checkbox-label">
+          <input type="checkbox" id="c-legal" required/>
+          <span>Acepto los <a href="/terminos.html" target="_blank" rel="noopener">Terminos y Condiciones</a> y la <a href="/privacidad.html" target="_blank" rel="noopener">Politica de Privacidad</a>.</span>
+        </label>
         <button type="submit" class="btn btn-primary btn-full" id="btn-comprador" data-i18n="register.createBuyerAccountBtn">Crear cuenta de comprador</button>
       </form>
 
       <!-- ── ARTESANO FORM ── -->
       <form id="form-artesano" class="hidden">
-        <div class="form-group">
-          <label class="form-label" data-i18n="auth.fullNameLabel">Nombre completo</label>
-          <input type="text" id="a-name" class="form-control" data-i18n-placeholder="auth.fullNamePlaceholder" placeholder="Tu nombre completo" required/>
+        <div class="register-steps" aria-label="Progreso del registro">
+          <button type="button" class="register-step is-active" data-step-indicator="1">1</button>
+          <span></span>
+          <button type="button" class="register-step" data-step-indicator="2">2</button>
+          <span></span>
+          <button type="button" class="register-step" data-step-indicator="3">3</button>
         </div>
-        <div class="form-group">
-          <label class="form-label" data-i18n="auth.emailLabel">Correo electrónico</label>
-          <input type="email" id="a-email" class="form-control" data-i18n-placeholder="auth.emailPlaceholder" placeholder="tu@email.com" required/>
-        </div>
-        <div class="form-group">
-          <label class="form-label" data-i18n="auth.passwordLabel">Contraseña</label>
-          <div class="password-input-wrapper">
-            <input type="password" id="a-pass" class="form-control" data-i18n-placeholder="auth.passwordPlaceholder" placeholder="Mínimo 8 caracteres" required/>
-            <i class="fa-solid fa-eye-slash toggle-password" onclick="togglePasswordVisibility('a-pass', this)"></i>
+
+        <section class="artisan-step is-active" data-step="1">
+          <h3 class="artisan-section-title"><i class="fa-solid fa-user"></i> Tu cuenta</h3>
+          <p class="step-copy">Primero crea tus datos de acceso.</p>
+          <div class="form-group">
+            <label class="form-label" data-i18n="auth.fullNameLabel">Nombre completo</label>
+            <input type="text" id="a-name" class="form-control" data-i18n-placeholder="auth.fullNamePlaceholder" placeholder="Tu nombre completo" required/>
           </div>
-          <div class="form-hint" data-i18n="auth.passwordRequirementsHint">Mínimo 8 caracteres, 1 mayúscula y 1 número</div>
-        </div>
-
-        <!-- Artisan Section Header -->
-        <div class="artisan-section-divider">
-          <h3 class="artisan-section-title">
-            <i class="fa-solid fa-palette"></i> <span data-i18n="register.artisanDataHeader">Datos de Artesano</span>
-          </h3>
-        </div>
-
-        <div class="form-group upload-group">
-          <label class="form-label" data-i18n="register.galleryLabel">Foto de Perfil / Galería del Taller</label>
-          <label class="custom-file-upload" for="a-galeria">
-            <i class="fa-solid fa-camera"></i>
-            <div class="upload-text-container">
-              <div class="upload-title">Foto de Perfil / Galería</div>
-              <div class="upload-subtitle">Se carga en Cloudinary</div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="auth.emailLabel">Correo electrónico</label>
+            <input type="email" id="a-email" class="form-control" data-i18n-placeholder="auth.emailPlaceholder" placeholder="tu@email.com" required/>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="auth.passwordLabel">Contraseña</label>
+            <div class="password-input-wrapper">
+              <input type="password" id="a-pass" class="form-control" data-i18n-placeholder="auth.passwordPlaceholder" placeholder="Mínimo 8 caracteres" required/>
+              <i class="fa-solid fa-eye-slash toggle-password" onclick="togglePasswordVisibility('a-pass', this)"></i>
             </div>
-            <span class="btn-upload">Subir foto</span>
-          </label>
-          <input type="file" id="a-galeria" multiple accept="image/*" required style="display:none;" onchange="updateUploadLabel(this, 'Se carga en Cloudinary')"/>
-          <div class="form-hint" data-i18n="register.galleryHint">Muestra tus mejores obras</div>
-        </div>
+            <div class="form-hint" data-i18n="auth.passwordRequirementsHint">Mínimo 8 caracteres, 1 mayúscula y 1 número</div>
+          </div>
+          <button type="button" class="btn btn-primary btn-full" data-next-step>Continuar</button>
+        </section>
 
-        <div class="form-group">
-          <label class="form-label" data-i18n="register.culturalHistoryLabel">Biografía / Historia cultural de tu oficio</label>
-          <textarea id="a-historia" class="form-control" data-i18n-placeholder="register.culturalHistoryPlaceholder" placeholder="Cuéntanos tu historia como artesano, tu técnica y tu inspiración..." required></textarea>
-        </div>
-        <div class="form-group">
-          <label class="form-label" data-i18n="register.categoryLabel">Oficio (ej: tejido, cerámica, talla en madera...)</label>
-          <select id="a-categoria" class="form-control" required>
-            <option value="" data-i18n="common.loading">Cargando oficios...</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label" data-i18n="register.regionLabel">Municipio del Huila</label>
-          <select id="a-region" class="form-control" required>
-            <option value="" data-i18n="common.loading">Cargando municipios...</option>
-          </select>
-        </div>
+        <section class="artisan-step" data-step="2">
+          <h3 class="artisan-section-title"><i class="fa-solid fa-palette"></i> Tu oficio</h3>
+          <p class="step-copy">Cuéntanos qué haces y desde dónde trabajas.</p>
+          <div class="form-group">
+            <label class="form-label" data-i18n="register.culturalHistoryLabel">Biografía / Historia cultural de tu oficio</label>
+            <textarea id="a-historia" class="form-control" data-i18n-placeholder="register.culturalHistoryPlaceholder" placeholder="Cuéntanos tu historia como artesano, tu técnica y tu inspiración..." required></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="register.categoryLabel">Oficio</label>
+            <select id="a-categoria" class="form-control" required>
+              <option value="" data-i18n="common.loading">Cargando oficios...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="register.regionLabel">Municipio del Huila</label>
+            <select id="a-region" class="form-control" required>
+              <option value="" data-i18n="common.loading">Cargando municipios...</option>
+            </select>
+          </div>
+          <div class="wizard-actions">
+            <button type="button" class="btn btn-secondary" data-prev-step>Volver</button>
+            <button type="button" class="btn btn-primary" data-next-step>Continuar</button>
+          </div>
+        </section>
 
-        <div class="form-group upload-group">
-          <label class="form-label" data-i18n="register.docFrontLabel">Cédula (Cara frontal)</label>
-          <label class="custom-file-upload" for="a-document-front">
-            <i class="fa-solid fa-camera"></i>
-            <div class="upload-text-container">
-              <div class="upload-title">Cédula Cara Frontal</div>
-              <div class="upload-subtitle">Se carga de forma segura</div>
-            </div>
-            <span class="btn-upload">Subir foto</span>
-          </label>
-          <input type="file" id="a-document-front" accept="image/*,application/pdf" required style="display:none;" onchange="updateUploadLabel(this, 'Se carga de forma segura')"/>
-          <div class="form-hint" data-i18n="register.docFrontHint">Sube una foto legible del frente de tu documento</div>
-        </div>
+        <section class="artisan-step" data-step="3">
+          <h3 class="artisan-section-title"><i class="fa-solid fa-shield-heart"></i> Soportes</h3>
+          <p class="step-copy">Sube tus documentos y una foto de tu trabajo.</p>
+          <div class="form-group upload-group">
+            <label class="form-label" data-i18n="register.galleryLabel">Foto de Perfil / Galería del Taller</label>
+            <label class="custom-file-upload" for="a-galeria">
+              <i class="fa-solid fa-camera"></i>
+              <div class="upload-text-container">
+                <div class="upload-title">Foto de Perfil / Galería</div>
+                <div class="upload-subtitle">Se carga en Cloudinary</div>
+              </div>
+              <span class="btn-upload">Subir foto</span>
+            </label>
+            <input type="file" id="a-galeria" name="gallery" multiple accept="image/*" style="display:none;" onchange="updateUploadLabel(this, 'Se carga en Cloudinary')"/>
+            <div class="form-hint" data-i18n="register.galleryHint">Muestra tus mejores obras</div>
+          </div>
 
-        <div class="form-group upload-group">
-          <label class="form-label" data-i18n="register.docBackLabel">Cédula (Cara posterior)</label>
-          <label class="custom-file-upload" for="a-document-back">
-            <i class="fa-solid fa-camera"></i>
-            <div class="upload-text-container">
-              <div class="upload-title">Cédula Cara Posterior</div>
-              <div class="upload-subtitle">Se carga de forma segura</div>
-            </div>
-            <span class="btn-upload">Subir foto</span>
+          <div class="form-group upload-group">
+            <label class="form-label" data-i18n="register.docFrontLabel">Cédula (Cara frontal)</label>
+            <label class="custom-file-upload" for="a-document-front">
+              <i class="fa-solid fa-id-card"></i>
+              <div class="upload-text-container">
+                <div class="upload-title">Cédula Cara Frontal</div>
+                <div class="upload-subtitle">Se carga de forma segura</div>
+              </div>
+              <span class="btn-upload">Subir foto</span>
+            </label>
+            <input type="file" id="a-document-front" name="id_document_front" accept="image/*,application/pdf" style="display:none;" onchange="updateUploadLabel(this, 'Se carga de forma segura')"/>
+          </div>
+
+          <div class="form-group upload-group">
+            <label class="form-label" data-i18n="register.docBackLabel">Cédula (Cara posterior)</label>
+            <label class="custom-file-upload" for="a-document-back">
+              <i class="fa-solid fa-id-card"></i>
+              <div class="upload-text-container">
+                <div class="upload-title">Cédula Cara Posterior</div>
+                <div class="upload-subtitle">Se carga de forma segura</div>
+              </div>
+              <span class="btn-upload">Subir foto</span>
+            </label>
+            <input type="file" id="a-document-back" name="id_document_back" accept="image/*,application/pdf" style="display:none;" onchange="updateUploadLabel(this, 'Se carga de forma segura')"/>
+          </div>
+
+          <label class="checkbox-label" id="declaracion-wrap">
+            <input type="checkbox" id="a-declaracion" required/>
+            <span>Declaro que la informacion suministrada es veridica y acepto los <a href="/terminos.html" target="_blank" rel="noopener">Terminos y Condiciones</a> y la <a href="/privacidad.html" target="_blank" rel="noopener">Politica de Privacidad</a>.</span>
           </label>
-          <input type="file" id="a-document-back" accept="image/*,application/pdf" required style="display:none;" onchange="updateUploadLabel(this, 'Se carga de forma segura')"/>
-          <div class="form-hint" data-i18n="register.docBackHint">Sube una foto legible del reverso de tu documento</div>
-        </div>
-        
-        <label class="checkbox-label" id="declaracion-wrap">
-          <input type="checkbox" id="a-declaracion" required/>
-          <span data-i18n="register.declarationLabel">Declaro que la información suministrada es verídica y asumo toda responsabilidad legal sobre los datos proporcionados</span>
-        </label>
-        
-        <button type="submit" class="btn btn-primary btn-full" id="btn-artesano" data-i18n="register.registerAsArtisanBtn">Registrarme como artesano</button>
+          <div class="wizard-actions">
+            <button type="button" class="btn btn-secondary" data-prev-step>Volver</button>
+            <button type="submit" class="btn btn-primary" id="btn-artesano" data-i18n="register.registerAsArtisanBtn">Registrarme</button>
+          </div>
+        </section>
       </form>
 
       <hr class="divider"/>

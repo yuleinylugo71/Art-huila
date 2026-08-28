@@ -20,6 +20,7 @@ document.addEventListener('languageChanged', () => {
 });
 
 async function initPage() {
+    initApplyWizard();
     loadOrders();
     try {
         const freshUser = await apiFetch('/users/me');
@@ -32,6 +33,149 @@ async function initPage() {
     loadProfileData();
     updateNavCart();
 }
+
+let currentApplyStep = 1;
+
+function initApplyWizard() {
+    const formContainer = document.getElementById('apply-form-container');
+    const form = document.getElementById('apply-form');
+    if (!formContainer || !form || form.dataset.wizardReady === 'true') return;
+
+    form.setAttribute('novalidate', 'novalidate');
+    formContainer.classList.add('apply-card');
+    const intro = formContainer.querySelector('p');
+    if (intro) {
+        intro.classList.add('apply-intro-text');
+        intro.textContent = 'Completa tu solicitud en 3 pasos. Una vez aprobada, podras gestionar tus productos desde el panel de artesano.';
+    }
+
+    form.insertAdjacentHTML('beforebegin', `
+        <div class="apply-stepper" aria-label="Progreso de solicitud">
+            <button type="button" class="apply-step-indicator active" data-apply-step-dot="1" onclick="goApplyStep(1)">
+                <span>1</span>
+                <strong>Oficio</strong>
+            </button>
+            <button type="button" class="apply-step-indicator" data-apply-step-dot="2" onclick="goApplyStep(2)">
+                <span>2</span>
+                <strong>Soportes</strong>
+            </button>
+            <button type="button" class="apply-step-indicator" data-apply-step-dot="3" onclick="goApplyStep(3)">
+                <span>3</span>
+                <strong>Enviar</strong>
+            </button>
+        </div>
+    `);
+
+    const category = document.getElementById('apply-category')?.closest('.form-group');
+    const region = document.getElementById('apply-region')?.closest('.form-group');
+    const history = document.getElementById('apply-cultural-history')?.closest('.form-group');
+    const docFront = document.getElementById('apply-doc-front')?.closest('.form-group');
+    const docBack = document.getElementById('apply-doc-back')?.closest('.form-group');
+    const gallery = document.getElementById('apply-gallery')?.closest('.form-group');
+    const truthfulness = document.getElementById('apply-truthfulness')?.closest('.form-group');
+    const submitRow = document.getElementById('btn-submit-apply')?.closest('div');
+
+    const stepOne = document.createElement('section');
+    stepOne.className = 'apply-step-panel active';
+    stepOne.dataset.applyStep = '1';
+    stepOne.innerHTML = '<h3><i class="fa-solid fa-palette"></i> Tu oficio artesanal</h3><div class="apply-form-grid"></div>';
+    const stepOneGrid = stepOne.querySelector('.apply-form-grid');
+    if (category) stepOneGrid.appendChild(category);
+    if (region) stepOneGrid.appendChild(region);
+    if (history) stepOne.appendChild(history);
+    stepOne.insertAdjacentHTML('beforeend', `
+        <div class="apply-actions">
+            <button type="button" class="btn btn-primary" onclick="nextApplyStep()">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+    `);
+
+    const stepTwo = document.createElement('section');
+    stepTwo.className = 'apply-step-panel';
+    stepTwo.dataset.applyStep = '2';
+    stepTwo.innerHTML = '<h3><i class="fa-solid fa-id-card"></i> Documentos y galeria</h3><div class="apply-form-grid"></div>';
+    const stepTwoGrid = stepTwo.querySelector('.apply-form-grid');
+    if (docFront) stepTwoGrid.appendChild(docFront);
+    if (docBack) stepTwoGrid.appendChild(docBack);
+    if (gallery) stepTwo.appendChild(gallery);
+    stepTwo.insertAdjacentHTML('beforeend', `
+        <div class="apply-actions">
+            <button type="button" class="btn btn-ghost apply-back-btn" onclick="prevApplyStep()"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
+            <button type="button" class="btn btn-primary" onclick="nextApplyStep()">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+    `);
+
+    const stepThree = document.createElement('section');
+    stepThree.className = 'apply-step-panel';
+    stepThree.dataset.applyStep = '3';
+    stepThree.innerHTML = `
+        <h3><i class="fa-solid fa-shield-halved"></i> Declaracion y envio</h3>
+        <div class="apply-review-box">
+            <i class="fa-solid fa-circle-info"></i>
+            <p>Antes de enviar, confirma que la informacion y los documentos corresponden a tu identidad y a tu trabajo artesanal.</p>
+        </div>
+    `;
+    if (truthfulness) {
+        truthfulness.classList.add('apply-check-row');
+        stepThree.appendChild(truthfulness);
+    }
+    const actions = document.createElement('div');
+    actions.className = 'apply-actions';
+    actions.innerHTML = '<button type="button" class="btn btn-ghost apply-back-btn" onclick="prevApplyStep()"><i class="fa-solid fa-arrow-left"></i> Anterior</button>';
+    if (submitRow) actions.appendChild(submitRow);
+    stepThree.appendChild(actions);
+
+    form.innerHTML = '';
+    form.append(stepOne, stepTwo, stepThree);
+    form.dataset.wizardReady = 'true';
+    showApplyStep(1, false);
+}
+
+function getApplyStepFields(step) {
+    const idsByStep = {
+        1: ['apply-category', 'apply-region', 'apply-cultural-history'],
+        2: ['apply-doc-front', 'apply-doc-back'],
+        3: ['apply-truthfulness']
+    };
+    return (idsByStep[step] || []).map(id => document.getElementById(id)).filter(Boolean);
+}
+
+function validateApplyStep(step) {
+    const fields = getApplyStepFields(step);
+    for (const field of fields) {
+        if (!field.checkValidity()) {
+            field.reportValidity();
+            return false;
+        }
+    }
+    return true;
+}
+
+function showApplyStep(step, shouldValidate = true) {
+    if (shouldValidate && step > currentApplyStep && !validateApplyStep(currentApplyStep)) return;
+    currentApplyStep = Math.max(1, Math.min(3, step));
+
+    document.querySelectorAll('.apply-step-panel').forEach(panel => {
+        panel.classList.toggle('active', Number(panel.dataset.applyStep) === currentApplyStep);
+    });
+
+    document.querySelectorAll('.apply-step-indicator').forEach(dot => {
+        const dotStep = Number(dot.dataset.applyStepDot);
+        dot.classList.toggle('active', dotStep === currentApplyStep);
+        dot.classList.toggle('completed', dotStep < currentApplyStep);
+    });
+}
+
+window.goApplyStep = function(step) {
+    showApplyStep(step, step > currentApplyStep);
+};
+
+window.nextApplyStep = function() {
+    showApplyStep(currentApplyStep + 1, true);
+};
+
+window.prevApplyStep = function() {
+    showApplyStep(currentApplyStep - 1, false);
+};
 
 function loadProfileData() {
     const user = Auth.getUser();
@@ -136,6 +280,7 @@ function renderBuyerStats() {
           </div>
         </div>
     `;
+
 }
 
 function renderBuyerOrdersPage() {
@@ -385,7 +530,8 @@ async function loadApplyTab() {
                     </div>
                 `;
                 
-                if (profile.id_number) document.getElementById('apply-id-number').value = profile.id_number;
+                const idNumberInput = document.getElementById('apply-id-number');
+                if (profile.id_number && idNumberInput) idNumberInput.value = profile.id_number;
                 if (profile.cultural_history) document.getElementById('apply-cultural-history').value = profile.cultural_history;
             }
         }
@@ -432,12 +578,19 @@ async function loadCategoriesAndRegions() {
 
 document.getElementById('apply-form').addEventListener('submit', async (e) => {
     e.preventDefault();
+    for (let step = 1; step <= 3; step++) {
+        showApplyStep(step, false);
+        if (!validateApplyStep(step)) {
+            return;
+        }
+    }
     const btn = document.getElementById('btn-submit-apply');
     const originalText = btn.innerHTML;
     btn.disabled = true;
     btn.textContent = i18next.t('common.sending', { defaultValue: 'Enviando...' });
 
-    const idNumber = document.getElementById('apply-id-number').value;
+    const idNumberInput = document.getElementById('apply-id-number');
+    const idNumber = idNumberInput ? idNumberInput.value.trim() : '';
     const categoryId = document.getElementById('apply-category').value;
     const regionId = document.getElementById('apply-region').value;
     const culturalHistory = document.getElementById('apply-cultural-history').value;
@@ -448,7 +601,7 @@ document.getElementById('apply-form').addEventListener('submit', async (e) => {
     const galleryInput = document.getElementById('apply-gallery');
 
     const formData = new FormData();
-    formData.append('id_number', idNumber);
+    if (idNumber) formData.append('id_number', idNumber);
     formData.append('category_id', categoryId);
     formData.append('region_id', regionId);
     formData.append('cultural_history', culturalHistory);

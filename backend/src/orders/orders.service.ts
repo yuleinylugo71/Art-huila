@@ -5,6 +5,7 @@ import {
   InternalServerErrorException,
   Inject,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -29,6 +30,7 @@ export class OrdersService {
     @Inject(MAIL_SERVICE)
     private readonly mailService: IMailService,
     private readonly mipaqueteService: MipaqueteService,
+    private readonly configService: ConfigService,
     private dataSource: DataSource,
   ) {}
 
@@ -202,7 +204,12 @@ export class OrdersService {
       throw new NotFoundException('Order not found');
     }
 
-    // Manual/Mock payment processing...
+    if (this.configService.get<string>('EPAYCO_ALLOW_MOCK_PAYMENTS') !== 'true') {
+      throw new BadRequestException(
+        'El pago debe confirmarse desde la pasarela ePayco.',
+      );
+    }
+
     return this.markAsPaid(id, `MOCK_PAY_${Date.now()}`);
   }
 

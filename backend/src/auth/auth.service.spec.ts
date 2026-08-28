@@ -32,6 +32,8 @@ describe('AuthService', () => {
   let artisanRepo: any;
 
   beforeEach(() => {
+    jest.clearAllMocks();
+
     usersService = {
       findByEmail: jest.fn(),
       findById: jest.fn(),
@@ -111,6 +113,20 @@ describe('AuthService', () => {
       ).rejects.toBeInstanceOf(UnauthorizedException);
     });
 
+    it('usuario sin correo verificado no puede iniciar sesion', async () => {
+      usersService.findByEmail.mockResolvedValue({
+        ...buyerUser,
+        email_verified: false,
+      });
+
+      await expect(
+        service.login({ email: buyerUser.email, password: 'Password123' }),
+      ).rejects.toBeInstanceOf(UnauthorizedException);
+
+      expect(bcrypt.compare).not.toHaveBeenCalled();
+      expect(jwtService.sign).not.toHaveBeenCalled();
+    });
+
   });
 
   describe('refresh', () => {
@@ -156,6 +172,8 @@ describe('AuthService HU-02', () => {
   let artisanRepo: any;
 
   beforeEach(() => {
+    jest.clearAllMocks();
+
     usersService = {
       findByEmail: jest.fn().mockResolvedValue(user),
       incrementFailedLogins: jest.fn(),
@@ -235,6 +253,10 @@ describe('AuthService HU-02', () => {
 
   it('artesano SUSPENDED no puede iniciar sesion', async () => {
     (bcrypt.compare as jest.Mock).mockResolvedValue(true);
+    usersService.findByEmail.mockResolvedValue({
+      ...user,
+      email_verified: true,
+    });
     artisanRepo.findOne.mockResolvedValue({
       verification_status: ArtisanStatus.SUSPENDED,
     });

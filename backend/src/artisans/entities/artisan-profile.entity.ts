@@ -32,8 +32,8 @@ export class ArtisanProfile {
   @JoinColumn()
   user: User;
 
-  @Column({ unique: true, nullable: true })
-  id_number: string; // Cédula
+  @Column({ type: 'varchar', unique: true, nullable: true })
+  id_number: string | null; // Cédula
 
   @Column({ type: 'text' })
   cultural_history: string;

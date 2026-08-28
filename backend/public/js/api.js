@@ -462,8 +462,8 @@ function renderGlobalLayout() {
           <div class="footer-legal">
             <h4 style="font-family: var(--font-display); color: white; font-size: 1.15rem; font-weight: 700; margin-bottom: 1.25rem;">Legal</h4>
             <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; padding-left: 0;">
-              <li><a href="#" data-i18n="home.privacy" style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.65); transition: all 0.2s;">${i18next.t('home.privacy')}</a></li>
-              <li><a href="#" data-i18n="home.terms" style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.65); transition: all 0.2s;">${i18next.t('home.terms')}</a></li>
+              <li><a href="/privacidad.html" data-i18n="home.privacy" style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.65); transition: all 0.2s;">${i18next.t('home.privacy')}</a></li>
+              <li><a href="/terminos.html" data-i18n="home.terms" style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.65); transition: all 0.2s;">${i18next.t('home.terms')}</a></li>
               <li><a href="#" data-i18n="home.contact" style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.65); transition: all 0.2s;">${i18next.t('home.contact')}</a></li>
             </ul>
           </div>

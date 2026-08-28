@@ -22,6 +22,9 @@ describe('ProductsService HU-02', () => {
           verification_status: ArtisanStatus.ACTIVE,
         }),
       } as any,
+      {
+        translateProductToEnglish: jest.fn((data) => Promise.resolve(data)),
+      } as any,
     );
 
     const product = await service.create('user-1', {

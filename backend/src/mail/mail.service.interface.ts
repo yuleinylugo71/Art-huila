@@ -34,6 +34,7 @@ export interface IMailService {
     to: string,
     token: string,
     userName: string,
+    frontendUrl?: string,
   ): Promise<void>;
 }
 

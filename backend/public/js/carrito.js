@@ -594,11 +594,8 @@ async function proceedToCheckout() {
       body: JSON.stringify(payload)
     });
 
-    btn.disabled = false;
-    btn.innerHTML = originalText;
-
-    // Show simulated payment modal (bypasses ePayco for test mode)
-    showSimulatedPaymentModal(order);
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Abriendo ePayco...';
+    await openEpaycoCheckout(order);
 
   } catch (e) {
     console.error('Checkout error:', e);
@@ -610,11 +607,54 @@ async function proceedToCheckout() {
 
 // ─── SIMULATED PAYMENT MODAL ──────────────────────────────────────────────────
 
+async function openEpaycoCheckout(order) {
+  const paymentSession = await apiFetch(`/payments/create-preference/${order.id}`, {
+    method: 'POST',
+  });
+
+  if (paymentSession.mode === 'demo') {
+    showToast('Modo demostracion de pagos activo. No se cobrara dinero real.', 'warning');
+    showSimulatedPaymentModal(order, paymentSession.message);
+    return;
+  }
+
+  if (typeof ePayco === 'undefined') {
+    throw new Error('No se cargo la libreria de ePayco. Revisa tu conexion a internet.');
+  }
+
+  const checkout = ePayco.checkout.configure({
+    sessionId: paymentSession.sessionId,
+    type: 'onpage',
+    test: paymentSession.test !== false,
+  });
+
+  if (typeof checkout.setHooks === 'function') {
+    checkout.setHooks({
+      onResponse: () => {
+        window.location.href = `/pago-resultado.html?order_id=${order.id}`;
+      },
+      onErrors: (error) => {
+        console.error('ePayco checkout error:', error);
+        showToast('Error en la pasarela de pago. Intenta de nuevo.', 'error');
+      },
+      onClosed: () => {
+        const btn = document.getElementById('btn-checkout');
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-lock" style="margin-right:0.4rem;"></i>Proceder al Pago';
+        }
+      },
+    });
+  }
+
+  checkout.open();
+}
+
 function formatCOP(amount) {
   return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(amount);
 }
 
-function showSimulatedPaymentModal(order) {
+function showSimulatedPaymentModal(order, demoMessage = null) {
   // Remove existing modal if any
   document.getElementById('sim-pay-modal')?.remove();
 
@@ -662,7 +702,7 @@ function showSimulatedPaymentModal(order) {
       <!-- Test mode notice -->
       <div style="background:#fef9c3; border-bottom:1px solid #fde68a; padding:0.6rem 1.5rem; display:flex; align-items:center; gap:0.5rem;">
         <i class="fa-solid fa-flask" style="color:#b45309; font-size:0.85rem;"></i>
-        <span style="font-size:0.78rem; color:#92400e; font-weight:600;">Modo Prueba — Usa los datos de prueba para simular el pago</span>
+        <span style="font-size:0.78rem; color:#92400e; font-weight:600;">${demoMessage || 'Modo demostracion: usa los datos de prueba para simular el pago. No se cobra dinero real.'}</span>
       </div>
 
       <!-- Body -->

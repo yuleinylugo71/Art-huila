@@ -488,6 +488,13 @@ input[type="file"].form-control:hover {
   cursor: pointer;
 }
 
+.checkbox-label a {
+  color: var(--color-primary);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 /* ── BUTTONS & DIVIDERS ── */
 .divider {
   border: 0;
@@ -599,6 +606,76 @@ nav.desktop-only {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+
+.register-steps {
+  display: grid;
+  grid-template-columns: 32px 1fr 32px 1fr 32px;
+  align-items: center;
+  gap: 0.65rem;
+  margin: 0.25rem 0 1.35rem;
+}
+
+.register-steps span {
+  height: 1px;
+  background: var(--color-border);
+}
+
+.register-step {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-border);
+  background: #ffffff;
+  color: var(--color-muted);
+  font-weight: 800;
+  font-size: 0.82rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.register-step.is-active,
+.register-step.is-complete {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: #ffffff;
+}
+
+.artisan-step {
+  display: none;
+}
+
+.artisan-step.is-active {
+  display: block;
+  animation: slideUpFade 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.step-copy {
+  margin: 0.4rem 0 1.25rem;
+  color: var(--color-muted);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.wizard-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.btn-secondary {
+  background: #ffffff;
+  color: var(--color-text);
+  border: 1.5px solid var(--color-border);
+  box-shadow: none;
+}
+
+.btn-secondary:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: translateY(-1.5px);
 }
 
 /* Custom Dotted Dragzone File Upload */

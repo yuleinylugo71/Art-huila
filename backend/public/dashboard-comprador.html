@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title data-i18n="buyer.title">Mi Perfil — Art Huila</title>
   <link rel="stylesheet" href="/css/base.css?v=18">
-  <link rel="stylesheet" href="/css/dashboard-comprador.css">
+  <link rel="stylesheet" href="/css/dashboard-comprador.css?v=4">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
@@ -160,11 +160,6 @@
           <p style="color: var(--color-muted); margin-bottom: 1.5rem; font-size: 0.9rem; line-height: 1.4;" data-i18n="buyer.applyInstructions">Completa el siguiente formulario para enviar tu solicitud de registro como artesano. Una vez aprobada, podrás gestionar tus productos.</p>
           <form id="apply-form" enctype="multipart/form-data">
             <div class="form-group">
-              <label class="form-label" for="apply-id-number" data-i18n="buyer.idNumberLabel">Número de Cédula (ID)</label>
-              <input type="text" id="apply-id-number" class="form-control" required placeholder="Ej: 10234567" />
-            </div>
-
-            <div class="form-group">
               <label class="form-label" for="apply-category" data-i18n="buyer.categoryLabel">Categoría de Artesanía</label>
               <select id="apply-category" class="form-control" required>
                 <option value="" disabled selected data-i18n="buyer.selectCategory">Seleccione una categoría</option>
@@ -224,6 +219,6 @@
 <script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
 <script src="/js/api.js"></script>
 <script src="/js/i18n.js"></script>
-<script src="/js/dashboard-comprador.js"></script>
+<script src="/js/dashboard-comprador.js?v=4"></script>
 </body>
 </html>

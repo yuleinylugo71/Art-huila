@@ -4,13 +4,16 @@ const XLSX = require('xlsx');
 
 async function run() {
   try {
+    const testEmail = process.env.TEST_LOGIN_EMAIL || 'artisan@example.test';
+    const testPassword = process.env.TEST_LOGIN_PASSWORD || 'change-me';
+
     // 1. Log in
     const loginRes = await fetch('http://localhost:3000/api/v1/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        email: 'rosa@artesano.com',
-        password: 'Artesano123!'
+        email: testEmail,
+        password: testPassword
       })
     });
     

@@ -15,8 +15,8 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+    it('should rely on the controller redirect metadata', () => {
+      expect(appController.getHello()).toBeUndefined();
     });
   });
 });
