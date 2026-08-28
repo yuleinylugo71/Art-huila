@@ -1,0 +1,2937 @@
+{
+  "categories": [
+    {
+      "name": "Cerámica",
+      "description": "Artesanía de Cerámica del Huila"
+    },
+    {
+      "name": "Orfebrería",
+      "description": "Artesanía de Orfebrería del Huila"
+    },
+    {
+      "name": "Sombrerería",
+      "description": "Artesanía de Sombrerería del Huila"
+    },
+    {
+      "name": "Talla en madera",
+      "description": "Artesanía de Talla en madera del Huila"
+    },
+    {
+      "name": "Tejeduría",
+      "description": "Artesanía de Tejeduría del Huila"
+    }
+  ],
+  "regions": [
+    {
+      "name": "Acevedo",
+      "description": "Municipio de Acevedo, Huila"
+    },
+    {
+      "name": "Agrado",
+      "description": "Municipio de Agrado, Huila"
+    },
+    {
+      "name": "Aipe",
+      "description": "Municipio de Aipe, Huila"
+    },
+    {
+      "name": "Algeciras",
+      "description": "Municipio de Algeciras, Huila"
+    },
+    {
+      "name": "Altamira",
+      "description": "Municipio de Altamira, Huila"
+    },
+    {
+      "name": "Baraya",
+      "description": "Municipio de Baraya, Huila"
+    },
+    {
+      "name": "Campoalegre",
+      "description": "Municipio de Campoalegre, Huila"
+    },
+    {
+      "name": "Colombia",
+      "description": "Municipio de Colombia, Huila"
+    },
+    {
+      "name": "Elías",
+      "description": "Municipio de Elías, Huila"
+    },
+    {
+      "name": "Garzón",
+      "description": "Municipio de Garzón, Huila"
+    },
+    {
+      "name": "Gigante",
+      "description": "Municipio de Gigante, Huila"
+    },
+    {
+      "name": "Guadalupe",
+      "description": "Municipio de Guadalupe, Huila"
+    },
+    {
+      "name": "Hobo",
+      "description": "Municipio de Hobo, Huila"
+    },
+    {
+      "name": "Íquira",
+      "description": "Municipio de Íquira, Huila"
+    },
+    {
+      "name": "Isnos",
+      "description": "Municipio de Isnos, Huila"
+    },
+    {
+      "name": "La Argentina",
+      "description": "Municipio de La Argentina, Huila"
+    },
+    {
+      "name": "La Plata",
+      "description": "Municipio de La Plata, Huila"
+    },
+    {
+      "name": "Nátaga",
+      "description": "Municipio de Nátaga, Huila"
+    },
+    {
+      "name": "Neiva",
+      "description": "Municipio de Neiva, Huila"
+    },
+    {
+      "name": "Oporapa",
+      "description": "Municipio de Oporapa, Huila"
+    },
+    {
+      "name": "Paicol",
+      "description": "Municipio de Paicol, Huila"
+    },
+    {
+      "name": "Palermo",
+      "description": "Municipio de Palermo, Huila"
+    },
+    {
+      "name": "Palestina",
+      "description": "Municipio de Palestina, Huila"
+    },
+    {
+      "name": "Pital",
+      "description": "Municipio de Pital, Huila"
+    },
+    {
+      "name": "Pitalito",
+      "description": "Municipio de Pitalito, Huila"
+    },
+    {
+      "name": "Rivera",
+      "description": "Municipio de Rivera, Huila"
+    },
+    {
+      "name": "Saladoblanco",
+      "description": "Municipio de Saladoblanco, Huila"
+    },
+    {
+      "name": "San Agustín",
+      "description": "Municipio de San Agustín, Huila"
+    },
+    {
+      "name": "Santa María",
+      "description": "Municipio de Santa María, Huila"
+    },
+    {
+      "name": "Suaza",
+      "description": "Municipio de Suaza, Huila"
+    },
+    {
+      "name": "Tarqui",
+      "description": "Municipio de Tarqui, Huila"
+    },
+    {
+      "name": "Tello",
+      "description": "Municipio de Tello, Huila"
+    },
+    {
+      "name": "Teruel",
+      "description": "Municipio de Teruel, Huila"
+    },
+    {
+      "name": "Tesalia",
+      "description": "Municipio de Tesalia, Huila"
+    },
+    {
+      "name": "Timaná",
+      "description": "Municipio de Timaná, Huila"
+    },
+    {
+      "name": "Villavieja",
+      "description": "Municipio de Villavieja, Huila"
+    },
+    {
+      "name": "Yaguará",
+      "description": "Municipio de Yaguará, Huila"
+    }
+  ],
+  "artisans": [
+    {
+      "full_name": "Carlos Murcia",
+      "email": "carlos@artesano.com",
+      "id_number": "20345678",
+      "cultural_history": "Historia y tradición artesanal de Carlos Murcia. Oficio transmitido de generación en generación en el departamento del Huila.",
+      "verification_status": "verified",
+      "truthfulness_declaration": true,
+      "category": "Cerámica",
+      "region": "Pitalito",
+      "avatar_url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785050175/arthuila/avatars/vro6ytbgapbfgy4bawnt.jpg"
+    },
+    {
+      "full_name": "Ingri Gasca",
+      "email": "ingrijuliethgascatenorio@gmail.com",
+      "id_number": "1116205722",
+      "cultural_history": "sdgfhtjkuiyltkytrergwfa",
+      "verification_status": "verified",
+      "truthfulness_declaration": true,
+      "category": "Cerámica",
+      "region": "Isnos",
+      "avatar_url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1781811352/arthuila/avatars/vwykaxtqaxa1pn33laup.png"
+    },
+    {
+      "full_name": "Rosa Elena Vargas",
+      "email": "rosa@artesano.com",
+      "id_number": "10234567",
+      "cultural_history": "Historia y tradición artesanal de Rosa Elena Vargas. Oficio transmitido de generación en generación en el departamento del Huila.",
+      "verification_status": "verified",
+      "truthfulness_declaration": true,
+      "category": "Tejeduría",
+      "region": "Neiva",
+      "avatar_url": null
+    },
+    {
+      "full_name": "Jhonatan Castro",
+      "email": "shonano247@gmail.com",
+      "id_number": "shonano247@gmail.com",
+      "cultural_history": "venezolano",
+      "verification_status": "verified",
+      "truthfulness_declaration": true,
+      "category": "Cerámica",
+      "region": "Acevedo",
+      "avatar_url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1778977904/arthuila/avatars/z6uc0r3l81jnk2ywnzcd.jpg"
+    },
+    {
+      "full_name": "Deicy quimbayo",
+      "email": "yuleinylugo71@gmail.com",
+      "id_number": "1115792264",
+      "cultural_history": "La antigua Mesopotamia\nEn la cuna de la civilización, en el cruce del Tigris y el Éufrates, surgieron las primeras expresiones de la artesanía. En Mesopotamia, los sumerios y acadios desarrollaron habilidades artesanales como la cerámica, la joyería y la orfebrería. Los textos cuneiformes revelan la importancia de la artesanía en la economía y la sociedad de estas culturas antiguas.",
+      "verification_status": "verified",
+      "truthfulness_declaration": true,
+      "category": "Cerámica",
+      "region": "Neiva",
+      "avatar_url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1778551272/arthuila/avatars/tfvauxv0rk5jfuemxvnv.png"
+    }
+  ],
+  "products": [
+    {
+      "name": "Sombrero Suazero tradicional",
+      "slug": "sombrero-suazero-tradicional",
+      "price": "85000.00",
+      "stock": 20,
+      "cultural_origin": "Comunidad artesana de Suaza - Huila",
+      "technique": "Tejido en palma de iraca",
+      "significance": "Símbolo de identidad campesina huilense y protección solar en el trabajo agrícola",
+      "status": "published",
+      "meta_title": "Sombrero Suazero | Art Huila",
+      "meta_description": "Auténtico sombrero huilense tejido a mano",
+      "short_description": "Elegante sombrero tejido a mano en palma de iraca",
+      "materials": "Palma de iraca",
+      "dimensions": "Talla M y L",
+      "weight": "0.3 kg",
+      "care_instructions": "Guardar en lugar seco alejado del sol directo",
+      "is_handmade": true,
+      "category": "Sombrerería",
+      "region": "Suaza",
+      "artisan_email": "ingrijuliethgascatenorio@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785041474/arthuila/products/ry18i2eg4artl17cum1i.png",
+          "public_id": "arthuila/products/ry18i2eg4artl17cum1i"
+        }
+      ]
+    },
+    {
+      "name": "Vasija de barro San Agustín",
+      "slug": "vasija-de-barro-san-agustin",
+      "price": "95000.00",
+      "stock": 15,
+      "cultural_origin": "Comunidad indígena de San Agustín - Huila",
+      "technique": "Alfarería a mano alzada",
+      "significance": "Replica los patrones funerarios de la cultura agustiniana prehispánica",
+      "status": "published",
+      "meta_title": "Vasija San Agustín | Art Huila",
+      "meta_description": "Cerámica inspirada en la cultura agustiniana",
+      "short_description": "Vasija decorativa inspirada en la arqueología de San Agustín",
+      "materials": "Barro cocido y pigmentos naturales",
+      "dimensions": "25x20 cm",
+      "weight": "1.2 kg",
+      "care_instructions": "Limpiar con paño seco, no sumergir en agua",
+      "is_handmade": true,
+      "category": "Cerámica",
+      "region": "San Agustín",
+      "artisan_email": "yuleinylugo71@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785043676/arthuila/products/ulekrihh5cu19xwfjq3l.png",
+          "public_id": "arthuila/products/ulekrihh5cu19xwfjq3l"
+        }
+      ]
+    },
+    {
+      "name": "Collar de chaquiras Páez",
+      "slug": "collar-de-chaquiras-paez",
+      "price": "45000.00",
+      "stock": 30,
+      "cultural_origin": "Comunidad Nasa Páez - La Plata, Huila",
+      "technique": "Tejido de chaquiras en hilo encerado",
+      "significance": "Representa los colores sagrados de la cosmovisión Nasa: verde, rojo y amarillo",
+      "status": "published",
+      "meta_title": "Collar Páez | Art Huila",
+      "meta_description": "Collar artesanal Nasa Páez del Huila",
+      "short_description": "Collar multicolor elaborado con chaquiras de vidrio y semillas naturales",
+      "materials": "Chaquiras de vidrio, hilo encerado, semillas",
+      "dimensions": "50 cm de largo",
+      "weight": "0.1 kg",
+      "care_instructions": "Evitar contacto con agua y perfumes",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "La Plata",
+      "artisan_email": "shonano247@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785044790/arthuila/products/jdguuokq9uk36bdnxlx8.png",
+          "public_id": "arthuila/products/jdguuokq9uk36bdnxlx8"
+        }
+      ]
+    },
+    {
+      "name": "Talla en madera Estatua Agustiniana",
+      "slug": "talla-en-madera-estatua-agustiniana",
+      "price": "220000.00",
+      "stock": 8,
+      "cultural_origin": "Taller artesanal de Pitalito - Huila",
+      "technique": "Talla directa en madera de cedro",
+      "significance": "Reproducción de los monolitos de la cultura San Agustín, declarada Patrimonio de la Humanidad",
+      "status": "published",
+      "meta_title": "Estatua Agustiniana madera | Art Huila",
+      "meta_description": "Réplica tallada en madera del patrimonio agustiniano",
+      "short_description": "Estatua tallada en madera réplica de los ídolos de San Agustín",
+      "materials": "Madera de cedro, cera natural",
+      "dimensions": "35x15 cm",
+      "weight": "2.5 kg",
+      "care_instructions": "Aplicar aceite de linaza cada 6 meses",
+      "is_handmade": true,
+      "category": "Talla en madera",
+      "region": "Pitalito",
+      "artisan_email": "shonano247@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785044316/arthuila/products/wjek7qkxcizn1ifckgxp.png",
+          "public_id": "arthuila/products/wjek7qkxcizn1ifckgxp"
+        }
+      ]
+    },
+    {
+      "name": "Mochila de cabuya Campoalegre",
+      "slug": "mochila-de-cabuya-campoalegre",
+      "price": "68000.00",
+      "stock": 18,
+      "cultural_origin": "Asociación artesanas de Campoalegre - Huila",
+      "technique": "Tejido en cabuya natural",
+      "significance": "La mochila simboliza la autosuficiencia y el trabajo comunitario andino",
+      "status": "published",
+      "meta_title": "Mochila cabuya | Art Huila",
+      "meta_description": "Mochila tejida en cabuya natural del Huila",
+      "short_description": "Mochila rústica tejida con fibra de cabuya teñida naturalmente",
+      "materials": "Fibra de cabuya, tintes vegetales",
+      "dimensions": "35x30 cm",
+      "weight": "0.6 kg",
+      "care_instructions": "Lavar a mano con agua fría y jabón neutro",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Campoalegre",
+      "artisan_email": "ingrijuliethgascatenorio@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785041346/arthuila/products/kvodiklax5jhszxxbf3v.png",
+          "public_id": "arthuila/products/kvodiklax5jhszxxbf3v"
+        }
+      ]
+    },
+    {
+      "name": "Pulsera de guadua Garzón",
+      "slug": "pulsera-de-guadua-garzon",
+      "price": "18000.00",
+      "stock": 50,
+      "cultural_origin": "Artesanos de Garzón - Huila",
+      "technique": "Tallado y pulido de guadua",
+      "significance": "La guadua representa la fortaleza y flexibilidad del campesino huilense",
+      "status": "published",
+      "meta_title": "Pulsera guadua Garzón | Art Huila",
+      "meta_description": "Joyería artesanal en guadua del Huila",
+      "short_description": "Pulsera elaborada con láminas de guadua pulida y barnizada",
+      "materials": "Guadua, barniz natural",
+      "dimensions": "Diámetro 7 cm",
+      "weight": "0.05 kg",
+      "care_instructions": "Evitar humedad excesiva",
+      "is_handmade": true,
+      "category": "Talla en madera",
+      "region": "Garzón",
+      "artisan_email": "yuleinylugo71@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785043555/arthuila/products/k8wmm3l8sirb1cr4thap.png",
+          "public_id": "arthuila/products/k8wmm3l8sirb1cr4thap"
+        }
+      ]
+    },
+    {
+      "name": "Figura de cerámica Dios Agustiniano",
+      "slug": "figura-de-ceramica-dios-agustiniano",
+      "price": "130000.00",
+      "stock": 10,
+      "cultural_origin": "Comunidad artesana de San Agustín - Huila",
+      "technique": "Modelado en arcilla y cocción en horno",
+      "significance": "Representa las deidades del panteón agustiniano protectoras de la naturaleza",
+      "status": "published",
+      "meta_title": "Figura cerámica agustiniana | Art Huila",
+      "meta_description": "Figura de barro inspirada en la cultura San Agustín",
+      "short_description": "Figura de barro cocido con acabado prehispánico auténtico",
+      "materials": "Arcilla roja, pigmentos naturales",
+      "dimensions": "20x12 cm",
+      "weight": "0.9 kg",
+      "care_instructions": "Limpiar con pincel seco, no mojar",
+      "is_handmade": true,
+      "category": "Cerámica",
+      "region": "San Agustín",
+      "artisan_email": "rosa@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047454/arthuila/products/figura-de-ceramica-dios-agustiniano.png",
+          "public_id": "arthuila/products/figura-de-ceramica-dios-agustiniano"
+        }
+      ]
+    },
+    {
+      "name": "Cinturón en cuero repujado Neiva",
+      "slug": "cinturon-en-cuero-repujado-neiva",
+      "price": "75000.00",
+      "stock": 12,
+      "cultural_origin": "Taller de cuero Neiva - Huila",
+      "technique": "Repujado y grabado en cuero curtido",
+      "significance": "El trabajo en cuero representa la tradición vaquera del llano huilense",
+      "status": "published",
+      "meta_title": "Cinturón cuero repujado | Art Huila",
+      "meta_description": "Cinturón artesanal en cuero del Huila",
+      "short_description": "Cinturón de cuero legítimo con diseños florales repujados a mano",
+      "materials": "Cuero de res, hebilla de bronce",
+      "dimensions": "120x4 cm",
+      "weight": "0.4 kg",
+      "care_instructions": "Aplicar crema para cuero mensualmente",
+      "is_handmade": true,
+      "category": "Orfebrería",
+      "region": "Neiva",
+      "artisan_email": "shonano247@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785044954/arthuila/products/j0a7ui1dddzgsbuo2rdu.png",
+          "public_id": "arthuila/products/j0a7ui1dddzgsbuo2rdu"
+        }
+      ]
+    },
+    {
+      "name": "Hamaca de algodón Villavieja",
+      "slug": "hamaca-de-algodon-villavieja",
+      "price": "180000.00",
+      "stock": 6,
+      "cultural_origin": "Cooperativa artesanal Villavieja - Huila",
+      "technique": "Tejido en telar manual",
+      "significance": "Herramienta ancestral del descanso en el desierto de la Tatacoa",
+      "status": "published",
+      "meta_title": "Hamaca algodón Villavieja | Art Huila",
+      "meta_description": "Hamaca tejida artesanalmente en el Huila",
+      "short_description": "Hamaca tejida a mano en algodón con flecos decorativos",
+      "materials": "Hilo de algodón 100% natural",
+      "dimensions": "200x120 cm",
+      "weight": "1.8 kg",
+      "care_instructions": "Lavar en máquina en frío, tender a la sombra",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Villavieja",
+      "artisan_email": "carlos@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047431/arthuila/products/hamaca-de-algodon-villavieja.png",
+          "public_id": "arthuila/products/hamaca-de-algodon-villavieja"
+        }
+      ]
+    },
+    {
+      "name": "Aretes de tagua Isnos",
+      "slug": "aretes-de-tagua-isnos",
+      "price": "28000.00",
+      "stock": 40,
+      "cultural_origin": "Artesanas de Isnos - Huila",
+      "technique": "Torneado y tallado de tagua",
+      "significance": "La tagua o marfil vegetal simboliza la biodiversidad del macizo colombiano",
+      "status": "published",
+      "meta_title": "Aretes tagua Isnos | Art Huila",
+      "meta_description": "Aretes artesanales de tagua del Huila",
+      "short_description": "Aretes de tagua tallados y teñidos con colorantes naturales",
+      "materials": "Tagua, tintes naturales",
+      "dimensions": "4x2 cm cada uno",
+      "weight": "0.02 kg",
+      "care_instructions": "Guardar en estuche, evitar golpes",
+      "is_handmade": true,
+      "category": "Orfebrería",
+      "region": "Isnos",
+      "artisan_email": "shonano247@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785044579/arthuila/products/fzdgtimk6lv4kjupuemf.png",
+          "public_id": "arthuila/products/fzdgtimk6lv4kjupuemf"
+        }
+      ]
+    },
+    {
+      "name": "Canasto de mimbre Acevedo",
+      "slug": "canasto-de-mimbre-acevedo",
+      "price": "55000.00",
+      "stock": 22,
+      "cultural_origin": "Artesanos de Acevedo - Huila",
+      "technique": "Cestería en mimbre y junco",
+      "significance": "El canasto representa la cosecha y la abundancia de la tierra huilense",
+      "status": "published",
+      "meta_title": "Canasto mimbre Acevedo | Art Huila",
+      "meta_description": "Cestería artesanal del sur del Huila",
+      "short_description": "Canasto tejido a mano con mimbre flexible y bejuco natural",
+      "materials": "Mimbre, bejuco, junco",
+      "dimensions": "40x35 cm",
+      "weight": "0.8 kg",
+      "care_instructions": "Limpiar con paño húmedo, no sumergir",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Acevedo",
+      "artisan_email": "ingrijuliethgascatenorio@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785040537/arthuila/products/beymce32abruly6zinf4.png",
+          "public_id": "arthuila/products/beymce32abruly6zinf4"
+        }
+      ]
+    },
+    {
+      "name": "Plato decorativo cerámica Rivera",
+      "slug": "plato-decorativo-ceramica-rivera",
+      "price": "72000.00",
+      "stock": 14,
+      "cultural_origin": "Taller cerámica Rivera - Huila",
+      "technique": "Cerámica vidriada a alta temperatura",
+      "significance": "Los motivos del plato evocan la flora y fauna del río Magdalena",
+      "status": "published",
+      "meta_title": "Plato cerámica Rivera | Art Huila",
+      "meta_description": "Cerámica decorativa artesanal del Huila",
+      "short_description": "Plato decorativo esmaltado con diseños de flora magdalenense",
+      "materials": "Arcilla blanca, esmaltes cerámicos",
+      "dimensions": "30 cm diámetro",
+      "weight": "0.7 kg",
+      "care_instructions": "Lavable, no apto para microondas",
+      "is_handmade": true,
+      "category": "Cerámica",
+      "region": "Rivera",
+      "artisan_email": "yuleinylugo71@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785043512/arthuila/products/apso5aq87nhq7qanpmlm.png",
+          "public_id": "arthuila/products/apso5aq87nhq7qanpmlm"
+        }
+      ]
+    },
+    {
+      "name": "Sombrero de paja Gigante",
+      "slug": "sombrero-de-paja-gigante",
+      "price": "78000.00",
+      "stock": 17,
+      "cultural_origin": "Cooperativa sombrerera Gigante - Huila",
+      "technique": "Tejido fino en paja toquilla",
+      "significance": "El sombrero de paja toquilla es símbolo del trabajo y la elegancia popular",
+      "status": "published",
+      "meta_title": "Sombrero paja toquilla Gigante | Art Huila",
+      "meta_description": "Sombrero fino artesanal del Huila",
+      "short_description": "Sombrero fino tejido en paja toquilla con diseño clásico huilense",
+      "materials": "Paja toquilla",
+      "dimensions": "Talla única ajustable",
+      "weight": "0.25 kg",
+      "care_instructions": "Mantener la forma con papel, guardar en caja",
+      "is_handmade": true,
+      "category": "Sombrerería",
+      "region": "Gigante",
+      "artisan_email": "yuleinylugo71@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785043469/arthuila/products/rutdl29cm55zcrdwlenh.png",
+          "public_id": "arthuila/products/rutdl29cm55zcrdwlenh"
+        }
+      ]
+    },
+    {
+      "name": "Mantel bordado Pitalito",
+      "slug": "mantel-bordado-pitalito",
+      "price": "110000.00",
+      "stock": 9,
+      "cultural_origin": "Bordadoras de Pitalito - Huila",
+      "technique": "Bordado a mano en tela de lino",
+      "significance": "El bordado recoge los paisajes cafeteros y florales del sur del Huila",
+      "status": "published",
+      "meta_title": "Mantel bordado Pitalito | Art Huila",
+      "meta_description": "Mantel bordado a mano del sur del Huila",
+      "short_description": "Mantel de lino con bordado a mano de flores y cafetales",
+      "materials": "Lino, hilo de seda, hilo de algodón",
+      "dimensions": "150x100 cm",
+      "weight": "0.5 kg",
+      "care_instructions": "Lavar a mano en frío, planchar en húmedo",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Pitalito",
+      "artisan_email": "shonano247@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785045220/arthuila/products/dtyguxuex99ipcamasif.png",
+          "public_id": "arthuila/products/dtyguxuex99ipcamasif"
+        }
+      ]
+    },
+    {
+      "name": "Máscara ritual de madera Saladoblanco",
+      "slug": "mascara-ritual-de-madera-saladoblanco",
+      "price": "165000.00",
+      "stock": 7,
+      "cultural_origin": "Talladores de Saladoblanco - Huila",
+      "technique": "Talla en madera de nogal",
+      "significance": "Las máscaras rememoran las festividades rituales de las comunidades andinas",
+      "status": "published",
+      "meta_title": "Máscara madera ritual | Art Huila",
+      "meta_description": "Máscara tallada en madera del Huila",
+      "short_description": "Máscara decorativa tallada en nogal con pigmentos naturales",
+      "materials": "Madera de nogal, pigmentos vegetales",
+      "dimensions": "25x18 cm",
+      "weight": "0.8 kg",
+      "care_instructions": "Aplicar aceite de teca anualmente",
+      "is_handmade": true,
+      "category": "Talla en madera",
+      "region": "Saladoblanco",
+      "artisan_email": "rosa@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047457/arthuila/products/mascara-ritual-de-madera-saladoblanco.png",
+          "public_id": "arthuila/products/mascara-ritual-de-madera-saladoblanco"
+        }
+      ]
+    },
+    {
+      "name": "Jarrón de barro Tarqui",
+      "slug": "jarron-de-barro-tarqui",
+      "price": "88000.00",
+      "stock": 13,
+      "cultural_origin": "Alfarería Tarqui - Huila",
+      "technique": "Torno y cocción en horno de leña",
+      "significance": "El jarrón refleja la tradición alfarera precolombina del alto Magdalena",
+      "status": "published",
+      "meta_title": "Jarrón barro Tarqui | Art Huila",
+      "meta_description": "Alfarería artesanal del Huila",
+      "short_description": "Jarrón de barro rojo cocido con acabado mate y grabados geométricos",
+      "materials": "Arcilla roja, óxido de hierro",
+      "dimensions": "28x14 cm",
+      "weight": "1.1 kg",
+      "care_instructions": "Uso decorativo, limpiar en seco",
+      "is_handmade": true,
+      "category": "Cerámica",
+      "region": "Tarqui",
+      "artisan_email": "carlos@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047433/arthuila/products/jarron-de-barro-tarqui.png",
+          "public_id": "arthuila/products/jarron-de-barro-tarqui"
+        }
+      ]
+    },
+    {
+      "name": "Bolso tejido en fique Guadalupe",
+      "slug": "bolso-tejido-en-fique-guadalupe",
+      "price": "62000.00",
+      "stock": 25,
+      "cultural_origin": "Fiqueras de Guadalupe - Huila",
+      "technique": "Tejido a mano en fibra de fique",
+      "significance": "El fique es la fibra nacional que representa la resistencia y la tradición andina",
+      "status": "published",
+      "meta_title": "Bolso fique Guadalupe | Art Huila",
+      "meta_description": "Bolso artesanal en fique del Huila",
+      "short_description": "Bolso estructurado tejido en fique teñido con plantas locales",
+      "materials": "Fibra de fique, tintes naturales de achiote y añil",
+      "dimensions": "30x25 cm",
+      "weight": "0.5 kg",
+      "care_instructions": "Lavar a mano en agua tibia con jabón neutro",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Guadalupe",
+      "artisan_email": "shonano247@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785045070/arthuila/products/kvsf0wd2qfcbigsntcwq.png",
+          "public_id": "arthuila/products/kvsf0wd2qfcbigsntcwq"
+        }
+      ]
+    },
+    {
+      "name": "Collar de semillas Timaná",
+      "slug": "collar-de-semillas-timana",
+      "price": "32000.00",
+      "stock": 35,
+      "cultural_origin": "Artesanas de Timaná - Huila",
+      "technique": "Ensartado y diseño con semillas nativas",
+      "significance": "Cada semilla proviene de la selva del piedemonte, conectando al portador con la naturaleza",
+      "status": "published",
+      "meta_title": "Collar semillas Timaná | Art Huila",
+      "meta_description": "Collar artesanal de semillas naturales del Huila",
+      "short_description": "Collar largo de semillas nativas multicolor y pepas de chonta",
+      "materials": "Semillas silvestres, chonta, mate",
+      "dimensions": "70 cm de largo",
+      "weight": "0.15 kg",
+      "care_instructions": "Evitar humedad prolongada",
+      "is_handmade": true,
+      "category": "Orfebrería",
+      "region": "Timaná",
+      "artisan_email": "carlos@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047429/arthuila/products/collar-de-semillas-timana.png",
+          "public_id": "arthuila/products/collar-de-semillas-timana"
+        }
+      ]
+    },
+    {
+      "name": "Tapiz de lana Palestina",
+      "slug": "tapiz-de-lana-palestina",
+      "price": "145000.00",
+      "stock": 8,
+      "cultural_origin": "Tejedoras de Palestina - Huila",
+      "technique": "Tejido en telar de pedal",
+      "significance": "El tapiz narra la historia agraria del Huila a través de escenas costumbristas",
+      "status": "published",
+      "meta_title": "Tapiz lana Palestina | Art Huila",
+      "meta_description": "Tapiz artesanal tejido a mano del Huila",
+      "short_description": "Tapiz decorativo tejido a mano con escenas del campo huilense",
+      "materials": "Lana natural teñida con plantas",
+      "dimensions": "80x60 cm",
+      "weight": "1.0 kg",
+      "care_instructions": "Sacudir suavemente, limpiar en seco",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Palestina",
+      "artisan_email": "yuleinylugo71@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785043435/arthuila/products/uk9emohmadrbv7uebwvq.png",
+          "public_id": "arthuila/products/uk9emohmadrbv7uebwvq"
+        }
+      ]
+    },
+    {
+      "name": "Abanico de palma Palermo",
+      "slug": "abanico-de-palma-palermo",
+      "price": "22000.00",
+      "stock": 45,
+      "cultural_origin": "Artesanos de Palermo - Huila",
+      "technique": "Tejido y talla en palma de vino",
+      "significance": "El abanico ha acompañado las festividades del San Pedro huilense por generaciones",
+      "status": "published",
+      "meta_title": "Abanico palma Palermo | Art Huila",
+      "meta_description": "Abanico artesanal de palma del Huila",
+      "short_description": "Abanico decorativo tejido en palma de vino con mango tallado",
+      "materials": "Palma de vino, madera de guayacán",
+      "dimensions": "35x20 cm abierto",
+      "weight": "0.15 kg",
+      "care_instructions": "Mantener alejado del calor directo",
+      "is_handmade": true,
+      "category": "Sombrerería",
+      "region": "Palermo",
+      "artisan_email": "ingrijuliethgascatenorio@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785040451/arthuila/products/lfko7q7k6cuvq9dpt7wy.png",
+          "public_id": "arthuila/products/lfko7q7k6cuvq9dpt7wy"
+        }
+      ]
+    },
+    {
+      "name": "Figura de cerámica tortuga Hobo",
+      "slug": "figura-de-ceramica-tortuga-hobo",
+      "price": "42000.00",
+      "stock": 28,
+      "cultural_origin": "Ceramistas de Hobo - Huila",
+      "technique": "Modelado a mano y esmaltado",
+      "significance": "La tortuga simboliza longevidad y conexión con el río Magdalena",
+      "status": "published",
+      "meta_title": "Figura tortuga cerámica | Art Huila",
+      "meta_description": "Figura cerámica artesanal del Huila",
+      "short_description": "Figura de tortuga en cerámica esmaltada con colores vivos",
+      "materials": "Arcilla, esmaltes cerámicos",
+      "dimensions": "12x8 cm",
+      "weight": "0.35 kg",
+      "care_instructions": "Apta para uso decorativo, lavar con cuidado",
+      "is_handmade": true,
+      "category": "Cerámica",
+      "region": "Hobo",
+      "artisan_email": "ingrijuliethgascatenorio@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785040312/arthuila/products/jbcq3lw8ninaaq52c1kg.png",
+          "public_id": "arthuila/products/jbcq3lw8ninaaq52c1kg"
+        }
+      ]
+    },
+    {
+      "name": "Talla de Jaguar en madera Altamira",
+      "slug": "talla-de-jaguar-en-madera-altamira",
+      "price": "195000.00",
+      "stock": 6,
+      "cultural_origin": "Talladores de Altamira - Huila",
+      "technique": "Talla directa en madera de roble",
+      "significance": "El jaguar es el guardián espiritual de los bosques amazónicos del Huila",
+      "status": "published",
+      "meta_title": "Talla jaguar madera | Art Huila",
+      "meta_description": "Figura de jaguar tallada en madera del Huila",
+      "short_description": "Figura de jaguar tallada en madera de roble con detalles realistas",
+      "materials": "Madera de roble, cera de carnauba",
+      "dimensions": "30x18 cm",
+      "weight": "1.8 kg",
+      "care_instructions": "Mantener en lugar seco, aplicar cera cada año",
+      "is_handmade": true,
+      "category": "Talla en madera",
+      "region": "Altamira",
+      "artisan_email": "carlos@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047441/arthuila/products/talla-de-jaguar-en-madera-altamira.png",
+          "public_id": "arthuila/products/talla-de-jaguar-en-madera-altamira"
+        }
+      ]
+    },
+    {
+      "name": "Aretes de cerámica Agrado",
+      "slug": "aretes-de-ceramica-agrado",
+      "price": "25000.00",
+      "stock": 38,
+      "cultural_origin": "Joyería en cerámica Agrado - Huila",
+      "technique": "Modelado en frío y pintura acrílica",
+      "significance": "Llevan grabados los motivos florales de la región cafetera del Agrado",
+      "status": "published",
+      "meta_title": "Aretes cerámica Agrado | Art Huila",
+      "meta_description": "Aretes artesanales de cerámica del Huila",
+      "short_description": "Aretes de cerámica ligera pintados a mano con flores del café",
+      "materials": "Cerámica, gancho de acero inox",
+      "dimensions": "3x2.5 cm",
+      "weight": "0.03 kg",
+      "care_instructions": "Evitar contacto con agua",
+      "is_handmade": true,
+      "category": "Cerámica",
+      "region": "Agrado",
+      "artisan_email": "ingrijuliethgascatenorio@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785040212/arthuila/products/axc2lenpbuosnhjl35rg.png",
+          "public_id": "arthuila/products/axc2lenpbuosnhjl35rg"
+        }
+      ]
+    },
+    {
+      "name": "Mochila fique San Agustín",
+      "slug": "mochila-fique-san-agustin",
+      "price": "92000.00",
+      "stock": 11,
+      "cultural_origin": "Artesanas de San Agustín - Huila",
+      "technique": "Tejido en fique con telar de cintura",
+      "significance": "Inspirada en los patrones textiles encontrados en tumbas de la cultura agustiniana",
+      "status": "published",
+      "meta_title": "Mochila fique San Agustín | Art Huila",
+      "meta_description": "Mochila artesanal tejida en fique del Huila",
+      "short_description": "Mochila tejida en fique con motivos prehispánicos agustinianos",
+      "materials": "Fibra de fique, tintes de bija y añil",
+      "dimensions": "32x28 cm",
+      "weight": "0.55 kg",
+      "care_instructions": "Lavar a mano en frío",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "San Agustín",
+      "artisan_email": "rosa@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047460/arthuila/products/mochila-fique-san-agustin.png",
+          "public_id": "arthuila/products/mochila-fique-san-agustin"
+        }
+      ]
+    },
+    {
+      "name": "Broche de tagua Elías",
+      "slug": "broche-de-tagua-elias",
+      "price": "20000.00",
+      "stock": 55,
+      "cultural_origin": "Artesanos de Elías - Huila",
+      "technique": "Torneado de tagua y pintura natural",
+      "significance": "La tagua o marfil vegetal del Huila es símbolo de la biodiversidad andina",
+      "status": "published",
+      "meta_title": "Broche tagua Elías | Art Huila",
+      "meta_description": "Broche de marfil vegetal artesanal del Huila",
+      "short_description": "Broche circular de tagua con diseño de flor de café pintado a mano",
+      "materials": "Tagua, anillo de latón",
+      "dimensions": "4 cm diámetro",
+      "weight": "0.02 kg",
+      "care_instructions": "Limpiar con paño seco suave",
+      "is_handmade": true,
+      "category": "Orfebrería",
+      "region": "Elías",
+      "artisan_email": "rosa@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047446/arthuila/products/broche-de-tagua-elias.jpg",
+          "public_id": "arthuila/products/broche-de-tagua-elias"
+        }
+      ]
+    },
+    {
+      "name": "Florero de cerámica Tesalia",
+      "slug": "florero-de-ceramica-tesalia",
+      "price": "65000.00",
+      "stock": 16,
+      "cultural_origin": "Cerámica Tesalia - Huila",
+      "technique": "Torneado en torno lento y vidriado",
+      "significance": "El florero captura la riqueza floral de las quebradas del Huila",
+      "status": "published",
+      "meta_title": "Florero cerámica Tesalia | Art Huila",
+      "meta_description": "Florero artesanal esmaltado del Huila",
+      "short_description": "Florero torneado en arcilla blanca con esmalte verde selva",
+      "materials": "Arcilla blanca, esmalte cerámico",
+      "dimensions": "22x12 cm",
+      "weight": "0.75 kg",
+      "care_instructions": "Apto para agua y uso diario",
+      "is_handmade": true,
+      "category": "Cerámica",
+      "region": "Tesalia",
+      "artisan_email": "yuleinylugo71@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785043394/arthuila/products/mp9abgaulem1z6fni9ch.png",
+          "public_id": "arthuila/products/mp9abgaulem1z6fni9ch"
+        }
+      ]
+    },
+    {
+      "name": "Manilla trenzada fique Yaguará",
+      "slug": "manilla-trenzada-fique-yaguara",
+      "price": "15000.00",
+      "stock": 60,
+      "cultural_origin": "Artesanas de Yaguará - Huila",
+      "technique": "Trenzado de fibra de fique",
+      "significance": "La manilla representa la unión comunitaria de los pueblos ribereños",
+      "status": "published",
+      "meta_title": "Manilla fique Yaguará | Art Huila",
+      "meta_description": "Manilla artesanal en fique del Huila",
+      "short_description": "Manilla trenzada en fique de colores con cierre ajustable",
+      "materials": "Fibra de fique, tintes vegetales",
+      "dimensions": "Ajustable 15-22 cm",
+      "weight": "0.02 kg",
+      "care_instructions": "Lavar a mano, secar a la sombra",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Yaguará",
+      "artisan_email": "carlos@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047436/arthuila/products/manilla-trenzada-fique-yaguara.png",
+          "public_id": "arthuila/products/manilla-trenzada-fique-yaguara"
+        }
+      ]
+    },
+    {
+      "name": "Sombrero vueltiao huilense Tello",
+      "slug": "sombrero-vueltiao-huilense-tello",
+      "price": "95000.00",
+      "stock": 14,
+      "cultural_origin": "Sombreros Tello - Huila",
+      "technique": "Tejido en caña flecha",
+      "significance": "Adaptación huilense del sombrero vueltiao símbolo de la identidad nacional colombiana",
+      "status": "published",
+      "meta_title": "Sombrero vueltiao huilense | Art Huila",
+      "meta_description": "Sombrero artesanal vueltiao del Huila",
+      "short_description": "Sombrero tejido en caña flecha con diseño tradicional huilense",
+      "materials": "Caña flecha",
+      "dimensions": "Talla única",
+      "weight": "0.3 kg",
+      "care_instructions": "Guardar en sombrero, evitar deformación",
+      "is_handmade": true,
+      "category": "Sombrerería",
+      "region": "Tello",
+      "artisan_email": "carlos@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047439/arthuila/products/sombrero-vueltiao-huilense-tello.jpg",
+          "public_id": "arthuila/products/sombrero-vueltiao-huilense-tello"
+        }
+      ]
+    },
+    {
+      "name": "Cuadro en madera pirograbado Íquira",
+      "slug": "cuadro-en-madera-pirograbado-iquira",
+      "price": "115000.00",
+      "stock": 10,
+      "cultural_origin": "Arte en madera Íquira - Huila",
+      "technique": "Pirograbado artístico en madera de pino",
+      "significance": "El pirograbado plasma los paisajes del alto Magdalena con técnica ancestral del fuego",
+      "status": "published",
+      "meta_title": "Cuadro pirograbado madera | Art Huila",
+      "meta_description": "Arte en madera pirograbado del Huila",
+      "short_description": "Cuadro pirograbado con paisaje típico del valle del Magdalena",
+      "materials": "Madera de pino, marco rústico",
+      "dimensions": "40x30 cm",
+      "weight": "0.9 kg",
+      "care_instructions": "Colgar en lugar seco sin exposición solar directa",
+      "is_handmade": true,
+      "category": "Talla en madera",
+      "region": "Íquira",
+      "artisan_email": "rosa@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047450/arthuila/products/cuadro-en-madera-pirograbado-iquira.png",
+          "public_id": "arthuila/products/cuadro-en-madera-pirograbado-iquira"
+        }
+      ]
+    },
+    {
+      "name": "Jarro de cerámica Baraya",
+      "slug": "jarro-de-ceramica-baraya",
+      "price": "48000.00",
+      "stock": 20,
+      "cultural_origin": "Alfarería Baraya - Huila",
+      "technique": "Modelado a mano y quema al carbón",
+      "significance": "El jarro evoca la tradición del tinto mañanero en los campos huilenses",
+      "status": "published",
+      "meta_title": "Jarro cerámica Baraya | Art Huila",
+      "meta_description": "Jarro artesanal de barro del Huila",
+      "short_description": "Jarro de cerámica rústica con asa gruesa y acabado artesanal",
+      "materials": "Arcilla local, óxidos naturales",
+      "dimensions": "12x9 cm",
+      "weight": "0.45 kg",
+      "care_instructions": "Apto para microondas y lavavajillas",
+      "is_handmade": true,
+      "category": "Cerámica",
+      "region": "Baraya",
+      "artisan_email": "rosa@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047456/arthuila/products/jarro-de-ceramica-baraya.png",
+          "public_id": "arthuila/products/jarro-de-ceramica-baraya"
+        }
+      ]
+    },
+    {
+      "name": "Tejido de punto chal Oporapa",
+      "slug": "tejido-de-punto-chal-oporapa",
+      "price": "88000.00",
+      "stock": 12,
+      "cultural_origin": "Tejedoras de Oporapa - Huila",
+      "technique": "Tejido de punto en dos agujas",
+      "significance": "El chal abriga el cuerpo y el alma como la niebla que cubre el Macizo Colombiano",
+      "status": "published",
+      "meta_title": "Chal punto Oporapa | Art Huila",
+      "meta_description": "Chal tejido a mano en lana del Huila",
+      "short_description": "Chal amplio tejido en punto calado con lana de oveja natural",
+      "materials": "Lana de oveja natural sin teñir",
+      "dimensions": "160x60 cm",
+      "weight": "0.4 kg",
+      "care_instructions": "Lavar a mano en agua fría, secar en plano",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Oporapa",
+      "artisan_email": "ingrijuliethgascatenorio@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785040143/arthuila/products/okcicjfz2xbfxk0wov2s.png",
+          "public_id": "arthuila/products/okcicjfz2xbfxk0wov2s"
+        }
+      ]
+    },
+    {
+      "name": "Pendientes de cobre Nátaga",
+      "slug": "pendientes-de-cobre-nataga",
+      "price": "38000.00",
+      "stock": 30,
+      "cultural_origin": "Orfebrería Nátaga - Huila",
+      "technique": "Repujado y soldado en cobre artesanal",
+      "significance": "El cobre fue el primer metal trabajado por las culturas precolombinas del Huila",
+      "status": "published",
+      "meta_title": "Pendientes cobre Nátaga | Art Huila",
+      "meta_description": "Joyería artesanal en cobre del Huila",
+      "short_description": "Pendientes de cobre repujado con diseños geométricos prehispánicos",
+      "materials": "Cobre, cierre de acero inox",
+      "dimensions": "5x3 cm",
+      "weight": "0.04 kg",
+      "care_instructions": "Limpiar con paño anti-oxidante",
+      "is_handmade": true,
+      "category": "Orfebrería",
+      "region": "Nátaga",
+      "artisan_email": "yuleinylugo71@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785043318/arthuila/products/hcb5pquagevyd5xtiph1.png",
+          "public_id": "arthuila/products/hcb5pquagevyd5xtiph1"
+        }
+      ]
+    },
+    {
+      "name": "Bolso de palma Santa María",
+      "slug": "bolso-de-palma-santa-maria",
+      "price": "58000.00",
+      "stock": 18,
+      "cultural_origin": "Artesanas de Santa María - Huila",
+      "technique": "Tejido en palma de iraca",
+      "significance": "La palma de Santa María cubre con su generosidad la tradición textil del norte del Huila",
+      "status": "published",
+      "meta_title": "Bolso palma Santa María | Art Huila",
+      "meta_description": "Bolso tejido en palma del Huila",
+      "short_description": "Bolso tejido en palma de iraca con asa de cuero y cierre",
+      "materials": "Palma de iraca, cuero natural, cierre metálico",
+      "dimensions": "28x22 cm",
+      "weight": "0.4 kg",
+      "care_instructions": "Limpiar con cepillo suave en seco",
+      "is_handmade": true,
+      "category": "Sombrerería",
+      "region": "Santa María",
+      "artisan_email": "ingrijuliethgascatenorio@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785040041/arthuila/products/hzah8oipkvgvt2iyobdh.png",
+          "public_id": "arthuila/products/hzah8oipkvgvt2iyobdh"
+        }
+      ]
+    },
+    {
+      "name": "Cuenco de madera Colombia Huila",
+      "slug": "cuenco-de-madera-colombia-huila",
+      "price": "72000.00",
+      "stock": 15,
+      "cultural_origin": "Tornería Colombia Huila - Huila",
+      "technique": "Torneado en madera de guayacán",
+      "significance": "El cuenco circular simboliza la unidad del pueblo huilense",
+      "status": "published",
+      "meta_title": "Cuenco madera guayacán | Art Huila",
+      "meta_description": "Cuenco artesanal en madera del Huila",
+      "short_description": "Cuenco torneado en madera de guayacán con acabado en aceite natural",
+      "materials": "Madera de guayacán, aceite de linaza",
+      "dimensions": "20 cm diámetro x 8 cm alto",
+      "weight": "0.9 kg",
+      "care_instructions": "Lavar a mano, nunca en lavavajillas",
+      "is_handmade": true,
+      "category": "Talla en madera",
+      "region": "Colombia",
+      "artisan_email": "shonano247@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785045373/arthuila/products/kp08xtcxvo8jpgisjwyf.png",
+          "public_id": "arthuila/products/kp08xtcxvo8jpgisjwyf"
+        }
+      ]
+    },
+    {
+      "name": "Tejido de chin chin Suaza",
+      "slug": "tejido-de-chin-chin-suaza",
+      "price": "42000.00",
+      "stock": 25,
+      "cultural_origin": "Artesanos de Suaza - Huila",
+      "technique": "Tejido en chinchorro tradicional",
+      "significance": "El chinchorro de descanso es parte de la cultura ribereña del sur del Huila",
+      "status": "published",
+      "meta_title": "Tejido chin chin Suaza | Art Huila",
+      "meta_description": "Cestería en bejuco chin chin del Huila",
+      "short_description": "Cesta decorativa tejida en bejuco chin chin con motivos geométricos",
+      "materials": "Bejuco chin chin, fibra de palma",
+      "dimensions": "35x30 cm",
+      "weight": "0.6 kg",
+      "care_instructions": "Mantener en lugar ventilado",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Suaza",
+      "artisan_email": "carlos@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047444/arthuila/products/tejido-de-chin-chin-suaza.png",
+          "public_id": "arthuila/products/tejido-de-chin-chin-suaza"
+        }
+      ]
+    },
+    {
+      "name": "Taza de barro Aipe",
+      "slug": "taza-de-barro-aipe",
+      "price": "35000.00",
+      "stock": 32,
+      "cultural_origin": "Cerámica Aipe - Huila",
+      "technique": "Moldeado y cocción artesanal",
+      "significance": "La taza de barro guarda el calor del café como el desierto de la Tatacoa guarda el sol",
+      "status": "published",
+      "meta_title": "Taza barro Aipe | Art Huila",
+      "meta_description": "Taza artesanal de barro del Huila",
+      "short_description": "Taza de barro rojo con asa moldeada y grabados de cactus",
+      "materials": "Arcilla roja, slip natural",
+      "dimensions": "10x8 cm",
+      "weight": "0.3 kg",
+      "care_instructions": "Lavar a mano, apta para bebidas calientes",
+      "is_handmade": true,
+      "category": "Cerámica",
+      "region": "Aipe",
+      "artisan_email": "carlos@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047442/arthuila/products/taza-de-barro-aipe.png",
+          "public_id": "arthuila/products/taza-de-barro-aipe"
+        }
+      ]
+    },
+    {
+      "name": "Collar de chagualas Algeciras",
+      "slug": "collar-de-chagualas-algeciras",
+      "price": "55000.00",
+      "stock": 20,
+      "cultural_origin": "Orfebres de Algeciras - Huila",
+      "technique": "Fundición y moldeado en bronce",
+      "significance": "Las chagualas son adornos prehispánicos usados por caciques de la región",
+      "status": "published",
+      "meta_title": "Collar chagualas bronce | Art Huila",
+      "meta_description": "Joyería prehispánica en bronce del Huila",
+      "short_description": "Collar de chagualas en bronce fundido réplica de piezas precolombinas",
+      "materials": "Bronce, hilo de algodón encerado",
+      "dimensions": "65 cm largo",
+      "weight": "0.3 kg",
+      "care_instructions": "Limpiar con paño seco, guardar en bolsa anti-oxidante",
+      "is_handmade": true,
+      "category": "Orfebrería",
+      "region": "Algeciras",
+      "artisan_email": "rosa@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047448/arthuila/products/collar-de-chagualas-algeciras.png",
+          "public_id": "arthuila/products/collar-de-chagualas-algeciras"
+        }
+      ]
+    },
+    {
+      "name": "Cesta de bambú Paicol",
+      "slug": "cesta-de-bambu-paicol",
+      "price": "48000.00",
+      "stock": 22,
+      "cultural_origin": "Artesanos de Paicol - Huila",
+      "technique": "Cestería en bambú rollizo",
+      "significance": "El bambú es la planta milenaria que une la tradición constructiva y artesanal del Huila",
+      "status": "published",
+      "meta_title": "Cesta bambú Paicol | Art Huila",
+      "meta_description": "Cesta artesanal de bambú del Huila",
+      "short_description": "Cesta rectangular tejida en bambú rollizo con tapa de madera",
+      "materials": "Bambú, madera de balso",
+      "dimensions": "35x25x20 cm",
+      "weight": "0.7 kg",
+      "care_instructions": "Mantener alejado de la humedad directa",
+      "is_handmade": true,
+      "category": "Talla en madera",
+      "region": "Paicol",
+      "artisan_email": "shonano247@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785044244/arthuila/products/b0pkl8wwmd1jisrzyzw3.png",
+          "public_id": "arthuila/products/b0pkl8wwmd1jisrzyzw3"
+        }
+      ]
+    },
+    {
+      "name": "Sombrero aguadeño La Argentina",
+      "slug": "sombrero-aguadeno-la-argentina",
+      "price": "82000.00",
+      "stock": 16,
+      "cultural_origin": "Sombreros La Argentina - Huila",
+      "technique": "Tejido en paja toquilla extrafina",
+      "significance": "Variante huilense del sombrero aguadeño, emblema de la identidad cafetera andina",
+      "status": "published",
+      "meta_title": "Sombrero aguadeño huilense | Art Huila",
+      "meta_description": "Sombrero artesanal estilo aguadeño del Huila",
+      "short_description": "Sombrero de paja toquilla tejido fino estilo aguadeño pintado a mano",
+      "materials": "Paja toquilla extrafina, pigmentos naturales",
+      "dimensions": "Talla M",
+      "weight": "0.22 kg",
+      "care_instructions": "Planchar con vapor suave, guardar en caja",
+      "is_handmade": true,
+      "category": "Sombrerería",
+      "region": "La Argentina",
+      "artisan_email": "ingrijuliethgascatenorio@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785039948/arthuila/products/lz10xbxczlfhtihgld9t.png",
+          "public_id": "arthuila/products/lz10xbxczlfhtihgld9t"
+        }
+      ]
+    },
+    {
+      "name": "Bastón tallado en chonta Oportapa",
+      "slug": "baston-tallado-en-chonta-oportapa",
+      "price": "98000.00",
+      "stock": 9,
+      "cultural_origin": "Talladores de Oporapa - Huila",
+      "technique": "Talla y pulido de chonta",
+      "significance": "El bastón de chonta es símbolo de autoridad y sabiduría en las comunidades indígenas",
+      "status": "published",
+      "meta_title": "Bastón chonta ceremonial | Art Huila",
+      "meta_description": "Bastón artesanal de chonta del Huila",
+      "short_description": "Bastón ceremonial tallado en madera de chonta con empuñadura zoomorfa",
+      "materials": "Madera de chonta, cuero crudo",
+      "dimensions": "110 cm de largo",
+      "weight": "0.6 kg",
+      "care_instructions": "Aplicar aceite de coco mensualmente",
+      "is_handmade": true,
+      "category": "Talla en madera",
+      "region": "Oporapa",
+      "artisan_email": "shonano247@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785044455/arthuila/products/ghjkpdkxosfgt7d7cbfx.png",
+          "public_id": "arthuila/products/ghjkpdkxosfgt7d7cbfx"
+        }
+      ]
+    },
+    {
+      "name": "Tapete de fique Pital",
+      "slug": "tapete-de-fique-pital",
+      "price": "75000.00",
+      "stock": 13,
+      "cultural_origin": "Fiqueras de Pital - Huila",
+      "technique": "Tejido plano en telar de piso",
+      "significance": "El tapete de fique limpia y embellece el hogar con los colores de la tierra huilense",
+      "status": "published",
+      "meta_title": "Tapete fique Pital | Art Huila",
+      "meta_description": "Tapete artesanal tejido en fique del Huila",
+      "short_description": "Tapete tejido en fique teñido con pigmentos de achiote y índigo",
+      "materials": "Fibra de fique, tintes de achiote y añil",
+      "dimensions": "60x40 cm",
+      "weight": "0.9 kg",
+      "care_instructions": "Sacudir y lavar a mano si es necesario",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Pital",
+      "artisan_email": "shonano247@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785044694/arthuila/products/dwwlfuslnm8latx4ynmt.png",
+          "public_id": "arthuila/products/dwwlfuslnm8latx4ynmt"
+        }
+      ]
+    },
+    {
+      "name": "Joyero de cerámica Teruel",
+      "slug": "joyero-de-ceramica-teruel",
+      "price": "58000.00",
+      "stock": 17,
+      "cultural_origin": "Cerámica Teruel - Huila",
+      "technique": "Cerámica moldeada y pintada a mano",
+      "significance": "El joyero preserva los tesoros cotidianos con la delicadeza de la artesanía huilense",
+      "status": "published",
+      "meta_title": "Joyero cerámica Teruel | Art Huila",
+      "meta_description": "Joyero artesanal de cerámica del Huila",
+      "short_description": "Joyero de cerámica con tapa, pintado a mano con flores del trópico",
+      "materials": "Arcilla blanca, esmaltes de colores",
+      "dimensions": "15x10 cm",
+      "weight": "0.5 kg",
+      "care_instructions": "Lavar a mano con suavidad",
+      "is_handmade": true,
+      "category": "Cerámica",
+      "region": "Teruel",
+      "artisan_email": "carlos@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047435/arthuila/products/joyero-de-ceramica-teruel.png",
+          "public_id": "arthuila/products/joyero-de-ceramica-teruel"
+        }
+      ]
+    },
+    {
+      "name": "Collar de huesos y semillas Tello",
+      "slug": "collar-de-huesos-y-semillas-tello",
+      "price": "40000.00",
+      "stock": 27,
+      "cultural_origin": "Artesanos de Tello - Huila",
+      "technique": "Selección y ensamblaje artesanal",
+      "significance": "Los huesos y semillas conectan al portador con los ciclos de la naturaleza",
+      "status": "published",
+      "meta_title": "Collar étnico semillas huesos | Art Huila",
+      "meta_description": "Collar étnico artesanal natural del Huila",
+      "short_description": "Collar étnico de huesos de animales silvestres y semillas amazónicas",
+      "materials": "Huesos curtidos, semillas nativas, hilo encerado",
+      "dimensions": "55 cm largo",
+      "weight": "0.12 kg",
+      "care_instructions": "Evitar agua y perfumes",
+      "is_handmade": true,
+      "category": "Orfebrería",
+      "region": "Tello",
+      "artisan_email": "yuleinylugo71@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785043263/arthuila/products/hl3umf6e4zm8hbrnzsd0.png",
+          "public_id": "arthuila/products/hl3umf6e4zm8hbrnzsd0"
+        }
+      ]
+    },
+    {
+      "name": "Poncho de lana Colombia Huila",
+      "slug": "poncho-de-lana-colombia-huila",
+      "price": "165000.00",
+      "stock": 7,
+      "cultural_origin": "Tejedoras artesanales Colombia - Huila",
+      "technique": "Tejido en telar con lana merina",
+      "significance": "El poncho andino protege al campesino de las heladas del páramo huilense",
+      "status": "published",
+      "meta_title": "Poncho lana andino | Art Huila",
+      "meta_description": "Poncho artesanal tejido en lana del Huila",
+      "short_description": "Poncho tejido en lana merina con rayas y rombos andinos tradicionales",
+      "materials": "Lana merina, flecos de hilo grueso",
+      "dimensions": "140x120 cm",
+      "weight": "1.2 kg",
+      "care_instructions": "Lavar en seco o a mano en agua muy fría",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Colombia",
+      "artisan_email": "rosa@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047462/arthuila/products/poncho-de-lana-colombia-huila.png",
+          "public_id": "arthuila/products/poncho-de-lana-colombia-huila"
+        }
+      ]
+    },
+    {
+      "name": "Figura de caimán en madera Aipe",
+      "slug": "figura-de-caiman-en-madera-aipe",
+      "price": "135000.00",
+      "stock": 8,
+      "cultural_origin": "Talla en madera Aipe - Huila",
+      "technique": "Talla directa y pintura natural",
+      "significance": "El caimán es el guardián mítico del río Magdalena en la región de la Tatacoa",
+      "status": "published",
+      "meta_title": "Figura caimán madera Aipe | Art Huila",
+      "meta_description": "Figura de caimán tallada en madera del Huila",
+      "short_description": "Figura decorativa de caimán tallada en madera de balso pintada a mano",
+      "materials": "Madera de balso, pintura acrílica, barniz",
+      "dimensions": "45x12 cm",
+      "weight": "0.7 kg",
+      "care_instructions": "Evitar exposición al sol directo prolongado",
+      "is_handmade": true,
+      "category": "Talla en madera",
+      "region": "Aipe",
+      "artisan_email": "rosa@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047452/arthuila/products/figura-de-caiman-en-madera-aipe.png",
+          "public_id": "arthuila/products/figura-de-caiman-en-madera-aipe"
+        }
+      ]
+    },
+    {
+      "name": "Sombrero de palma Tello",
+      "slug": "sombrero-de-palma-tello",
+      "price": "70000.00",
+      "stock": 19,
+      "cultural_origin": "Sombreros Tello - Huila",
+      "technique": "Tejido en palma amarga",
+      "significance": "La palma amarga es la materia prima ancestral del sombrero opita, símbolo del Huila",
+      "status": "published",
+      "meta_title": "Sombrero palma amarga | Art Huila",
+      "meta_description": "Sombrero opita de palma amarga del Huila",
+      "short_description": "Sombrero de palma amarga de ala ancha tejido en espiral",
+      "materials": "Palma amarga",
+      "dimensions": "Talla única",
+      "weight": "0.28 kg",
+      "care_instructions": "Mantener su forma, guardar boca abajo",
+      "is_handmade": true,
+      "category": "Sombrerería",
+      "region": "Tello",
+      "artisan_email": "carlos@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047438/arthuila/products/sombrero-de-palma-tello.jpg",
+          "public_id": "arthuila/products/sombrero-de-palma-tello"
+        }
+      ]
+    },
+    {
+      "name": "Macetero de barro Campoalegre",
+      "slug": "macetero-de-barro-campoalegre",
+      "price": "52000.00",
+      "stock": 21,
+      "cultural_origin": "Alfarería Campoalegre - Huila",
+      "technique": "Modelado a mano y quema artesanal",
+      "significance": "El macetero de barro fusiona la naturaleza con el arte alfarero del Huila",
+      "status": "published",
+      "meta_title": "Macetero barro Campoalegre | Art Huila",
+      "meta_description": "Macetero artesanal de barro del Huila",
+      "short_description": "Macetero de barro crudo decorado con grabados geométricos tradicionales",
+      "materials": "Arcilla local, engobe rojo",
+      "dimensions": "20x18 cm",
+      "weight": "1.0 kg",
+      "care_instructions": "Apto para plantas, limpiar con paño húmedo",
+      "is_handmade": true,
+      "category": "Cerámica",
+      "region": "Campoalegre",
+      "artisan_email": "yuleinylugo71@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785043199/arthuila/products/qmklgolia9aop2mxbakz.png",
+          "public_id": "arthuila/products/qmklgolia9aop2mxbakz"
+        }
+      ]
+    },
+    {
+      "name": "Anillo de tagua Gigante",
+      "slug": "anillo-de-tagua-gigante",
+      "price": "22000.00",
+      "stock": 48,
+      "cultural_origin": "Joyería en tagua Gigante - Huila",
+      "technique": "Torneado y lacado de tagua",
+      "significance": "La tagua tallada como anillo simboliza el compromiso con la naturaleza y lo artesanal",
+      "status": "published",
+      "meta_title": "Anillo tagua Gigante | Art Huila",
+      "meta_description": "Anillo artesanal de tagua del Huila",
+      "short_description": "Anillo de tagua torneado con incrustación de semillas de amor",
+      "materials": "Tagua, semillas de amor seco",
+      "dimensions": "Talla 7-12 ajustable",
+      "weight": "0.01 kg",
+      "care_instructions": "Evitar agua y productos químicos",
+      "is_handmade": true,
+      "category": "Orfebrería",
+      "region": "Gigante",
+      "artisan_email": "yuleinylugo71@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785043144/arthuila/products/c8viiwztyx7vditbjwpy.png",
+          "public_id": "arthuila/products/c8viiwztyx7vditbjwpy"
+        }
+      ]
+    },
+    {
+      "name": "Cuadro tejido en cabuya La Plata",
+      "slug": "cuadro-tejido-en-cabuya-la-plata",
+      "price": "98000.00",
+      "stock": 9,
+      "cultural_origin": "Artesanas La Plata - Huila",
+      "technique": "Tejido pictórico en telar manual",
+      "significance": "El cuadro textil captura la cotidianidad campesina del piedemonte huilense",
+      "status": "published",
+      "meta_title": "Cuadro tejido cabuya | Art Huila",
+      "meta_description": "Arte textil en cabuya del Huila",
+      "short_description": "Cuadro decorativo tejido en cabuya con escena campesina a color",
+      "materials": "Cabuya teñida, bastidor de madera",
+      "dimensions": "50x40 cm",
+      "weight": "0.8 kg",
+      "care_instructions": "Colgar en lugar seco, sacudir ocasionalmente",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "La Plata",
+      "artisan_email": "ingrijuliethgascatenorio@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785039846/arthuila/products/ix88ss8uk2081bvol1qu.png",
+          "public_id": "arthuila/products/ix88ss8uk2081bvol1qu"
+        }
+      ]
+    },
+    {
+      "name": "Tejido de macramé Neiva",
+      "slug": "tejido-de-macrame-neiva",
+      "price": "78000.00",
+      "stock": 15,
+      "cultural_origin": "Artesanas urbanas de Neiva - Huila",
+      "technique": "Macramé con nudos marineros",
+      "significance": "El macramé representa la creatividad contemporánea que dialoga con la tradición artesanal huilense",
+      "status": "published",
+      "meta_title": "Tapiz macramé Neiva | Art Huila",
+      "meta_description": "Tapiz artesanal en macramé del Huila",
+      "short_description": "Tapiz decorativo en macramé tejido a mano con hilo de algodón natural",
+      "materials": "Hilo de algodón grueso, madera de bambú",
+      "dimensions": "50x70 cm",
+      "weight": "0.35 kg",
+      "care_instructions": "Sacudir suavemente, limpiar manchas con paño húmedo",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Neiva",
+      "artisan_email": "rosa@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047463/arthuila/products/tejido-de-macrame-neiva.png",
+          "public_id": "arthuila/products/tejido-de-macrame-neiva"
+        }
+      ]
+    },
+    {
+      "name": "Broche de tagua Elías",
+      "slug": "broche-de-tagua-elias-nuevo",
+      "price": "20000.00",
+      "stock": 55,
+      "cultural_origin": "Origen cultural artesanal del Huila - Artesanos de Elías - Huila",
+      "technique": "Torneado de tagua y pintura natural",
+      "significance": "“La tagua o marfil vegetal del Huila es símbolo de la biodiversidad andina”",
+      "status": "published",
+      "meta_title": "Broche de tagua Elías | Art Huila",
+      "meta_description": "Compra Broche de tagua Elías, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Broche circular de tagua con diseño de flor de café pintado a mano",
+      "materials": "Tagua, anillo de latón",
+      "dimensions": "4 cm diámetro",
+      "weight": "0.02 kg",
+      "care_instructions": "Limpiar con paño seco suave",
+      "is_handmade": true,
+      "category": "Orfebrería",
+      "region": "Neiva",
+      "artisan_email": "rosa@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047447/arthuila/products/broche-de-tagua-elias-nuevo.jpg",
+          "public_id": "arthuila/products/broche-de-tagua-elias-nuevo"
+        }
+      ]
+    },
+    {
+      "name": "Figura de cerámica Dios Agustiniano",
+      "slug": "figura-de-ceramica-dios-agustiniano-nuevo",
+      "price": "130000.00",
+      "stock": 10,
+      "cultural_origin": "Origen cultural artesanal del Huila - Comunidad artesana de San Agustín - Huila",
+      "technique": "Modelado en arcilla y cocción en horno",
+      "significance": "“Representa las deidades del panteón agustiniano protectoras de la naturaleza”",
+      "status": "published",
+      "meta_title": "Figura de cerámica Dios Agustiniano | Art Huila",
+      "meta_description": "Compra Figura de cerámica Dios Agustiniano, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Figura de barro cocido con acabado prehispánico auténtico",
+      "materials": "Arcilla roja, pigmentos naturales",
+      "dimensions": "20x12 cm",
+      "weight": "0.9 kg",
+      "care_instructions": "Limpiar con pincel seco, no mojar",
+      "is_handmade": true,
+      "category": "Cerámica",
+      "region": "Neiva",
+      "artisan_email": "rosa@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047455/arthuila/products/figura-de-ceramica-dios-agustiniano-nuevo.png",
+          "public_id": "arthuila/products/figura-de-ceramica-dios-agustiniano-nuevo"
+        }
+      ]
+    },
+    {
+      "name": "Jarro de cerámica Baraya",
+      "slug": "jarro-de-ceramica-baraya-nuevo",
+      "price": "48000.00",
+      "stock": 20,
+      "cultural_origin": "Origen cultural artesanal del Huila - Alfarería Baraya - Huila",
+      "technique": "Modelado a mano y quema al carbón",
+      "significance": "“El jarro evoca la tradición del tinto mañanero en los campos huilenses”",
+      "status": "published",
+      "meta_title": "Jarro de cerámica Baraya | Art Huila",
+      "meta_description": "Compra Jarro de cerámica Baraya, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Jarro de cerámica rústica con asa gruesa y acabado artesanal",
+      "materials": "Arcilla local, óxidos naturales",
+      "dimensions": "12x9 cm",
+      "weight": "0.45 kg",
+      "care_instructions": "Apto para microondas y lavavajillas",
+      "is_handmade": true,
+      "category": "Cerámica",
+      "region": "Neiva",
+      "artisan_email": "rosa@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047457/arthuila/products/jarro-de-ceramica-baraya-nuevo.png",
+          "public_id": "arthuila/products/jarro-de-ceramica-baraya-nuevo"
+        }
+      ]
+    },
+    {
+      "name": "Cuadro en madera pirograbado Íquira",
+      "slug": "cuadro-en-madera-pirograbado-iquira-nuevo",
+      "price": "115000.00",
+      "stock": 10,
+      "cultural_origin": "Origen cultural artesanal del Huila - Arte en madera Íquira - Huila",
+      "technique": "Pirograbado artístico en madera de pino",
+      "significance": "“El pirograbado plasma los paisajes del alto Magdalena con técnica ancestral del fuego”",
+      "status": "published",
+      "meta_title": "Cuadro en madera pirograbado Íquira | Art Huila",
+      "meta_description": "Compra Cuadro en madera pirograbado Íquira, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Cuadro pirograbado con paisaje típico del valle del Magdalena",
+      "materials": "Madera de pino, marco rústico",
+      "dimensions": "40x30 cm",
+      "weight": "0.9 kg",
+      "care_instructions": "Colgar en lugar seco sin exposición solar directa",
+      "is_handmade": true,
+      "category": "Talla en madera",
+      "region": "Neiva",
+      "artisan_email": "rosa@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047451/arthuila/products/cuadro-en-madera-pirograbado-iquira-nuevo.png",
+          "public_id": "arthuila/products/cuadro-en-madera-pirograbado-iquira-nuevo"
+        }
+      ]
+    },
+    {
+      "name": "Máscara ritual de madera Saladoblanco",
+      "slug": "mascara-ritual-de-madera-saladoblanco-nuevo",
+      "price": "165000.00",
+      "stock": 7,
+      "cultural_origin": "Origen cultural artesanal del Huila - Talladores de Saladoblanco - Huila",
+      "technique": "Talla en madera de nogal",
+      "significance": "“Las máscaras rememoran las festividades rituales de las comunidades andinas”",
+      "status": "published",
+      "meta_title": "Máscara ritual de madera Saladoblanco | Art Huila",
+      "meta_description": "Compra Máscara ritual de madera Saladoblanco, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Máscara decorativa tallada en nogal con pigmentos naturales",
+      "materials": "Madera de nogal, pigmentos vegetales",
+      "dimensions": "25x18 cm",
+      "weight": "0.8 kg",
+      "care_instructions": "Aplicar aceite de teca anualmente",
+      "is_handmade": true,
+      "category": "Talla en madera",
+      "region": "Neiva",
+      "artisan_email": "rosa@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047458/arthuila/products/mascara-ritual-de-madera-saladoblanco-nuevo.png",
+          "public_id": "arthuila/products/mascara-ritual-de-madera-saladoblanco-nuevo"
+        }
+      ]
+    },
+    {
+      "name": "Collar de chagualas Algeciras",
+      "slug": "collar-de-chagualas-algeciras-nuevo",
+      "price": "55000.00",
+      "stock": 20,
+      "cultural_origin": "Origen cultural artesanal del Huila - Orfebres de Algeciras - Huila",
+      "technique": "Fundición y moldeado en bronce",
+      "significance": "“Las chagualas son adornos prehispánicos usados por caciques de la región”",
+      "status": "published",
+      "meta_title": "Collar de chagualas Algeciras | Art Huila",
+      "meta_description": "Compra Collar de chagualas Algeciras, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Collar de chagualas en bronce fundido réplica de piezas precolombinas",
+      "materials": "Bronce, hilo de algodón encerado",
+      "dimensions": "65 cm largo",
+      "weight": "0.3 kg",
+      "care_instructions": "Limpiar con paño seco, guardar en bolsa anti-oxidante",
+      "is_handmade": true,
+      "category": "Orfebrería",
+      "region": "Neiva",
+      "artisan_email": "rosa@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047449/arthuila/products/collar-de-chagualas-algeciras-nuevo.png",
+          "public_id": "arthuila/products/collar-de-chagualas-algeciras-nuevo"
+        }
+      ]
+    },
+    {
+      "name": "Poncho de lana Colombia Huila",
+      "slug": "poncho-de-lana-colombia-huila-nuevo",
+      "price": "165000.00",
+      "stock": 7,
+      "cultural_origin": "Origen cultural artesanal del Huila - Tejedoras artesanales Colombia - Huila",
+      "technique": "Tejido en telar con lana merina",
+      "significance": "“El poncho andino protege al campesino de las heladas del páramo huilense”",
+      "status": "published",
+      "meta_title": "Poncho de lana Colombia Huila | Art Huila",
+      "meta_description": "Compra Poncho de lana Colombia Huila, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Poncho tejido en lana merina con rayas y rombos andinos tradicionales",
+      "materials": "Lana merina, flecos de hilo grueso",
+      "dimensions": "140x120 cm",
+      "weight": "1.2 kg",
+      "care_instructions": "Lavar en seco o a mano en agua muy fría",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Neiva",
+      "artisan_email": "rosa@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047462/arthuila/products/poncho-de-lana-colombia-huila-nuevo.png",
+          "public_id": "arthuila/products/poncho-de-lana-colombia-huila-nuevo"
+        }
+      ]
+    },
+    {
+      "name": "Mochila fique San Agustín",
+      "slug": "mochila-fique-san-agustin-nuevo",
+      "price": "92000.00",
+      "stock": 11,
+      "cultural_origin": "Origen cultural artesanal del Huila - Artesanas de San Agustín - Huila",
+      "technique": "Tejido en fique con telar de cintura",
+      "significance": "“Inspirada en los patrones textiles encontrados en tumbas de la cultura agustiniana”",
+      "status": "published",
+      "meta_title": "Mochila fique San Agustín | Art Huila",
+      "meta_description": "Compra Mochila fique San Agustín, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Mochila tejida en fique con motivos prehispánicos agustinianos",
+      "materials": "Fibra de fique, tintes de bija y añil",
+      "dimensions": "32x28 cm",
+      "weight": "0.55 kg",
+      "care_instructions": "Lavar a mano en frío",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Neiva",
+      "artisan_email": "rosa@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047460/arthuila/products/mochila-fique-san-agustin-nuevo.png",
+          "public_id": "arthuila/products/mochila-fique-san-agustin-nuevo"
+        }
+      ]
+    },
+    {
+      "name": "Tejido de macramé Neiva",
+      "slug": "tejido-de-macrame-neiva-nuevo",
+      "price": "78000.00",
+      "stock": 15,
+      "cultural_origin": "Origen cultural artesanal del Huila - Artesanas urbanas de Neiva - Huila",
+      "technique": "Macramé con nudos marineros",
+      "significance": "“El macramé representa la creatividad contemporánea que dialoga con la tradición artesanal huilense”",
+      "status": "published",
+      "meta_title": "Tejido de macramé Neiva | Art Huila",
+      "meta_description": "Compra Tejido de macramé Neiva, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Tapiz decorativo en macramé tejido a mano con hilo de algodón natural",
+      "materials": "Hilo de algodón grueso, madera de bambú",
+      "dimensions": "50x70 cm",
+      "weight": "0.35 kg",
+      "care_instructions": "Sacudir suavemente, limpiar manchas con paño húmedo",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Neiva",
+      "artisan_email": "rosa@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047464/arthuila/products/tejido-de-macrame-neiva-nuevo.png",
+          "public_id": "arthuila/products/tejido-de-macrame-neiva-nuevo"
+        }
+      ]
+    },
+    {
+      "name": "Figura de caimán en madera Aipe",
+      "slug": "figura-de-caiman-en-madera-aipe-nuevo",
+      "price": "135000.00",
+      "stock": 8,
+      "cultural_origin": "Origen cultural artesanal del Huila - Talla en madera Aipe - Huila",
+      "technique": "Talla directa y pintura natural",
+      "significance": "“El caimán es el guardián mítico del río Magdalena en la región de la Tatacoa”",
+      "status": "published",
+      "meta_title": "Figura de caimán en madera Aipe | Art Huila",
+      "meta_description": "Compra Figura de caimán en madera Aipe, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Figura decorativa de caimán tallada en madera de balso pintada a mano",
+      "materials": "Madera de balso, pintura acrílica, barniz",
+      "dimensions": "45x12 cm",
+      "weight": "0.7 kg",
+      "care_instructions": "Evitar exposición al sol directo prolongado",
+      "is_handmade": true,
+      "category": "Talla en madera",
+      "region": "Neiva",
+      "artisan_email": "rosa@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047453/arthuila/products/figura-de-caiman-en-madera-aipe-nuevo.png",
+          "public_id": "arthuila/products/figura-de-caiman-en-madera-aipe-nuevo"
+        }
+      ]
+    },
+    {
+      "name": "Hamaca de algodón Villavieja",
+      "slug": "hamaca-de-algodon-villavieja-nuevo",
+      "price": "180000.00",
+      "stock": 6,
+      "cultural_origin": "Origen cultural artesanal del Huila - Cooperativa artesanal Villavieja - Huila",
+      "technique": "Tejido en telar manual",
+      "significance": "“Herramienta ancestral del descanso en el desierto de la Tatacoa”",
+      "status": "published",
+      "meta_title": "Hamaca de algodón Villavieja | Art Huila",
+      "meta_description": "Compra Hamaca de algodón Villavieja, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Hamaca tejida a mano en algodón con flecos decorativos",
+      "materials": "Hilo de algodón 100% natural",
+      "dimensions": "200x120 cm",
+      "weight": "1.8 kg",
+      "care_instructions": "Lavar en máquina en frío, tender a la sombra",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Neiva",
+      "artisan_email": "carlos@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047432/arthuila/products/hamaca-de-algodon-villavieja-nuevo.png",
+          "public_id": "arthuila/products/hamaca-de-algodon-villavieja-nuevo"
+        }
+      ]
+    },
+    {
+      "name": "Taza de barro Aipe",
+      "slug": "taza-de-barro-aipe-nuevo",
+      "price": "35000.00",
+      "stock": 32,
+      "cultural_origin": "Origen cultural artesanal del Huila - Cerámica Aipe - Huila",
+      "technique": "Moldeado y cocción artesanal",
+      "significance": "“La taza de barro guarda el calor del café como el desierto de la Tatacoa guarda el sol”",
+      "status": "published",
+      "meta_title": "Taza de barro Aipe | Art Huila",
+      "meta_description": "Compra Taza de barro Aipe, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Taza de barro rojo con asa moldeada y grabados de cactus",
+      "materials": "Arcilla roja, slip natural",
+      "dimensions": "10x8 cm",
+      "weight": "0.3 kg",
+      "care_instructions": "Lavar a mano, apta para bebidas calientes",
+      "is_handmade": true,
+      "category": "Cerámica",
+      "region": "Neiva",
+      "artisan_email": "carlos@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047443/arthuila/products/taza-de-barro-aipe-nuevo.png",
+          "public_id": "arthuila/products/taza-de-barro-aipe-nuevo"
+        }
+      ]
+    },
+    {
+      "name": "Sombrero de palma Tello",
+      "slug": "sombrero-de-palma-tello-nuevo",
+      "price": "70000.00",
+      "stock": 19,
+      "cultural_origin": "Origen cultural artesanal del Huila - Sombreros Tello - Huila",
+      "technique": "Tejido en palma amarga",
+      "significance": "“La palma amarga es la materia prima ancestral del sombrero opita, símbolo del Huila”",
+      "status": "published",
+      "meta_title": "Sombrero de palma Tello | Art Huila",
+      "meta_description": "Compra Sombrero de palma Tello, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Sombrero de palma amarga de ala ancha tejido en espiral",
+      "materials": "Palma amarga",
+      "dimensions": "Talla única",
+      "weight": "0.28 kg",
+      "care_instructions": "Mantener su forma, guardar boca abajo",
+      "is_handmade": true,
+      "category": "Sombrerería",
+      "region": "Neiva",
+      "artisan_email": "carlos@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047439/arthuila/products/sombrero-de-palma-tello-nuevo.jpg",
+          "public_id": "arthuila/products/sombrero-de-palma-tello-nuevo"
+        },
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785048863/arthuila/products/kmrt0ebdwgxjp1pmjzls.png",
+          "public_id": "arthuila/products/kmrt0ebdwgxjp1pmjzls"
+        }
+      ]
+    },
+    {
+      "name": "Tejido de chin chin Suaza",
+      "slug": "tejido-de-chin-chin-suaza-nuevo",
+      "price": "42000.00",
+      "stock": 25,
+      "cultural_origin": "Origen cultural artesanal del Huila - Artesanos de Suaza - Huila",
+      "technique": "Tejido en chinchorro tradicional",
+      "significance": "“El chinchorro de descanso es parte de la cultura ribereña del sur del Huila”",
+      "status": "published",
+      "meta_title": "Tejido de chin chin Suaza | Art Huila",
+      "meta_description": "Compra Tejido de chin chin Suaza, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Cesta decorativa tejida en bejuco chin chin con motivos geométricos",
+      "materials": "Bejuco chin chin, fibra de palma",
+      "dimensions": "35x30 cm",
+      "weight": "0.6 kg",
+      "care_instructions": "Mantener en lugar ventilado",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Neiva",
+      "artisan_email": "carlos@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047445/arthuila/products/tejido-de-chin-chin-suaza-nuevo.png",
+          "public_id": "arthuila/products/tejido-de-chin-chin-suaza-nuevo"
+        }
+      ]
+    },
+    {
+      "name": "Sombrero vueltiao huilense Tello",
+      "slug": "sombrero-vueltiao-huilense-tello-nuevo",
+      "price": "95000.00",
+      "stock": 14,
+      "cultural_origin": "Origen cultural artesanal del Huila - Sombreros Tello - Huila",
+      "technique": "Tejido en caña flecha",
+      "significance": "“Adaptación huilense del sombrero vueltiao símbolo de la identidad nacional colombiana”",
+      "status": "published",
+      "meta_title": "Sombrero vueltiao huilense Tello | Art Huila",
+      "meta_description": "Compra Sombrero vueltiao huilense Tello, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Sombrero tejido en caña flecha con diseño tradicional huilense",
+      "materials": "Caña flecha",
+      "dimensions": "Talla única",
+      "weight": "0.3 kg",
+      "care_instructions": "Guardar en sombrero, evitar deformación",
+      "is_handmade": true,
+      "category": "Sombrerería",
+      "region": "Neiva",
+      "artisan_email": "carlos@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785048826/arthuila/products/ncw3b7fvr5ap4pp6txvb.png",
+          "public_id": "arthuila/products/ncw3b7fvr5ap4pp6txvb"
+        }
+      ]
+    },
+    {
+      "name": "Jarrón de barro Tarqui",
+      "slug": "jarron-de-barro-tarqui-nuevo",
+      "price": "88000.00",
+      "stock": 13,
+      "cultural_origin": "Origen cultural artesanal del Huila - Alfarería Tarqui - Huila",
+      "technique": "Torno y cocción en horno de leña",
+      "significance": "“El jarrón refleja la tradición alfarera precolombina del alto Magdalena”",
+      "status": "published",
+      "meta_title": "Jarrón de barro Tarqui | Art Huila",
+      "meta_description": "Compra Jarrón de barro Tarqui, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Jarrón de barro rojo cocido con acabado mate y grabados geométricos",
+      "materials": "Arcilla roja, óxido de hierro",
+      "dimensions": "28x14 cm",
+      "weight": "1.1 kg",
+      "care_instructions": "Uso decorativo, limpiar en seco",
+      "is_handmade": true,
+      "category": "Cerámica",
+      "region": "Neiva",
+      "artisan_email": "carlos@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785048463/arthuila/products/he0ho3anz1v4hi9kxj5h.png",
+          "public_id": "arthuila/products/he0ho3anz1v4hi9kxj5h"
+        }
+      ]
+    },
+    {
+      "name": "Manilla trenzada fique Yaguará",
+      "slug": "manilla-trenzada-fique-yaguara-nuevo",
+      "price": "15000.00",
+      "stock": 60,
+      "cultural_origin": "Origen cultural artesanal del Huila - Artesanas de Yaguará - Huila",
+      "technique": "Trenzado de fibra de fique",
+      "significance": "“La manilla representa la unión comunitaria de los pueblos ribereños”",
+      "status": "published",
+      "meta_title": "Manilla trenzada fique Yaguará | Art Huila",
+      "meta_description": "Compra Manilla trenzada fique Yaguará, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Manilla trenzada en fique de colores con cierre ajustable",
+      "materials": "Fibra de fique, tintes vegetales",
+      "dimensions": "Ajustable 15-22 cm",
+      "weight": "0.02 kg",
+      "care_instructions": "Lavar a mano, secar a la sombra",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Neiva",
+      "artisan_email": "carlos@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047437/arthuila/products/manilla-trenzada-fique-yaguara-nuevo.png",
+          "public_id": "arthuila/products/manilla-trenzada-fique-yaguara-nuevo"
+        }
+      ]
+    },
+    {
+      "name": "Talla de Jaguar en madera Altamira",
+      "slug": "talla-de-jaguar-en-madera-altamira-nuevo",
+      "price": "195000.00",
+      "stock": 6,
+      "cultural_origin": "Origen cultural artesanal del Huila - Talladores de Altamira - Huila",
+      "technique": "Talla directa en madera de roble",
+      "significance": "“El jaguar es el guardián espiritual de los bosques amazónicos del Huila”",
+      "status": "published",
+      "meta_title": "Talla de Jaguar en madera Altamira | Art Huila",
+      "meta_description": "Compra Talla de Jaguar en madera Altamira, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Figura de jaguar tallada en madera de roble con detalles realistas",
+      "materials": "Madera de roble, cera de carnauba",
+      "dimensions": "30x18 cm",
+      "weight": "1.8 kg",
+      "care_instructions": "Mantener en lugar seco, aplicar cera cada año",
+      "is_handmade": true,
+      "category": "Talla en madera",
+      "region": "Neiva",
+      "artisan_email": "carlos@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047442/arthuila/products/talla-de-jaguar-en-madera-altamira-nuevo.png",
+          "public_id": "arthuila/products/talla-de-jaguar-en-madera-altamira-nuevo"
+        }
+      ]
+    },
+    {
+      "name": "Joyero de cerámica Teruel",
+      "slug": "joyero-de-ceramica-teruel-nuevo",
+      "price": "58000.00",
+      "stock": 17,
+      "cultural_origin": "Origen cultural artesanal del Huila - Cerámica Teruel - Huila",
+      "technique": "Cerámica moldeada y pintada a mano",
+      "significance": "“El joyero preserva los tesoros cotidianos con la delicadeza de la artesanía huilense”",
+      "status": "published",
+      "meta_title": "Joyero de cerámica Teruel | Art Huila",
+      "meta_description": "Compra Joyero de cerámica Teruel, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Joyero de cerámica con tapa, pintado a mano con flores del trópico",
+      "materials": "Arcilla blanca, esmaltes de colores",
+      "dimensions": "15x10 cm",
+      "weight": "0.5 kg",
+      "care_instructions": "Lavar a mano con suavidad",
+      "is_handmade": true,
+      "category": "Cerámica",
+      "region": "Neiva",
+      "artisan_email": "carlos@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047435/arthuila/products/joyero-de-ceramica-teruel-nuevo.png",
+          "public_id": "arthuila/products/joyero-de-ceramica-teruel-nuevo"
+        }
+      ]
+    },
+    {
+      "name": "Collar de semillas Timaná",
+      "slug": "collar-de-semillas-timana-nuevo",
+      "price": "32000.00",
+      "stock": 35,
+      "cultural_origin": "Origen cultural artesanal del Huila - Artesanas de Timaná - Huila",
+      "technique": "Ensartado y diseño con semillas nativas",
+      "significance": "“Cada semilla proviene de la selva del piedemonte, conectando al portador con la naturaleza”",
+      "status": "published",
+      "meta_title": "Collar de semillas Timaná | Art Huila",
+      "meta_description": "Compra Collar de semillas Timaná, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Collar largo de semillas nativas multicolor y pepas de chonta",
+      "materials": "Semillas silvestres, chonta, mate",
+      "dimensions": "70 cm de largo",
+      "weight": "0.15 kg",
+      "care_instructions": "Evitar humedad prolongada",
+      "is_handmade": true,
+      "category": "Talla en madera",
+      "region": "Neiva",
+      "artisan_email": "carlos@artesano.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785047430/arthuila/products/collar-de-semillas-timana-nuevo.png",
+          "public_id": "arthuila/products/collar-de-semillas-timana-nuevo"
+        }
+      ]
+    },
+    {
+      "name": "Mantel bordado Pitalito",
+      "slug": "mantel-bordado-pitalito-nuevo",
+      "price": "110000.00",
+      "stock": 9,
+      "cultural_origin": "Origen cultural artesanal del Huila - Bordadoras de Pitalito - Huila",
+      "technique": "Bordado a mano en tela de lino",
+      "significance": "“El bordado recoge los paisajes cafeteros y florales del sur del Huila”",
+      "status": "published",
+      "meta_title": "Mantel bordado Pitalito | Art Huila",
+      "meta_description": "Compra Mantel bordado Pitalito, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Mantel de lino con bordado a mano de flores y cafetales",
+      "materials": "Lino, hilo de seda, hilo de algodón",
+      "dimensions": "150x100 cm",
+      "weight": "0.5 kg",
+      "care_instructions": "Lavar a mano en frío, planchar en húmedo",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Neiva",
+      "artisan_email": "shonano247@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785045192/arthuila/products/hcac2cd8t9qkphqt8hee.png",
+          "public_id": "arthuila/products/hcac2cd8t9qkphqt8hee"
+        }
+      ]
+    },
+    {
+      "name": "Cuenco de madera Colombia Huila",
+      "slug": "cuenco-de-madera-colombia-huila-nuevo",
+      "price": "72000.00",
+      "stock": 15,
+      "cultural_origin": "Origen cultural artesanal del Huila - Tornería Colombia Huila - Huila",
+      "technique": "Torneado en madera de guayacán",
+      "significance": "“El cuenco circular simboliza la unidad del pueblo huilense”",
+      "status": "published",
+      "meta_title": "Cuenco de madera Colombia Huila | Art Huila",
+      "meta_description": "Compra Cuenco de madera Colombia Huila, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Cuenco torneado en madera de guayacán con acabado en aceite natural",
+      "materials": "Madera de guayacán, aceite de linaza",
+      "dimensions": "20 cm diámetro x 8 cm alto",
+      "weight": "0.9 kg",
+      "care_instructions": "Lavar a mano, nunca en lavavajillas",
+      "is_handmade": true,
+      "category": "Talla en madera",
+      "region": "Neiva",
+      "artisan_email": "shonano247@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785045335/arthuila/products/f1z3u6qf6wbloiqnnbaa.png",
+          "public_id": "arthuila/products/f1z3u6qf6wbloiqnnbaa"
+        }
+      ]
+    },
+    {
+      "name": "Bolso tejido en fique Guadalupe",
+      "slug": "bolso-tejido-en-fique-guadalupe-nuevo",
+      "price": "62000.00",
+      "stock": 25,
+      "cultural_origin": "Origen cultural artesanal del Huila - Fiqueras de Guadalupe - Huila",
+      "technique": "Tejido a mano en fibra de fique",
+      "significance": "“El fique es la fibra nacional que representa la resistencia y la tradición andina”",
+      "status": "published",
+      "meta_title": "Bolso tejido en fique Guadalupe | Art Huila",
+      "meta_description": "Compra Bolso tejido en fique Guadalupe, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Bolso estructurado tejido en fique teñido con plantas locales",
+      "materials": "Fibra de fique, tintes naturales de achiote y añil",
+      "dimensions": "30x25 cm",
+      "weight": "0.5 kg",
+      "care_instructions": "Lavar a mano en agua tibia con jabón neutro",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Neiva",
+      "artisan_email": "shonano247@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785045050/arthuila/products/z77qxpz7evfjcoaws3hy.png",
+          "public_id": "arthuila/products/z77qxpz7evfjcoaws3hy"
+        }
+      ]
+    },
+    {
+      "name": "Cinturón en cuero repujado Neiva",
+      "slug": "cinturon-en-cuero-repujado-neiva-nuevo",
+      "price": "75000.00",
+      "stock": 12,
+      "cultural_origin": "Origen cultural artesanal del Huila - Taller de cuero Neiva - Huila",
+      "technique": "Repujado y grabado en cuero curtido",
+      "significance": "“El trabajo en cuero representa la tradición vaquera del llano huilense”",
+      "status": "published",
+      "meta_title": "Cinturón en cuero repujado Neiva | Art Huila",
+      "meta_description": "Compra Cinturón en cuero repujado Neiva, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Cinturón de cuero legítimo con diseños florales repujados a mano",
+      "materials": "Cuero de res, hebilla de bronce",
+      "dimensions": "120x4 cm",
+      "weight": "0.4 kg",
+      "care_instructions": "Aplicar crema para cuero mensualmente",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Neiva",
+      "artisan_email": "shonano247@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785044898/arthuila/products/ctfhtywef4tzoybb9f6f.png",
+          "public_id": "arthuila/products/ctfhtywef4tzoybb9f6f"
+        }
+      ]
+    },
+    {
+      "name": "Collar de chaquiras Páez",
+      "slug": "collar-de-chaquiras-paez-nuevo",
+      "price": "45000.00",
+      "stock": 30,
+      "cultural_origin": "Origen cultural artesanal del Huila - Comunidad Nasa Páez - La Plata, Huila",
+      "technique": "Tejido de chaquiras en hilo encerado",
+      "significance": "“Representa los colores sagrados de la cosmovisión Nasa: verde, rojo y amarillo”",
+      "status": "published",
+      "meta_title": "Collar de chaquiras Páez | Art Huila",
+      "meta_description": "Compra Collar de chaquiras Páez, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Collar multicolor elaborado con chaquiras de vidrio y semillas naturales",
+      "materials": "Chaquiras de vidrio, hilo encerado, semillas",
+      "dimensions": "50 cm de largo",
+      "weight": "0.1 kg",
+      "care_instructions": "Evitar contacto con agua y perfumes",
+      "is_handmade": true,
+      "category": "Orfebrería",
+      "region": "Neiva",
+      "artisan_email": "shonano247@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785044760/arthuila/products/fh3z5uqhnpxs4onupmso.png",
+          "public_id": "arthuila/products/fh3z5uqhnpxs4onupmso"
+        }
+      ]
+    },
+    {
+      "name": "Tapete de fique Pital",
+      "slug": "tapete-de-fique-pital-nuevo",
+      "price": "75000.00",
+      "stock": 13,
+      "cultural_origin": "Origen cultural artesanal del Huila - Fiqueras de Pital - Huila",
+      "technique": "Tejido plano en telar de piso",
+      "significance": "“El tapete de fique limpia y embellece el hogar con los colores de la tierra huilense”",
+      "status": "published",
+      "meta_title": "Tapete de fique Pital | Art Huila",
+      "meta_description": "Compra Tapete de fique Pital, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Tapete tejido en fique teñido con pigmentos de achiote y índigo",
+      "materials": "Fibra de fique, tintes de achiote y añil",
+      "dimensions": "60x40 cm",
+      "weight": "0.9 kg",
+      "care_instructions": "Sacudir y lavar a mano si es necesario",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Neiva",
+      "artisan_email": "shonano247@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785044668/arthuila/products/unxohqm3jh41vcgamyxc.png",
+          "public_id": "arthuila/products/unxohqm3jh41vcgamyxc"
+        }
+      ]
+    },
+    {
+      "name": "Aretes de tagua Isnos",
+      "slug": "aretes-de-tagua-isnos-nuevo",
+      "price": "28000.00",
+      "stock": 40,
+      "cultural_origin": "Origen cultural artesanal del Huila - Artesanas de Isnos - Huila",
+      "technique": "Torneado y tallado de tagua",
+      "significance": "“La tagua o marfil vegetal simboliza la biodiversidad del macizo colombiano”",
+      "status": "published",
+      "meta_title": "Aretes de tagua Isnos | Art Huila",
+      "meta_description": "Compra Aretes de tagua Isnos, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Aretes de tagua tallados y teñidos con colorantes naturales",
+      "materials": "Tagua, tintes naturales",
+      "dimensions": "4x2 cm cada uno",
+      "weight": "0.02 kg",
+      "care_instructions": "Guardar en estuche, evitar golpes",
+      "is_handmade": true,
+      "category": "Orfebrería",
+      "region": "Neiva",
+      "artisan_email": "shonano247@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785044557/arthuila/products/tcmhfbqyy9iuob06x6bq.png",
+          "public_id": "arthuila/products/tcmhfbqyy9iuob06x6bq"
+        }
+      ]
+    },
+    {
+      "name": "Bastón tallado en chonta Oportapa",
+      "slug": "baston-tallado-en-chonta-oportapa-nuevo",
+      "price": "98000.00",
+      "stock": 9,
+      "cultural_origin": "Origen cultural artesanal del Huila - Talladores de Oporapa - Huila",
+      "technique": "Talla y pulido de chonta",
+      "significance": "“El bastón de chonta es símbolo de autoridad y sabiduría en las comunidades indígenas”",
+      "status": "published",
+      "meta_title": "Bastón tallado en chonta Oportapa | Art Huila",
+      "meta_description": "Compra Bastón tallado en chonta Oportapa, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Bastón ceremonial tallado en madera de chonta con empuñadura zoomorfa",
+      "materials": "Madera de chonta, cuero crudo",
+      "dimensions": "110 cm de largo",
+      "weight": "0.6 kg",
+      "care_instructions": "Aplicar aceite de coco mensualmente",
+      "is_handmade": true,
+      "category": "Talla en madera",
+      "region": "Neiva",
+      "artisan_email": "shonano247@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785044428/arthuila/products/f2zeqrztzcgagmwsi6mw.png",
+          "public_id": "arthuila/products/f2zeqrztzcgagmwsi6mw"
+        }
+      ]
+    },
+    {
+      "name": "Cesta de bambú Paicol",
+      "slug": "cesta-de-bambu-paicol-nuevo",
+      "price": "48000.00",
+      "stock": 22,
+      "cultural_origin": "Origen cultural artesanal del Huila - Artesanos de Paicol - Huila",
+      "technique": "Cestería en bambú rollizo",
+      "significance": "“El bambú es la planta milenaria que une la tradición constructiva y artesanal del Huila”",
+      "status": "published",
+      "meta_title": "Cesta de bambú Paicol | Art Huila",
+      "meta_description": "Compra Cesta de bambú Paicol, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Cesta rectangular tejida en bambú rollizo con tapa de madera",
+      "materials": "Bambú, madera de balso",
+      "dimensions": "35x25x20 cm",
+      "weight": "0.7 kg",
+      "care_instructions": "Mantener alejado de la humedad directa",
+      "is_handmade": true,
+      "category": "Talla en madera",
+      "region": "Neiva",
+      "artisan_email": "shonano247@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785044214/arthuila/products/vfqkebk4o50eriemrm2j.png",
+          "public_id": "arthuila/products/vfqkebk4o50eriemrm2j"
+        }
+      ]
+    },
+    {
+      "name": "Talla en madera Estatua Agustiniana",
+      "slug": "talla-en-madera-estatua-agustiniana-nuevo",
+      "price": "220000.00",
+      "stock": 8,
+      "cultural_origin": "Origen cultural artesanal del Huila - Taller artesanal de Pitalito - Huila",
+      "technique": "Talla directa en madera de cedro",
+      "significance": "“Reproducción de los monolitos de la cultura San Agustín, declarada Patrimonio de la Humanidad”",
+      "status": "published",
+      "meta_title": "Talla en madera Estatua Agustiniana | Art Huila",
+      "meta_description": "Compra Talla en madera Estatua Agustiniana, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Estatua tallada en madera réplica de los ídolos de San Agustín",
+      "materials": "Madera de cedro, cera natural",
+      "dimensions": "35x15 cm",
+      "weight": "2.5 kg",
+      "care_instructions": "Aplicar aceite de linaza cada 6 meses",
+      "is_handmade": true,
+      "category": "Talla en madera",
+      "region": "Neiva",
+      "artisan_email": "shonano247@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785044105/arthuila/products/onmcybzb5rohjbgweoxr.png",
+          "public_id": "arthuila/products/onmcybzb5rohjbgweoxr"
+        }
+      ]
+    },
+    {
+      "name": "Cuadro tejido en cabuya La Plata",
+      "slug": "cuadro-tejido-en-cabuya-la-plata-nuevo",
+      "price": "98000.00",
+      "stock": 9,
+      "cultural_origin": "Origen cultural artesanal del Huila - Artesanas La Plata - Huila",
+      "technique": "Tejido pictórico en telar manual",
+      "significance": "“El cuadro textil captura la cotidianidad campesina del piedemonte huilense”",
+      "status": "published",
+      "meta_title": "Cuadro tejido en cabuya La Plata | Art Huila",
+      "meta_description": "Compra Cuadro tejido en cabuya La Plata, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Cuadro decorativo tejido en cabuya con escena campesina a color",
+      "materials": "Cabuya teñida, bastidor de madera",
+      "dimensions": "50x40 cm",
+      "weight": "0.8 kg",
+      "care_instructions": "Colgar en lugar seco, sacudir ocasionalmente",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Neiva",
+      "artisan_email": "ingrijuliethgascatenorio@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785039697/arthuila/products/uyb2vfhjvpemhoakkaoo.png",
+          "public_id": "arthuila/products/uyb2vfhjvpemhoakkaoo"
+        }
+      ]
+    },
+    {
+      "name": "Mochila de cabuya Campoalegre",
+      "slug": "mochila-de-cabuya-campoalegre-nuevo",
+      "price": "68000.00",
+      "stock": 18,
+      "cultural_origin": "Origen cultural artesanal del Huila - Asociación artesanas de Campoalegre - Huila",
+      "technique": "Tejido en cabuya natural",
+      "significance": "“La mochila simboliza la autosuficiencia y el trabajo comunitario andino”",
+      "status": "published",
+      "meta_title": "Mochila de cabuya Campoalegre | Art Huila",
+      "meta_description": "Compra Mochila de cabuya Campoalegre, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Mochila rústica tejida con fibra de cabuya teñida naturalmente",
+      "materials": "Fibra de cabuya, tintes vegetales",
+      "dimensions": "35x30 cm",
+      "weight": "0.6 kg",
+      "care_instructions": "Lavar a mano con agua fría y jabón neutro",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Neiva",
+      "artisan_email": "ingrijuliethgascatenorio@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785039573/arthuila/products/vbxmfls5f8rb9ebhitwg.png",
+          "public_id": "arthuila/products/vbxmfls5f8rb9ebhitwg"
+        }
+      ]
+    },
+    {
+      "name": "Sombrero aguadeño La Argentina",
+      "slug": "sombrero-aguadeno-la-argentina-nuevo",
+      "price": "82000.00",
+      "stock": 16,
+      "cultural_origin": "Origen cultural artesanal del Huila - Sombreros La Argentina - Huila",
+      "technique": "Tejido en paja toquilla extrafina",
+      "significance": "“Variante huilense del sombrero aguadeño, emblema de la identidad cafetera andina”",
+      "status": "published",
+      "meta_title": "Sombrero aguadeño La Argentina | Art Huila",
+      "meta_description": "Compra Sombrero aguadeño La Argentina, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Sombrero de paja toquilla tejido fino estilo aguadeño pintado a mano",
+      "materials": "Paja toquilla extrafina, pigmentos naturales",
+      "dimensions": "Talla M",
+      "weight": "0.22 kg",
+      "care_instructions": "Planchar con vapor suave, guardar en caja",
+      "is_handmade": true,
+      "category": "Sombrerería",
+      "region": "Neiva",
+      "artisan_email": "ingrijuliethgascatenorio@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785038465/arthuila/products/dez8qrtzdyjjyyrr3fe2.jpg",
+          "public_id": "arthuila/products/dez8qrtzdyjjyyrr3fe2"
+        }
+      ]
+    },
+    {
+      "name": "Aretes de cerámica Agrado",
+      "slug": "aretes-de-ceramica-agrado-nuevo",
+      "price": "25000.00",
+      "stock": 38,
+      "cultural_origin": "Origen cultural artesanal del Huila - Joyería en cerámica Agrado - Huila",
+      "technique": "Modelado en frío y pintura acrílica",
+      "significance": "“Llevan grabados los motivos florales de la región cafetera del Agrado”",
+      "status": "published",
+      "meta_title": "Aretes de cerámica Agrado | Art Huila",
+      "meta_description": "Compra Aretes de cerámica Agrado, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Aretes de cerámica ligera pintados a mano con flores del café",
+      "materials": "Cerámica, gancho de acero inox",
+      "dimensions": "3x2.5 cm",
+      "weight": "0.03 kg",
+      "care_instructions": "Evitar contacto con agua",
+      "is_handmade": true,
+      "category": "Cerámica",
+      "region": "Neiva",
+      "artisan_email": "ingrijuliethgascatenorio@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785038414/arthuila/products/w67uiabc7ohqupt9zc4y.jpg",
+          "public_id": "arthuila/products/w67uiabc7ohqupt9zc4y"
+        }
+      ]
+    },
+    {
+      "name": "Sombrero Suazero tradicional",
+      "slug": "sombrero-suazero-tradicional-nuevo",
+      "price": "85000.00",
+      "stock": 20,
+      "cultural_origin": "Origen cultural artesanal del Huila - Comunidad artesana de Suaza - Huila",
+      "technique": "Tejido en palma de iraca",
+      "significance": "“Símbolo de identidad campesina huilense y protección solar en el trabajo agrícola”",
+      "status": "published",
+      "meta_title": "Sombrero Suazero tradicional | Art Huila",
+      "meta_description": "Compra Sombrero Suazero tradicional, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Elegante sombrero tejido a mano en palma de iraca",
+      "materials": "Palma de iraca",
+      "dimensions": "Talla M y L",
+      "weight": "0.3 kg",
+      "care_instructions": "Guardar en lugar seco alejado del sol directo",
+      "is_handmade": true,
+      "category": "Sombrerería",
+      "region": "Neiva",
+      "artisan_email": "ingrijuliethgascatenorio@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785038267/arthuila/products/t7aftnzefrvzemm6vrzc.png",
+          "public_id": "arthuila/products/t7aftnzefrvzemm6vrzc"
+        }
+      ]
+    },
+    {
+      "name": "Abanico de palma Palermo",
+      "slug": "abanico-de-palma-palermo-nuevo",
+      "price": "22000.00",
+      "stock": 45,
+      "cultural_origin": "Origen cultural artesanal del Huila - Artesanos de Palermo - Huila",
+      "technique": "Tejido y talla en palma de vino",
+      "significance": "“El abanico ha acompañado las festividades del San Pedro huilense por generaciones”",
+      "status": "published",
+      "meta_title": "Abanico de palma Palermo | Art Huila",
+      "meta_description": "Compra Abanico de palma Palermo, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Abanico decorativo tejido en palma de vino con mango tallado",
+      "materials": "Palma de vino, madera de guayacán",
+      "dimensions": "35x20 cm abierto",
+      "weight": "0.15 kg",
+      "care_instructions": "Mantener alejado del calor directo",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Neiva",
+      "artisan_email": "ingrijuliethgascatenorio@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785038227/arthuila/products/mmirlz4iluguigzayxlj.jpg",
+          "public_id": "arthuila/products/mmirlz4iluguigzayxlj"
+        }
+      ]
+    },
+    {
+      "name": "Figura de cerámica tortuga Hobo",
+      "slug": "figura-de-ceramica-tortuga-hobo-nuevo",
+      "price": "42000.00",
+      "stock": 28,
+      "cultural_origin": "Origen cultural artesanal del Huila - Ceramistas de Hobo - Huila",
+      "technique": "Modelado a mano y esmaltado",
+      "significance": "“La tortuga simboliza longevidad y conexión con el río Magdalena”",
+      "status": "published",
+      "meta_title": "Figura de cerámica tortuga Hobo | Art Huila",
+      "meta_description": "Compra Figura de cerámica tortuga Hobo, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Figura de tortuga en cerámica esmaltada con colores vivos",
+      "materials": "Arcilla, esmaltes cerámicos",
+      "dimensions": "12x8 cm",
+      "weight": "0.35 kg",
+      "care_instructions": "Apta para uso decorativo, lavar con cuidado",
+      "is_handmade": true,
+      "category": "Cerámica",
+      "region": "Neiva",
+      "artisan_email": "ingrijuliethgascatenorio@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785038124/arthuila/products/yp59ezueayqqd8xzixty.png",
+          "public_id": "arthuila/products/yp59ezueayqqd8xzixty"
+        }
+      ]
+    },
+    {
+      "name": "Canasto de mimbre Acevedo",
+      "slug": "canasto-de-mimbre-acevedo-nuevo",
+      "price": "55000.00",
+      "stock": 22,
+      "cultural_origin": "Origen cultural artesanal del Huila - Artesanos de Acevedo - Huila",
+      "technique": "Cestería en mimbre y junco",
+      "significance": "“El canasto representa la cosecha y la abundancia de la tierra huilense”",
+      "status": "published",
+      "meta_title": "Canasto de mimbre Acevedo | Art Huila",
+      "meta_description": "Compra Canasto de mimbre Acevedo, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Canasto tejido a mano con mimbre flexible y bejuco natural",
+      "materials": "Mimbre, bejuco, junco",
+      "dimensions": "40x35 cm",
+      "weight": "0.8 kg",
+      "care_instructions": "Limpiar con paño húmedo, no sumergir",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Neiva",
+      "artisan_email": "ingrijuliethgascatenorio@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785037967/arthuila/products/ovrhvpq1jje0pep5q9sd.png",
+          "public_id": "arthuila/products/ovrhvpq1jje0pep5q9sd"
+        }
+      ]
+    },
+    {
+      "name": "Tejido de punto chal Oporapa",
+      "slug": "tejido-de-punto-chal-oporapa-nuevo",
+      "price": "88000.00",
+      "stock": 12,
+      "cultural_origin": "Origen cultural artesanal del Huila - Tejedoras de Oporapa - Huila",
+      "technique": "Tejido de punto en dos agujas",
+      "significance": "“El chal abriga el cuerpo y el alma como la niebla que cubre el Macizo Colombiano”",
+      "status": "published",
+      "meta_title": "Tejido de punto chal Oporapa | Art Huila",
+      "meta_description": "Compra Tejido de punto chal Oporapa, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Chal amplio tejido en punto calado con lana de oveja natural",
+      "materials": "Lana de oveja natural sin teñir",
+      "dimensions": "160x60 cm",
+      "weight": "0.4 kg",
+      "care_instructions": "Lavar a mano en agua fría, secar en plano",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Neiva",
+      "artisan_email": "ingrijuliethgascatenorio@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785037763/arthuila/products/ibxnsqsnhzfb6gjnglgl.png",
+          "public_id": "arthuila/products/ibxnsqsnhzfb6gjnglgl"
+        }
+      ]
+    },
+    {
+      "name": "Bolso de palma Santa María",
+      "slug": "bolso-de-palma-santa-maria-nuevo",
+      "price": "58000.00",
+      "stock": 17,
+      "cultural_origin": "Origen cultural artesanal del Huila - Artesanas de Santa María - Huila",
+      "technique": "Tejido en palma de iraca",
+      "significance": "“La palma de Santa María cubre con su generosidad la tradición textil del norte del Huila”",
+      "status": "published",
+      "meta_title": "Bolso de palma Santa María | Art Huila",
+      "meta_description": "Compra Bolso de palma Santa María, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Bolso tejido en palma de iraca con asa de cuero y cierre",
+      "materials": "Palma de iraca, cuero natural, cierre metálico",
+      "dimensions": "28x22 cm",
+      "weight": "0.4 kg",
+      "care_instructions": "Limpiar con cepillo suave en seco",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Neiva",
+      "artisan_email": "ingrijuliethgascatenorio@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785037336/arthuila/products/hr0ml2v9gw9mmkjyenxq.png",
+          "public_id": "arthuila/products/hr0ml2v9gw9mmkjyenxq"
+        }
+      ]
+    },
+    {
+      "name": "Collar de huesos y semillas Tello",
+      "slug": "collar-de-huesos-y-semillas-tello-nuevo",
+      "price": "40000.00",
+      "stock": 27,
+      "cultural_origin": "Origen cultural artesanal del Huila - Artesanos de Tello - Huila",
+      "technique": "Selección y ensamblaje artesanal",
+      "significance": "“Los huesos y semillas conectan al portador con los ciclos de la naturaleza”",
+      "status": "published",
+      "meta_title": "Collar de huesos y semillas Tello | Art Huila",
+      "meta_description": "Compra Collar de huesos y semillas Tello, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Collar étnico de huesos de animales silvestres y semillas amazónicas",
+      "materials": "Huesos curtidos, semillas nativas, hilo encerado",
+      "dimensions": "55 cm largo",
+      "weight": "0.12 kg",
+      "care_instructions": "Evitar agua y perfumes",
+      "is_handmade": true,
+      "category": "Orfebrería",
+      "region": "Neiva",
+      "artisan_email": "yuleinylugo71@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785043116/arthuila/products/eigbi38z33dbrpxenpio.png",
+          "public_id": "arthuila/products/eigbi38z33dbrpxenpio"
+        }
+      ]
+    },
+    {
+      "name": "Anillo de tagua Gigante",
+      "slug": "anillo-de-tagua-gigante-nuevo",
+      "price": "22000.00",
+      "stock": 48,
+      "cultural_origin": "Origen cultural artesanal del Huila - Joyería en tagua Gigante - Huila",
+      "technique": "Torneado y lacado de tagua",
+      "significance": "“La tagua tallada como anillo simboliza el compromiso con la naturaleza y lo artesanal”",
+      "status": "published",
+      "meta_title": "Anillo de tagua Gigante | Art Huila",
+      "meta_description": "Compra Anillo de tagua Gigante, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Anillo de tagua torneado con incrustación de semillas de amor",
+      "materials": "Tagua, semillas de amor seco",
+      "dimensions": "Talla 7-12 ajustable",
+      "weight": "0.01 kg",
+      "care_instructions": "Evitar agua y productos químicos",
+      "is_handmade": true,
+      "category": "Orfebrería",
+      "region": "Neiva",
+      "artisan_email": "yuleinylugo71@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785043002/arthuila/products/uoplwrddzhhshzzfzzcc.png",
+          "public_id": "arthuila/products/uoplwrddzhhshzzfzzcc"
+        }
+      ]
+    },
+    {
+      "name": "Tapiz de lana Palestina",
+      "slug": "tapiz-de-lana-palestina-nuevo",
+      "price": "145000.00",
+      "stock": 8,
+      "cultural_origin": "Origen cultural artesanal del Huila - Tejedoras de Palestina - Huila",
+      "technique": "Tejido en telar de pedal",
+      "significance": "“El tapiz narra la historia agraria del Huila a través de escenas costumbristas”",
+      "status": "published",
+      "meta_title": "Tapiz de lana Palestina | Art Huila",
+      "meta_description": "Compra Tapiz de lana Palestina, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Tapiz decorativo tejido a mano con escenas del campo huilense",
+      "materials": "Lana natural teñida con plantas",
+      "dimensions": "80x60 cm",
+      "weight": "1.0 kg",
+      "care_instructions": "Sacudir suavemente, limpiar en seco",
+      "is_handmade": true,
+      "category": "Tejeduría",
+      "region": "Neiva",
+      "artisan_email": "yuleinylugo71@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785042887/arthuila/products/z8qry7e6w5bksloybxh1.png",
+          "public_id": "arthuila/products/z8qry7e6w5bksloybxh1"
+        }
+      ]
+    },
+    {
+      "name": "Macetero de barro Campoalegre",
+      "slug": "macetero-de-barro-campoalegre-nuevo",
+      "price": "52000.00",
+      "stock": 21,
+      "cultural_origin": "Origen cultural artesanal del Huila - Alfarería Campoalegre - Huila",
+      "technique": "Modelado a mano y quema artesanal",
+      "significance": "“El macetero de barro fusiona la naturaleza con el arte alfarero del Huila”",
+      "status": "published",
+      "meta_title": "Macetero de barro Campoalegre | Art Huila",
+      "meta_description": "Compra Macetero de barro Campoalegre, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Macetero de barro crudo decorado con grabados geométricos tradicionales",
+      "materials": "Arcilla local, engobe rojo",
+      "dimensions": "20x18 cm",
+      "weight": "1.0 kg",
+      "care_instructions": "Apto para plantas, limpiar con paño húmedo",
+      "is_handmade": true,
+      "category": "Cerámica",
+      "region": "Neiva",
+      "artisan_email": "yuleinylugo71@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785042648/arthuila/products/ngcoo1rge9dppz8pverz.png",
+          "public_id": "arthuila/products/ngcoo1rge9dppz8pverz"
+        }
+      ]
+    },
+    {
+      "name": "Plato decorativo cerámica Rivera",
+      "slug": "plato-decorativo-ceramica-rivera-nuevo",
+      "price": "72000.00",
+      "stock": 14,
+      "cultural_origin": "Origen cultural artesanal del Huila - Taller cerámica Rivera - Huila",
+      "technique": "Cerámica vidriada a alta temperatura",
+      "significance": "“Los motivos del plato evocan la flora y fauna del río Magdalena”",
+      "status": "published",
+      "meta_title": "Plato decorativo cerámica Rivera | Art Huila",
+      "meta_description": "Compra Plato decorativo cerámica Rivera, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Plato decorativo esmaltado con diseños de flora magdalenense",
+      "materials": "Arcilla blanca, esmaltes cerámicos",
+      "dimensions": "30 cm diámetro",
+      "weight": "0.7 kg",
+      "care_instructions": "Lavable, no apto para microondas",
+      "is_handmade": true,
+      "category": "Cerámica",
+      "region": "Neiva",
+      "artisan_email": "yuleinylugo71@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785042487/arthuila/products/ga9b68fbdeflwlqmcll8.png",
+          "public_id": "arthuila/products/ga9b68fbdeflwlqmcll8"
+        }
+      ]
+    },
+    {
+      "name": "Sombrero de paja Gigante",
+      "slug": "sombrero-de-paja-gigante-nuevo",
+      "price": "78000.00",
+      "stock": 17,
+      "cultural_origin": "Origen cultural artesanal del Huila - Cooperativa sombrerera Gigante - Huila",
+      "technique": "Tejido fino en paja toquilla",
+      "significance": "“El sombrero de paja toquilla es símbolo del trabajo y la elegancia popular”",
+      "status": "published",
+      "meta_title": "Sombrero de paja Gigante | Art Huila",
+      "meta_description": "Compra Sombrero de paja Gigante, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Sombrero fino tejido en paja toquilla con diseño clásico huilense",
+      "materials": "Paja toquilla",
+      "dimensions": "Talla única ajustable",
+      "weight": "0.25 kg",
+      "care_instructions": "Mantener la forma con papel, guardar en caja",
+      "is_handmade": true,
+      "category": "Sombrerería",
+      "region": "Neiva",
+      "artisan_email": "yuleinylugo71@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785042327/arthuila/products/bo0bx2qneddqxpcdt1b8.png",
+          "public_id": "arthuila/products/bo0bx2qneddqxpcdt1b8"
+        }
+      ]
+    },
+    {
+      "name": "Vasija de barro San Agustín",
+      "slug": "vasija-de-barro-san-agustin-nuevo",
+      "price": "95000.00",
+      "stock": 15,
+      "cultural_origin": "Origen cultural artesanal del Huila - Comunidad indígena de San Agustín - Huila",
+      "technique": "Alfarería a mano alzada",
+      "significance": "“Replica los patrones funerarios de la cultura agustiniana prehispánica”",
+      "status": "published",
+      "meta_title": "Vasija de barro San Agustín | Art Huila",
+      "meta_description": "Compra Vasija de barro San Agustín, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Vasija decorativa inspirada en la arqueología de San Agustín",
+      "materials": "Barro cocido y pigmentos naturales",
+      "dimensions": "25x20 cm",
+      "weight": "1.2 kg",
+      "care_instructions": "Limpiar con paño seco, no sumergir en agua",
+      "is_handmade": true,
+      "category": "Cerámica",
+      "region": "Neiva",
+      "artisan_email": "yuleinylugo71@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785042218/arthuila/products/bp2gacg3fglsiv5t2t1y.png",
+          "public_id": "arthuila/products/bp2gacg3fglsiv5t2t1y"
+        }
+      ]
+    },
+    {
+      "name": "Pendientes de cobre Nátaga",
+      "slug": "pendientes-de-cobre-nataga-nuevo",
+      "price": "38000.00",
+      "stock": 30,
+      "cultural_origin": "Origen cultural artesanal del Huila - Orfebrería Nátaga - Huila",
+      "technique": "Repujado y soldado en cobre artesanal",
+      "significance": "“El cobre fue el primer metal trabajado por las culturas precolombinas del Huila”",
+      "status": "published",
+      "meta_title": "Pendientes de cobre Nátaga | Art Huila",
+      "meta_description": "Compra Pendientes de cobre Nátaga, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Pendientes de cobre repujado con diseños geométricos prehispánicos",
+      "materials": "Cobre, cierre de acero inox",
+      "dimensions": "5x3 cm",
+      "weight": "0.04 kg",
+      "care_instructions": "Limpiar con paño anti-oxidante",
+      "is_handmade": true,
+      "category": "Orfebrería",
+      "region": "Neiva",
+      "artisan_email": "yuleinylugo71@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785042015/arthuila/products/jyhvjgj7vo2oh1zn1on6.png",
+          "public_id": "arthuila/products/jyhvjgj7vo2oh1zn1on6"
+        }
+      ]
+    },
+    {
+      "name": "Pulsera de guadua Garzón",
+      "slug": "pulsera-de-guadua-garzon-nuevo",
+      "price": "18000.00",
+      "stock": 50,
+      "cultural_origin": "Origen cultural artesanal del Huila - Artesanos de Garzón - Huila",
+      "technique": "Tallado y pulido de guadua",
+      "significance": "“La guadua representa la fortaleza y flexibilidad del campesino huilense”",
+      "status": "published",
+      "meta_title": "Pulsera de guadua Garzón | Art Huila",
+      "meta_description": "Compra Pulsera de guadua Garzón, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Pulsera elaborada con láminas de guadua pulida y barnizada",
+      "materials": "Guadua, barniz natural",
+      "dimensions": "Diámetro 7 cm",
+      "weight": "0.05 kg",
+      "care_instructions": "Evitar humedad excesiva",
+      "is_handmade": true,
+      "category": "Orfebrería",
+      "region": "Neiva",
+      "artisan_email": "yuleinylugo71@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785041809/arthuila/products/mllcg154vaikrbr09kgq.png",
+          "public_id": "arthuila/products/mllcg154vaikrbr09kgq"
+        }
+      ]
+    },
+    {
+      "name": "Florero de cerámica Tesalia",
+      "slug": "florero-de-ceramica-tesalia-nuevo",
+      "price": "65000.00",
+      "stock": 16,
+      "cultural_origin": "Origen cultural artesanal del Huila - Cerámica Tesalia - Huila",
+      "technique": "Torneado en torno lento y vidriado",
+      "significance": "“El florero captura la riqueza floral de las quebradas del Huila”",
+      "status": "published",
+      "meta_title": "Florero de cerámica Tesalia | Art Huila",
+      "meta_description": "Compra Florero de cerámica Tesalia, pieza artesanal auténtica del Huila, Colombia.",
+      "short_description": "Florero torneado en arcilla blanca con esmalte verde selva",
+      "materials": "Arcilla blanca, esmalte cerámico",
+      "dimensions": "22x12 cm",
+      "weight": "0.75 kg",
+      "care_instructions": "Apto para agua y uso diario",
+      "is_handmade": true,
+      "category": "Cerámica",
+      "region": "Neiva",
+      "artisan_email": "yuleinylugo71@gmail.com",
+      "images": [
+        {
+          "url": "https://res.cloudinary.com/dcoj4c3ay/image/upload/v1785041680/arthuila/products/vittguvpxs0rr2eno3yh.png",
+          "public_id": "arthuila/products/vittguvpxs0rr2eno3yh"
+        }
+      ]
+    }
+  ]
+}

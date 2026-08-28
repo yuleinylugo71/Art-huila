@@ -36,9 +36,9 @@ async function initHome() {
   if (mobileWelcomeUsername) {
     if (user) {
       const firstName = (user.full_name || user.username || '').split(' ')[0];
-      mobileWelcomeUsername.textContent = firstName || 'Invitado 🏺';
+      mobileWelcomeUsername.textContent = firstName || 'Invitado';
     } else {
-      mobileWelcomeUsername.textContent = 'Invitado 🏺';
+      mobileWelcomeUsername.textContent = 'Invitado';
     }
   }
 
@@ -99,7 +99,7 @@ async function initHome() {
   try {
     const products = await apiFetch('/products?featured=true&limit=4');
     cachedProducts = products; // Cache the products for wishlist and cart
-    
+
     if (!products || products.length === 0) {
       featuredGrid.innerHTML = `<p class="text-muted">${i18next.t('home.noFeaturedProducts')}</p>`;
       const mobileFeaturedGrid = document.getElementById('mobile-featured-grid');
@@ -112,10 +112,10 @@ async function initHome() {
         const artisanName = p.artisan?.user?.full_name || p.artisan?.name || '';
 
         return `
-          <div class="product-card" onclick="window.location.href='/producto.html?slug=${p.slug}'">
+          <div class="product-card" onclick="window.location.href='/producto/${p.slug}'">
             <div class="product-card-image" style="position:relative;">
               <img src="${imgUrl}" alt="${window.translateProduct(p)}" onerror="this.onerror=null; this.src='/img/placeholder.jpg';" loading="lazy"/>
-              
+
               <!-- Heart Wishlist button floating over image -->
               <button class="btn-wishlist ${isWish ? 'active' : ''}" data-id="${p.id}" onclick="event.stopPropagation(); if (typeof Wishlist !== 'undefined') Wishlist.toggle('${p.id}')" title="Favoritos">
                 <i class="${isWish ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
@@ -127,7 +127,7 @@ async function initHome() {
                 <i class="fa-solid fa-store" style="font-size:0.75rem;"></i>
                 <span style="font-size:0.75rem;"><strong>${artisanName}</strong></span>
               </div>
-              
+
               <!-- Stock & Stars Row -->
               <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.25rem;">
                 <div class="product-card-stock">${isOutOfStock ? 'Sin stock' : `${p.stock || 5} disponibles`}</div>
@@ -142,8 +142,8 @@ async function initHome() {
               <!-- Product Footer (Price & Orange Cart Button) -->
               <div class="product-card-footer-new" style="display:flex;justify-content:space-between;align-items:center;margin-top:0.5rem;">
                 <span class="product-price-new">${formatPrice(p.price)}</span>
-                <button class="btn-card-cart ${isOutOfStock ? 'disabled' : ''}" 
-                        onclick="event.stopPropagation(); ${isOutOfStock ? '' : `addToCart('${p.id}')`}" 
+                <button class="btn-card-cart ${isOutOfStock ? 'disabled' : ''}"
+                        onclick="event.stopPropagation(); ${isOutOfStock ? '' : `addToCart('${p.id}')`}"
                         title="${isOutOfStock ? 'Sin stock' : 'Agregar al carrito'}"
                         ${isOutOfStock ? 'disabled' : ''}>
                   <i class="${isOutOfStock ? 'fa-solid fa-circle-xmark' : 'fa-solid fa-plus'}"></i>
@@ -174,13 +174,14 @@ async function initHome() {
     const p = cachedProducts.find(x => x.id === productId);
     if (!p) return;
     const user = Auth.getUser();
-    if (user && user.role === 'artesano' && p.artisan?.user && user.id === p.artisan.user.id) {
-      showToast('No puedes comprar tus propios productos', 'warning'); 
+    const artisanUserId = p.artisan?.user?.id || p.artisan?.userId || p.artisan_user_id;
+    if (user && (user.role === 'artesano' || user.role === 'artisan') && artisanUserId && user.id === artisanUserId) {
+      showToast(i18next.t('product.errorCantBuyOwnProduct', { defaultValue: 'No puedes comprar tus propios productos' }), 'warning');
       return;
     }
-    const imgUrl = p.image_url || '';
-    const artisanName = p.artisan?.name || '';
-    Cart.add({ id: p.id, name: p.name, price: p.price, image: imgUrl, artisanName }, 1);
+    const imgUrl = p.image_url || (p.images && p.images[0] ? p.images[0].url : '');
+    const artisanName = p.artisan?.name || p.artisan?.user?.full_name || '';
+    Cart.add({ id: p.id, name: p.name, name_en: p.name_en, price: p.price, image: imgUrl, artisanName, artisanUserId }, 1);
   }
   window.addToCart = addToCart;
 
@@ -189,12 +190,12 @@ async function initHome() {
   if (navAuth) {
     const user = Auth.getUser();
     if (user) {
-      let dashboard = 'dashboard-comprador.html';
-      if (user.role === 'artesano') dashboard = 'dashboard-artesano.html';
-      if (user.role === 'admin') dashboard = 'dashboard-admin.html';
+      let dashboard = '/dashboard-comprador.html';
+      if (user.role === 'artesano') dashboard = '/dashboard-artesano.html';
+      if (user.role === 'admin') dashboard = '/dashboard-admin.html';
       navAuth.innerHTML = `<a href="${dashboard}" class="btn-mi-cuenta" data-i18n="nav.myPanel">Mi Panel</a>`;
     } else {
-      navAuth.innerHTML = `<a href="login.html" class="btn-mi-cuenta" data-i18n="auth.login">Iniciar sesión</a>`;
+      navAuth.innerHTML = `<a href="/login.html" class="btn-mi-cuenta" data-i18n="auth.login">Iniciar sesión</a>`;
     }
     if (typeof applyTranslations === 'function') applyTranslations();
   }
@@ -319,5 +320,60 @@ async function initHome() {
 
     // Initial load
     updateSlider();
+  }
+
+  // --- MOBILE HERO PRODUCT SLIDER ---
+  let currentMobileSlideIndex = window.currentMobileSlideIndex || 0;
+  const mobileSliderContainer = document.getElementById('mobile-hero-slider');
+  if (mobileSliderContainer) {
+    const mobileItems = mobileSliderContainer.querySelectorAll('.mobile-hero-product');
+    const mobileDotsContainer = document.getElementById('mobile-hero-dots-container');
+
+    const updateMobileSlider = () => {
+      const dots = mobileDotsContainer ? mobileDotsContainer.querySelectorAll('button') : [];
+      mobileItems.forEach((item, i) => {
+        item.classList.toggle('active', i === currentMobileSlideIndex);
+      });
+
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === currentMobileSlideIndex);
+      });
+
+      const activeItem = mobileItems[currentMobileSlideIndex];
+      if (activeItem) {
+        const isEn = (i18next.language || 'es').startsWith('en');
+        const nameAttr = isEn ? 'data-name-en' : 'data-name-es';
+        const name = activeItem.getAttribute(nameAttr) || activeItem.getAttribute('data-name-es');
+        const price = activeItem.getAttribute('data-price');
+        const nameEl = document.getElementById('mobile-slider-item-name');
+        const priceEl = document.getElementById('mobile-slider-item-price');
+
+        if (nameEl) nameEl.textContent = name;
+        if (priceEl && price) priceEl.textContent = formatPrice(Number(price));
+      }
+    };
+
+    const nextMobileSlide = () => {
+      currentMobileSlideIndex = (currentMobileSlideIndex + 1) % mobileItems.length;
+      window.currentMobileSlideIndex = currentMobileSlideIndex;
+      updateMobileSlider();
+    };
+
+    if (mobileDotsContainer) {
+      mobileDotsContainer.querySelectorAll('button').forEach((dot, idx) => {
+        dot.onclick = (e) => {
+          e.preventDefault();
+          currentMobileSlideIndex = idx;
+          window.currentMobileSlideIndex = currentMobileSlideIndex;
+          updateMobileSlider();
+        };
+      });
+    }
+
+    if (window.mobileHeroSliderInterval) {
+      clearInterval(window.mobileHeroSliderInterval);
+    }
+    window.mobileHeroSliderInterval = setInterval(nextMobileSlide, 3500);
+    updateMobileSlider();
   }
 }

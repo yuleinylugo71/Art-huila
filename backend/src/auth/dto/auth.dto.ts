@@ -44,11 +44,9 @@ export class RefreshDto {
 export class LogoutDto extends RefreshDto {}
 
 export class RegisterArtisanDto extends RegisterDto {
-  @IsNotEmpty({
-    message: 'El número de identificación (cédula) es obligatorio',
-  })
+  @IsOptional()
   @IsString()
-  id_number: string;
+  id_number?: string;
 
   @IsNotEmpty({ message: 'La historia cultural es obligatoria' })
   @IsString()

@@ -38,11 +38,6 @@ export class UsersService {
     const user = await this.findById(userId);
     if (!user) return;
     user.failed_login_attempts += 1;
-    if (user.failed_login_attempts >= 3) {
-      const lockUntil = new Date();
-      lockUntil.setMinutes(lockUntil.getMinutes() + 5);
-      user.locked_until = lockUntil;
-    }
     await this.userRepo.save(user);
   }
 

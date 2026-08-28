@@ -185,7 +185,14 @@
     "paymentStatusFailed": "Fallido",
     "paymentStatusPending": "Pendiente",
     "paymentStatusCancelled": "Cancelado",
-    "retryPaymentBtn": "Reintentar pago"
+    "retryPaymentBtn": "Reintentar pago",
+    "updateTrackingModalTitle": "Registrar Guía de Envío",
+    "updateTrackingHint": "Ingresa la información del paquete enviado para que el cliente pueda hacerle seguimiento.",
+    "carrierLabelSelect": "Empresa Transportadora *",
+    "selectCarrierPlaceholder": "Seleccionar transportadora...",
+    "trackingNumberLabelInput": "Número de Guía / Tracking *",
+    "mipaqueteNote": "* Si seleccionas MiPaquete, el número de guía se generará automáticamente.",
+    "saveAndShipBtn": "Guardar y Despachar"
   },
   "buyer": {
     "title": "Mi Perfil — Art Huila",
@@ -620,6 +627,10 @@
     "brandSubtitleMobile": "Artesanías con Alma",
     "heroTitleMobile": "Artesanías con Alma del Huila",
     "heroSubtitleMobile": "Cultura ancestral en cada pieza",
+    "mobileHeroTitle": "Artesanía que inspira",
+    "mobileHeroSubtitle": "Hecho en Huila, para el mundo.",
+    "mobileHandmade": "Hecho a mano",
+    "mobileSearchPlaceholder": "¿Qué buscas hoy?",
     "btnExplore": "Explorar",
     "btnRegister": "Registrarse",
     "statArtisansMobile": "Artesanos",

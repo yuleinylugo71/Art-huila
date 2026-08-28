@@ -17,7 +17,8 @@ body {
   display: flex;
   width: 100%;
   max-width: 840px; /* Slightly wider for gorgeous form columns */
-  height: 620px; /* Fixed elegant height to keep layout stable and scroll internally */
+  height: 640px; /* Fixed elegant height to keep layout stable and scroll internally */
+  max-height: calc(100vh - 3rem);
   border-radius: 16px;
   overflow: hidden;
   box-shadow:
@@ -29,15 +30,16 @@ body {
   transition: max-width 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-/* Make registration card wider dynamically if needed */
+/* Registration card dimensions kept strictly identical to keep container size fixed */
 .auth-layout-register {
-  max-width: 960px;
-  height: auto;
-  min-height: 620px;
+  max-width: 840px;
+  height: 640px;
+  max-height: calc(100vh - 3rem);
 }
 .auth-layout-register .auth-right {
-  height: auto;
-  overflow-y: visible;
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 /* ─────────────────────────────────────────
@@ -45,13 +47,15 @@ body {
    ───────────────────────────────────────── */
 .auth-left {
   width: 42%;
+  height: 100%;
   background: var(--color-primary);
   position: relative;
   display: flex;
   flex-direction: column;
   padding: 3rem 4.5rem 2.5rem 2.25rem; /* Increased right padding to prevent overlapping with wave divider */
-  z-index: 1;
+  z-index: 2;
   color: #ffffff;
+  box-sizing: border-box;
 }
 
 /* Multi-layered organic wave dividers styled after the Spacer mockup */
@@ -225,6 +229,8 @@ body {
   z-index: 0;
   overflow-y: auto;
   height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
 }
 
 /* Custom premium scrollbar for the scrollable form panel */
@@ -482,6 +488,13 @@ input[type="file"].form-control:hover {
   cursor: pointer;
 }
 
+.checkbox-label a {
+  color: var(--color-primary);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 /* ── BUTTONS & DIVIDERS ── */
 .divider {
   border: 0;
@@ -595,6 +608,76 @@ nav.desktop-only {
   gap: 0.5rem;
 }
 
+.register-steps {
+  display: grid;
+  grid-template-columns: 32px 1fr 32px 1fr 32px;
+  align-items: center;
+  gap: 0.65rem;
+  margin: 0.25rem 0 1.35rem;
+}
+
+.register-steps span {
+  height: 1px;
+  background: var(--color-border);
+}
+
+.register-step {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-border);
+  background: #ffffff;
+  color: var(--color-muted);
+  font-weight: 800;
+  font-size: 0.82rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.register-step.is-active,
+.register-step.is-complete {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: #ffffff;
+}
+
+.artisan-step {
+  display: none;
+}
+
+.artisan-step.is-active {
+  display: block;
+  animation: slideUpFade 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.step-copy {
+  margin: 0.4rem 0 1.25rem;
+  color: var(--color-muted);
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.wizard-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.btn-secondary {
+  background: #ffffff;
+  color: var(--color-text);
+  border: 1.5px solid var(--color-border);
+  box-shadow: none;
+}
+
+.btn-secondary:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: translateY(-1.5px);
+}
+
 /* Custom Dotted Dragzone File Upload */
 .custom-file-upload {
   display: flex;
@@ -656,10 +739,22 @@ nav.desktop-only {
    RESPONSIVE LAYOUT
    ───────────────────────────────────────── */
 @media (max-width: 860px) {
+  html,
   body {
-    padding: 0;
+    min-height: 100dvh;
+    height: auto;
+    padding: 0 !important;
+    padding-bottom: 0 !important;
+    display: block !important;
     align-items: stretch;
     background: #faf8f5 !important;
+    overflow-y: auto !important;
+  }
+
+  .mobile-bottom-nav {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
   }
 
   .mobile-only {
@@ -674,9 +769,11 @@ nav.desktop-only {
     border-radius: 0;
     border: none;
     box-shadow: none;
-    min-height: 100vh;
+    min-height: 100dvh;
     height: auto;
+    max-height: none;
     max-width: 100%;
+    overflow: visible !important;
     background: #faf8f5 !important;
   }
 
@@ -690,9 +787,11 @@ nav.desktop-only {
 
   .auth-right {
     width: 100% !important;
-    padding: 0.5rem 1.25rem 3rem 1.25rem !important;
+    min-height: 100dvh;
+    height: auto !important;
+    padding: 0.5rem 1.25rem calc(3rem + env(safe-area-inset-bottom)) 1.25rem !important;
     background: #faf8f5 !important;
-    overflow-y: visible;
+    overflow: visible !important;
     box-sizing: border-box;
   }
 
@@ -701,10 +800,11 @@ nav.desktop-only {
     width: 100%;
     background: #ffffff;
     border-radius: 24px;
-    padding: 2rem 1.5rem;
+    padding: 1.75rem 1.5rem 1.85rem;
     box-shadow: 0 12px 40px rgba(139, 90, 43, 0.05);
     border: 1.5px solid #ebdcd0;
     box-sizing: border-box;
+    margin-bottom: 1rem;
   }
 
   /* Form Titles */
@@ -866,7 +966,7 @@ nav.desktop-only {
     flex-direction: column;
     align-items: center;
     position: relative;
-    padding: 2.25rem 0.5rem 2.25rem 0.5rem;
+    padding: 1.35rem 0.5rem 1.6rem 0.5rem;
     width: 100%;
     box-sizing: border-box;
   }
@@ -885,12 +985,12 @@ nav.desktop-only {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 64px;
-    height: 64px;
+    width: 56px;
+    height: 56px;
     border-radius: 16px;
     background: #c1440e; /* Terracotta block */
     color: #ffffff;
-    font-size: 1.85rem;
+    font-size: 1.55rem;
     box-shadow: 0 8px 24px rgba(193, 68, 14, 0.25);
   }
   .mobile-brand-title {

@@ -5,6 +5,7 @@ import {
   InternalServerErrorException,
   Inject,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -29,6 +30,7 @@ export class OrdersService {
     @Inject(MAIL_SERVICE)
     private readonly mailService: IMailService,
     private readonly mipaqueteService: MipaqueteService,
+    private readonly configService: ConfigService,
     private dataSource: DataSource,
   ) {}
 
@@ -61,11 +63,9 @@ export class OrdersService {
           throw new NotFoundException(`Product ${itemDto.productId} not found`);
         }
 
-        if (
-          product.artisan &&
-          product.artisan.user &&
-          product.artisan.user.id === user.id
-        ) {
+        const artisanUserId =
+          product.artisan?.user?.id || (product.artisan as any)?.user_id;
+        if (artisanUserId && artisanUserId === user.id) {
           throw new BadRequestException(
             `No puedes comprar tu propio producto: ${product.name}`,
           );
@@ -136,6 +136,7 @@ export class OrdersService {
         'items',
         'items.product',
         'items.product.artisan',
+        'items.product.category',
         'items.product.images',
       ],
       order: { created_at: 'DESC' },
@@ -203,7 +204,12 @@ export class OrdersService {
       throw new NotFoundException('Order not found');
     }
 
-    // Manual/Mock payment processing...
+    if (this.configService.get<string>('EPAYCO_ALLOW_MOCK_PAYMENTS') !== 'true') {
+      throw new BadRequestException(
+        'El pago debe confirmarse desde la pasarela ePayco.',
+      );
+    }
+
     return this.markAsPaid(id, `MOCK_PAY_${Date.now()}`);
   }
 
@@ -357,6 +363,33 @@ export class OrdersService {
             'El administrador solo puede marcar un pedido como Cancelado o Entregado.',
           );
         }
+      }
+    }
+
+    // If order is being shipped, automatically generate tracking guide using buyer's selected carrier
+    if (status === OrderStatus.SHIPPED && !order.tracking_number) {
+      if (order.shipping_company === 'MIPAQUETE' || !order.shipping_company) {
+        try {
+          const guide = await this.mipaqueteService.generateGuide(order);
+          order.tracking_number = guide.guideNumber;
+          order.shipping_company = guide.carrier;
+          order.tracking_url = guide.trackingUrl;
+        } catch (e) {
+          console.warn('MiPaquete auto-guide generation failed, using standard carrier code:', e.message);
+        }
+      }
+
+      if (!order.tracking_number) {
+        const carrier = (order.shipping_company || 'Servientrega').toUpperCase();
+        let prefix = 'AH';
+        if (carrier.includes('SERVIENTREGA')) prefix = 'SER';
+        else if (carrier.includes('COORDINADORA')) prefix = 'COO';
+        else if (carrier.includes('INTER')) prefix = 'INT';
+        else if (carrier.includes('ENVIA')) prefix = 'ENV';
+        else if (carrier.includes('TCC')) prefix = 'TCC';
+
+        const randomNum = Math.floor(100000000 + Math.random() * 900000000);
+        order.tracking_number = `${prefix}-${randomNum}`;
       }
     }
 

@@ -3,6 +3,7 @@ import {
   UnauthorizedException,
   BadRequestException,
   ConflictException,
+  NotFoundException,
   Inject,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -68,6 +69,12 @@ export class AuthService {
 
     if (!user) throw new UnauthorizedException(invalidMsg);
 
+    if (!user.email_verified) {
+      throw new UnauthorizedException(
+        'Debes verificar tu correo electronico antes de iniciar sesion',
+      );
+    }
+
     if (user.role === UserRole.ARTISAN) {
       const profile = await this.artisanRepo.findOne({
         where: { user: { id: user.id } },
@@ -79,15 +86,6 @@ export class AuthService {
       }
     }
 
-    // Check if account is locked
-    if (user.locked_until && user.locked_until > new Date()) {
-      const minutesLeft = Math.ceil(
-        (user.locked_until.getTime() - Date.now()) / 60000,
-      );
-      throw new UnauthorizedException(
-        `Cuenta bloqueada. Intenta en ${minutesLeft} minuto(s)`,
-      );
-    }
 
     const passwordMatch = await bcrypt.compare(
       dto.password,
@@ -162,13 +160,16 @@ export class AuthService {
       if (!region)
         throw new BadRequestException('Categoría o región no válida');
 
-      const existingArtisan = await this.artisanRepo.findOne({
-        where: { id_number: dto.id_number },
-      });
-      if (existingArtisan) {
-        throw new ConflictException(
-          'El número de cédula (ID) ya se encuentra registrado',
-        );
+      const idNumber = dto.id_number?.trim() || null;
+      if (idNumber) {
+        const existingArtisan = await this.artisanRepo.findOne({
+          where: { id_number: idNumber },
+        });
+        if (existingArtisan) {
+          throw new ConflictException(
+            'El número de cédula (ID) ya se encuentra registrado',
+          );
+        }
       }
 
       // Upload ID document if exists
@@ -202,7 +203,7 @@ export class AuthService {
 
       const profile = this.artisanRepo.create({
         user,
-        id_number: dto.id_number,
+        id_number: idNumber,
         cultural_history: dto.cultural_history,
         category,
         region,
@@ -234,7 +235,7 @@ export class AuthService {
 
       const frontendUrl =
         this.configService.get<string>('FRONTEND_URL') ||
-        'http://localhost:5173';
+        'http://localhost:3000';
       await this.mailService.sendVerificationEmail(
         user.email,
         user.full_name,
@@ -308,12 +309,45 @@ export class AuthService {
     return { message: 'Sesion cerrada correctamente' };
   }
 
-  async requestPasswordReset(email: string) {
-    const genericMsg =
-      'Si el correo existe, recibirás instrucciones para restablecer tu contraseña.';
-    const user = await this.usersService.findByEmail(email);
+  private extractFrontendUrl(req?: any): string | null {
+    if (!req || !req.headers) return null;
+
+    const origin = req.headers['origin'];
+    if (origin && typeof origin === 'string' && origin.startsWith('http')) {
+      return origin.replace(/\/+$/, '');
+    }
+
+    const referer = req.headers['referer'];
+    if (referer && typeof referer === 'string' && referer.startsWith('http')) {
+      try {
+        const u = new URL(referer);
+        return `${u.protocol}//${u.host}`;
+      } catch (e) {}
+    }
+
+    const host = req.headers['x-forwarded-host'] || req.headers['host'];
+    if (host && typeof host === 'string') {
+      const proto =
+        (req.headers['x-forwarded-proto'] as string) || req.protocol || 'http';
+      return `${proto}://${host.split(',')[0].trim()}`.replace(/\/+$/, '');
+    }
+
+    return null;
+  }
+
+  async requestPasswordReset(email: string, req?: any) {
+    if (!email || typeof email !== 'string' || !email.trim()) {
+      throw new BadRequestException(
+        'Por favor ingresa un correo electrónico válido',
+      );
+    }
+
+    const cleanEmail = email.trim();
+    const user = await this.usersService.findByEmail(cleanEmail);
     if (!user) {
-      return { message: genericMsg };
+      throw new NotFoundException(
+        'El correo electrónico no se encuentra registrado',
+      );
     }
 
     const token = crypto.randomBytes(32).toString('hex');
@@ -322,17 +356,25 @@ export class AuthService {
 
     await this.usersService.save(user);
 
+    const detectedFrontendUrl = this.extractFrontendUrl(req);
+
     try {
       await this.mailService.sendPasswordResetEmail(
         user.email,
         token,
         user.full_name,
+        detectedFrontendUrl || undefined,
       );
     } catch (err) {
       console.error('Error sending password reset email:', err);
+      throw new BadRequestException(
+        'Error al enviar el correo de recuperación. Por favor intenta más tarde.',
+      );
     }
 
-    return { message: genericMsg };
+    return {
+      message: 'Se ha enviado un enlace de recuperación a tu correo electrónico.',
+    };
   }
 
   async resetPassword(token: string, newPassword: string) {

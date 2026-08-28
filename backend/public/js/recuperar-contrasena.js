@@ -23,7 +23,12 @@ function initRecover() {
     e.preventDefault();
     const btn = document.getElementById('btn-submit');
     const statusEl = document.getElementById('status-message');
-    const email = document.getElementById('email').value;
+    const email = document.getElementById('email').value.trim();
+
+    if (!email) {
+      statusEl.innerHTML = `<div style="background:#fee2e2;color:#991b1b;padding:0.75rem 1rem;border-radius:12px;font-size:0.8rem;font-weight:600;border:1px solid #fecaca;text-align:left;"><i class="fa-solid fa-circle-xmark"></i> Por favor ingresa tu correo electrónico</div>`;
+      return;
+    }
 
     btn.disabled = true;
     const originalBtnText = btn.innerHTML;
@@ -36,7 +41,7 @@ function initRecover() {
         body: JSON.stringify({ email }),
       });
 
-      statusEl.innerHTML = `<div style="background:#dcfce7;color:#15803d;padding:0.75rem 1rem;border-radius:12px;font-size:0.8rem;font-weight:600;border:1px solid #bbf7d0;text-align:left;"><i class="fa-solid fa-circle-check"></i> ${i18next.t('recoverPassword.successMsg')}</div>`;
+      statusEl.innerHTML = `<div style="background:#dcfce7;color:#15803d;padding:0.75rem 1rem;border-radius:12px;font-size:0.8rem;font-weight:600;border:1px solid #bbf7d0;text-align:left;"><i class="fa-solid fa-circle-check"></i> ${data.message || i18next.t('recoverPassword.successMsg')}</div>`;
       btn.innerHTML = `<i class="fa-solid fa-check"></i> ${i18next.t('common.processing')}`;
       form.reset();
     } catch (err) {

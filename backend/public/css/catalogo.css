@@ -347,6 +347,10 @@
   box-shadow: 0 4px 12px rgba(193, 68, 14, 0.2);
 }
 
+.mobile-catalog-search-row {
+  display: none;
+}
+
 /* Responsive Layout */
 @media (max-width: 992px) {
   .catalog-layout {
@@ -461,6 +465,28 @@
     border-color: var(--color-primary);
     color: white;
     box-shadow: 0 3px 10px rgba(193, 68, 14, 0.2);
+  }
+}
+
+@media (max-width: 768px) {
+  .mobile-catalog-search-row {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 0.65rem !important;
+  }
+
+  .mobile-catalog-search-row .mobile-catalog-search-wrapper {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+
+  .mobile-catalog-search-row .mobile-catalog-filter-btn {
+    flex: 0 0 40px !important;
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
   }
 }
 

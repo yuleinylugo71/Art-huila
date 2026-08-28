@@ -79,8 +79,8 @@ export class AuthController {
   }
 
   @Post('recuperar-contrasena')
-  requestPasswordReset(@Body('email') email: string) {
-    return this.authService.requestPasswordReset(email);
+  requestPasswordReset(@Body('email') email: string, @Req() req: any) {
+    return this.authService.requestPasswordReset(email, req);
   }
 
   @Post('nueva-contrasena')

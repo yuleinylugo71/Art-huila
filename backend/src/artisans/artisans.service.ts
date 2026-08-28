@@ -117,6 +117,14 @@ export class ArtisansService {
     });
   }
 
+  async findForSitemap() {
+    return this.profileRepo.find({
+      where: { verification_status: ArtisanStatus.VERIFIED },
+      relations: ['user', 'category', 'region', 'gallery'],
+      order: { updated_at: 'DESC' },
+    });
+  }
+
   async apply(
     userId: string,
     data: any,
@@ -142,13 +150,20 @@ export class ArtisansService {
       }
     }
 
-    const existingArtisan = await this.profileRepo.findOne({
-      where: { id_number: data.id_number },
-    });
-    if (existingArtisan && (!profile || existingArtisan.id !== profile.id)) {
-      throw new ConflictException(
-        'El número de cédula (ID) ya se encuentra registrado',
-      );
+    const idNumber =
+      typeof data.id_number === 'string' && data.id_number.trim()
+        ? data.id_number.trim()
+        : null;
+
+    if (idNumber) {
+      const existingArtisan = await this.profileRepo.findOne({
+        where: { id_number: idNumber },
+      });
+      if (existingArtisan && (!profile || existingArtisan.id !== profile.id)) {
+        throw new ConflictException(
+          'El número de cédula (ID) ya se encuentra registrado',
+        );
+      }
     }
 
     const user = await this.profileRepo.manager.findOne(User, {
@@ -162,7 +177,7 @@ export class ArtisansService {
     if (!profile) {
       profile = this.profileRepo.create({
         user,
-        id_number: data.id_number,
+        id_number: idNumber,
         cultural_history: data.cultural_history,
         category: { id: data.category_id },
         region: { id: data.region_id },
@@ -176,7 +191,7 @@ export class ArtisansService {
         id_document_back_url: idDocumentBackUrl,
       });
     } else {
-      profile.id_number = data.id_number;
+      profile.id_number = idNumber;
       profile.cultural_history = data.cultural_history;
       profile.category = { id: data.category_id } as any;
       profile.region = { id: data.region_id } as any;

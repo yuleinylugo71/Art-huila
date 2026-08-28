@@ -3,8 +3,8 @@ let API = window.VITE_API_URL || '/api/v1';
 const BASE_URL = '';
 window.BASE_URL = BASE_URL; // Asegurar disponibilidad global para otros archivos
 
-// Dynamic Injection of Tailwind CSS CDN (with Preflight disabled)
-(function injectTailwind() {
+// Dynamic Injection of Tailwind CSS CDN (disabled to prevent layout shifts)
+/* (function injectTailwind() {
   if (typeof window !== 'undefined') {
     window.tailwind = {
       config: {
@@ -29,7 +29,7 @@ window.BASE_URL = BASE_URL; // Asegurar disponibilidad global para otros archivo
     twScript.src = 'https://cdn.tailwindcss.com';
     document.head.appendChild(twScript);
   }
-})();
+})(); */
 
 
 const Auth = {
@@ -59,7 +59,7 @@ const Auth = {
       } catch (e) {
         userCart = [];
       }
-      
+
       guestCart.forEach(guestItem => {
         const existing = userCart.find(item => item.id === guestItem.id);
         if (existing) {
@@ -68,7 +68,7 @@ const Auth = {
           userCart.push(guestItem);
         }
       });
-      
+
       localStorage.setItem(userCartKey, JSON.stringify(userCart));
       localStorage.removeItem(guestCartKey);
       if (typeof Cart !== 'undefined' && Cart.updateNav) {
@@ -195,11 +195,11 @@ const Wishlist = {
     try {
       const list = JSON.parse(localStorage.getItem('arthuila_wishlist')) || [];
       if (!Array.isArray(list)) return [];
-      return list.filter(item => 
-        item && 
-        typeof item === 'string' && 
-        item.trim() !== '' && 
-        item !== 'undefined' && 
+      return list.filter(item =>
+        item &&
+        typeof item === 'string' &&
+        item.trim() !== '' &&
+        item !== 'undefined' &&
         item !== 'null'
       );
     } catch (e) {
@@ -218,7 +218,7 @@ const Wishlist = {
       list.push(id);
     }
     localStorage.setItem('arthuila_wishlist', JSON.stringify(list));
-    
+
     // Toggle active state in DOM if present
     document.querySelectorAll(`.btn-wishlist[data-id="${id}"]`).forEach(btn => {
       btn.classList.toggle('active');
@@ -247,7 +247,7 @@ const Wishlist = {
   },
   updateBadges() {
     const list = this.get();
-    
+
     // Update mobile badge dot visibility if present on page
     const mobileFavBadgeDot = document.getElementById('mobile-fav-badge-dot');
     if (mobileFavBadgeDot) {
@@ -281,10 +281,22 @@ const Cart = {
     Cart.updateNav();
   },
   add: (product, quantity = 1) => {
+    const user = Auth.getUser();
+    if (user && (user.role === 'artesano' || user.role === 'artisan')) {
+      const ownerUserId = product.artisanUserId || product.artisan_user_id || product.artisanOwnerId;
+      if (ownerUserId && ownerUserId === user.id) {
+        const msg = typeof i18next !== 'undefined' ? i18next.t('product.errorCantBuyOwnProduct') : 'No puedes comprar tus propios productos';
+        showToast(msg, 'warning');
+        return;
+      }
+    }
+
     const cart = Cart.get();
     const existing = cart.find(item => item.id === product.id);
     if (existing) {
       existing.quantity += quantity;
+      if (product.name_en && !existing.name_en) existing.name_en = product.name_en;
+      if (product.name && !existing.name) existing.name = product.name;
       showToast('<i class="fa-solid fa-box"></i> Se agregó otra unidad al carrito', 'success');
     } else {
       cart.push({ ...product, quantity });
@@ -341,17 +353,17 @@ function renderGlobalLayout() {
   if (typeof i18next === 'undefined' || !i18next.isInitialized) {
     return;
   }
-  
+
   const isHome = window.location.pathname === '/' || window.location.pathname.endsWith('/index.html') || window.location.pathname === '';
   const isCatalog = window.location.pathname.includes('catalogo.html');
   const isCart = window.location.pathname.includes('carrito.html');
-  
+
   // 1. GLOBAL HEADER
   const oldNav = document.querySelector('nav.navbar, nav.navbar-global');
   if (oldNav) {
     const header = document.createElement('nav');
     header.className = 'navbar-global';
-    
+
     // Preserve layout constraints
     if (oldNav.classList.contains('desktop-only')) {
       header.classList.add('desktop-only');
@@ -359,77 +371,79 @@ function renderGlobalLayout() {
     if (oldNav.classList.contains('hero-navbar')) {
       header.classList.add('hero-navbar');
     }
-    
+
     // Add scrolled class if already scrolled
     const scrollPos = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
     if (scrollPos > 20) header.classList.add('scrolled');
-    
+
     const user = Auth.getUser();
     let authAreaHtml = '';
     if (user) {
-      let dashboard = 'dashboard-comprador.html';
-      if (user.role === 'artesano') dashboard = 'dashboard-artesano.html';
-      if (user.role === 'admin') dashboard = 'dashboard-admin.html';
+      let dashboard = '/dashboard-comprador.html';
+      if (user.role === 'artesano') dashboard = '/dashboard-artesano.html';
+      if (user.role === 'admin') dashboard = '/dashboard-admin.html';
       authAreaHtml = `
         <a href="${dashboard}" class="btn btn-outline btn-sm" style="padding: 0.45rem 1rem;" data-i18n="nav.myPanel">${i18next.t('nav.myPanel')}</a>
         <button class="btn btn-ghost btn-sm" onclick="Auth.logout()" style="color: var(--color-muted); border: none; background: transparent; font-weight: 600; cursor: pointer; padding: 0.45rem 0.5rem;" data-i18n="auth.logout">${i18next.t('auth.logout')}</button>
       `;
     } else {
       authAreaHtml = `
-        <a href="login.html" class="btn btn-primary btn-sm" style="padding: 0.45rem 1rem;" data-i18n="auth.login">${i18next.t('auth.login')}</a>
+        <a href="/login.html" class="btn btn-primary btn-sm" style="padding: 0.45rem 1rem;" data-i18n="auth.login">${i18next.t('auth.login')}</a>
       `;
     }
-    
+
     header.innerHTML = `
-      <div class="navbar-left">
-        <a href="index.html" class="navbar-brand" data-subtitle="MAESTRÍA ANCESTRAL">Art <span>Huila</span></a>
-      </div>
-      
-      <div class="navbar-center">
-        <ul class="navbar-nav">
-          <li><a href="index.html" id="nav-link-home" class="${isHome ? 'active' : ''}" data-i18n="nav.home">${i18next.t('nav.home')}</a></li>
-          <li><a href="catalogo.html" id="nav-link-catalog" class="${isCatalog ? 'active' : ''}" data-i18n="nav.viewCatalog">${i18next.t('nav.viewCatalog')}</a></li>
-          <li><a href="#" id="nav-link-fav" class="fav-nav-btn" onclick="event.preventDefault(); window.toggleMobileFavoritesDrawer();">
-            <i class="fa-solid fa-heart"></i> <span data-i18n="home.myFavorites">${i18next.t('home.myFavorites', {defaultValue: 'Favoritos'})}</span>
-            <span id="nav-fav-count-badge" class="cart-badge" style="display: none; background: #c1440e;">0</span>
-          </a></li>
-          <li><a href="carrito.html" id="nav-link-cart" class="cart-nav-btn ${isCart ? 'active' : ''}">
-            <i class="fa-solid fa-cart-shopping"></i>
-            <span id="nav-cart-count" class="cart-badge">0</span>
-          </a></li>
-        </ul>
-      </div>
-      
-      <div class="navbar-right">
-        <div id="nav-auth-area" style="display: flex; align-items: center; gap: 0.5rem;">${authAreaHtml}</div>
-        <div id="nav-auth" style="display:none;"></div>
-        
-        <div class="lang-switcher">
-          <button id="btn-lang-es" class="lang-btn" onclick="window.changeLanguage('es')">ES</button>
-          <span style="color: var(--color-border); font-size: 0.8rem; user-select: none;">|</span>
-          <button id="btn-lang-en" class="lang-btn" onclick="window.changeLanguage('en')">EN</button>
+      <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+        <div class="navbar-left">
+          <a href="/index.html" class="navbar-brand" data-subtitle="MAESTRÍA ANCESTRAL">Art <span>Huila</span></a>
+        </div>
+
+        <div class="navbar-center">
+          <ul class="navbar-nav">
+            <li><a href="/index.html" id="nav-link-home" class="${isHome ? 'active' : ''}" data-i18n="nav.home">${i18next.t('nav.home')}</a></li>
+            <li><a href="/catalogo.html" id="nav-link-catalog" class="${isCatalog ? 'active' : ''}" data-i18n="nav.viewCatalog">${i18next.t('nav.viewCatalog')}</a></li>
+            <li><a href="#" id="nav-link-fav" class="fav-nav-btn" onclick="event.preventDefault(); window.toggleMobileFavoritesDrawer();">
+              <i class="fa-solid fa-heart"></i> <span data-i18n="home.myFavorites">${i18next.t('home.myFavorites', {defaultValue: 'Favoritos'})}</span>
+              <span id="nav-fav-count-badge" class="cart-badge" style="display: none; background: #c1440e;">0</span>
+            </a></li>
+            <li><a href="/carrito.html" id="nav-link-cart" class="cart-nav-btn ${isCart ? 'active' : ''}">
+              <i class="fa-solid fa-cart-shopping"></i>
+              <span id="nav-cart-count" class="cart-badge">0</span>
+            </a></li>
+          </ul>
+        </div>
+
+        <div class="navbar-right">
+          <div id="nav-auth-area" style="display: flex; align-items: center; gap: 0.5rem;">${authAreaHtml}</div>
+          <div id="nav-auth" style="display:none;"></div>
+
+          <div class="lang-switcher">
+            <button id="btn-lang-es" class="lang-btn" onclick="window.changeLanguage('es')">ES</button>
+            <span style="color: var(--color-border); font-size: 0.8rem; user-select: none;">|</span>
+            <button id="btn-lang-en" class="lang-btn" onclick="window.changeLanguage('en')">EN</button>
+          </div>
         </div>
       </div>
     `;
-    
+
     oldNav.replaceWith(header);
-    
+
     // Update language buttons active class
     const lang = i18next.language || 'es';
     const btnEs = document.getElementById('btn-lang-es');
     const btnEn = document.getElementById('btn-lang-en');
     if (btnEs) btnEs.classList.toggle('active', lang === 'es');
     if (btnEn) btnEn.classList.toggle('active', lang === 'en');
-    
+
     Cart.updateNav();
   }
-  
+
   // 2. GLOBAL FOOTER
   const oldFooter = document.querySelector('footer, footer.footer-global');
   if (oldFooter) {
     const footer = document.createElement('footer');
     footer.className = 'footer-global';
-    
+
     footer.innerHTML = `
       <div class="footer-container">
         <div class="footer-grid">
@@ -440,16 +454,16 @@ function renderGlobalLayout() {
           <div class="footer-links">
             <h4 style="font-family: var(--font-display); color: white; font-size: 1.15rem; font-weight: 700; margin-bottom: 1.25rem;">Navegación</h4>
             <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; padding-left: 0;">
-              <li><a href="index.html" style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.65); transition: all 0.2s;">Inicio</a></li>
-              <li><a href="catalogo.html" style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.65); transition: all 0.2s;">${i18next.t('nav.viewCatalog')}</a></li>
-              <li><a href="carrito.html" style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.65); transition: all 0.2s;">Mi Carrito</a></li>
+              <li><a href="/index.html" style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.65); transition: all 0.2s;">Inicio</a></li>
+              <li><a href="/catalogo.html" style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.65); transition: all 0.2s;">${i18next.t('nav.viewCatalog')}</a></li>
+              <li><a href="/carrito.html" style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.65); transition: all 0.2s;">Mi Carrito</a></li>
             </ul>
           </div>
           <div class="footer-legal">
             <h4 style="font-family: var(--font-display); color: white; font-size: 1.15rem; font-weight: 700; margin-bottom: 1.25rem;">Legal</h4>
             <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; padding-left: 0;">
-              <li><a href="#" data-i18n="home.privacy" style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.65); transition: all 0.2s;">${i18next.t('home.privacy')}</a></li>
-              <li><a href="#" data-i18n="home.terms" style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.65); transition: all 0.2s;">${i18next.t('home.terms')}</a></li>
+              <li><a href="/privacidad.html" data-i18n="home.privacy" style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.65); transition: all 0.2s;">${i18next.t('home.privacy')}</a></li>
+              <li><a href="/terminos.html" data-i18n="home.terms" style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.65); transition: all 0.2s;">${i18next.t('home.terms')}</a></li>
               <li><a href="#" data-i18n="home.contact" style="font-size: 0.9rem; color: rgba(255, 255, 255, 0.65); transition: all 0.2s;">${i18next.t('home.contact')}</a></li>
             </ul>
           </div>
@@ -459,7 +473,7 @@ function renderGlobalLayout() {
         </div>
       </div>
     `;
-    
+
     oldFooter.replaceWith(footer);
   }
 
@@ -473,24 +487,24 @@ function renderGlobalLayout() {
   }
 
   const user = Auth.getUser();
-  let panelUrl = 'login.html';
+  let panelUrl = '/login.html';
   let panelLabel = i18next.t('nav.login', { defaultValue: 'Ingresar' });
   let panelIcon = 'fa-user';
-  
+
   if (user) {
     panelLabel = i18next.t('nav.myPanel', { defaultValue: 'Mi Panel' });
     panelIcon = 'fa-user';
-    if (user.role === 'artesano') panelUrl = 'dashboard-artesano.html';
-    else if (user.role === 'admin') panelUrl = 'dashboard-admin.html';
-    else panelUrl = 'dashboard-comprador.html';
+    if (user.role === 'artesano') panelUrl = '/dashboard-artesano.html';
+    else if (user.role === 'admin') panelUrl = '/dashboard-admin.html';
+    else panelUrl = '/dashboard-comprador.html';
   }
 
   bottomNav.innerHTML = `
-    <a href="index.html" class="mobile-bottom-nav-item ${isHome ? 'active' : ''}">
+    <a href="/index.html" class="mobile-bottom-nav-item ${isHome ? 'active' : ''}">
       <i class="fa-solid fa-house"></i>
       <span data-i18n="nav.home">${i18next.t('nav.home', { defaultValue: 'Inicio' })}</span>
     </a>
-    <a href="catalogo.html" class="mobile-bottom-nav-item ${isCatalog ? 'active' : ''}">
+    <a href="/catalogo.html" class="mobile-bottom-nav-item ${isCatalog ? 'active' : ''}">
       <i class="fa-solid fa-grip"></i>
       <span data-i18n="nav.viewCatalog">${i18next.t('nav.viewCatalog', { defaultValue: 'Catálogo' })}</span>
     </a>
@@ -499,7 +513,7 @@ function renderGlobalLayout() {
       <span id="mobile-fav-count" class="cart-badge" style="display: none;">0</span>
       <span data-i18n="nav.favorites">${i18next.t('nav.favorites', { defaultValue: 'Favoritos' })}</span>
     </a>
-    <a href="carrito.html" class="mobile-bottom-nav-item ${isCart ? 'active' : ''}">
+    <a href="/carrito.html" class="mobile-bottom-nav-item ${isCart ? 'active' : ''}">
       <i class="fa-solid fa-cart-shopping"></i>
       <span id="mobile-cart-count" class="cart-badge">0</span>
       <span data-i18n="nav.cart">${i18next.t('nav.cart', { defaultValue: 'Carrito' })}</span>
@@ -528,7 +542,7 @@ function renderGlobalLayout() {
         </div>
         <button onclick="window.toggleMobileFavoritesDrawer()" style="background: none; border: none; font-size: 1.2rem; color: #4a3e35; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; transition: background-color 0.2s;"><i class="fa-solid fa-xmark"></i></button>
       </div>
-      
+
       <!-- Drawer Body -->
       <div id="mobile-fav-drawer-list" style="flex: 1; overflow-y: auto; padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem;">
         <!-- Loaded dynamically via JS -->
@@ -673,17 +687,17 @@ window.renderFavoritesInDrawer = async function() {
       const isOutOfStock = p.stock !== undefined && p.stock < 1;
       const imgUrl = p.image_url || '/img/placeholder.jpg';
       const artisanName = p.artisan?.user?.full_name || p.artisan?.name || '';
-      
+
       return `
         <div class="fav-drawer-card" style="display: flex; gap: 1rem; background: #ffffff; padding: 0.85rem; border-radius: 12px; border: 1.2px solid #ebdcd0; align-items: center; position: relative;">
-          <div class="imagen" style="width: 64px; height: 64px; flex-shrink: 0; border-radius: 8px; overflow: hidden; cursor: pointer;" onclick="window.location.href='/producto.html?slug=${p.slug}'">
+          <div class="imagen" style="width: 64px; height: 64px; flex-shrink: 0; border-radius: 8px; overflow: hidden; cursor: pointer;" onclick="window.location.href='/producto/${p.slug}'">
             <img src="${imgUrl}" alt="${window.translateProduct(p)}" onerror="this.onerror=null; this.src='/img/placeholder.jpg';" style="width: 100%; height: 100%; object-fit: cover;" />
           </div>
           <div class="info" style="flex: 1; display: flex; flex-direction: column; gap: 0.15rem; min-width: 0;">
             <span class="vendedor" style="font-size: 0.65rem; color: var(--color-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${artisanName}</span>
-            <h4 style="font-family: var(--font-body); font-weight: 700; font-size: 0.85rem; color: #261f1b; margin: 0; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer;" onclick="window.location.href='/producto.html?slug=${p.slug}'">${window.translateProduct(p)}</h4>
+            <h4 style="font-family: var(--font-body); font-weight: 700; font-size: 0.85rem; color: #261f1b; margin: 0; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer;" onclick="window.location.href='/producto/${p.slug}'">${window.translateProduct(p)}</h4>
             <div class="precio" style="font-weight: 800; color: #c1440e; font-size: 0.9rem; margin-top: 0.1rem;">${formatPrice(p.price)}</div>
-            
+
             <div style="display: flex; gap: 0.5rem; margin-top: 0.4rem;">
               <button onclick="event.stopPropagation(); Wishlist.toggle('${p.id}'); if (typeof runInitHome === 'function') runInitHome();" style="flex: 1; border: 1.2px solid #c1440e; background: none; color: #c1440e; border-radius: 6px; padding: 0.35rem 0.5rem; font-size: 0.72rem; font-weight: 700; cursor: pointer; transition: all 0.2s;">Quitar</button>
               <button onclick="event.stopPropagation(); if (!${isOutOfStock}) { window.addWishToCart('${p.id}'); }" style="flex: 1; border: none; background: #c1440e; color: white; border-radius: 6px; padding: 0.35rem 0.5rem; font-size: 0.72rem; font-weight: 700; cursor: pointer; transition: all 0.2s;" ${isOutOfStock ? 'disabled' : ''}>${isOutOfStock ? 'Sin Stock' : 'Llevar'}</button>
@@ -703,15 +717,14 @@ window.addWishToCart = function(productId) {
   const p = (window.cachedProducts || []).find(x => x.id === productId);
   if (!p) return;
   const user = Auth.getUser();
-  if (user && user.role === 'artesano' && p.artisan?.user && user.id === p.artisan.user.id) {
-    showToast('No puedes comprar tus propios productos', 'warning'); 
+  const artisanUserId = p.artisan?.user?.id || p.artisan?.userId || p.artisan_user_id;
+  if (user && (user.role === 'artesano' || user.role === 'artisan') && artisanUserId && user.id === artisanUserId) {
+    showToast(i18next.t('product.errorCantBuyOwnProduct', { defaultValue: 'No puedes comprar tus propios productos' }), 'warning');
     return;
   }
-  const imgUrl = p.image_url || '';
-  const artisanName = p.artisan?.name || '';
-  Cart.add({ id: p.id, name: p.name, price: p.price, image: imgUrl, artisanName }, 1);
+  const imgUrl = p.image_url || (p.images && p.images[0] ? p.images[0].url : '');
+  const artisanName = p.artisan?.name || p.artisan?.user?.full_name || '';
+  Cart.add({ id: p.id, name: p.name, name_en: p.name_en, price: p.price, image: imgUrl, artisanName, artisanUserId }, 1);
   Wishlist.toggle(p.id);
   if (typeof runInitHome === 'function') runInitHome();
 };
-
-

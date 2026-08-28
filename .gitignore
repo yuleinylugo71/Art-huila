@@ -2,6 +2,11 @@ node_modules/
 backend/node_modules/
 frontend/node_modules/
 .env
+.env.*
+!.env.example
+!.env.db.example
+!.env.local.example
+!backend/.env.example
 .env.production
 .env.local
 .env.development
@@ -10,3 +15,12 @@ dist/
 backend/dist/
 frontend/dist/
 .gemini/
+backend/public/js/vendor/
+frontend/public/js/vendor/
+backend/public/uploads/
+
+# Temporales de documentos y extracciones locales
+docx_temp/
+~$*.docx
+*_texto_extraido.txt
+catalog_extracted.txt

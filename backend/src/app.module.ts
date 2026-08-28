@@ -21,6 +21,7 @@ import { PaymentsModule } from './payments/payments.module';
 import { SitemapController } from './sitemap/sitemap.controller';
 import { StatsController } from './stats.controller';
 import { LogisticsModule } from './logistics/logistics.module';
+import { SeoController } from './seo.controller';
 
 @Module({
   imports: [
@@ -41,12 +42,20 @@ import { LogisticsModule } from './logistics/logistics.module';
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        url: configService.get<string>('DATABASE_URL'),
-        autoLoadEntities: true,
-        synchronize: process.env.NODE_ENV !== 'production',
-      }),
+      useFactory: (configService: ConfigService) => {
+        const explicitSynchronize =
+          configService.get<string>('DB_SYNCHRONIZE');
+
+        return {
+          type: 'postgres',
+          url: configService.get<string>('DATABASE_URL'),
+          autoLoadEntities: true,
+          synchronize:
+            explicitSynchronize === undefined
+              ? process.env.NODE_ENV !== 'production'
+              : explicitSynchronize === 'true',
+        };
+      },
       inject: [ConfigService],
     }),
     UsersModule,
@@ -65,7 +74,7 @@ import { LogisticsModule } from './logistics/logistics.module';
     PaymentsModule,
     LogisticsModule,
   ],
-  controllers: [AppController, SitemapController, StatsController],
+  controllers: [AppController, SitemapController, StatsController, SeoController],
   providers: [AppService],
 })
 export class AppModule {}

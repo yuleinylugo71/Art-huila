@@ -214,7 +214,7 @@ img { max-width: 100%; display: block; }
 }
 
 /* Sections */
-.section { padding: 5rem 0; }
+.section { padding: 3rem 0; }
 .section-title {
   font-size: clamp(1.8rem, 3.5vw, 2.8rem);
   font-weight: 900;
@@ -228,7 +228,7 @@ img { max-width: 100%; display: block; }
 }
 .section-warm {
   background: var(--color-accent-warm);
-  padding: 5rem 2rem;
+  padding: 3rem 2rem;
 }
 
 /* Grids */
@@ -922,17 +922,26 @@ footer a:hover { color: var(--color-primary-light); }
   color: var(--color-muted) !important;
   opacity: 0.5;
 }
-.navbar-global.scrolled .btn-outline,
-.navbar-global.scrolled .btn-primary {
+.navbar-global.scrolled .btn-outline {
   background: transparent !important;
   border-color: transparent !important;
   color: #000000 !important;
   padding: 0.5rem 1rem !important;
 }
+.navbar-global.scrolled .btn-primary,
+.navbar-global.scrolled .btn-mi-cuenta {
+  background: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  color: #ffffff !important;
+  padding: 0.5rem 1rem !important;
+  box-shadow: 0 8px 18px rgba(193, 68, 14, 0.18);
+}
 .navbar-global.scrolled .btn-outline:hover,
-.navbar-global.scrolled .btn-primary:hover {
+.navbar-global.scrolled .btn-primary:hover,
+.navbar-global.scrolled .btn-mi-cuenta:hover {
   color: #ffffff !important;
   background: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
 }
 .navbar-global.scrolled .btn-ghost {
   color: var(--color-muted) !important;

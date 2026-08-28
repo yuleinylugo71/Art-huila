@@ -1,5 +1,6 @@
 // registro.js
 let selectedType = null;
+let currentArtisanStep = 1;
 
 const runInitRegistro = () => {
   if (typeof applyTranslations === 'function') applyTranslations();
@@ -22,11 +23,13 @@ function selectType(type) {
   document.querySelectorAll('.type-card').forEach(c => {
     c.style.border = '2px solid var(--color-border)';
     c.style.transform = 'none';
+    c.classList.remove('active');
   });
   const card = document.getElementById(`type-${type}`);
   if (card) {
     card.style.border = '2px solid var(--color-primary)';
     card.style.transform = 'scale(1.02)';
+    card.classList.add('active');
   }
 
   const authLayout = document.querySelector('.auth-layout');
@@ -47,6 +50,55 @@ function selectType(type) {
 
   const selectedForm = document.getElementById(`form-${type}`);
   if (selectedForm) selectedForm.classList.remove('hidden');
+  if (type === 'artesano') showArtisanStep(1);
+}
+
+function showArtisanStep(step) {
+  currentArtisanStep = step;
+  document.querySelectorAll('.artisan-step').forEach(section => {
+    section.classList.toggle('is-active', Number(section.dataset.step) === step);
+  });
+  document.querySelectorAll('[data-step-indicator]').forEach(indicator => {
+    const indicatorStep = Number(indicator.dataset.stepIndicator);
+    indicator.classList.toggle('is-active', indicatorStep === step);
+    indicator.classList.toggle('is-complete', indicatorStep < step);
+  });
+  const errorEl = document.getElementById('error-msg');
+  if (errorEl) errorEl.classList.add('hidden');
+}
+
+function validateCurrentArtisanStep() {
+  const section = document.querySelector(`.artisan-step[data-step="${currentArtisanStep}"]`);
+  if (!section) return true;
+  const fields = Array.from(section.querySelectorAll('input, select, textarea'));
+  const invalidField = fields.find(field => !field.checkValidity());
+  if (invalidField) {
+    invalidField.reportValidity();
+    return false;
+  }
+  return true;
+}
+
+function initArtisanWizard() {
+  document.querySelectorAll('[data-next-step]').forEach(button => {
+    button.onclick = () => {
+      if (!validateCurrentArtisanStep()) return;
+      showArtisanStep(Math.min(currentArtisanStep + 1, 3));
+    };
+  });
+
+  document.querySelectorAll('[data-prev-step]').forEach(button => {
+    button.onclick = () => showArtisanStep(Math.max(currentArtisanStep - 1, 1));
+  });
+
+  document.querySelectorAll('[data-step-indicator]').forEach(button => {
+    button.onclick = () => {
+      const targetStep = Number(button.dataset.stepIndicator);
+      if (targetStep <= currentArtisanStep || validateCurrentArtisanStep()) {
+        showArtisanStep(targetStep);
+      }
+    };
+  });
 }
 
 // Load categories and regions for artisan form
@@ -73,6 +125,7 @@ async function loadSelects() {
 
 function initRegistro() {
   loadSelects();
+  initArtisanWizard();
 
   // Buyer registration
   const formComprador = document.getElementById('form-comprador');
@@ -116,6 +169,29 @@ function initRegistro() {
         return;
       }
 
+      const galleryInput = document.getElementById('a-galeria');
+      const docFrontInput = document.getElementById('a-document-front');
+      const docBackInput = document.getElementById('a-document-back');
+      const missingFileMessage = (() => {
+        if (!galleryInput.files || galleryInput.files.length === 0) {
+          return 'Por favor sube al menos una foto de perfil o de tu taller.';
+        }
+        if (!docFrontInput.files || docFrontInput.files.length === 0) {
+          return 'Por favor sube la cara frontal de tu cedula.';
+        }
+        if (!docBackInput.files || docBackInput.files.length === 0) {
+          return 'Por favor sube la cara posterior de tu cedula.';
+        }
+        return '';
+      })();
+
+      if (missingFileMessage) {
+        const el = document.getElementById('error-msg');
+        el.textContent = missingFileMessage;
+        el.classList.remove('hidden');
+        return;
+      }
+
       const btn = document.getElementById('btn-artesano');
       btn.disabled = true; 
       btn.textContent = i18next.t('register.processingRegistration');
@@ -132,17 +208,17 @@ function initRegistro() {
         formData.append('truthfulness_declaration', 'true');
 
         // Handle files
-        const docFrontFile = document.getElementById('a-document-front').files[0];
+        const docFrontFile = docFrontInput.files[0];
         if (docFrontFile) {
           formData.append('id_document_front', docFrontFile);
         }
 
-        const docBackFile = document.getElementById('a-document-back').files[0];
+        const docBackFile = docBackInput.files[0];
         if (docBackFile) {
           formData.append('id_document_back', docBackFile);
         }
 
-        const galleryFiles = document.getElementById('a-galeria').files;
+        const galleryFiles = galleryInput.files;
         for (let i = 0; i < galleryFiles.length; i++) {
           formData.append('gallery', galleryFiles[i]);
         }

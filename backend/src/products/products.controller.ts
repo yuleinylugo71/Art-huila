@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -53,6 +54,7 @@ export class ProductsController {
       return {
         id: p.id,
         name: p.name,
+        name_en: p.name_en,
         slug: p.slug,
         price: p.price,
         status: p.artisan.verification_status,
@@ -112,5 +114,16 @@ export class ProductsController {
       uploaded.push({ url: result.secure_url, publicId: result.public_id });
     }
     return this.productsService.addImages(id, user.id, uploaded);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ARTISAN)
+  @Delete(':productId/images/:imageId')
+  async deleteImage(
+    @Param('productId') productId: string,
+    @Param('imageId') imageId: string,
+    @CurrentUser() user: any,
+  ) {
+    return this.productsService.removeImage(productId, imageId, user.id);
   }
 }

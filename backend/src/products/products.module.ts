@@ -4,6 +4,7 @@ import { Product } from './entities/product.entity';
 import { ProductImage } from './entities/product-image.entity';
 import { ProductsService } from './products.service';
 import { ProductsController } from './products.controller';
+import { TranslationService } from './translation.service';
 import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 import { ArtisansModule } from '../artisans/artisans.module';
 
@@ -14,7 +15,7 @@ import { ArtisansModule } from '../artisans/artisans.module';
     ArtisansModule,
   ],
   controllers: [ProductsController],
-  providers: [ProductsService],
+  providers: [ProductsService, TranslationService],
   exports: [ProductsService],
 })
 export class ProductsModule {}

@@ -9,6 +9,7 @@ import { Product, ProductStatus } from './entities/product.entity';
 import { ProductImage } from './entities/product-image.entity';
 import { ArtisansService } from '../artisans/artisans.service';
 import { ArtisanStatus } from '../artisans/entities/artisan-profile.entity';
+import { TranslationService } from './translation.service';
 
 function slugify(text: string): string {
   return text
@@ -27,9 +28,12 @@ export class ProductsService {
     @InjectRepository(ProductImage)
     private readonly imageRepo: Repository<ProductImage>,
     private readonly artisansService: ArtisansService,
+    private readonly translationService: TranslationService,
   ) {}
 
   async create(userId: string, data: any): Promise<Product> {
+    const translatedData =
+      await this.translationService.translateProductToEnglish(data);
     const profile = await this.artisansService.findByUserId(userId);
     if (!profile)
       throw new ForbiddenException('Solo artesanos pueden crear productos');
@@ -39,21 +43,37 @@ export class ProductsService {
       );
     }
 
-    let slug = slugify(data.name);
+    let slug = slugify(translatedData.name);
     const existing = await this.productRepo.findOneBy({ slug });
     if (existing) slug = `${slug}-${Date.now()}`;
 
-    const metaTitle = data.meta_title || `${data.name} | Art Huila`;
+    const metaTitle =
+      translatedData.meta_title || `${translatedData.name} | Art Huila`;
+    const metaTitleEn =
+      translatedData.meta_title_en ||
+      (translatedData.name_en ? `${translatedData.name_en} | Art Huila` : null);
     const metaDesc =
-      data.meta_description || `Artesanía ${data.name} del Huila, Colombia.`;
+      translatedData.meta_description ||
+      `Artesanía ${translatedData.name} del Huila, Colombia.`;
+
+    const metaDescEn =
+      translatedData.meta_description_en ||
+      translatedData.short_description_en ||
+      (translatedData.name_en
+        ? `Handmade craft ${translatedData.name_en} from Huila, Colombia.`
+        : null);
 
     const product = this.productRepo.create({
-      ...data,
-      category: data.category_id ? { id: data.category_id } : undefined,
-      region: data.region_id ? { id: data.region_id } : undefined,
+      ...translatedData,
+      category: translatedData.category_id
+        ? { id: translatedData.category_id }
+        : undefined,
+      region: translatedData.region_id ? { id: translatedData.region_id } : undefined,
       slug,
       meta_title: metaTitle,
+      meta_title_en: metaTitleEn,
       meta_description: metaDesc,
+      meta_description_en: metaDescEn,
       artisan: profile,
       status: ProductStatus.PUBLISHED,
     });
@@ -91,6 +111,8 @@ export class ProductsService {
     if (product.artisan.user.id !== userId)
       throw new ForbiddenException('No puedes editar este producto');
 
+    data = await this.translationService.translateProductToEnglish(data);
+
     if (data.name && data.name !== product.name) {
       let slug = slugify(data.name);
       const existing = await this.productRepo.findOneBy({ slug });
@@ -101,17 +123,30 @@ export class ProductsService {
 
     const updatePayload: any = {
       name: data.name,
+      name_en: data.name_en,
       slug: data.slug,
       price: data.price,
       stock: data.stock,
       cultural_origin: data.cultural_origin,
+      cultural_origin_en: data.cultural_origin_en,
       technique: data.technique,
+      technique_en: data.technique_en,
       significance: data.significance,
+      significance_en: data.significance_en,
       short_description: data.short_description,
+      short_description_en: data.short_description_en,
       materials: data.materials,
+      materials_en: data.materials_en,
       dimensions: data.dimensions,
+      dimensions_en: data.dimensions_en,
       weight: data.weight,
+      weight_en: data.weight_en,
       care_instructions: data.care_instructions,
+      care_instructions_en: data.care_instructions_en,
+      meta_title: data.meta_title,
+      meta_title_en: data.meta_title_en,
+      meta_description: data.meta_description,
+      meta_description_en: data.meta_description_en,
       is_handmade: data.is_handmade,
     };
 
@@ -159,11 +194,44 @@ export class ProductsService {
     return saved;
   }
 
+  async removeImage(productId: string, imageId: string, userId: string) {
+    // Verify the product belongs to this artisan
+    const product = await this.productRepo.findOne({
+      where: { id: productId },
+      relations: ['artisan', 'artisan.user', 'images'],
+    });
+    if (!product) throw new NotFoundException('Producto no encontrado');
+    if (product.artisan.user.id !== userId)
+      throw new ForbiddenException('No tienes permiso para eliminar esta imagen');
+
+    const image = product.images.find((img) => img.id === imageId);
+    if (!image) throw new NotFoundException('Imagen no encontrada');
+
+    await this.imageRepo.remove(image);
+    return { success: true, imageId };
+  }
+
   async findAll() {
     return this.productRepo.find({
       relations: ['artisan', 'artisan.user', 'category', 'region'],
       order: { created_at: 'DESC' },
     });
+  }
+
+  async findForSitemap() {
+    return this.productRepo
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.artisan', 'artisan')
+      .leftJoinAndSelect('artisan.user', 'user')
+      .leftJoinAndSelect('product.category', 'category')
+      .leftJoinAndSelect('product.region', 'region')
+      .leftJoinAndSelect('product.images', 'images')
+      .where('product.status = :status', { status: ProductStatus.PUBLISHED })
+      .andWhere('artisan.verification_status != :suspended', {
+        suspended: ArtisanStatus.SUSPENDED,
+      })
+      .orderBy('product.updated_at', 'DESC')
+      .getMany();
   }
 
   async hide(id: string) {
@@ -191,7 +259,7 @@ export class ProductsService {
 
     if (query) {
       qb.andWhere(
-        '(product.name ILIKE :q OR product.cultural_origin ILIKE :q)',
+        '(product.name ILIKE :q OR product.name_en ILIKE :q OR product.cultural_origin ILIKE :q OR product.cultural_origin_en ILIKE :q OR product.short_description ILIKE :q OR product.short_description_en ILIKE :q)',
         { q: `%${query}%` },
       );
     }

@@ -6,23 +6,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Art Huila — Artesanías con Historia</title>
   <link rel="stylesheet" href="/css/base.css?v=18">
-  <link rel="stylesheet" href="/css/index.css?v=11">
+  <link rel="stylesheet" href="/css/index.css?v=16">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    /* Force CTA Banner to go edge-to-edge and touch the footer */
+    /* Force CTA Banner & Footer to touch with zero gap/space */
     .cta-banner {
       background: linear-gradient(135deg, #d35400 0%, #c1440e 50%, #8e2c02 100%) !important;
       border-radius: 0 !important;
       margin: 0 !important;
+      margin-bottom: 0 !important;
       width: 100% !important;
       box-sizing: border-box !important;
-      padding: 6.5rem 2rem !important;
+      padding: 4.5rem 0 !important;
+    }
+    footer {
+      margin: 0 !important;
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+      padding: 2.5rem 2rem !important;
     }
     .cta-banner::before {
       content: '' !important;
       position: absolute !important;
       inset: 0 !important;
-      background: 
+      background:
         radial-gradient(circle at center, rgba(255, 255, 255, 0.15) 0%, transparent 70%),
         url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.035'%3E%3Ccircle cx='40' cy='40' r='38'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat !important;
       opacity: 0.9 !important;
@@ -106,7 +113,7 @@
             </a>
           </div>
         </div>
-        
+
         <div class="hero-image-col">
           <div class="hero-slider-wrapper">
             <div class="slider-container" id="hero-slider">
@@ -154,49 +161,19 @@
       </main>
     </div>
 
-    <!-- NEW FEATURES BAR -->
-    <section class="features-bar container">
-      <div class="feature-item-new">
-        <div class="feature-icon-new"><i class="fa-solid fa-hands"></i></div>
-        <div class="feature-text-new">
-          <h4 data-i18n="home.feature1Title">100% Hecho a Mano</h4>
-          <p data-i18n="home.feature1Desc">Artesanías auténticas</p>
-        </div>
-      </div>
-      <div class="feature-item-new">
-        <div class="feature-icon-new"><i class="fa-solid fa-truck-fast"></i></div>
-        <div class="feature-text-new">
-          <h4 data-i18n="home.feature2Title">Envíos Seguros</h4>
-          <p data-i18n="home.feature2Desc">A todo Colombia</p>
-        </div>
-      </div>
-      <div class="feature-item-new">
-        <div class="feature-icon-new"><i class="fa-solid fa-shield-halved"></i></div>
-        <div class="feature-text-new">
-          <h4 data-i18n="home.feature3Title">Pago Protegido</h4>
-          <p data-i18n="home.feature3Desc">Garantía de seguridad</p>
-        </div>
-      </div>
-      <div class="feature-item-new">
-        <div class="feature-icon-new"><i class="fa-solid fa-heart"></i></div>
-        <div class="feature-text-new">
-          <h4 data-i18n="home.feature4Title">Apoyo Directo</h4>
-          <p data-i18n="home.feature4Desc">Fomento local</p>
-        </div>
-      </div>
-    </section>
-
     <!-- CATEGORIES SECTION -->
-    <section class="section container reveal">
-      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2.5rem;">
-        <div>
-          <h2 class="section-title-new" style="margin-bottom:0.25rem;" data-i18n="home.exploreCategories">Compra por Oficio</h2>
-          <p class="section-subtitle-new" data-i18n="home.exploreCategoriesSubtitle">Encuentra la maestría en cada oficio</p>
+    <section class="categories-section reveal">
+      <div class="container">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.25rem;">
+          <div>
+            <h2 class="section-title-new" style="margin-bottom:0.25rem;" data-i18n="home.exploreCategories">Compra por Oficio</h2>
+            <p class="section-subtitle-new" data-i18n="home.exploreCategoriesSubtitle">Encuentra la maestría en cada oficio</p>
+          </div>
+          <a href="catalogo.html" class="view-all-link-new" data-i18n="home.viewAllCrafts">Ver todos los oficios →</a>
         </div>
-        <a href="catalogo.html" class="view-all-link-new" data-i18n="home.viewAllCrafts">Ver todos los oficios →</a>
-      </div>
-      <div id="categories-grid" class="categories-grid-circular reveal-stagger">
-        <!-- Cargado por JS -->
+        <div id="categories-grid" class="categories-grid-circular reveal-stagger">
+          <!-- Cargado por JS -->
+        </div>
       </div>
     </section>
 
@@ -261,11 +238,54 @@
       </div>
     </header>
 
+    <section class="mobile-hero-card">
+      <div class="mobile-hero-shape mobile-hero-shape-soft"></div>
+      <div class="mobile-hero-shape mobile-hero-shape-terracotta"></div>
+      <div class="mobile-hero-card-content">
+        <span data-i18n="home.heroTag">Maestría Ancestral</span>
+        <h1 data-i18n="home.mobileHeroTitle">Artesanía que inspira</h1>
+        <p data-i18n="home.mobileHeroSubtitle">Hecho en Huila, para el mundo.</p>
+      </div>
+      <div class="mobile-hero-slider" id="mobile-hero-slider">
+        <div class="mobile-hero-product active" data-index="0" data-name-es="Vasija de Barro Cocido" data-name-en="Clay Pottery Vessel" data-price="85000">
+          <img src="/img/clay_pottery.png" alt="Cerámica" />
+        </div>
+        <div class="mobile-hero-product" data-index="1" data-name-es="Mochila Wayuu Tradicional" data-name-en="Traditional Wayuu Bag" data-price="120000">
+          <img src="/img/mochila_bag.png" alt="Mochila artesanal del Huila" />
+        </div>
+        <div class="mobile-hero-product" data-index="2" data-name-es="Sombrero de Pindo" data-name-en="Pindo Straw Hat" data-price="95000">
+          <img src="/img/sombrero_pindo.png" alt="Sombrero" />
+        </div>
+        <div class="mobile-hero-product" data-index="3" data-name-es="Jarrón de Arcilla Esmaltada" data-name-en="Glazed Clay Vase" data-price="110000">
+          <img src="/img/glazed_ceramic.png" alt="Cerámica esmaltada" />
+        </div>
+        <div class="mobile-hero-product" data-index="4" data-name-es="Tallado en Madera Ancestral" data-name-en="Ancestral Wood Carving" data-price="78000">
+          <img src="/img/wood_carving.png" alt="Artesanía en madera" />
+        </div>
+      </div>
+      <div class="mobile-hero-origin">
+        <i class="fa-regular fa-hand"></i>
+        <span data-i18n="home.mobileHandmade">Hecho a mano</span>
+      </div>
+      <div class="mobile-hero-info-card">
+        <span id="mobile-slider-item-name">Vasija de Barro Cocido</span>
+        <span id="mobile-slider-item-price">$85,000</span>
+      </div>
+      <div class="mobile-hero-dots" id="mobile-hero-dots-container" aria-label="Productos destacados">
+        <button class="active" data-index="0" type="button"></button>
+        <button data-index="1" type="button"></button>
+        <button data-index="2" type="button"></button>
+        <button data-index="3" type="button"></button>
+        <button data-index="4" type="button"></button>
+      </div>
+      <a href="catalogo.html" class="mobile-hero-explore" data-i18n="home.btnExplore">Explorar</a>
+    </section>
+
     <!-- Mobile Search Block -->
     <div class="mobile-search-block">
       <div class="mobile-search-pill">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" id="mobile-home-search" placeholder="¿Qué buscas hoy?" onkeypress="window.handleMobileSearch(event)" />
+        <input type="text" id="mobile-home-search" data-i18n-placeholder="home.mobileSearchPlaceholder" placeholder="¿Qué buscas hoy?" onkeypress="window.handleMobileSearch(event)" />
       </div>
       <button class="mobile-search-filter-btn" onclick="window.location.href='/catalogo.html'">
         <i class="fa-solid fa-sliders"></i>
@@ -278,24 +298,28 @@
     </div>
 
     <!-- Terracota Promo Banner -->
-    <div class="mobile-promo-banner" onclick="window.location.href='/catalogo.html'">
-      <div class="promo-content">
-        <span class="promo-tag" data-i18n="home.promoTag">Colección 2026</span>
-        <h3 class="promo-title" data-i18n="home.promoDiscount">¡Hasta 30% de descuento en piezas seleccionadas!</h3>
-        <button class="btn-promo-buy" data-i18n="home.promoBuy">Comprar ahora</button>
-      </div>
-      <div class="promo-image-decoration">🏺</div>
-    </div>
 
     <!-- Featured Products Title Row -->
     <div class="mobile-section-header">
       <h3 class="mobile-section-title" data-i18n="home.featuredProducts">Productos Destacados</h3>
       <a href="catalogo.html" class="mobile-view-all" data-i18n="home.viewAllCatalog">Ver todo →</a>
     </div>
-    
+
     <!-- Mobile Featured 2-Column Grid -->
     <div id="mobile-featured-grid" class="grid grid-2">
       <!-- Cargado por JS -->
+    </div>
+
+    <section class="mobile-artisan-cta">
+      <span class="mobile-artisan-kicker" data-i18n="home.heroTag">Maestría Ancestral</span>
+      <h2 data-i18n="home.ctaTitle">¿Eres un maestro artesano?</h2>
+      <p data-i18n="home.ctaSubtitle">Únete a la plataforma que valora tu historia, protege tu técnica y conecta tu arte con el mundo.</p>
+      <a href="registro.html" class="mobile-artisan-btn" data-i18n="home.ctaButton">Empezar a vender hoy</a>
+    </section>
+
+    <div class="mobile-home-footer">
+      <div class="brand">Art <span>Huila</span></div>
+      <p data-i18n="home.footerText">&copy;2026 Art Huila. Orgullosamente huilense.</p>
     </div>
   </div>
 
@@ -303,8 +327,8 @@
   <script src="https://unpkg.com/i18next-http-backend/i18nextHttpBackend.min.js"></script>
   <script src="https://unpkg.com/i18next-browser-languagedetector/i18nextBrowserLanguageDetector.min.js"></script>
   <script src="/js/api.js"></script>
-  <script src="/js/i18n.js"></script>
-  <script src="/js/home.js?v=17"></script>
+  <script src="/js/i18n.js?v=2"></script>
+  <script src="/js/home.js?v=18"></script>
 </body>
 
 </html>

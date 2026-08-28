@@ -214,7 +214,12 @@ function updateTracker(status) {
                 labelEl.style.color = '#dc2626';
             }
         }
-        if (lineProgress) lineProgress.style.width = '0%';
+        if (lineProgress) {
+            lineProgress.style.setProperty('--progress-ratio', '0');
+            lineProgress.style.setProperty('--progress-percent', '0%');
+            lineProgress.style.width = '';
+            lineProgress.style.height = '';
+        }
         return;
     }
 
@@ -235,12 +240,17 @@ function updateTracker(status) {
     // Update Connecting Line Progress
     if (lineProgress) {
         if (currentIdx === -1) {
-            lineProgress.style.width = '0%';
-            lineProgress.style.height = '0%';
+            lineProgress.style.setProperty('--progress-ratio', '0');
+            lineProgress.style.setProperty('--progress-percent', '0%');
+            lineProgress.style.width = '';
+            lineProgress.style.height = '';
         } else {
-            const percentage = (currentIdx / (steps.length - 1)) * 100;
-            lineProgress.style.width = `${percentage}%`;
-            lineProgress.style.height = `${percentage}%`;
+            const ratio = currentIdx / (steps.length - 1);
+            const percentage = ratio * 100;
+            lineProgress.style.setProperty('--progress-ratio', `${ratio}`);
+            lineProgress.style.setProperty('--progress-percent', `${percentage}%`);
+            lineProgress.style.width = '';
+            lineProgress.style.height = '';
         }
     }
 }
@@ -304,39 +314,40 @@ async function initiateEpaycoRetry(order) {
     retryBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Procesando...';
 
     try {
-        const epaycoConfig = await apiFetch('/payments/epayco-config');
-        const publicKey = epaycoConfig.publicKey || window.EPAYCO_PUBLIC_KEY;
-        const backendUrl = epaycoConfig.backendUrlPublic || 'http://localhost:3000/api/v1';
-
-        const handler = ePayco.checkout.configure({
-            key: publicKey,
-            test: true
+        const paymentSession = await apiFetch(`/payments/create-preference/${order.id}`, {
+            method: 'POST',
         });
 
-        const confirmationUrl = backendUrl.endsWith('/') 
-            ? backendUrl + 'payments/webhook' 
-            : backendUrl + '/payments/webhook';
+        if (paymentSession.mode === 'demo') {
+            showToast('Modo demostracion de pagos activo. No se cobrara dinero real.', 'warning');
+            await apiFetch(`/orders/${order.id}/pay`, { method: 'POST' });
+            window.location.href = `/pago-exitoso.html?simulated=true&x_ref_payco=SIM_${order.id.substring(0, 8).toUpperCase()}`;
+            return;
+        }
 
-        const buyer = Auth.getUser();
+        if (typeof ePayco === 'undefined') {
+            throw new Error('No se cargo la libreria de ePayco.');
+        }
 
-        handler.open({
-            name: 'ArtHuila',
-            description: 'Compra de artesanías - Orden #' + order.id,
-            invoice: String(order.id),
-            currency: 'cop',
-            amount: String(Math.round(order.total_amount)),
-            tax_base: '0',
-            tax: '0',
-            country: 'co',
-            lang: 'es',
-            external: false,
-            response: window.location.origin + '/pago-resultado',
-            confirmation: confirmationUrl,
-            name_billing: buyer?.full_name || '',
-            address_billing: buyer?.address || '',
-            mobilephone_billing: buyer?.phone || '',
-            email_billing: buyer?.email || ''
+        const checkout = ePayco.checkout.configure({
+            sessionId: paymentSession.sessionId,
+            type: 'onpage',
+            test: paymentSession.test !== false
         });
+
+        if (typeof checkout.setHooks === 'function') {
+            checkout.setHooks({
+                onResponse: () => {
+                    window.location.href = `/pago-resultado.html?order_id=${order.id}`;
+                },
+                onErrors: (error) => {
+                    console.error('ePayco checkout error:', error);
+                    showToast('Error en la pasarela de pago. Intenta de nuevo.', 'error');
+                }
+            });
+        }
+
+        checkout.open();
     } catch (e) {
         console.error('Retry payment error:', e);
         showToast('Error al iniciar la pasarela de pago: ' + e.message, 'error');
